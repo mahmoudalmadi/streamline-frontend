@@ -10,6 +10,7 @@ module.exports = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        streamlineBlue : "#28C8ED",
       },
     },
   },
