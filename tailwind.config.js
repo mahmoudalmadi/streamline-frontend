@@ -11,6 +11,7 @@ module.exports = {
         background: "var(--background)",
         foreground: "var(--foreground)",
         streamlineBlue : "#28C8ED",
+        graySubtitle: "#9F9F9F"
       },
     },
   },

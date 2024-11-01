@@ -1,7 +1,7 @@
 import Image from "next/image";
 import DynamicScreen from "./components/DynamicScreen";
 import TopBar from "./components/TopBar";
-import SearchBar from "./components/searchBarComps/searchBar";
+import SearchBar from "./components/searchBarComps/SearchBar";
 
 export default function Home() {
   return (
@@ -11,14 +11,16 @@ export default function Home() {
         <TopBar/>
 
         <div
-        className="flex justify-center w-full"
+        className="flex flex-col items-center justify-center w-full"
         >
-          <div className="font-bold justify-center text-[24px] items-center">
+          <div className="flex font-bold text-[24px] text-center">
             Find Your Swim Team
           </div>
-        </div>
 
         <SearchBar/>
+
+        </div>
+
 
       </DynamicScreen>
     </div>
