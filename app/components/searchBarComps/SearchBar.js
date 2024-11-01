@@ -1,6 +1,33 @@
+"use client";
+
 import { FaSearch } from "react-icons/fa";
+import LocationDropdown from "./LocationDropdown";
+import { useState } from "react";
 
 const SearchBar = () => {
+
+    const [isLocationDropdownVisible, setIsLocationDropdownVisible] = useState(false);
+    const [isDropdownClosing, setIsDropdownClosing] = useState(false);
+    const toggleLocationDropdownVisibility = () => {
+        if (isDropdownClosing) return; // Prevent reopening if in closing state
+        setIsLocationDropdownVisible(prev => !prev);
+    };
+    const handleCloseDropdown = () => {
+        setIsDropdownClosing(true); // Set closing flag
+        setIsLocationDropdownVisible(false);
+        setTimeout(() => setIsDropdownClosing(false), 500); // Reset after a short delay
+    };
+    const [locations, setLocations] = useState([
+        { city: 'New York', state: 'NY' },
+        { city: 'Los Angeles', state: 'CA' },
+        { city: 'Chicago', state: 'IL' },
+        { city: 'Houston', state: 'TX' },
+        { city: 'New York', state: 'NY' },
+        { city: 'Los Angeles', state: 'CA' },
+        { city: 'Chicago', state: 'IL' },
+        { city: 'Houston', state: 'TX' }
+      ]);
+
 
     return(
 
@@ -8,20 +35,22 @@ const SearchBar = () => {
          justify-between border-[0.5px] border-graySubtitle rounded-full w-[100%]">
         
             {/* where box */}
-            <div className="flex flex-1 flex-col justify-center rounded-full px-3 
-            py-1 pl-6 hover:bg-gray-200">
+
+            <div className="relative flex flex-1 flex-col justify-center rounded-full px-3 
+            py-1 pl-6 hover:bg-gray-200 cursor-pointer"
+            onClick={toggleLocationDropdownVisibility}>
                 <div className="font-semibold text-[14px]">
                     Where
                 </div>
                 <div className=" text-graySubtitle text-[13px]">
                     Search locations 
                 </div>
+
+                <LocationDropdown isVisible={isLocationDropdownVisible}
+                    onClose={handleCloseDropdown} locations={locations}/>
             </div>
 
-
-
             {/* where box */}
-            
             <div className="relative group flex flex-1 flex-col justify-center rounded-full px-3 py-1 pl-6 hover:bg-gray-200">
                     <div className="absolute right-0 h-[60%] h-full w-[0.5px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>

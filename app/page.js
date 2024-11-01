@@ -13,7 +13,7 @@ export default function Home() {
         <div
         className="flex flex-col items-center justify-center w-full"
         >
-          <div className="flex font-bold text-[24px] text-center mb-2">
+          <div className="flex font-bold text-[24px] text-center mb-2 mt-2">
             Find Your Swim Team
           </div>
 
