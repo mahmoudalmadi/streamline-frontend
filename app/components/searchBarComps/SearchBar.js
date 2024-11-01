@@ -2,6 +2,7 @@
 
 import { FaSearch } from "react-icons/fa";
 import LocationDropdown from "./LocationDropdown";
+import LessonTypeDropdown from "./LessonTypeDropdown";
 import { useState } from "react";
 
 const SearchBar = () => {
@@ -15,18 +16,36 @@ const SearchBar = () => {
     const handleCloseDropdown = () => {
         setIsDropdownClosing(true); // Set closing flag
         setIsLocationDropdownVisible(false);
-        setTimeout(() => setIsDropdownClosing(false), 500); // Reset after a short delay
+        setTimeout(() => setIsDropdownClosing(false), 1000); // Reset after a short delay
     };
     const [locations, setLocations] = useState([
-        { city: 'New York', state: 'NY' },
-        { city: 'Los Angeles', state: 'CA' },
-        { city: 'Chicago', state: 'IL' },
-        { city: 'Houston', state: 'TX' },
-        { city: 'New York', state: 'NY' },
-        { city: 'Los Angeles', state: 'CA' },
-        { city: 'Chicago', state: 'IL' },
-        { city: 'Houston', state: 'TX' }
+        {id:1, city: 'New York', state: 'NY', checked:false },
+        {id:2, city: 'Los Angeles', state: 'CA', checked:false },
+        {id:3, city: 'Chicago', state: 'IL' , checked:false},
+        {id:4, city: 'Houston', state: 'TX' , checked:false},
+        {id:5, city: 'New York', state: 'NY', checked:false },
+        {id:6, city: 'Los Angeles', state: 'CA', checked:false },
+        {id:7, city: 'Chicago', state: 'IL' , checked:false},
+        {id:8, city: 'Houston', state: 'TX' , checked:false}
       ]);
+
+    const [isLessonTypeDropdownVisible, setIsLessonTypeDropdownVisible] = useState(false);
+    const [isLessonTypeDropdownClosing, setIsLessonTypeDropdownClosing] = useState(false);
+    const toggleIsLessonTypeDropdownVisible = () => {
+        if (isLessonTypeDropdownClosing) return; // Prevent reopening if in closing state
+        setIsLessonTypeDropdownVisible(prev => !prev);
+    };
+    const handleCloseLessonTypeDropdown = () => {
+        setIsLessonTypeDropdownClosing(true); // Set closing flag
+        setIsLessonTypeDropdownVisible(false);
+        setTimeout(() => setIsLessonTypeDropdownClosing(false), 500); // Reset after a short delay
+    };
+
+    const [lessonTypes,setLessonTypes] = useState([
+        { lessonType: 'Private', lessonTypeDescription: 'One one one with an instructor' },
+        { lessonType: 'Semi-Private', lessonTypeDescription: `I don't remember` },
+        { lessonType: 'Group', lessonTypeDescription: 'Group lesson with other swimmers' }
+    ]);
 
 
     return(
@@ -46,7 +65,7 @@ const SearchBar = () => {
                     Search locations 
                 </div>
 
-                <LocationDropdown isVisible={isLocationDropdownVisible}
+                <LocationDropdown isVisible={isLocationDropdownVisible} setLocations={setLocations}
                     onClose={handleCloseDropdown} locations={locations}/>
             </div>
 
@@ -62,11 +81,14 @@ const SearchBar = () => {
                     </div>
                     <div className="absolute left-0 h-[60%] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
+
+                    
             </div>
 
             {/* lesson type box */}
             <div className="relative group flex flex-1 flex-col justify-center rounded-full px-3 py-1
-             hover:bg-gray-200 pl-6">
+             hover:bg-gray-200 pl-6 "
+             onClick={toggleIsLessonTypeDropdownVisible}>
                 <div className="absolute right-0 h-[60%] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                 <div className="font-semibold text-[14px]">
@@ -77,6 +99,9 @@ const SearchBar = () => {
                 </div>
                 <div className="absolute left-0 h-[60%] h-full w-[0.5px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
+                <LessonTypeDropdown isVisible={isLessonTypeDropdownVisible}
+                    onClose={handleCloseLessonTypeDropdown} 
+                    lessonTypes={lessonTypes}/>
             </div>
 
             {/* lesson type box */}

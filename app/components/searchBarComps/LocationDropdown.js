@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const LocationDropdown = ({ isVisible, onClose, locations }) => {
+const LocationDropdown = ({ isVisible, onClose, locations,setLocations }) => {
     const divRef = useRef(null);
 
     const handleClickOutside = (event) => {
@@ -22,6 +22,12 @@ const LocationDropdown = ({ isVisible, onClose, locations }) => {
         console.log("is visbile later",isVisible)
     }, [isVisible]);
 
+    const handleCheckboxChange = (id) => {
+        setLocations(locations.map(item => 
+          item.id === id ? { ...item, checked: !item.checked } : item
+        ));
+      };
+
     return (
         isVisible && (
             <div
@@ -30,14 +36,23 @@ const LocationDropdown = ({ isVisible, onClose, locations }) => {
                  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]"
                 onClick={onClose} // Close on click within the div
             >
-                <div className='max-h-[256px] overflow-y-scroll pl-3 pr-4 py-2'> 
+                <div 
+                style={{
+                    overflowY:'scroll'
+                }}
+                className='max-h-[256px] pl-3 pr-4 py-2'> 
 
-                <div className='text-[10px] mb-0.5 pl-3  pr-3 whitespace-nowrap text-gray-700 pr-2'>
+                <div className='text-[10px] mb-0.5 pl-3  pr-3 whitespace-nowrap 
+                text-streamlineBlue pr-2 font-semibold'>
                     Cities with available swim clubs
                 </div>
                 {locations.map((item, index) => (
                 <div key={index} className="flex flex-1 pl-3  pr-3 w-full font-semibold py-2
-                rounded-xl whitespace-nowrap hover:bg-gray-200">
+                rounded-xl whitespace-nowrap items-center hover:bg-gray-200 
+                space-x-1.5" onClick={()=>{handleCheckboxChange(item.id)}}>
+                    <input
+                    type='checkbox' checked={item.checked} onChange={()=>{handleCheckboxChange(item.id)}}
+                    />
                     <p>{item.city}, {item.state}</p>
                 </div>
                 ))}
