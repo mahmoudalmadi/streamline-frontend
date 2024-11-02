@@ -16,7 +16,7 @@ const SearchBar = () => {
     const handleCloseDropdown = () => {
         setIsDropdownClosing(true); // Set closing flag
         setIsLocationDropdownVisible(false);
-        setTimeout(() => setIsDropdownClosing(false), 1000); // Reset after a short delay
+        setTimeout(() => setIsDropdownClosing(false), 500); // Reset after a short delay
     };
     const [locations, setLocations] = useState([
         {id:1, city: 'New York', state: 'NY', checked:false },
@@ -29,6 +29,8 @@ const SearchBar = () => {
         {id:8, city: 'Houston', state: 'TX' , checked:false}
       ]);
 
+    const [selectedLessonType, setSelectedLessonType] = useState("")
+    const [selectedSkillLevel, setSelectedSkillLevel] = useState("")
     const [isLessonTypeDropdownVisible, setIsLessonTypeDropdownVisible] = useState(false);
     const [isLessonTypeDropdownClosing, setIsLessonTypeDropdownClosing] = useState(false);
     const toggleIsLessonTypeDropdownVisible = () => {
@@ -101,7 +103,10 @@ const SearchBar = () => {
                     opacity-100  "/>
                 <LessonTypeDropdown isVisible={isLessonTypeDropdownVisible}
                     onClose={handleCloseLessonTypeDropdown} 
-                    lessonTypes={lessonTypes}/>
+                    lessonTypes={lessonTypes} selectedLessonType={selectedLessonType}
+                    setSelectedLessonType={setSelectedLessonType}
+                    selectedSkillLevel={selectedSkillLevel}
+                    setSelectedSkillLevel={setSelectedSkillLevel}/>
             </div>
 
             {/* lesson type box */}
