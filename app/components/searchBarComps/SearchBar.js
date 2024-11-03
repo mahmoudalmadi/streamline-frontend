@@ -6,8 +6,10 @@ import LessonTimingDropdown from "./LessonTimingDropdown";
 import LessonTypeDropdown from "./LessonTypeDropdown";
 import { useState } from "react";
 
+import PriceDropdown from "./PriceDropdown";
 const SearchBar = () => {
 
+    // lesson location dropdown setup
     const [isLocationDropdownVisible, setIsLocationDropdownVisible] = useState(false);
     const [isDropdownClosing, setIsDropdownClosing] = useState(false);
     const toggleLocationDropdownVisibility = () => {
@@ -31,6 +33,7 @@ const SearchBar = () => {
       ]);
 
       
+    // Lesson type dropdown setup
     const [selectedLessonType, setSelectedLessonType] = useState("")
     const [selectedSkillLevel, setSelectedSkillLevel] = useState("")
     const [isLessonTypeDropdownVisible, setIsLessonTypeDropdownVisible] = useState(false);
@@ -44,7 +47,6 @@ const SearchBar = () => {
         setIsLessonTypeDropdownVisible(false);
         setTimeout(() => setIsLessonTypeDropdownClosing(false), 500); // Reset after a short delay
     };
-
     const [lessonTypes,setLessonTypes] = useState([
         { lessonType: 'Private', lessonTypeDescription: 'One one one with an instructor' },
         { lessonType: 'Semi-Private', lessonTypeDescription: `I don't remember` },
@@ -55,11 +57,25 @@ const SearchBar = () => {
         { skillLevel: 'Intermediate', skillLevelDescription: `Has some swimming experience` },
         { skillLevel: 'Advanced', skillLevelDescription: 'Already a proficient swimmer' }
     ]);
+    
+    // Lesson pricing dropdown setup
+    const [priceLowerBound, setPriceLowerBound] = useState(0)
+    const [priceUpperBound, setPriceUpperBound] = useState(200)
+    const [isPriceDropdownVisible, setIsPriceDropdownVisible] = useState(false);
+    const [isPriceDropdownClosing, setIsPriceDropdownClosing] = useState(false);
+    const toggleIsPriceDropdownVisible = () => {
+        if (isPriceDropdownClosing) return; // Prevent reopening if in closing state
+        setIsPriceDropdownVisible(prev => !prev);
+    };
+    const handleClosePriceDropdown = () => {
+        setIsPriceDropdownClosing(true); // Set closing flag
+        setIsPriceDropdownVisible(false);
+        setTimeout(() => setIsPriceDropdownClosing(false), 500); // Reset after a short delay
+    };
 
-
+    // Lesson timing dropdown setup
     const [isLessonTimingDropdownVisible, setIsLessonTimingDropdownVisible] = useState(false);
     const [isLessonTimingDropdownClosing, setIsLessonTimingDropdownClosing] = useState(false);
-
     const toggleIsLessonTimingDropdownVisible = () => {
         if (isLessonTimingDropdownClosing) return; // Prevent reopening if in closing state
         setIsLessonTimingDropdownVisible(prev => !prev);
@@ -92,8 +108,8 @@ const SearchBar = () => {
         
             {/* where box */}
 
-            <div className="relative flex flex-1 flex-col justify-center rounded-full px-3 
-            py-1 pl-6 hover:bg-gray-200 cursor-pointer"
+            <div className={`relative flex flex-1 flex-col justify-center rounded-full px-3 
+            py-1 pl-6 hover:bg-gray-200 cursor-pointer ${isLocationDropdownVisible?"bg-gray-200":""}`}
             onClick={toggleLocationDropdownVisibility}>
                 <div className="font-semibold text-[14px]">
                     Where
@@ -106,9 +122,10 @@ const SearchBar = () => {
                     onClose={handleCloseDropdown} locations={locations}/>
             </div>
 
-            {/* where box */}
-            <div className="relative flex flex-1 flex-col cursor-pointer
-            justify-center rounded-full px-3 py-1 pl-6 hover:bg-gray-200"
+            {/* when box */}
+            <div className={`relative flex flex-1 flex-col cursor-pointer
+            justify-center rounded-full px-3 py-1 pl-6 hover:bg-gray-200
+            ${isLessonTimingDropdownVisible?"bg-gray-200":""}`}
             onClick={toggleIsLessonTimingDropdownVisible}>
                     <div className="absolute right-0 h-[60%] h-full w-[0.5px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
@@ -130,8 +147,8 @@ const SearchBar = () => {
             </div>
 
             {/* lesson type box */}
-            <div className="relative group flex flex-1 flex-col justify-center rounded-full px-3 py-1
-             hover:bg-gray-200 pl-6 cursor-pointer"
+            <div className={`relative group flex flex-1 flex-col justify-center rounded-full px-3 py-1
+             hover:bg-gray-200 pl-6 cursor-pointer ${isLessonTypeDropdownVisible?"bg-gray-200":""}`}
              onClick={toggleIsLessonTypeDropdownVisible}>
                 <div className="absolute right-0 h-[60%] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
@@ -152,16 +169,17 @@ const SearchBar = () => {
                     setSelectedSkillLevel={setSelectedSkillLevel}/>
             </div>
 
-            {/* lesson type box */}
-            <div className="flex flex-1 
+            {/* Price box */}
+            <div className={`relative group flex flex-1 
             justify-between items-center rounded-full py-1 pr-1 pl-4
-            hover:bg-gray-200 cursor-pointer">
+            hover:bg-gray-200 cursor-pointer ${isPriceDropdownVisible?"bg-gray-200":""}`}
+            onClick={toggleIsPriceDropdownVisible}>
                 <div className="flex flex-col">
                     <div className="font-semibold text-[14px]">
                         Price
                     </div>
                     <div className=" text-graySubtitle text-[13px]">
-                        Add Level
+                        Lesson Price
                     </div>
                 </div>
 
@@ -171,6 +189,12 @@ const SearchBar = () => {
                 <FaSearch style={{ color: 'white', fontSize: '20px' }} />
                 </div>  
                 </button>      
+
+                <PriceDropdown isVisible={isPriceDropdownVisible} 
+                setPriceLowerBound={setPriceLowerBound}
+                priceLowerBound={priceLowerBound} setPriceUpperBound={setPriceUpperBound}
+                priceUpperBound={priceUpperBound}
+                onClose={handleClosePriceDropdown} />
             </div>
 
         </div>

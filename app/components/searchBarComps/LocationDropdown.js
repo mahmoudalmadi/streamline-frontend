@@ -40,10 +40,13 @@ const LocationDropdown = ({ isVisible, onClose, locations,setLocations }) => {
                 style={{
                     overflowY:'scroll'
                 }}
-                className='max-h-[256px] pl-3 pr-4 py-2'> 
+                className='max-h-[256px] pl-3 pr-4'> 
 
-                <div className='text-[10px] mb-0.5 pl-3  pr-3 whitespace-nowrap 
-                text-streamlineBlue pr-2 font-semibold'>
+                <div className='text-[12px] mb-0.5 pl-3 whitespace-nowrap 
+                text-streamlineBlue pr-2 '
+                style={{
+                    fontWeight:525
+                }}>
                     Cities with available swim clubs
                 </div>
                 {locations.map((item, index) => (

@@ -32,8 +32,11 @@ setSelectedLessonType, setSelectedSkillLevel }) => {
             >
                 <div className='flex max-h-[256px] overflow-y-scroll pl-3 pr-4'>
                     <div className='flex flex-col'>
-                        <div className='text-[10px] mb-0.5 pl-3  pr-3 whitespace-nowrap 
-                        text-streamlineBlue pr-2 font-semibold'>
+                        <div className='text-[12px] mb-0.5 pl-3 whitespace-nowrap 
+                        text-streamlineBlue pr-2 '
+                        style={{
+                            fontWeight:525
+                        }}>
                             Available lesson types
                         </div>
                         {lessonTypes.map((item, index) => (
@@ -56,8 +59,11 @@ setSelectedLessonType, setSelectedSkillLevel }) => {
                         </div>
                     </div>
                     <div className='flex flex-col'>
-                        <div className='text-[10px] mb-0.5 pl-3  pr-3 whitespace-nowrap 
-                        text-streamlineBlue pr-2 font-semibold'>
+                        <div className='text-[12px] mb-0.5 pl-3 whitespace-nowrap 
+                            text-streamlineBlue pr-2 '
+                            style={{
+                                fontWeight:525
+                            }}>
                             Skill Levels
                         </div>
                         {skillLevels.map((item, index) => (
