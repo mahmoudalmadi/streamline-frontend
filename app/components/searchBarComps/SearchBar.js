@@ -2,6 +2,7 @@
 
 import { FaSearch } from "react-icons/fa";
 import LocationDropdown from "./LocationDropdown";
+import LessonTimingDropdown from "./LessonTimingDropdown";
 import LessonTypeDropdown from "./LessonTypeDropdown";
 import { useState } from "react";
 
@@ -29,6 +30,7 @@ const SearchBar = () => {
         {id:8, city: 'Houston', state: 'TX' , checked:false}
       ]);
 
+      
     const [selectedLessonType, setSelectedLessonType] = useState("")
     const [selectedSkillLevel, setSelectedSkillLevel] = useState("")
     const [isLessonTypeDropdownVisible, setIsLessonTypeDropdownVisible] = useState(false);
@@ -47,6 +49,39 @@ const SearchBar = () => {
         { lessonType: 'Private', lessonTypeDescription: 'One one one with an instructor' },
         { lessonType: 'Semi-Private', lessonTypeDescription: `I don't remember` },
         { lessonType: 'Group', lessonTypeDescription: 'Group lesson with other swimmers' }
+    ]);
+    const [skillLevels,setSkillLevels] = useState([
+        { skillLevel: 'Beginner', skillLevelDescription: 'Learning swimming for the first time' },
+        { skillLevel: 'Intermediate', skillLevelDescription: `Has some swimming experience` },
+        { skillLevel: 'Advanced', skillLevelDescription: 'Already a proficient swimmer' }
+    ]);
+
+
+    const [isLessonTimingDropdownVisible, setIsLessonTimingDropdownVisible] = useState(false);
+    const [isLessonTimingDropdownClosing, setIsLessonTimingDropdownClosing] = useState(false);
+
+    const toggleIsLessonTimingDropdownVisible = () => {
+        if (isLessonTimingDropdownClosing) return; // Prevent reopening if in closing state
+        setIsLessonTimingDropdownVisible(prev => !prev);
+    };
+    const handleCloseLessonTimingDropdown = () => {
+        setIsLessonTimingDropdownClosing(true); // Set closing flag
+        setIsLessonTimingDropdownVisible(false);
+        setTimeout(() => setIsLessonTimingDropdownClosing(false), 500); // Reset after a short delay
+    };
+    const [daysOfWeek,setDaysOfWeek] = useState([
+        {id:1, day: 'Monday', checked:false },
+        {id:2, day: 'Tuesday', checked:false },
+        {id:3, day: 'Wednesday', checked:false},
+        {id:4, day: 'Thursday', checked:false},
+        {id:5, day: 'Friday', checked:false },
+        {id:6, day: 'Saturday', checked:false },
+        {id:7, day: 'Sunday', checked:false},
+      ]);
+    const [timesOfDay,setTimesOfDay] = useState([
+        {id:1, timeOfDay: '9 AM - 12 PM',checked:false},
+        {id:2, timeOfDay: '3 PM - 6 PM',checked:false},
+        {id:3, timeOfDay: '6 PM - 9 PM',checked:false}
     ]);
 
 
@@ -72,7 +107,9 @@ const SearchBar = () => {
             </div>
 
             {/* where box */}
-            <div className="relative group flex flex-1 flex-col justify-center rounded-full px-3 py-1 pl-6 hover:bg-gray-200">
+            <div className="relative flex flex-1 flex-col cursor-pointer
+            justify-center rounded-full px-3 py-1 pl-6 hover:bg-gray-200"
+            onClick={toggleIsLessonTimingDropdownVisible}>
                     <div className="absolute right-0 h-[60%] h-full w-[0.5px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                     <div className="font-semibold text-[14px]">
@@ -83,13 +120,18 @@ const SearchBar = () => {
                     </div>
                     <div className="absolute left-0 h-[60%] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
-
+                    <LessonTimingDropdown isVisible={isLessonTimingDropdownVisible}
+                    onClose={handleCloseLessonTimingDropdown} 
+                    timesOfDay={timesOfDay} daysOfWeek={daysOfWeek}
+                    setDaysOfWeek={setDaysOfWeek}
+                    setTimesOfDay={setTimesOfDay}
+                    />
                     
             </div>
 
             {/* lesson type box */}
             <div className="relative group flex flex-1 flex-col justify-center rounded-full px-3 py-1
-             hover:bg-gray-200 pl-6 "
+             hover:bg-gray-200 pl-6 cursor-pointer"
              onClick={toggleIsLessonTypeDropdownVisible}>
                 <div className="absolute right-0 h-[60%] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
@@ -103,7 +145,8 @@ const SearchBar = () => {
                     opacity-100  "/>
                 <LessonTypeDropdown isVisible={isLessonTypeDropdownVisible}
                     onClose={handleCloseLessonTypeDropdown} 
-                    lessonTypes={lessonTypes} selectedLessonType={selectedLessonType}
+                    lessonTypes={lessonTypes} skillLevels={skillLevels}
+                    selectedLessonType={selectedLessonType}
                     setSelectedLessonType={setSelectedLessonType}
                     selectedSkillLevel={selectedSkillLevel}
                     setSelectedSkillLevel={setSelectedSkillLevel}/>
@@ -112,7 +155,7 @@ const SearchBar = () => {
             {/* lesson type box */}
             <div className="flex flex-1 
             justify-between items-center rounded-full py-1 pr-1 pl-4
-            hover:bg-gray-200">
+            hover:bg-gray-200 cursor-pointer">
                 <div className="flex flex-col">
                     <div className="font-semibold text-[14px]">
                         Price
