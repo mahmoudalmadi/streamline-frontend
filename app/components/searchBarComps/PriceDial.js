@@ -120,8 +120,15 @@ const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBou
         />
 
         {/* Price Display */}
-        <div className="mt-6 text-lg font-semibold text-gray-700">
-        Price: ${minPrice}      MaxPrice: ${maxPrice}
+        <div className="flex flex-col mt-6 text-lg font-semibold text-gray-700 justify-between">
+            <div className='flex'>
+                Minimum: ${minPrice}      
+                
+                </div>
+
+            <div className='flex'>
+                Maximum: ${maxPrice}
+            </div>
         </div>
   </div>
   );
