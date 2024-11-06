@@ -98,7 +98,8 @@ const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBou
         };    
 
   return (
-    <div className="flex relative pt-7 ml-1" style={{ width: `${lineWidth}px` }}>
+    <div className="flex relative pt-7 ml-1" style={{ width: `${lineWidth}px`,
+    height:"110px" }}>
         {/* Line */}
         <div className="absolute w-full h-[2px] bg-gray-300  transform -translate-y-1/2" 
         ref={priceRangeBarRef}/>
@@ -120,14 +121,41 @@ const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBou
         />
 
         {/* Price Display */}
-        <div className="flex justify-between w-full mt-6 text-lg font-semibold text-gray-700">
-            <div className='flex'>
-                Minimum: ${minPrice}      
-                
+        <div className="flex justify-between w-full mt-6 text-lg text-gray-700">
+            <div className='flex flex-col items-center'
+            style={{
+                position:"absolute",
+                left:-10
+            }}>
+                <div
+                className='flex text-[12px]'
+                >
+                Minimum
                 </div>
+                
+                <div 
+                className='flex text-[16px]'
+                >
+                ${minPrice}      
+                </div>
+            </div>
 
-            <div className='flex'>
-                Maximum: ${maxPrice}
+            <div className='flex flex-col items-center'
+            style={{
+                position:"absolute",
+                right:0
+            }}>
+                <div
+                className='flex text-[12px]'
+                >
+                Maximum
+                </div>
+                
+                <div 
+                className='flex text-[16px]'
+                >
+                ${maxPrice}      
+                </div>
             </div>
         </div>
   </div>
