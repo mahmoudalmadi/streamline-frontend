@@ -120,7 +120,7 @@ const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBou
         />
 
         {/* Price Display */}
-        <div className="flex flex-col mt-6 text-lg font-semibold text-gray-700 justify-between">
+        <div className="flex justify-between w-full mt-6 text-lg font-semibold text-gray-700">
             <div className='flex'>
                 Minimum: ${minPrice}      
                 
