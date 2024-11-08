@@ -40,7 +40,8 @@ setTimesOfDay, setDaysOfWeek }) => {
         isVisible && (
             <div
                 ref={divRef}
-                className="absolute flex left-1/2 top-full mt-2 py-2 
+                className="absolute bg-white
+                flex left-1/2 top-full mt-2 py-2 
                  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]
                  transform -translate-x-1/2 pr-1.5"
                 onClick={(e)=>e.stopPropagation()} // Close on click within the div
@@ -56,7 +57,7 @@ setTimesOfDay, setDaysOfWeek }) => {
                         </div>
                         {daysOfWeek.map((item, index) => (
                         <div key={index} className="flex flex-1 pl-3  pr-3 w-full  py-1
-                        text-[15px]
+                        text-[15px] 
                         rounded-xl whitespace-nowrap items-center hover:bg-gray-200 
                         space-x-1.5" onClick={()=>{handleDaysCheckboxChange(item.id)}}>
                             <input

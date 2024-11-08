@@ -106,7 +106,7 @@ const SearchBar = () => {
 
     return(
         <>
-        <div className="flex shadow-[0_0_10px_rgba(0,0,0,0.1)]
+        <div className="relative flex shadow-[0_0_10px_rgba(0,0,0,0.1)] 
          justify-between border-[0.5px] border-graySubtitle rounded-full w-[100%]"
          style={{
             zIndex:100
