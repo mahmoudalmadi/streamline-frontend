@@ -61,6 +61,9 @@ const SearchBar = () => {
     // Lesson pricing dropdown setup
     const [priceLowerBound, setPriceLowerBound] = useState(0)
     const [priceUpperBound, setPriceUpperBound] = useState(200)
+    let biggestPrice = 200;
+    const [desiredMaxPrice, setDesiredMaxPrice] = useState(biggestPrice);
+    const [desiredMinPrice, setDesiredMinPrice] = useState(0);
     const [isPriceDropdownVisible, setIsPriceDropdownVisible] = useState(false);
     const [isPriceDropdownClosing, setIsPriceDropdownClosing] = useState(false);
     const toggleIsPriceDropdownVisible = () => {
@@ -102,15 +105,22 @@ const SearchBar = () => {
 
 
     return(
-
+        <>
         <div className="flex shadow-[0_0_10px_rgba(0,0,0,0.1)]
-         justify-between border-[0.5px] border-graySubtitle rounded-full w-[100%]">
+         justify-between border-[0.5px] border-graySubtitle rounded-full w-[100%]"
+         style={{
+            zIndex:100
+         }}>
         
             {/* where box */}
 
             <div className={`relative flex flex-1 flex-col justify-center rounded-full px-3 
             py-1 pl-6 hover:bg-gray-200 cursor-pointer ${isLocationDropdownVisible?"bg-gray-200":""}`}
-            onClick={toggleLocationDropdownVisibility}>
+            onClick={toggleLocationDropdownVisibility}
+            style={{
+                zIndex:100
+            }}
+            >
                 <div className="font-semibold text-[14px]">
                     Where
                 </div>
@@ -194,10 +204,16 @@ const SearchBar = () => {
                 setPriceLowerBound={setPriceLowerBound}
                 priceLowerBound={priceLowerBound} setPriceUpperBound={setPriceUpperBound}
                 priceUpperBound={priceUpperBound}
-                onClose={handleClosePriceDropdown} />
+                onClose={handleClosePriceDropdown} 
+                minPrice={desiredMinPrice} setMinPrice ={setDesiredMinPrice}
+                maxPrice={desiredMaxPrice} setMaxPrice={setDesiredMaxPrice}
+                biggestPrice={biggestPrice}/>
             </div>
 
         </div>
+
+        </>
+
 
     )
 

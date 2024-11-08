@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import PriceDial from './PriceDial';
 
 const PriceDropdown = ({ isVisible, onClose, setPriceLowerBound, priceLowerBound,
-setPriceUpperBound, priceUpperBound }) => {
+setPriceUpperBound, priceUpperBound, minPrice, setMinPrice, maxPrice,setMaxPrice,biggestPrice}) => {
     const divRef = useRef(null);
 
     const handleClickOutside = (event) => {
@@ -39,7 +39,11 @@ setPriceUpperBound, priceUpperBound }) => {
                     Per lesson price range ($CAD)
                 <PriceDial setPriceLowerBound={setPriceLowerBound} 
                 lowerBound={priceLowerBound} upperBound={priceUpperBound}
-                setPriceUpperBound={setPriceUpperBound}/>
+                setPriceUpperBound={setPriceUpperBound}
+                minPrice={minPrice} setMinPrice={setMinPrice}
+                maxPrice={maxPrice} setMaxPrice={setMaxPrice}
+                biggestPrice={biggestPrice}
+                />
                 </div>
             </div>
         )

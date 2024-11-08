@@ -34,6 +34,9 @@ const LocationDropdown = ({ isVisible, onClose, locations,setLocations }) => {
                 ref={divRef}
                 className="absolute flex flex-col left-0 top-full mt-2 py-2 
                  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]"
+                 style={{
+                    zIndex:100
+                 }}
                 onClick={(e)=>e.stopPropagation()} // Close on click within the div
             >
                 <div 

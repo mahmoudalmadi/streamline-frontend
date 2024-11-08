@@ -1,8 +1,8 @@
 import React, { useState,useRef, useEffect } from 'react';
 
-const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBound}) => {
+const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBound,
+minPrice,setMinPrice, maxPrice, setMaxPrice, biggestPrice}) => {
 
-    const [minPrice, setMinPrice] = useState(0);
     const [dialPosition, setDialPosition] = useState(0);
     const lineWidth = upperBound * 2; 
     const leftDialRef = useRef(null);
@@ -12,9 +12,7 @@ const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBou
     
     const [leftDialCoord, setLeftDialCoord] = useState(2*upperBound)
     let maxCoord = upperBound*2
-    const [leftOffset, setLeftOffset] = useState(0)
-    let biggestPrice=200;
-    const [maxPrice, setMaxPrice] = useState(biggestPrice);
+    const [leftOffset, setLeftOffset] = useState(2*upperBound)
 
     const priceRangeBarRef = useRef(null)
 
@@ -44,7 +42,7 @@ const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBou
           const finalDialPosition =Math.max(newDialPosition,0)
 
           setPriceLowerBound(finalDialPosition);
-            console.log(finalDialPosition,leftBarCoord, lineWidth)
+
           const minPrice = Math.round(
             (finalDialPosition)/lineWidth *  biggestPrice
           );
@@ -74,12 +72,12 @@ const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBou
         const handleMouseMove = (event) => {
         if(event.clientX>sliderRight || event.clientX<sliderLeft){
             const newDialPosition = 
-            Math.min(event.clientX - sliderRight + leftOffset,lowerBound+50);
-            setLeftOffset(Math.max(Math.min(newDialPosition,lowerBound+50),maxCoord))
-            const finalDialPosition =Math.min(newDialPosition,maxCoord)
-            console.log(event.clientX-sliderLeft, slide,)
-            // setLeftDialCoord(finalDialPosition);
-            console.log(finalDialPosition,leftBarCoord, lineWidth)
+            Math.min(event.clientX - sliderLeft + leftOffset,maxCoord);
+            setLeftOffset(Math.min(Math.max(newDialPosition,lowerBound+50),maxCoord))
+            const finalDialPosition =Math.max(newDialPosition,lowerBound+50)
+            
+            setLeftDialCoord(finalDialPosition);
+
             const maxPrice = Math.round(
             (finalDialPosition)/lineWidth *  biggestPrice
             );
@@ -97,7 +95,7 @@ const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBou
         };    
 
   return (
-    <div className="flex relative pt-7 ml-1" style={{ width: `${lineWidth}px`,
+    <div className="flex relative pt-7 ml-1 mr-1" style={{ width: `${lineWidth}px`,
     height:"110px" }}>
         {/* Line */}
         <div className="absolute w-full h-[2px] bg-gray-300  transform -translate-y-1/2" 
@@ -127,13 +125,14 @@ const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBou
                 left:-10
             }}>
                 <div
-                className='flex text-[12px]'
+                className='flex text-[12px] text-graySubtitle'
                 >
                 Minimum
                 </div>
                 
                 <div 
-                className='flex text-[16px]'
+                className='flex text-[16px] text-streamlineBlue
+                 border border-gray-300 rounded-3xl px-2.5'
                 >
                 ${minPrice}      
                 </div>
@@ -145,13 +144,14 @@ const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBou
                 right:0
             }}>
                 <div
-                className='flex text-[12px]'
+                className='flex text-[12px] text-graySubtitle'
                 >
                 Maximum
                 </div>
                 
                 <div 
-                className='flex text-[16px]'
+                className='flex text-[16px] text-streamlineBlue
+                border border-gray-300 rounded-3xl px-2.5'
                 >
                 ${maxPrice}      
                 </div>

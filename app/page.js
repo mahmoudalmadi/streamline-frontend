@@ -11,15 +11,26 @@ export default function Home() {
         <TopBar/>
 
         <div
-        className="flex flex-col items-center justify-center w-full"
+        className="relative flex flex-col items-center justify-center w-full"
         >
           <div className="flex font-bold text-[24px] text-center mb-2 mt-2">
             Find Your Swim Team
           </div>
 
-          <SearchBar/>
+
+            {/* SearchBar with high z-index */}
+          <div className="relative z-20 w-full ">
+            <SearchBar />
+          </div>
+
+          {/* Gray line with lower z-index */}
+          <div
+            className=" w-screen h-[1px] bg-gray-200 mt-[18px] z-0"
+          />
 
         </div>
+
+
 
 
       </DynamicScreen>
