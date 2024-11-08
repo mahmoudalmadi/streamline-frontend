@@ -50,9 +50,13 @@ const LocationDropdown = ({ isVisible, onClose, locations,setLocations }) => {
                     Cities with available swim clubs
                 </div>
                 {locations.map((item, index) => (
-                <div key={index} className="flex flex-1 pl-3  pr-3 w-full font-semibold py-2
+                <div key={index} className="flex flex-1 pl-3  pr-3 w-full text-[14px] py-2
                 rounded-xl whitespace-nowrap items-center hover:bg-gray-200 
-                space-x-1.5" onClick={()=>{handleCheckboxChange(item.id)}}>
+                space-x-1.5" onClick={()=>{handleCheckboxChange(item.id)}}
+                style={{
+                    fontWeight:500,
+                }}
+                >
                     <input
                     type='checkbox' checked={item.checked} onChange={()=>{handleCheckboxChange(item.id)}}
                     />

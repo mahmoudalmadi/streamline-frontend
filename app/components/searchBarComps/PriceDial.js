@@ -12,7 +12,7 @@ const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBou
     
     const [leftDialCoord, setLeftDialCoord] = useState(2*upperBound)
     let maxCoord = upperBound*2
-    const [leftOffset, setLeftOffset] = useState(maxCoord)
+    const [leftOffset, setLeftOffset] = useState(0)
     let biggestPrice=200;
     const [maxPrice, setMaxPrice] = useState(biggestPrice);
 
@@ -50,7 +50,6 @@ const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBou
           );
           setMinPrice(minPrice);}
         };
-    
 
         const handleMouseUp = () => {
             document.removeEventListener('mousemove', handleMouseMove);
@@ -76,10 +75,10 @@ const PriceDial = ({setPriceUpperBound, setPriceLowerBound, lowerBound, upperBou
         if(event.clientX>sliderRight || event.clientX<sliderLeft){
             const newDialPosition = 
             Math.min(event.clientX - sliderRight + leftOffset,lowerBound+50);
-            setLeftOffset(Math.max(Math.min(newDialPosition,maxCoord),lowerBound+50))
-            const finalDialPosition =Math.max(newDialPosition,0)
-
-            setLeftDialCoord(finalDialPosition);
+            setLeftOffset(Math.max(Math.min(newDialPosition,lowerBound+50),maxCoord))
+            const finalDialPosition =Math.min(newDialPosition,maxCoord)
+            console.log(event.clientX-sliderLeft, slide,)
+            // setLeftDialCoord(finalDialPosition);
             console.log(finalDialPosition,leftBarCoord, lineWidth)
             const maxPrice = Math.round(
             (finalDialPosition)/lineWidth *  biggestPrice

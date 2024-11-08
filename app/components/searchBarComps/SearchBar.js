@@ -114,7 +114,7 @@ const SearchBar = () => {
                 <div className="font-semibold text-[14px]">
                     Where
                 </div>
-                <div className=" text-graySubtitle text-[13px]">
+                <div className=" text-graySubtitle text-[12px]">
                     Search locations 
                 </div>
 
@@ -132,7 +132,7 @@ const SearchBar = () => {
                     <div className="font-semibold text-[14px]">
                         When
                     </div>
-                    <div className=" text-graySubtitle text-[13px]">
+                    <div className=" text-graySubtitle text-[12px]">
                         Lesson times
                     </div>
                     <div className="absolute left-0 h-[60%] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
@@ -147,7 +147,7 @@ const SearchBar = () => {
             </div>
 
             {/* lesson type box */}
-            <div className={`relative group flex flex-1 flex-col justify-center rounded-full px-3 py-1
+            <div className={`relative group flex w-[23%] flex-col justify-center rounded-full px-3 py-1
              hover:bg-gray-200 pl-6 cursor-pointer ${isLessonTypeDropdownVisible?"bg-gray-200":""}`}
              onClick={toggleIsLessonTypeDropdownVisible}>
                 <div className="absolute right-0 h-[60%] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
@@ -155,7 +155,7 @@ const SearchBar = () => {
                 <div className="font-semibold text-[14px]">
                     Type
                 </div>
-                <div className=" text-graySubtitle text-[13px]">
+                <div className=" text-graySubtitle text-[12px]">
                     Add Level
                 </div>
                 <div className="absolute left-0 h-[60%] h-full w-[0.5px] bg-gray-200 transform -translate-x-1/2
@@ -178,8 +178,8 @@ const SearchBar = () => {
                     <div className="font-semibold text-[14px]">
                         Price
                     </div>
-                    <div className=" text-graySubtitle text-[13px]">
-                        Lesson Price
+                    <div className=" text-graySubtitle text-[12px]">
+                        Per Lesson
                     </div>
                 </div>
 
