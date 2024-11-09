@@ -1,10 +1,21 @@
+"use client";
+
 import StreamlineLogo from '../../public/streamlineLogo.svg'
+import { useRouter } from 'next/navigation'
 
 const TopBar = () => {
 
+    const router = useRouter();
+
+
+    const redirectHome = () => {
+        router.push('/')
+        console.log("REDT??")
+    }
+
     return (
         <div className='flex justify-between items-center'>
-            <button>
+            <button onClick={redirectHome}>
             <StreamlineLogo className="w-[130px] h-[50px]"/>
             </button>
 
