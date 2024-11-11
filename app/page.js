@@ -31,7 +31,7 @@ export default function Home() {
 
         </div>
 
-        <div className="text-[20px] font-semibold mt-[12px]">
+        <div className="text-[20px] font-semibold mt-[12px] mb-4">
           Partnered Swim Teams
         </div>
 

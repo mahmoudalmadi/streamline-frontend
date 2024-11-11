@@ -157,7 +157,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType}) => {
         {errorMessage.length>0 &&
         <div className='flex mt-[7px] items-center'>
             <RedWarningIcon/>
-            <div className='text-[12px] mt-[3px] ml-[5px]'
+            <div className='text-[11px] mt-[3px] ml-[5px]'
             style={{color:'#FF0000'}}>
                 {errorMessage}
             </div>
