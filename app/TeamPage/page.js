@@ -2,6 +2,7 @@
 
 import DynamicScreen from "../components/DynamicScreen";
 import ImageViewer from "../components/ImageViewer";
+import BookingPanel from "../components/LessonBookingPanel/BookingPanel";
 import TopBar from "../components/TopBar";
 import { useState } from "react";
 
@@ -150,37 +151,9 @@ export default function TeamPage() {
             <div className="mb-[10px] font-bold">
                 Book your trial lesson
             </div>
-
-            <div className="flex flex-col w-full  border border-gray-400 rounded-xl cursor-pointer">
-
-                <div className="border-b border-gray-400 p-2">
-                    <div className="font-bold text-[12px]">
-                        LESSON TYPE
-                    </div>
-                    <div className="text-gray-400 text-[12px]">
-                        Select lesson type
-                    </div>
-                </div>
-                <div className=" flex">
-                <div className="w-[50%] p-2 border-r border-gray-400">
-                    <div className="font-bold text-[12px]">
-                        DATE
-                    </div>
-                    <div className="text-gray-400 text-[12px]">
-                        Add date
-                    </div>
-                </div>
-                <div className="w-[50%] p-2">
-                    <div className="font-bold text-[12px]">
-                        TIME
-                    </div>
-                    <div className="text-gray-400 text-[12px]">
-                        Add time
-                    </div>
-                </div>
-
-                </div>
-
+            
+            <div>
+            <BookingPanel/>
             </div>
 
             <div className="flex w-full justify-center items-center mt-[10px]
