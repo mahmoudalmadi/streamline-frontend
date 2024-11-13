@@ -54,6 +54,7 @@ export default function BookingPanel() {
         },[selectedLessonType, selectedSkillLevel])
 
     return(
+        <>
         <div className="relative flex flex-col w-full  border border-gray-300 rounded-xl cursor-pointer">
 
                 <div className="relative border-b border-gray-300 p-2"
@@ -108,9 +109,31 @@ export default function BookingPanel() {
                     </div>
                 </div>
 
+
                 </div>
 
             </div>
-    )
+    
+                <div className="flex w-full justify-center items-center mt-[10px]
+                bg-streamlineBlue py-[10px] rounded-xl cursor-pointer">
 
+                    <div className="text-white font-bold text-[15px] "
+                    onClick={
+                        ()=>{
+                            if(selectedSkillLevel!="" && selectedLessonType!="" && !selectedDate
+                            && !selectedTime){
+                                toggleIsDateTimeDropdownVisible()
+                            }else if(selectedSkillLevel==="" || selectedLessonType ===""){
+                                toggleIsLessonTypeDropdownVisible()
+                            }else{
+                                console.log("hello")
+                            }
+                        }
+                    }>
+                        {selectedTime?"Book lesson":"Check availability"}
+                    </div>
+                </div>
+        
+        </>
+    )
 }

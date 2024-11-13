@@ -60,8 +60,8 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
                  "
                 onClick={(e)=>e.stopPropagation()} // Close on click within the div
             >
-                <div className='flex  overflow-y-scroll pl-3'>
-                    <div className='flex-1 flex-col'>
+                <div className='flex  overflow-y-scroll pl-3 space-x-[40px]'>
+                    <div className='flex-1 flex-col mr-[15px]'>
                         <div className='text-[12px] mb-0.5 pl-[10px] whitespace-nowrap 
                         text-streamlineBlue '
                         style={{
@@ -86,7 +86,7 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
                                 items-center max-w-[180px] px-[10px]'>
                             <div className=
                             {`flex-1 text-center space-y-[10px]
-                            ${selectedDate?"w-[200px] mr-[]":"text-graySubtitle"}
+                            ${selectedDate?"w-[200px]":" w-[200px] text-graySubtitle"}
                             `}>
                                 {
                                 selectedDate ? 

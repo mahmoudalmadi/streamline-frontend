@@ -3,15 +3,17 @@
 import DynamicScreen from "../components/DynamicScreen";
 import ImageViewer from "../components/ImageViewer";
 import BookingPanel from "../components/LessonBookingPanel/BookingPanel";
+import SwimClubDescription from "../components/SwimClubDescription";
 import TopBar from "../components/TopBar";
 import { useState } from "react";
 
 export default function TeamPage() {
 
     const swimTeamName = "Neptunes Swimming Academy"
-
+    const swimClubDescription="Neptunes Swimming Academy is a vibrant and inclusive swim club dedicated to nurturing swimmers of all ages and skill levels. Located in a picturesque setting, the academy offers comprehensive training programs that cater to children, teens, and adults alike. With a focus on developing essential swimming techniques, the academy emphasizes safety, fitness, and fun in the water. Experienced instructors provide personalized coaching, ensuring that each swimmer maximizes their potential while fostering a love for the sport. Whether you are a beginner looking to learn the basics or an advanced swimmer aiming to refine your skills, Neptunes Swimming Academy is the perfect place to dive in and make a splash."
     const programsAvailable = ["Learn to swim", "Competitive"]
     const classSizes= ["Group (4:1)", "Semi-Private (2:1)"]
+    const coachPhoto="https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg"
 
     const images = ["https://swimmings.s3.us-east-2.amazonaws.com/neptuneLogo.jpeg",
     "https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg",
@@ -53,8 +55,8 @@ export default function TeamPage() {
       };
 
   return (
-    <div className="flex  justify-center items-center">
-      <DynamicScreen className=" h-screen">
+    <div className="flex  justify-center items-center ">
+      <DynamicScreen className=" h-screen ">
 
         <TopBar/>
 
@@ -127,9 +129,9 @@ export default function TeamPage() {
                 }
         </div>
 
-        <div className="flex">
+        <div className="flex space-x-[20px]">
         
-        <div className="flex-1">
+        <div className="flex-1 ">
         
         <div
         className="font-bold text-[18px]"
@@ -139,13 +141,38 @@ export default function TeamPage() {
         
         <ProgramsList items={programsAvailable}/>
 
+        <div className="flex space-x-[5px]">
         <div>
-            Class size{classSizes.length>1?"s":""}: {classSizes.join(', ')}
+            Class size{classSizes.length>1?"s":""}:
+        </div>
+        <div className="font-bold">
+            {classSizes.join(', ')}
         </div>
 
         </div>
 
-        <div className="p-[20px] w-[35%] border border-gray-300 rounded-xl
+        <div className="flex items-center space-x-[10px] mt-[10px]">
+        <img
+                    src={coachPhoto}
+                    className=
+                    " w-[50px] h-[50px] rounded-[100px]"
+                />
+            <div className="font-bold">
+            Coach Stephan
+            </div>
+        </div>
+
+        <div
+            className="relative w-full h-[1px] bg-gray-200 mt-[18px]"
+          />  
+
+        <SwimClubDescription swimClubDescription={swimClubDescription}/>
+
+        <div
+            className="relative w-full h-[1px] bg-gray-200 mt-[8px]"
+          />  
+
+        <div className="mt-[20px] sm:hidden p-[20px] border border-gray-300 rounded-xl
         shadow-[0_0_10px_rgba(0,0,0,0.1)] ">
             
             <div className="mb-[10px] font-bold">
@@ -153,16 +180,25 @@ export default function TeamPage() {
             </div>
             
             <div>
-            <BookingPanel/>
+            <BookingPanel 
+            />
             </div>
+        </div>
 
-            <div className="flex w-full justify-center items-center mt-[10px]
-            bg-streamlineBlue py-[10px] rounded-xl">
+        </div>
 
-                <div className="text-white font-bold text-[15px]">
-                    Check availability
-                </div>
+        <div className="hidden sm:block p-[20px] w-[35%] border border-gray-300 rounded-xl
+        shadow-[0_0_10px_rgba(0,0,0,0.1)] ">
+            
+            <div className="mb-[10px] font-bold">
+                Book your trial lesson
             </div>
+            
+            <div>
+            <BookingPanel 
+            />
+            </div>
+            
 
         </div>
 
