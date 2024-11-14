@@ -114,7 +114,7 @@ export default function BookingPanel() {
 
             </div>
     
-                <div className="flex w-full justify-center items-center mt-[10px]
+                <div className="flex w-full justify-center items-center mt-[13px]
                 bg-streamlineBlue py-[10px] rounded-xl cursor-pointer">
 
                     <div className="text-white font-bold text-[15px] "

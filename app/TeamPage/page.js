@@ -185,10 +185,12 @@ export default function TeamPage() {
             </div>
         </div>
 
+        <div className="w-full h-[20px]"/>
+        
         </div>
 
         <div className="hidden sm:block p-[20px] w-[35%] border border-gray-300 rounded-xl
-        shadow-[0_0_10px_rgba(0,0,0,0.1)] ">
+        shadow-[0_0_10px_rgba(0,0,0,0.1)] h-[260px]">
             
             <div className="mb-[10px] font-bold">
                 Book your trial lesson
@@ -201,6 +203,7 @@ export default function TeamPage() {
             
 
         </div>
+
 
 
         </div>

@@ -13,6 +13,8 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
         }
     }, [isVisible,selectedDate]);
 
+    const [currentDate, setCurrentDate] = useState(null)
+
     const handleClickOutside = (event) => {
         if (divRef.current && !divRef.current.contains(event.target)) {
             onClose(); // Trigger the close function
@@ -27,8 +29,10 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
     ];
 
     const availableTimes = {
-        "11/15/2024" : ["Available times","7 AM - 7:30 AM"],
-       "11/16/2024" : ["Available times","7 AM - 7:30 AM", "7:30 AM - 8:30 AM","8:30 - 9:00 AM"]
+        "11/15/2024" : ["Available times",selectedDate?.toDateString().slice(0,
+            selectedDate.toDateString().length -4),"7 AM - 7:30 AM"],
+       "11/16/2024" : ["Available times",selectedDate?.toDateString().slice(0,
+        selectedDate.toDateString().length -4),"7 AM - 7:30 AM", "7:30 AM - 8:30 AM","8:30 - 9:00 AM"]
     }
 
     // Function to determine if a day is disabled
@@ -72,8 +76,8 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
                         <div className='flex flex-1 '>
                         <DayPicker
                             mode="single"
-                            selected={selectedDate}
-                            onSelect={setSelectedDate}
+                            selected={currentDate}
+                            onSelect={setCurrentDate}
                             disabled={isDateDisabled}
                         
                         />
@@ -86,20 +90,26 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
                                 items-center max-w-[180px] px-[10px]'>
                             <div className=
                             {`flex-1 text-center space-y-[10px]
-                            ${selectedDate?"w-[200px]":" w-[200px] text-graySubtitle"}
+                            ${currentDate?"w-[200px]":" w-[200px] text-graySubtitle"}
                             `}>
                                 {
-                                selectedDate ? 
+                                currentDate ? 
                                 
-                                availableTimes[selectedDate.toLocaleDateString()].map(
+                                availableTimes[currentDate.toLocaleDateString()].map(
                                     (item,index)=>
-                                    (<div className={item!="Available times" ? `flex-1 
-                                    ${selectedTime!=item? "hover:bg-gray-100":"text-white bg-streamlineBlue"}
-                                    ${index>0?"text-streamlineBlue border border-streamlineBlue py-[5px]":""}
+                                    (<div className={item!="Available times" ? `flex-1 leading-6
+                                    ${index==1 ? "font-bold": ""} 
+                                    ${selectedTime!=item && index>1 ? "hover:bg-gray-100":""}
+                                    ${selectedTime===item && index!=1 && currentDate==selectedDate ? "text-white bg-streamlineBlue":""}
+                                    ${index>1?"text-streamlineBlue border border-streamlineBlue py-[4px]":""}
                                     rounded-full
                                     ` : ""} onClick={()=>{
-                                        if(item!="Available times")
-                                        {setSelectedTime(item);toggleIsDateTimeDropdownVisible()}}}>
+                                        if(index>1)
+                                        {setSelectedTime(item);
+                                            setSelectedDate(
+                                                currentDate
+                                            )
+                                        toggleIsDateTimeDropdownVisible()}}}>
                                         {item}
                                     </div>)
                                 )

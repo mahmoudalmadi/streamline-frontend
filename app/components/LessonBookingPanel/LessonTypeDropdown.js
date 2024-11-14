@@ -4,6 +4,12 @@ const LessonTypeDropdown = ({ isVisible, onClose, lessonTypes,skillLevels, selec
 setSelectedLessonType, setSelectedSkillLevel }) => {
     const divRef = useRef(null);
 
+    useEffect(() => {
+        if (isVisible && divRef.current) {
+            divRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }, [isVisible,selectedLessonType,selectedSkillLevel]);
+
     const handleClickOutside = (event) => {
         if (divRef.current && !divRef.current.contains(event.target)) {
             onClose(); // Trigger the close function
