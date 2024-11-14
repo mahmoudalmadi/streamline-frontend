@@ -4,6 +4,7 @@ import DynamicScreen from "../components/DynamicScreen";
 import ImageViewer from "../components/ImageViewer";
 import BookingPanel from "../components/LessonBookingPanel/BookingPanel";
 import SwimClubDescription from "../components/SwimClubDescription";
+import Map from "../components/MapComponents/Map"
 import TopBar from "../components/TopBar";
 import { useState } from "react";
 
@@ -14,6 +15,7 @@ export default function TeamPage() {
     const programsAvailable = ["Learn to swim", "Competitive"]
     const classSizes= ["Group (4:1)", "Semi-Private (2:1)"]
     const coachPhoto="https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg"
+    const coachName="Coach Stefan Todorov"
 
     const images = ["https://swimmings.s3.us-east-2.amazonaws.com/neptuneLogo.jpeg",
     "https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg",
@@ -71,7 +73,7 @@ export default function TeamPage() {
         {swimTeamName}
         </div>
 
-        <div className="flex space-x-[10px] pb-[15px]">
+        <div className="flex space-x-[10px] pb-[25px]">
             
                 <div className="flex-1">
                 <img
@@ -115,7 +117,7 @@ export default function TeamPage() {
 
 
         </div>
-                <div className="absolute bottom-[30px] right-[20px] bg-white
+                <div className="absolute bottom-[40px] right-[20px] bg-white
                 cursor-pointer text-[12px] font-bold border border-black
                 px-2 py-2 rounded-full" onClick={()=>{openModal(0)}}>
                     Show all photos
@@ -158,7 +160,7 @@ export default function TeamPage() {
                     " w-[50px] h-[50px] rounded-[100px]"
                 />
             <div className="font-bold">
-            Coach Stephan
+            {coachName}
             </div>
         </div>
 
@@ -171,6 +173,15 @@ export default function TeamPage() {
         <div
             className="relative w-full h-[1px] bg-gray-200 mt-[8px]"
           />  
+
+        <div className="flex flex-col w-full mt-[20px]"/>
+            <Map />
+        
+        <div
+            className=" w-full h-[1px] bg-gray-200 mt-[18px] mb-[100px]"
+          />  
+        </div>
+
 
         <div className="mt-[20px] sm:hidden p-[20px] border border-gray-300 rounded-xl
         shadow-[0_0_10px_rgba(0,0,0,0.1)] ">
@@ -185,9 +196,7 @@ export default function TeamPage() {
             </div>
         </div>
 
-        <div className="w-full h-[20px]"/>
         
-        </div>
 
         <div className="hidden sm:block p-[20px] w-[35%] border border-gray-300 rounded-xl
         shadow-[0_0_10px_rgba(0,0,0,0.1)] h-[260px]">
