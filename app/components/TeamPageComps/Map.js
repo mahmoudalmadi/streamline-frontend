@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-const Map = ({location}) => {
+const Map = ({locationCoords, address}) => {
   const mapRef = useRef(null);
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY; // Replace with your actual Google Maps API key
 
@@ -14,7 +14,7 @@ const Map = ({location}) => {
 
     // Initialize the map after the script has loaded
     window.initMap = () => {
-      const location = { lat: 40.748817, lng: -73.985428 }; // Replace with your location coordinates
+      const location = { lat: locationCoords.lat, lng:locationCoords.long }; // Replace with your location coordinates
       const map = new window.google.maps.Map(mapRef.current, {
         center: location,
         zoom: 15,
@@ -57,12 +57,11 @@ const Map = ({location}) => {
       ">Our Location</h3>
       <div
         ref={mapRef}
-        className="w-full h-[350px] rounded-lg shadow-lg border border-gray-300"
+        className="w-full h-[350px] rounded-lg  border border-gray-300 shadow-[0_0_14px_rgba(0,0,0,0.1)]"
       ></div>
-      <h3 className="  mt-[12px] text-[18px]
-      ">115 Haynes Ave</h3>
-      <h3 className="  text-[18px]
-      ">Toronto, Ontario M3J0L8</h3>
+      <h3 className="  mt-[12px] text-[18px] font-bold
+      ">{address}</h3>
+      
     </div>
   );
 };

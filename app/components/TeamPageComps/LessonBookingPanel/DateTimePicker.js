@@ -30,9 +30,9 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
 
     const availableTimes = {
         "11/15/2024" : ["Available times",currentDate?.toDateString().slice(0,
-            selectedDate.toDateString().length -4),"7 AM - 7:30 AM"],
+            currentDate.toDateString().length -4),"7 AM - 7:30 AM"],
        "11/16/2024" : ["Available times",currentDate?.toDateString().slice(0,
-        selectedDate.toDateString().length -4),"7 AM - 7:30 AM", "7:30 AM - 8:30 AM","8:30 - 9:00 AM"]
+        currentDate.toDateString().length -4),"7 AM - 7:30 AM", "7:30 AM - 8:30 AM","8:30 - 9:00 AM"]
     }
 
     // Function to determine if a day is disabled

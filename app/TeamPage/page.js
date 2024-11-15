@@ -2,11 +2,13 @@
 
 import DynamicScreen from "../components/DynamicScreen";
 import ImageViewer from "../components/ImageViewer";
-import BookingPanel from "../components/LessonBookingPanel/BookingPanel";
+import BookingPanel from "../components/TeamPageComps/LessonBookingPanel/BookingPanel";
 import SwimClubDescription from "../components/SwimClubDescription";
-import Map from "../components/MapComponents/Map"
+import Map from "../components/TeamPageComps/Map"
 import TopBar from "../components/TopBar";
+import SafetyCertified from "../../public/SafetyCertified.svg"
 import { useState } from "react";
+import AmenitiesSection from "../components/TeamPageComps/AmenitiesSection";
 
 export default function TeamPage() {
 
@@ -16,6 +18,9 @@ export default function TeamPage() {
     const classSizes= ["Group (4:1)", "Semi-Private (2:1)"]
     const coachPhoto="https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg"
     const coachName="Coach Stefan Todorov"
+    const locationAddress="115 Haynes Ave, Toronto, Ontario M3J0L8"
+    const locationCoords = {"lat":40.748817,"long": -73.985428}
+    const amenities = [1,2,4,5]
 
     const images = ["https://swimmings.s3.us-east-2.amazonaws.com/neptuneLogo.jpeg",
     "https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg",
@@ -46,7 +51,7 @@ export default function TeamPage() {
         } else if (items.length >= 3) {
           // Three or more items:
           const lastItem = items[items.length - 1].toLowerCase();
-          const middleItems = items.slice(1, -1).map(item => item.toLowerCase()).join(', ');
+          const middleItems = items.slice(1, -1).map((item,index) => item.toLowerCase()).join(', ');
           return `${items[0]}, ${middleItems}, and ${lastItem} programs`;
         }
         return '';
@@ -174,16 +179,44 @@ export default function TeamPage() {
             className="relative w-full h-[1px] bg-gray-200 mt-[8px]"
           />  
 
-        <div className="flex flex-col w-full mt-[20px]"/>
-            <Map />
-        
-        <div
-            className=" w-full h-[1px] bg-gray-200 mt-[18px] mb-[100px]"
-          />  
+        {/* SAFETY CERTIFICATION SECTION */}
+        <div className="flex items-center mt-[5px]">
+        <SafetyCertified className="
+        md:w-[180px]
+        w-[180px] h-[100px] mt-[12px]"/>
+        <div className="flex flex-col text-[18px] font-bold ml-[10px]">
+            <div>
+                Safety Certified
+            </div>
+            <div className="text-[15px] text-gray-400 leading-5 ">
+                {swimTeamName}'s staff is fully certified and has passed all
+                our rigorous safety checks
+            </div>
+        </div>
         </div>
 
+        <div
+            className="relative w-full h-[1px] bg-gray-200 mt-[12px]"
+          />  
 
-        <div className="mt-[20px] sm:hidden p-[20px] border border-gray-300 rounded-xl
+        {/* AMENITIES SECTION */}
+
+        <AmenitiesSection amenities={amenities}/>
+
+        <div
+            className="relative w-full h-[1px] bg-gray-200 mt-[12px]"
+          />  
+
+
+        {/* MAP SECTION */}
+        <div className="flex flex-col w-full mt-[20px]"/>
+            <Map address={locationAddress} locationCoords={locationCoords}/>
+        
+        <div
+            className=" w-full h-[1px] bg-gray-200 mt-[18px] mb-[20px]"
+          />  
+        
+        <div className=" sm:hidden p-[20px] border border-gray-300 rounded-xl
         shadow-[0_0_10px_rgba(0,0,0,0.1)] ">
             
             <div className="mb-[10px] font-bold">
@@ -194,6 +227,13 @@ export default function TeamPage() {
             <BookingPanel 
             />
             </div>
+
+        </div>
+
+        <div
+            className=" w-full h-[1px] bg-gray-200 mt-[22px] mb-[100px]"
+          />  
+
         </div>
 
         
