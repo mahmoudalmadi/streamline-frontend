@@ -12,8 +12,9 @@ export default function AmenitiesSection({amenities}){
             (
                 <div>
                     <div className="mt-[10px] flex items-center font-bold space-x-[10px]
-                    text-[16px]">
-                        <img src={`/amenities/${CONFIG.amenitiesIcons[item]['iconName']}`} className="w-[70px] h-[70px]"/>
+                    text-[16px] py-[10px]">
+                        <img src={`/amenities/${CONFIG.amenitiesIcons[item]['iconName']}`} 
+                        className="w-[45px] h-[45px]"/>
                         <div>
                              {CONFIG.amenitiesIcons[item]['name']}
                         </div>

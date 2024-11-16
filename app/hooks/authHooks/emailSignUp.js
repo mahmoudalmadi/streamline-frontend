@@ -6,6 +6,7 @@ const emailSignUp = async ({email, password}) => {
       email,
       password,
     })
+    console.log(user)
     if (error) {console.log('Error:', error)
 throw (error)}
     else console.log('User signed up:', user)

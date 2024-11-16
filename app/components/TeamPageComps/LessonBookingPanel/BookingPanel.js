@@ -4,14 +4,11 @@ import { useState, useEffect } from "react";
 import LessonTypeDropdown from "./LessonTypeDropdown";
 import DateTimePicker from "./DateTimePicker";
 
-export default function BookingPanel() {
+export default function BookingPanel({lessonTypes, skillLevels,
+selectedDate, setSelectedDate, selectedTime,setSelectedTime,
+selectedLessonType,setSelectedLessonType,selectedSkillLevel,
+setSelectedSkillLevel}) {
 
-        const [selectedDate, setSelectedDate] = useState(null);
-        const [selectedTime, setSelectedTime] = useState(null);
-
-        // Lesson type dropdown setup
-        const [selectedLessonType, setSelectedLessonType] = useState("")
-        const [selectedSkillLevel, setSelectedSkillLevel] = useState("")
         const [isLessonTypeDropdownVisible, setIsLessonTypeDropdownVisible] = useState(false);
         const [isLessonTypeDropdownClosing, setIsLessonTypeDropdownClosing] = useState(false);
         const toggleIsLessonTypeDropdownVisible = () => {
@@ -23,16 +20,6 @@ export default function BookingPanel() {
             setIsLessonTypeDropdownVisible(false);
             setTimeout(() => setIsLessonTypeDropdownClosing(false), 500); // Reset after a short delay
         };
-        const [lessonTypes,setLessonTypes] = useState([
-            { lessonType: 'Private', lessonTypeDescription: 'One one one with an instructor' },
-            { lessonType: 'Semi-Private', lessonTypeDescription: `I don't remember` },
-            { lessonType: 'Group', lessonTypeDescription: 'Group lesson with other swimmers' }
-        ]);
-        const [skillLevels,setSkillLevels] = useState([
-            { skillLevel: 'Beginner', skillLevelDescription: 'Learning swimming for the first time' },
-            { skillLevel: 'Intermediate', skillLevelDescription: `Has some swimming experience` },
-            { skillLevel: 'Advanced', skillLevelDescription: 'Already a proficient swimmer' }
-        ]);
         
         const [isDateTimeDropdownVisible, setIsDateTimeDropdownVisible] = useState(false);
         const [isDateTimeDropdownClosing, setIsDateTimeDropdownClosing] = useState(false);
@@ -115,9 +102,7 @@ export default function BookingPanel() {
             </div>
     
                 <div className="flex w-full justify-center items-center mt-[13px]
-                bg-streamlineBlue py-[10px] rounded-xl cursor-pointer">
-
-                    <div className="text-white font-bold text-[15px] "
+                bg-streamlineBlue py-[10px] rounded-xl cursor-pointer"
                     onClick={
                         ()=>{
                             if(selectedSkillLevel!="" && selectedLessonType!="" && !selectedDate
@@ -130,9 +115,16 @@ export default function BookingPanel() {
                             }
                         }
                     }>
+
+                    <div className="text-white font-bold text-[15px] ">
                         {selectedTime?"Book lesson":"Check availability"}
                     </div>
                 </div>
+
+                {selectedTime &&
+                <div className="flex w-full justify-center items-center mt-[15px] text-[14px]">
+                    You won't be charged yet
+                </div>}
         
         </>
     )
