@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react";
 import LessonTypeDropdown from "./LessonTypeDropdown";
 import DateTimePicker from "./DateTimePicker";
+import { useRouter } from "next/navigation";
 
 export default function BookingPanel({lessonTypes, skillLevels,
 selectedDate, setSelectedDate, selectedTime,setSelectedTime,
 selectedLessonType,setSelectedLessonType,selectedSkillLevel,
 setSelectedSkillLevel}) {
+
+        const router = useRouter();
 
         const [isLessonTypeDropdownVisible, setIsLessonTypeDropdownVisible] = useState(false);
         const [isLessonTypeDropdownClosing, setIsLessonTypeDropdownClosing] = useState(false);
@@ -39,6 +42,10 @@ setSelectedSkillLevel}) {
                 toggleIsDateTimeDropdownVisible()
             }
         },[selectedLessonType, selectedSkillLevel])
+
+        const handleRedirect = () => {
+            router.push('/CheckoutPage')
+        }
 
     return(
         <>
@@ -111,7 +118,7 @@ setSelectedSkillLevel}) {
                             }else if(selectedSkillLevel==="" || selectedLessonType ===""){
                                 toggleIsLessonTypeDropdownVisible()
                             }else{
-                                console.log("hello")
+                                handleRedirect()
                             }
                         }
                     }>
