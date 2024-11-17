@@ -14,6 +14,11 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+export const metadata = {
+  title: "Experience Streamline",
+  description: "Find Your Swim Team",
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

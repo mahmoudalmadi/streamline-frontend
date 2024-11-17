@@ -179,7 +179,7 @@ export default function CheckoutPage() {
 
 <div className="relative flex justify-between mb-[5px]"
             style={{
-                zIndex:20
+                zIndex:15
             }}>
                 <div className="font-bold">
                     Lesson type

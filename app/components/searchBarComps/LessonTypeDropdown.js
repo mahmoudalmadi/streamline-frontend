@@ -27,7 +27,7 @@ setSelectedLessonType, setSelectedSkillLevel, additionalStyling }) => {
                 ref={divRef}
                 className=
                 {`absolute flex bg-white
-                    ${additionalStyling!=null?
+                    ${additionalStyling===null?
                     "-left-[14px] transform -translate-x-1/2":additionalStyling}
                  top-full mt-2 py-2 
                  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]
@@ -54,8 +54,8 @@ setSelectedLessonType, setSelectedSkillLevel, additionalStyling }) => {
                             onChange={()=>{setSelectedLessonType(item.lessonType)}}
                             />
                                 <div className='flex-col'>
-                                    <div className='text-[16px] font-semibold'>{item.lessonType}</div>
-                                    <div className='text-[14px] text-graySubtitle'>{item.lessonTypeDescription}</div>
+                                    <div className='text-[14px] font-semibold'>{item.lessonType}</div>
+                                    <div className='text-[12px] text-graySubtitle'>{item.lessonTypeDescription}</div>
                                 </div>
                             </div>
                         </div>
@@ -81,8 +81,8 @@ setSelectedLessonType, setSelectedSkillLevel, additionalStyling }) => {
                             onChange={()=>{setSelectedSkillLevel(item.skillLevel)}}
                             />
                                 <div className='flex-col'>
-                                    <div className='text-[16px] font-semibold'>{item.skillLevel}</div>
-                                    <div className='text-[14px] text-graySubtitle'>{item.skillLevelDescription}</div>
+                                    <div className='text-[14px] font-semibold'>{item.skillLevel}</div>
+                                    <div className='text-[12px] text-graySubtitle'>{item.skillLevelDescription}</div>
                                 </div>
                             </div>
                         </div>
