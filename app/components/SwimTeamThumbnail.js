@@ -38,7 +38,7 @@ export default function SwimTeamThumbnail(){
     };
   
     const handleRedirect = () => {
-        router.push(`/${teamPathNameß}`)
+        router.push(`/${teamPathName}`)
     }
 
     return(

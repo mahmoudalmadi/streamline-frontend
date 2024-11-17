@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 const LessonTypeDropdown = ({ isVisible, onClose, lessonTypes,skillLevels, selectedLessonType, selectedSkillLevel,
-setSelectedLessonType, setSelectedSkillLevel }) => {
+setSelectedLessonType, setSelectedSkillLevel, additionalStyling }) => {
     const divRef = useRef(null);
 
     const handleClickOutside = (event) => {
@@ -25,11 +25,13 @@ setSelectedLessonType, setSelectedSkillLevel }) => {
         isVisible && (
             <div
                 ref={divRef}
-                className="absolute flex bg-white
-                    -left-[14px]
+                className=
+                {`absolute flex bg-white
+                    ${additionalStyling!=null?
+                    "-left-[14px] transform -translate-x-1/2":additionalStyling}
                  top-full mt-2 py-2 
                  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]
-                 transform -translate-x-1/2"
+                 `}
                 onClick={(e)=>e.stopPropagation()} // Close on click within the div
             >
                 <div className='flex max-h-[256px] overflow-y-scroll pl-3 pr-4'>

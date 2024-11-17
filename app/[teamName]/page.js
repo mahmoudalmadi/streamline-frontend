@@ -12,6 +12,7 @@ import AmenitiesSection from "../components/TeamPageComps/AmenitiesSection";
 import HeadCoachSection from "../components/TeamPageComps/HeadCoachSection";
 import { useRouter, useSearchParams,usePathname } from "next/navigation";
 
+
 export default function TeamPage()  {
 
     const swimTeamName = "Neptunes Swimming Academy"
@@ -34,13 +35,6 @@ export default function TeamPage()  {
 
     const pathName = usePathname();
     const teamName = pathName.split('/').pop();
-
-    console.log(teamName)
-    // const teamName = searchParams.get('teamName'); 
-    const router = useRouter();
-
-    // const {teamName} = router.query;
-    console.log(teamName,"hi")
 
     const [lessonTypes,setLessonTypes] = useState([
         { lessonType: 'Private', lessonTypeDescription: 'One one one with an instructor' },
@@ -250,11 +244,12 @@ export default function TeamPage()  {
         </div>
 
         <div className="flex items-center space-x-[10px] mt-[15px] cursor-pointer"
-        onClick={scrollToCoachDiv}>
+        >
         <img
                     src={coachPhoto}
                     className=
                     " w-[50px] h-[50px] rounded-[100px]"
+                    onClick={scrollToCoachDiv}
                 />
             <div className="font-bold">
             Coach {coachName}
@@ -340,7 +335,9 @@ export default function TeamPage()  {
             selectedDate={selectedDate} setSelectedDate={setSelectedDate}
             selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel}
             selectedLessonType={selectedLessonType} setSelectedLessonType={setSelectedLessonType}
-            selectedTime={selectedTime} setSelectedTime={setSelectedTime}
+            selectedTime={selectedTime} setSelectedTime={setSelectedTime} 
+            dateTimePositioning={"left-1/2 transform -translate-x-1/2 "}
+            teamName={teamName} lessonPrice={trialLessonPrice}
             />
             </div>
 
@@ -383,6 +380,8 @@ export default function TeamPage()  {
             selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel}
             selectedLessonType={selectedLessonType} setSelectedLessonType={setSelectedLessonType}
             selectedTime={selectedTime} setSelectedTime={setSelectedTime}
+            dateTimePositioning={"right-0"} teamName={teamName}
+            lessonPrice={trialLessonPrice}
             />
             </div>
             

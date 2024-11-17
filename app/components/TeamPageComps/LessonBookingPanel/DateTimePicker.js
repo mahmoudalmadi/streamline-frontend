@@ -4,7 +4,7 @@ import "react-day-picker/style.css";
 
 const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, selectedTime, 
     toggleIsDateTimeDropdownVisible,
-    setSelectedTime}) => {
+    setSelectedTime, dateTimePositioning}) => {
     const divRef = useRef(null);
 
     useEffect(() => {
@@ -57,11 +57,11 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
         isVisible && (
             <div
                 ref={divRef}
-                className="absolute flex bg-white
-                right-0
-                 top-full mt-2 py-2 
+                className={`absolute flex bg-white
+                ${dateTimePositioning}
+                 mt-2 py-2 
                  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)] mb-[10px]
-                 "
+                 `}
                 onClick={(e)=>e.stopPropagation()} // Close on click within the div
             >
                 <div className='flex  overflow-y-scroll pl-3 space-x-[40px]'>

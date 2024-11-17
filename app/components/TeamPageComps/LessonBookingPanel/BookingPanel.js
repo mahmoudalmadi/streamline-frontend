@@ -4,11 +4,12 @@ import { useState, useEffect } from "react";
 import LessonTypeDropdown from "./LessonTypeDropdown";
 import DateTimePicker from "./DateTimePicker";
 import { useRouter } from "next/navigation";
+import { useCheckout } from "../../../contexts/CheckoutContext";
 
 export default function BookingPanel({lessonTypes, skillLevels,
 selectedDate, setSelectedDate, selectedTime,setSelectedTime,
 selectedLessonType,setSelectedLessonType,selectedSkillLevel,
-setSelectedSkillLevel}) {
+setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice}) {
 
         const router = useRouter();
 
@@ -43,9 +44,27 @@ setSelectedSkillLevel}) {
             }
         },[selectedLessonType, selectedSkillLevel])
 
+        // const handleRedirect = () => {
+        //     router.push(
+        //     `/${teamName}/checkout?lessontype=${selectedLessonType}?skillLevel=${selectedSkillLevel}?lessonTime=${selectedTime}?\
+        //     lessonDate=${selectedDate}?lessonPrice=${lessonPrice}`)
+        // }
+
+        const { checkoutData, setCheckoutData } = useCheckout();
+
+        const updateCheckout = () => {
+        setCheckoutData({
+            lessonType :selectedLessonType,
+            lessonDate: selectedDate,
+            skillLevel:selectedSkillLevel,
+            lessonPrice:lessonPrice,
+            lessonTime:selectedTime
+        })
+        }
+
         const handleRedirect = () => {
-            router.push(
-            `{}`)
+            updateCheckout()
+            router.push(`/${teamName}/checkout`)
         }
 
     return(
@@ -76,7 +95,15 @@ setSelectedSkillLevel}) {
                 </div>
                 <div className=" flex">
                 <div className="w-[50%] p-2 border-r border-gray-300"
-                onClick={toggleIsDateTimeDropdownVisible}>
+                onClick={()=>{
+                    if (selectedLessonType==="" || selectedSkillLevel==="")
+                    {toggleIsLessonTypeDropdownVisible()}
+                    else
+                    {
+                    toggleIsDateTimeDropdownVisible()
+                    }
+                }}>
+
                     <div className="font-bold text-[11px]">
                         DATE
                     </div>
@@ -93,9 +120,19 @@ setSelectedSkillLevel}) {
                     selectedTime={selectedTime}
                     setSelectedTime={setSelectedTime}
                     toggleIsDateTimeDropdownVisible={toggleIsDateTimeDropdownVisible}
+                    dateTimePositioning={dateTimePositioning}
                     />
                 </div>
-                <div className="w-[50%] p-2" onClick={toggleIsDateTimeDropdownVisible}>
+                <div className="w-[50%] p-2" 
+                onClick={()=>{
+                    if (selectedLessonType==="" || selectedSkillLevel==="")
+                    {toggleIsLessonTypeDropdownVisible()}
+                    else
+                    {
+                    toggleIsDateTimeDropdownVisible()
+                    }
+                }}
+                >
                     <div className="font-bold text-[11px]">
                         TIME
                     </div>
