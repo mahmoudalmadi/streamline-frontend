@@ -12,12 +12,14 @@ export default function SwimTeamThumbnail(){
     const [currentIndex, setCurrentIndex] = useState(0);
     const router = useRouter();
   
-    const images = ["https://swimmings.s3.us-east-2.amazonaws.com/neptuneLogo.jpeg",
+    const images = [
+    
     "https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg",
+    "https://swimmings.s3.us-east-2.amazonaws.com/neptuneLogo.jpeg",
     "https://swimmings.s3.us-east-2.amazonaws.com/poolThree.jpg",
     "https://swimmings.s3.us-east-2.amazonaws.com/poolTwo.jpeg"]
 
-
+    const teamPathName = "neptunes"
     // const images = ["https://nutriflodev.s3.us-east-2.amazonaws.com/ingredients/images/brownrice.jpg",
     // "https://nutriflodev.s3.us-east-2.amazonaws.com/ingredients/images/brownrice.jpg",
     // "https://nutriflodev.s3.us-east-2.amazonaws.com/ingredients/images/brownrice.jpg",
@@ -36,7 +38,7 @@ export default function SwimTeamThumbnail(){
     };
   
     const handleRedirect = () => {
-        router.push('/TeamPage')
+        router.push(`/${teamPathNameß}`)
     }
 
     return(
@@ -54,7 +56,7 @@ export default function SwimTeamThumbnail(){
                     alt={`Thumbnail ${index + 1}`}
                     className=
                     {
-                    `absolute top-0 left-0 w-full h-full object-contain rounded transition-transform duration-500 ease-in-out
+                    `absolute top-0 left-0 w-full h-full object-cover rounded transition-transform duration-500 ease-in-out
                         ${index < currentIndex ? '-translate-x-full' :
                         index > currentIndex ? 'translate-x-full' : 
                         index === currentIndex ? 'translate-x-0' : ""}`

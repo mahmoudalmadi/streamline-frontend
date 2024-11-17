@@ -22,7 +22,7 @@ setSelectedSkillLevel}) {
             setIsLessonTypeDropdownClosing(true); // Set closing flag
             setIsLessonTypeDropdownVisible(false);
             setTimeout(() => setIsLessonTypeDropdownClosing(false), 500); // Reset after a short delay
-        };
+        };  
         
         const [isDateTimeDropdownVisible, setIsDateTimeDropdownVisible] = useState(false);
         const [isDateTimeDropdownClosing, setIsDateTimeDropdownClosing] = useState(false);
@@ -44,7 +44,8 @@ setSelectedSkillLevel}) {
         },[selectedLessonType, selectedSkillLevel])
 
         const handleRedirect = () => {
-            router.push('/CheckoutPage')
+            router.push(
+            `{}`)
         }
 
     return(

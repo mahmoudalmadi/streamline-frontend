@@ -10,8 +10,9 @@ import SafetyCertified from "../../public/SafetyCertified.svg"
 import { useState, useRef, useEffect } from "react";
 import AmenitiesSection from "../components/TeamPageComps/AmenitiesSection";
 import HeadCoachSection from "../components/TeamPageComps/HeadCoachSection";
+import { useRouter, useSearchParams,usePathname } from "next/navigation";
 
-export default function TeamPage() {
+export default function TeamPage()  {
 
     const swimTeamName = "Neptunes Swimming Academy"
     const swimClubDescription="Neptunes Swimming Academy is a vibrant and inclusive swim club dedicated to nurturing swimmers of all ages and skill levels. Located in a picturesque setting, the academy offers comprehensive training programs that cater to children, teens, and adults alike. With a focus on developing essential swimming techniques, the academy emphasizes safety, fitness, and fun in the water. Experienced instructors provide personalized coaching, ensuring that each swimmer maximizes their potential while fostering a love for the sport. Whether you are a beginner looking to learn the basics or an advanced swimmer aiming to refine your skills, Neptunes Swimming Academy is the perfect place to dive in and make a splash."
@@ -31,6 +32,15 @@ export default function TeamPage() {
     Outside of coaching, Stefan enjoys sharing his knowledge through workshops and seminars, inspiring the next generation of swimmers and coaches alike. His vision for Neptunes Swimming Academy is not just about winning medals but also about building character, discipline, and lifelong friendships among athletes.\
     With Stefan Todorov at the helm, Neptunes Swimming Academy continues to be a beacon of hope and achievement in the world of competitive swimming."
 
+    const pathName = usePathname();
+    const teamName = pathName.split('/').pop();
+
+    console.log(teamName)
+    // const teamName = searchParams.get('teamName'); 
+    const router = useRouter();
+
+    // const {teamName} = router.query;
+    console.log(teamName,"hi")
 
     const [lessonTypes,setLessonTypes] = useState([
         { lessonType: 'Private', lessonTypeDescription: 'One one one with an instructor' },
@@ -128,6 +138,19 @@ export default function TeamPage() {
         coachRef.current?.scrollIntoView({ behavior: "smooth" });
     };
     
+    const [scrollY, setScrollY] = useState(0);
+
+    useEffect(() => {
+      const handleScroll = () => {
+        console.log(scrollY)
+        setScrollY(window.scrollY);
+      };
+  
+      window.addEventListener("scroll", handleScroll);
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+      };
+    }, []);
 
   return (
     <div className="flex  justify-center items-center ">
@@ -201,7 +224,10 @@ export default function TeamPage() {
                 }
         </div>
 
-        <div className="flex space-x-[20px]">
+        <div className="flex space-x-[20px]"
+        style={{
+            position:"sticky"
+        }}>
         
         <div className="flex-1 ">
         
@@ -296,8 +322,9 @@ export default function TeamPage() {
         
 
         {/* BOTTOM OF MOBILE PAGE BOOKING PANEL */}
-        <div className=" sm:hidden p-[20px] border border-gray-300 rounded-xl
-        shadow-[0_0_10px_rgba(0,0,0,0.1)] ">
+        <div className=" p-[20px] border border-gray-300 rounded-xl
+        shadow-[0_0_10px_rgba(0,0,0,0.1)] "
+        >
             
             <div className="flex mb-[10px] font-bold space-x-[4px] items-end">
                 <div className="text-[20px]">
@@ -329,8 +356,16 @@ export default function TeamPage() {
         
 
         {/* BIGGER SCREEN BOOK LESSON PANEL */}
-        <div className={`hidden sm:block p-[20px] w-[35%] border border-gray-300 rounded-xl
-        shadow-[0_0_10px_rgba(0,0,0,0.1)] ${selectedTime ?"h-[290px]" :"h-[240px]"}`}>
+        <div className={`
+        hidden sm:block p-[20px] w-[35%] border border-gray-300 rounded-xl
+        
+        shadow-[0_0_10px_rgba(0,0,0,0.1)] ${selectedTime ?"h-[290px]" :"h-[240px]"}`}
+        style={{
+            position: "sticky",
+            // marginTop: `${scrollY}px`, // Adjust max height for stopping
+            // transition: "top 0.2s ease-in-out",
+          }}
+        >
             
             <div className="flex mb-[10px] font-bold space-x-[4px] items-end">
                 <div className="text-[20px]">
