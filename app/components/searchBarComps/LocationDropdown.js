@@ -10,7 +10,6 @@ const LocationDropdown = ({ isVisible, onClose, locations,setLocations }) => {
     };
 
     useEffect(() => {
-        console.log("is visbile changes",isVisible)
         if (isVisible) {
             document.addEventListener('mousedown', handleClickOutside);
         } else {
@@ -19,7 +18,6 @@ const LocationDropdown = ({ isVisible, onClose, locations,setLocations }) => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-        console.log("is visbile later",isVisible)
     }, [isVisible]);
 
     const handleCheckboxChange = (id) => {

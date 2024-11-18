@@ -12,7 +12,6 @@ setPriceUpperBound, priceUpperBound, minPrice, setMinPrice, maxPrice,setMaxPrice
     };
 
     useEffect(() => {
-        console.log("is visbile changes IN PRICE",isVisible)
         if (isVisible) {
             document.addEventListener('mousedown', handleClickOutside);
         } else {

@@ -2,12 +2,11 @@
 
 // Modal.js
 import React from 'react'
-import supabase from './supabaseClient';
 import XCancelIcon from '../../public/XCancelIcon.svg'
 import EmailIcon from '../../public/emailIcon.svg'
 import RedWarningIcon from "../../public/RedWarningIcon.svg"
 import { useState } from 'react';
-import emailSignUp from '../hooks/authHooks/emailSignUp';
+import { emailSignUp, emailLogin } from '../hooks/authHooks/firebaseAuth';
 
 const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType}) => {
 
@@ -81,7 +80,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType}) => {
 
         <div className="flex items-center justify-center py-2 rounded-full
         mt-[20px] font-bold bg-streamlineBlue text-white w-full text-center
-        cursor-pointer">
+        cursor-pointer" onClick={()=>{emailLogin({email:email,password:password});onClose()}}>
             Log In
         </div>
 
@@ -154,7 +153,9 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType}) => {
 
         {errorMessage.length>0 &&
         <div className='flex mt-[7px] items-center'>
+            <div className='w-[20px]'>
             <RedWarningIcon/>
+            </div>
             <div className='text-[11px] mt-[3px] ml-[5px]'
             style={{color:'#FF0000'}}>
                 {errorMessage}
@@ -166,7 +167,8 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType}) => {
         mt-[20px] font-bold bg-streamlineBlue text-white w-full text-center
         cursor-pointer" onClick={async()=>{
             try
-            {await emailSignUp({email:email, password:password})
+            {await emailSignUp({email:email, password:password});
+            onClose()
             }catch(error){
                 setErrorMessage(error.message)
             }

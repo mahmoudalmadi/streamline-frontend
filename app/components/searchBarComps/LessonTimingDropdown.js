@@ -11,7 +11,6 @@ setTimesOfDay, setDaysOfWeek }) => {
     };
 
     useEffect(() => {
-        console.log("anything changins? in timing",isVisible)
         if (isVisible) {
             document.addEventListener('mousedown', handleClickOutside);
         } else {

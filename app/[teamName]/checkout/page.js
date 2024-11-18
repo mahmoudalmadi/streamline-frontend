@@ -24,11 +24,9 @@ export default function CheckoutPage() {
     let teamName;
     useEffect(()=>{
         teamName = pathName.split('/')[1];
-        console.log("hi",teamName)
         if(!checkoutData){
             router.push(`/${teamName}`)
         }else{
-            console.log("nothing??")
         }
 
     },[])
@@ -106,8 +104,8 @@ export default function CheckoutPage() {
                 }}>
                 <BlackMoveLeft />
                 </div>
-                <div className="">
-                Confirm and Pay
+                <div className="font-bold">
+                Confirm and pay
                 </div>
             </div>
 
@@ -149,7 +147,7 @@ export default function CheckoutPage() {
 
             <div className="relative flex justify-between mb-[5px]"
             style={{
-                zIndex:20
+                zIndex:25
             }}>
                 <div>
                     Time and date

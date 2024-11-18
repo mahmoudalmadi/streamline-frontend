@@ -2,8 +2,9 @@
 
 import StreamlineLogo from '../../public/streamlineLogo.svg'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AuthModal from './AuthModal';
+import { monitorAuthState, logout } from "../hooks/authHooks/firebaseAuth";
 
 const TopBar = () => {
 
@@ -17,8 +18,21 @@ const TopBar = () => {
 
     const redirectHome = () => {
         router.push('/')
-        console.log("REDT??")
     }
+
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+      const unsubscribe = monitorAuthState((currentUser) => {
+        if (currentUser) {
+          setUser(currentUser);
+        } else {
+          setUser(null);
+        }
+      });
+  
+      return () => unsubscribe();
+    }, []);
 
     return (
         <div className='flex justify-between items-center'>
@@ -26,6 +40,13 @@ const TopBar = () => {
             <StreamlineLogo className="w-[130px] h-[50px]"/>
             </button>
 
+            {user ?
+            <button onClick={()=>{logout()}}>
+            <div className=' text-streamlineBlue text-[14px] font-semibold'>
+                Log out
+            </div>
+            </button>
+            :
             <div className='flex flex-row space-x-4 items-center'>
                 <button onClick={()=>{openModal();setIsLogin(true)}}>
                 <div className=' text-streamlineBlue text-[14px] font-semibold'>
@@ -41,8 +62,8 @@ const TopBar = () => {
                     Sign Up
                 </div>
                 </button>
-            </div>        
-
+            </div> 
+            }
 
             <AuthModal isOpen={isModalOpen} onClose={closeModal} isLogin={isLogin}
             switchModalType={switchModalType}/>

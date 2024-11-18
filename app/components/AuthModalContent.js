@@ -23,7 +23,7 @@ export default function AuthModalContent({set}) {
 
     return(
 
-    <div className="relative flex flex-col bg-white p-6 rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] w-96  items-center  ">
+    <div className="relative flex flex-col bg-white p-6 rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] w-full  items-center  ">
 
         {isLogin ?
         <>

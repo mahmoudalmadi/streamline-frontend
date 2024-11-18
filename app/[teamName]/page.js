@@ -136,7 +136,6 @@ export default function TeamPage()  {
 
     useEffect(() => {
       const handleScroll = () => {
-        console.log(scrollY)
         setScrollY(window.scrollY);
       };
   
@@ -395,7 +394,7 @@ export default function TeamPage()  {
          {/* Fixed button that appears when the target div is out of view */}
         {!isDivVisible && (
             <button
-            onClick={()=>{scrollToDiv(); console.log(checkAvailabilityRef)}}
+            onClick={()=>{scrollToDiv();}}
             className="sm:hidden fixed font-bold bottom-[30px] px-[30px] py-[10px] left-1/2 transform -translate-x-1/2 bg-streamlineBlue text-white px-4 py-2 rounded-full shadow-lg"
             >
             Check trial lesson availability
