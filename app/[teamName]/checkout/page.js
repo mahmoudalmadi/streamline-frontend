@@ -1,7 +1,7 @@
 "use client";
 
 import DynamicScreen from "../../components/DynamicScreen";
-import BookingPanel from "../../components/TeamPageComps/LessonBookingPanel/BookingPanel";
+
 import TopBar from "../../components/TopBar";
 import { useState, useRef, useEffect } from "react";
 import { useRouter,usePathname } from "next/navigation";
@@ -9,15 +9,18 @@ import { useCheckout } from "../../contexts/CheckoutContext";
 import DateTimePicker from "@/app/components/TeamPageComps/LessonBookingPanel/DateTimePicker";
 import BlackMoveLeft from "../../../public/BlackMoveLeft.svg"
 import LessonTypeDropdown from "@/app/components/searchBarComps/LessonTypeDropdown";
+import AuthModalContent from "@/app/components/AuthModalContent";
 
 export default function CheckoutPage() {
 
 
     const router = useRouter();
     const pathName = usePathname();
-    
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const currency = "CAD";
     const { checkoutData, setCheckoutData } = useCheckout();
-    
+    const coachPhoto="https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg"
+    const swimTeamName = "Neptunes Swimming Academy"
     let teamName;
     useEffect(()=>{
         teamName = pathName.split('/')[1];
@@ -63,17 +66,17 @@ export default function CheckoutPage() {
         setTimeout(() => setIsDateTimeDropdownClosing(false), 500); // Reset after a short delay
     };
 
-    const [isLessonTypeDropdownVisible, setIsLessonTypeDropdownVisible] = useState(false);
-    const [isLessonTypeDropdownClosing, setIsLessonTypeDropdownClosing] = useState(false);
-    const toggleIsLessonTypeDropdownVisible = () => {
-        if (isLessonTypeDropdownClosing) return; // Prevent reopening if in closing state
-        setIsLessonTypeDropdownVisible(prev => !prev);
-    };
-    const handleCloseLessonTypeDropdown = () => {
-        setIsLessonTypeDropdownClosing(true); // Set closing flag
-        setIsLessonTypeDropdownVisible(false);
-        setTimeout(() => setIsLessonTypeDropdownClosing(false), 500); // Reset after a short delay
-    };  
+    // const [isLessonTypeDropdownVisible, setIsLessonTypeDropdownVisible] = useState(false);
+    // const [isLessonTypeDropdownClosing, setIsLessonTypeDropdownClosing] = useState(false);
+    // const toggleIsLessonTypeDropdownVisible = () => {
+    //     if (isLessonTypeDropdownClosing) return; // Prevent reopening if in closing state
+    //     setIsLessonTypeDropdownVisible(prev => !prev);
+    // };
+    // const handleCloseLessonTypeDropdown = () => {
+    //     setIsLessonTypeDropdownClosing(true); // Set closing flag
+    //     setIsLessonTypeDropdownVisible(false);
+    //     setTimeout(() => setIsLessonTypeDropdownClosing(false), 500); // Reset after a short delay
+    // };  
 
     return (
         <div className="flex  justify-center items-center">
@@ -90,7 +93,7 @@ export default function CheckoutPage() {
 
             </div>
 
-            <div className="flex space-x-[45px] mt-[30px]">
+            <div className="flex space-x-[43px] mt-[30px]">
             
             <div className="flex-1 ">
             
@@ -111,22 +114,25 @@ export default function CheckoutPage() {
             {/* TOP OF MOBILE PAGE BOOKING PANEL */}
             <div className=" sm:hidden p-[20px] border border-gray-300 rounded-xl
             shadow-[0_0_10px_rgba(0,0,0,0.1)] ">  
-                <div className="flex mb-[10px] font-bold space-x-[4px] items-end">
-                    <div className="text-[20px]">
-                        ${lessonPrice}
+                <div className="flex items-center  mb-[10px] space-x-[4px] items-end">
+                        <img
+                            src={coachPhoto}
+                            className=
+                            " w-[100px] h-[100px] rounded-[10px]"
+                        />
+                    <div className="pl-[10px]">
+                    
+                    <div className="font-bold">
+                    {swimTeamName}
                     </div>
-                    <div className="text-[16px]">
-                        trial lesson
+
+                    <div className="leading-1.25 text-[15px]">
+                    {currSelectedSkillLevel} {currSelectedLessonType.toLowerCase()} trial lesson
                     </div>
-                </div>
-                
-                <div>
-                {/* <BookingPanel 
-                selectedDate={selectedDate} setSelectedDate={setSelectedDate}
-                selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel}
-                selectedLessonType={selectedLessonType} setSelectedLessonType={setSelectedLessonType}
-                selectedTime={selectedTime} setSelectedTime={setSelectedTime}
-                /> */}
+                    <div className="leading-1.25 text-[15px]">
+                    1 Swimmer
+                    </div>
+                    </div>
                 </div>
 
             </div>
@@ -138,7 +144,7 @@ export default function CheckoutPage() {
             <div
             className="font-bold text-[18px] mb-[15px]"
             >
-                Your trial lesson
+                Your trial lesson details
             </div>
 
             <div className="relative flex justify-between mb-[5px]"
@@ -177,7 +183,64 @@ export default function CheckoutPage() {
                 className="relative w-full h-[1px] bg-gray-200 mt-[15px] mb-[20px]"
             />         
 
-<div className="relative flex justify-between mb-[5px]"
+<div
+            className="font-bold text-[18px] mb-[15px]"
+            >
+                Price details
+            </div>
+
+            <div className="relative flex justify-between mb-[5px]"
+            style={{
+                zIndex:20
+            }}>
+                <div>
+                    Trial lesson fee
+                </div>
+
+                <div>
+                    ${lessonPrice}
+                </div>
+
+            </div>
+            
+            <div
+                className="relative w-full h-[1px] bg-gray-500 mt-[5px] mb-[5px]"
+            />         
+
+            <div className="relative flex justify-between mb-[5px]"
+            style={{
+                zIndex:20
+            }}>
+                <div>
+                    Total ({currency})
+                </div>
+
+                <div>
+                    ${lessonPrice}
+                </div>
+
+            </div>
+            
+            <div
+                className="relative w-full h-[1px] bg-gray-200 mt-[20px] mb-[20px]"
+            />         
+
+            <div
+            className="font-bold text-[18px] mb-[15px]"
+            >
+                Login or signup to book
+            </div>
+
+            <div className="flex justify-center">
+            <AuthModalContent/>
+
+            </div>
+            
+            <div
+                className="relative w-full h-[1px] bg-gray-200 mt-[20px] mb-[20px]"
+            />         
+
+        {/* <div className="relative flex justify-between mb-[5px]"
             style={{
                 zIndex:15
             }}>
@@ -197,43 +260,45 @@ export default function CheckoutPage() {
                 additionalStyling={"right-0"}/>
                 </div>
 
-            </div>
+            </div> */}
             
-            <div className="leading-1.25 text-[15px]">
+            {/* <div className="leading-1.25 text-[15px]">
             {currSelectedSkillLevel} {currSelectedLessonType.toLowerCase()} lesson
             </div>
             
             <div
                 className="relative w-full h-[1px] bg-gray-200 mt-[15px] mb-[20px]"
-            />         
+            />          */}
 
 
             </div>
 
             
-
             {/* BIGGER SCREEN BOOK LESSON PANEL */}
-            <div className={`hidden sm:block p-[20px] w-[35%] border border-gray-300 rounded-xl
-            shadow-[0_0_10px_rgba(0,0,0,0.1)] ${currSelectedTime ?"h-[290px]" :"h-[240px]"}`}>
+            <div className={`hidden sm:block p-[20px] w-[35%] border 
+            flex flex-col justify-center border-gray-300 rounded-xl h-[200px]
+            shadow-[0_0_10px_rgba(0,0,0,0.1)] }`}>
                 
-                <div className="flex mb-[10px] font-bold space-x-[4px] items-end">
-                    <div className="text-[20px]">
-                        $30
+                <div className="flex items-center mt-[10px]">
+                        <img
+                            src={coachPhoto}
+                            className=
+                            " w-[100px] h-[100px] rounded-[10px]"
+                        />
+                    <div className="pl-[10px]">
+                    
+                    <div className="font-bold">
+                    {swimTeamName}
                     </div>
-                    <div className="text-[16px]">
-                        trial lesson
+
+                    <div className="leading-1.25 text-[15px]">
+                    {currSelectedSkillLevel} {currSelectedLessonType.toLowerCase()} trial lesson
+                    </div>
+                    <div className="leading-1.25 text-[15px]">
+                    1 Swimmer
+                    </div>
                     </div>
                 </div>
-                
-                <div>
-                {/* <BookingPanel
-                selectedDate={selectedDate} setSelectedDate={setSelectedDate}
-                selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel}
-                selectedLessonType={selectedLessonType} setSelectedLessonType={setSelectedLessonType}
-                selectedTime={selectedTime} setSelectedTime={setSelectedTime}
-                /> */}
-                </div>
-                
 
             </div>
 

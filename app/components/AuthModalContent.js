@@ -1,34 +1,30 @@
 "use client";
 
-// Modal.js
+import { useState } from "react";
 import React from 'react'
 import supabase from './supabaseClient';
-import XCancelIcon from '../../public/XCancelIcon.svg'
 import EmailIcon from '../../public/emailIcon.svg'
 import RedWarningIcon from "../../public/RedWarningIcon.svg"
-import { useState } from 'react';
 import emailSignUp from '../hooks/authHooks/emailSignUp';
 
-const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType}) => {
+
+
+export default function AuthModalContent({set}) {
 
     const [showPassword, setShowPassword] = useState(false)
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState('')
     const [errorMessage,setErrorMessage] = useState('')
-      
+    const [isLogin, setIsLogin] = useState(false)
+    
+    const switchModalType = () =>{
+        setIsLogin(!isLogin)
+    }
 
-  if (!isOpen) return null
+    return(
 
-  return (
-    <div className="fixed inset-0 flex items-center 
-    justify-center bg-black bg-opacity-50 z-50">
-      <div className="relative flex flex-col bg-white p-6 rounded-xl shadow-lg w-96 
-      items-center
-      ">
-        <button 
-        className=" absolute right-[15px] top-[10px] text-streamlineBlue font-bold float-right" onClick={onClose}>
-        <XCancelIcon className="w-[25px] h-[50px]"/>
-        </button>
+    <div className="relative flex flex-col bg-white p-6 rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] w-96  items-center  ">
+
         {isLogin ?
         <>
         <div className="flex  font-bold">
@@ -196,8 +192,5 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType}) => {
         }
 
       </div>
-    </div>
-  )
+    )
 }
-
-export default AuthModal
