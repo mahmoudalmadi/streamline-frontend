@@ -8,26 +8,40 @@ import RedWarningIcon from "../../public/RedWarningIcon.svg"
 import { useState } from 'react';
 import { emailSignUp, emailLogin } from '../hooks/authHooks/firebaseAuth';
 
-const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType}) => {
+const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
     const [showPassword, setShowPassword] = useState(false)
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState('')
     const [errorMessage,setErrorMessage] = useState('')
-      
 
-  if (!isOpen) return null
+    function extractContent(str) {
+        const match = str.match(/:(.*?)(?=\()/);
+        return match ? match[1].trim() : null; // Return the content or null if no match is found
+    }
+
+    function extractLatterContent(str) {
+        const match = str.match(/\/(.*?)(?=\))/);
+        return match ? match[1].trim() : null; // Return the content or null if no match is found
+    }
+
+  if (!isOpen && isModal) return null
 
   return (
-    <div className="fixed inset-0 flex items-center 
-    justify-center bg-black bg-opacity-50 z-50">
-      <div className="relative flex flex-col bg-white p-6 rounded-xl shadow-lg w-96 
-      items-center
-      ">
+    <div className={isModal? "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" 
+    : ""}>
+      <div className=
+      {isModal?"relative flex flex-col bg-white p-6 rounded-xl shadow-lg w-96 items-center":
+      ""}>
+        
+        {isModal &&
         <button 
-        className=" absolute right-[15px] top-[10px] text-streamlineBlue font-bold float-right" onClick={onClose}>
+        className=" absolute right-[15px] top-[10px] text-streamlineBlue font-bold float-right" 
+        onClick={
+            ()=>{onClose(); setErrorMessage("")}}>
         <XCancelIcon className="w-[25px] h-[50px]"/>
-        </button>
+        </button>}
+
         {isLogin ?
         <>
         <div className="flex  font-bold">
@@ -76,11 +90,32 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType}) => {
 
         </div>
 
+        {errorMessage.length>0 &&
+        <div className='flex mt-[7px] items-center'>
+            <div className='w-[20px]'>
+            <RedWarningIcon/>
+            </div>
+            <div className='text-[11px] mt-[3px] ml-[5px]'
+            style={{color:'#FF0000'}}>
+                {errorMessage}
+            </div>
+        </div>}
         </div>
 
         <div className="flex items-center justify-center py-2 rounded-full
         mt-[20px] font-bold bg-streamlineBlue text-white w-full text-center
-        cursor-pointer" onClick={()=>{emailLogin({email:email,password:password});onClose()}}>
+        cursor-pointer" onClick={async()=>{
+            try{
+            await emailLogin({email:email,password:password});
+            if(isModal){onClose()}
+            }
+            catch(error){
+            const errMessage = extractContent(error.message)
+            const errMessageTwo = extractLatterContent(error.message)
+            const finalErrMessage = errMessage + " (" + errMessageTwo + ")"
+            setErrorMessage(finalErrMessage)
+            }
+            }}>
             Log In
         </div>
 
@@ -168,9 +203,12 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType}) => {
         cursor-pointer" onClick={async()=>{
             try
             {await emailSignUp({email:email, password:password});
-            onClose()
+                if(isModal){onClose()}
             }catch(error){
-                setErrorMessage(error.message)
+                const errMessage = extractContent(error.message)
+                const errMessageTwo = extractLatterContent(error.message)
+                const finalErrMessage = errMessage + " (" + errMessageTwo + ")"
+                setErrorMessage(finalErrMessage)
             }
             }}>
             Sign Up
