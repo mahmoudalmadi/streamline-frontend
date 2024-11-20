@@ -29,10 +29,10 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
   return (
     <div className={isModal? "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" 
-    : ""}>
+    : "flex items-center justify-center"}>
       <div className=
-      {isModal?"relative flex flex-col bg-white p-6 rounded-xl shadow-lg w-96 items-center":
-      ""}>
+      {isModal?"relative flex flex-col bg-white p-6 rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] w-96 items-center":
+      "flex flex-col w-full bg-white p-6 rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] items-center"}>
         
         {isModal &&
         <button 
@@ -47,15 +47,17 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         <div className="flex  font-bold">
           Log In
         </div>
-
+        
+        {isModal && 
         <div
-        className='absolute w-full h-[1px] bg-gray-300 top-[55px]'
-        />
+        className={isModal?'absolute w-full h-[1px] bg-gray-300 top-[55px]':
+                        "absolute w-full h-[1px] bg-gray-300 top-[10px]"}
+        />}
 
-        <div className='w-full mt-[40px]'>
-        <div className='font-bold '>
+        <div className={isModal?'w-full mt-[40px]':'w-full'}>
+        {isModal && <div className='font-bold '>
             Welcome to Experience Streamline
-        </div>
+        </div>}
 
         <div className='border border-gray-200 px-4 mt-[15px]
          py-2 w-full'
@@ -66,6 +68,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
             <input
             className='w-full outline-none'
             placeholder='Email Address'
+            onChange={(e)=>{setEmail(e.target.value);setErrorMessage("")}}
             />
         </div>
         <div className='flex border-l border-r border-b
@@ -138,19 +141,18 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         </div>
         </>:
         <>
-        <>
-        <div className="flex  font-bold">
+        <div className="flex  font-bold ">
           Create a New Account
         </div>
-
-        <div
+        
+        {isModal&& <div
         className='absolute w-full h-[1px] bg-gray-300 top-[55px]'
-        />
+        />}
 
-        <div className='w-full mt-[40px]'>
-        <div className='font-bold '>
+        <div className={isModal?'w-full mt-[40px]':'w-full'}>
+        {isModal && <div className='font-bold '>
             Welcome to Experience Streamline
-        </div>
+        </div>}
 
         <div className='border border-gray-200 px-4 mt-[15px]
          py-2 w-full'
@@ -231,7 +233,6 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
             </div>
             Log In with Email
         </div>
-        </>
         </>
         }
 

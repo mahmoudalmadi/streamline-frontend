@@ -9,11 +9,13 @@ import { useCheckout } from "../../contexts/CheckoutContext";
 import DateTimePicker from "@/app/components/TeamPageComps/LessonBookingPanel/DateTimePicker";
 import BlackMoveLeft from "../../../public/BlackMoveLeft.svg"
 import LessonTypeDropdown from "@/app/components/searchBarComps/LessonTypeDropdown";
-import AuthModalContent from "@/app/components/AuthModalContent";
+import AuthModal from "@/app/components/AuthModal";
+import PaymentModal from "@/app/components/PaymentModal";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function CheckoutPage() {
 
-
+    const {user, setUser} = useAuth();
     const router = useRouter();
     const pathName = usePathname();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -21,11 +23,18 @@ export default function CheckoutPage() {
     const { checkoutData, setCheckoutData } = useCheckout();
     const coachPhoto="https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg"
     const swimTeamName = "Neptunes Swimming Academy"
+
+    const [isLoginOption,setIsLoginOptions] = useState(false)
+
+    const switchModalType = () => {
+        setIsLoginOptions(!isLoginOption)
+    }
+
     let teamName;
     useEffect(()=>{
         teamName = pathName.split('/')[1];
         if(!checkoutData){
-            router.push(`/${teamName}`)
+            // router.push(`/${teamName}`)
         }else{
         }
 
@@ -230,7 +239,17 @@ export default function CheckoutPage() {
             </div>
 
             <div className="flex justify-center">
-            <AuthModalContent/>
+            { 
+            user?
+            <PaymentModal/>
+            :
+            <AuthModal
+            isOpen={true}
+            onClose={null}
+            isLogin={isLoginOption}
+            switchModalType={switchModalType}
+            isModal={false}
+            />}
 
             </div>
             

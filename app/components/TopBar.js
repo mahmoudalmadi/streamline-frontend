@@ -5,8 +5,11 @@ import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react';
 import AuthModal from './AuthModal';
 import { monitorAuthState, logout } from "../hooks/authHooks/firebaseAuth";
+import { useAuth } from '../contexts/AuthContext';
 
 const TopBar = () => {
+
+    const {user, setUser} = useAuth();
 
     const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -20,19 +23,25 @@ const TopBar = () => {
         router.push('/')
     }
 
-    const [user, setUser] = useState(null);
+    // const [user, setUser] = useState(null);
 
-    useEffect(() => {
-      const unsubscribe = monitorAuthState((currentUser) => {
-        if (currentUser) {
-          setUser(currentUser);
-        } else {
-          setUser(null);
-        }
-      });
+    // useEffect(() => {
+    //   const unsubscribe = monitorAuthState((currentUser) => {
+    //     if (currentUser) {
+    //       setUser(currentUser);
+    //     } else {
+    //       setUser(null);
+    //     }
+    //   });
   
-      return () => unsubscribe();
-    }, []);
+    //   return () => {
+    //     if (typeof unsubscribe === 'function') {
+    //       unsubscribe();
+    //     }
+    //   };
+    // }, []);
+
+
 
     return (
         <div className='flex justify-between items-center'>
@@ -66,7 +75,7 @@ const TopBar = () => {
             }
 
             <AuthModal isOpen={isModalOpen} onClose={closeModal} isLogin={isLogin}
-            switchModalType={switchModalType}/>
+            switchModalType={switchModalType} isModal={true}/>
 
         </div>
     )

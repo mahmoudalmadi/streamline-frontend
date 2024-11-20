@@ -51,9 +51,11 @@ export default function TeamPage()  {
     const coachRef = useRef(null)
     const [isDivVisible, setIsDivVisible] = useState(true); // Track visibility of the target div
 
-    const images = ["https://swimmings.s3.us-east-2.amazonaws.com/neptuneLogo.jpeg",
+    const images = [
     "https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg",
+    "https://swimmings.s3.us-east-2.amazonaws.com/neptuneLogo.jpeg",
     "https://swimmings.s3.us-east-2.amazonaws.com/poolThree.jpg",
+    "https://swimmings.s3.us-east-2.amazonaws.com/poolTwo.jpeg",
     "https://swimmings.s3.us-east-2.amazonaws.com/poolTwo.jpeg"]
 
     const [isOpen, setIsOpen] = useState(false);
@@ -166,7 +168,7 @@ export default function TeamPage()  {
             
                 <div className="flex-1">
                 <img
-                    src={images[1]}
+                    src={images[0]}
                     onClick={()=>{openModal(0)}}
                     className=
                     "  object-cover w-full h-full cursor-pointer
@@ -176,7 +178,7 @@ export default function TeamPage()  {
             
                 <div className="hidden sm:block w-[50%] h-full">
                 <div className="grid grid-cols-2 gap-[10px] h-full">
-                    {images.slice(0,4).map((image, index) => (
+                    {images.slice(1,5).map((image, index) => (
                     <div
                     className=""
                     >
