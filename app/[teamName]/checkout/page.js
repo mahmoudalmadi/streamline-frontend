@@ -19,11 +19,10 @@ export default function CheckoutPage() {
     const router = useRouter();
     const pathName = usePathname();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const currency = "CAD";
     const { checkoutData, setCheckoutData } = useCheckout();
     const coachPhoto="https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg"
     const swimTeamName = "Neptunes Swimming Academy"
-
+    const currency = "CAD"
     const [isLoginOption,setIsLoginOptions] = useState(false)
 
     const switchModalType = () => {
@@ -235,13 +234,13 @@ export default function CheckoutPage() {
             <div
             className="font-bold text-[18px] mb-[15px]"
             >
-                Login or signup to book
+                {user?"Pay with":"Login or signup to book"}
             </div>
 
             <div className="flex justify-center">
             { 
             user?
-            <PaymentModal/>
+            <PaymentModal lessonPrice={lessonPrice} currency={currency.toLowerCase()}/>
             :
             <AuthModal
             isOpen={true}

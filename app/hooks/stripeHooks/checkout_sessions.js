@@ -13,6 +13,11 @@ function PaymentForm({ amount, currency }) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const pathName = usePathname()
+  const router = useRouter()
+
+  const handleRedirect = () => {
+    router.push(pathName+`/success`)
+    }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -38,7 +43,7 @@ function PaymentForm({ amount, currency }) {
     } else {
       if (result.paymentIntent.status === 'succeeded') {
         setSuccess(true);
-
+        handleRedirect();
       }
     }
     setLoading(false);
@@ -66,14 +71,14 @@ function PaymentForm({ amount, currency }) {
       {success ? (
         <div className="text-green-500">Payment successful!</div>
       ) : (
-        <form onSubmit={handleSubmit} className="w-[300px] space-y-4 ">
-          <h2 className=" font-bold mb-4 text-center text-[18px]">Complete Your Payment</h2>
-          <CardElement options={cardStyle} className="w-full p-3 border rounded" />
+        <form onSubmit={handleSubmit} className="w-[300px] ">
+          <h2 className="text-[15px] mb-[10px]">Credit or debit card</h2>
+          <CardElement options={cardStyle} className="w-full p-3 border rounded-[10px]" />
           {error && <div className="text-red-500 text-sm">{error}</div>}
           <button
             type="submit"
             disabled={!stripe || loading}
-            className={`w-full bg-streamlineBlue text-white font-bold py-2 px-4 rounded-[12px] ${
+            className={`w-full bg-streamlineBlue text-white mt-[20px] font-bold py-2 px-4 rounded-[12px] ${
               loading && 'opacity-50 cursor-not-allowed'
             }`}
           >

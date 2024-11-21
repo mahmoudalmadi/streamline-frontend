@@ -1,11 +1,15 @@
-import Image from "next/image";
-import DynamicScreen from "./components/DynamicScreen";
-import TopBar from "./components/TopBar";
-import SearchBar from "./components/searchBarComps/SearchBar";
-import SwimTeamsMenu from "./components/SwimTeamsMenu";
+"use client";
+
+import { useRouter } from "next/navigation";
+import DynamicScreen from "../../../components/DynamicScreen";
+import TopBar from "../../../components/TopBar";
+
 
 export default function SuccessfulCheckout() {
 
+
+    const router = useRouter();
+    
     const handleRedirect = () => {
         router.push(`/`)
     }
@@ -16,12 +20,12 @@ export default function SuccessfulCheckout() {
         <TopBar/>
 
         <div
-        className="flex p-[200px]"
+        className="flex "
         >
             Successful transaction
 
             <button>
-                <div className="p-[20px] rounded-[15px] bg-streamlineBlue text-white"
+                <div className="p-[10px] rounded-[15px] bg-streamlineBlue text-white"
                 onClick={handleRedirect}>
                     Go home
                 </div>

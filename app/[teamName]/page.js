@@ -348,17 +348,10 @@ export default function TeamPage()  {
 
         <div
             ref={checkAvailabilityRef}
-            className=" w-full sm:hidden h-[1px] bg-gray-200 mt-[32px] mb-[10px]"
+            className=" w-full sm:hidden h-[1px] bg-gray-200 mt-[32px] mb-[100px]"
           />  
 
-          <PaymentModal isModal={false} isOpen={true}/>  
-
-        <div
-            className=" w-full sm:hidden h-[1px] bg-gray-200 mt-[32px] mb-[100px]"
-          />
         </div>
-
-
         
 
         {/* BIGGER SCREEN BOOK LESSON PANEL */}
