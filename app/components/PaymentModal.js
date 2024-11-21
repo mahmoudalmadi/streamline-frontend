@@ -3,27 +3,16 @@
 // Modal.js
 import React from 'react'
 import XCancelIcon from '../../public/XCancelIcon.svg'
-import EmailIcon from '../../public/emailIcon.svg'
-import RedWarningIcon from "../../public/RedWarningIcon.svg"
+
 import { useState } from 'react';
-import { emailSignUp, emailLogin } from '../hooks/authHooks/firebaseAuth';
+import PaymentPage from '../hooks/stripeHooks/checkout_sessions';
+
+// import Stripe from 'stripe';
 
 const PaymentModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
-    const [showPassword, setShowPassword] = useState(false)
-    const [password, setPassword] = useState("")
-    const [email, setEmail] = useState('')
-    const [errorMessage,setErrorMessage] = useState('')
 
-    function extractContent(str) {
-        const match = str.match(/:(.*?)(?=\()/);
-        return match ? match[1].trim() : null; // Return the content or null if no match is found
-    }
-
-    function extractLatterContent(str) {
-        const match = str.match(/\/(.*?)(?=\))/);
-        return match ? match[1].trim() : null; // Return the content or null if no match is found
-    }
+    // const stripe = new Stripe(process.env.NEXT_PUBLIC_PUBLISHABLE_KEY)
 
   if (!isOpen && isModal) return null
 
@@ -42,7 +31,7 @@ const PaymentModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => 
         <XCancelIcon className="w-[25px] h-[50px]"/>
         </button>}
 
-        
+        <PaymentPage amount={30} currency="cad"/>
 
       </div>
     </div>

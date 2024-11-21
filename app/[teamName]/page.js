@@ -11,6 +11,7 @@ import { useState, useRef, useEffect } from "react";
 import AmenitiesSection from "../components/TeamPageComps/AmenitiesSection";
 import HeadCoachSection from "../components/TeamPageComps/HeadCoachSection";
 import { useRouter, useSearchParams,usePathname } from "next/navigation";
+import PaymentModal from "../components/PaymentModal";
 
 
 export default function TeamPage()  {
@@ -33,6 +34,7 @@ export default function TeamPage()  {
     Outside of coaching, Stefan enjoys sharing his knowledge through workshops and seminars, inspiring the next generation of swimmers and coaches alike. His vision for Neptunes Swimming Academy is not just about winning medals but also about building character, discipline, and lifelong friendships among athletes.\
     With Stefan Todorov at the helm, Neptunes Swimming Academy continues to be a beacon of hope and achievement in the world of competitive swimming."
 
+    
     const pathName = usePathname();
     const teamName = pathName.split('/').pop();
 
@@ -346,10 +348,16 @@ export default function TeamPage()  {
 
         <div
             ref={checkAvailabilityRef}
-            className=" w-full sm:hidden h-[1px] bg-gray-200 mt-[32px] mb-[100px]"
+            className=" w-full sm:hidden h-[1px] bg-gray-200 mt-[32px] mb-[10px]"
           />  
 
+          <PaymentModal isModal={false} isOpen={true}/>  
+
+        <div
+            className=" w-full sm:hidden h-[1px] bg-gray-200 mt-[32px] mb-[100px]"
+          />
         </div>
+
 
         
 
@@ -397,7 +405,8 @@ export default function TeamPage()  {
         {!isDivVisible && (
             <button
             onClick={()=>{scrollToDiv();}}
-            className="sm:hidden fixed font-bold bottom-[30px] px-[30px] py-[10px] left-1/2 transform -translate-x-1/2 bg-streamlineBlue text-white px-4 py-2 rounded-full shadow-lg"
+            className="sm:hidden fixed font-bold bottom-[30px] px-[30px] py-[10px] left-1/2 transform -translate-x-1/2 bg-streamlineBlue text-white px-4 py-2 rounded-full
+            shadow-[0_0_20px_rgba(0,0,0,0.15)]"
             >
             Check trial lesson availability
             </button>

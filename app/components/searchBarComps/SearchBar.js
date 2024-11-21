@@ -137,7 +137,7 @@ const SearchBar = () => {
             justify-center rounded-full px-3 py-1 pl-6 hover:bg-gray-200
             ${isLessonTimingDropdownVisible?"bg-gray-200":""}`}
             onClick={toggleIsLessonTimingDropdownVisible}>
-                    <div className="absolute right-0 h-[55%] h-full w-[0.5px] bg-gray-200 transform -translate-x-1/2
+                    <div className="absolute right-0 h-[54%] h-full w-[0.5px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                     <div className="font-semibold text-[14px]">
                         When
@@ -145,7 +145,7 @@ const SearchBar = () => {
                     <div className=" text-graySubtitle text-[12px]">
                         Lesson times
                     </div>
-                    <div className="absolute left-0 h-[55%] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
+                    <div className="absolute left-0 h-[54%] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                     <LessonTimingDropdown isVisible={isLessonTimingDropdownVisible}
                     onClose={handleCloseLessonTimingDropdown} 
@@ -160,7 +160,7 @@ const SearchBar = () => {
             <div className={`relative group flex w-[23%] flex-col justify-center rounded-full px-3 py-1
              hover:bg-gray-200 pl-6 cursor-pointer ${isLessonTypeDropdownVisible?"bg-gray-200":""}`}
              onClick={toggleIsLessonTypeDropdownVisible}>
-                <div className="absolute right-0 h-[55%] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
+                <div className="absolute right-0 h-[54%] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                 <div className="font-semibold text-[14px]">
                     Type
@@ -168,7 +168,7 @@ const SearchBar = () => {
                 <div className=" text-graySubtitle text-[12px]">
                     Add Level
                 </div>
-                <div className="absolute left-0 h-[55%] h-full w-[0.5px] bg-gray-200 transform -translate-x-1/2
+                <div className="absolute left-0 h-[54%] h-full w-[0.5px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                 <LessonTypeDropdown isVisible={isLessonTypeDropdownVisible}
                     onClose={handleCloseLessonTypeDropdown} 
@@ -176,7 +176,8 @@ const SearchBar = () => {
                     selectedLessonType={selectedLessonType}
                     setSelectedLessonType={setSelectedLessonType}
                     selectedSkillLevel={selectedSkillLevel}
-                    setSelectedSkillLevel={setSelectedSkillLevel}/>
+                    setSelectedSkillLevel={setSelectedSkillLevel}
+                    additionalStyling={null}/>
             </div>
 
             {/* Price box */}
