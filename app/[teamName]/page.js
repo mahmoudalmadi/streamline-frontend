@@ -11,7 +11,6 @@ import { useState, useRef, useEffect } from "react";
 import AmenitiesSection from "../components/TeamPageComps/AmenitiesSection";
 import HeadCoachSection from "../components/TeamPageComps/HeadCoachSection";
 import { useRouter, useSearchParams,usePathname } from "next/navigation";
-import PaymentModal from "../components/PaymentModal";
 
 
 export default function TeamPage()  {

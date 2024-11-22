@@ -47,7 +47,7 @@ export default function SwimTeamThumbnail(){
         onClick={handleRedirect}>
 
                 {/* Image Div */}
-            <div className="relative w-full aspect-[5/4] bg-black rounded-2xl overflow-hidden">
+            <div className="relative w-full aspect-[5/4] rounded-2xl overflow-hidden">
 
             {images.map((image, index) => (
                 <img

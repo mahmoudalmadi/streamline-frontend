@@ -7,12 +7,7 @@ import XCancelIcon from '../../public/XCancelIcon.svg'
 import { useState } from 'react';
 import PaymentPage from '../hooks/stripeHooks/checkout_sessions';
 
-// import Stripe from 'stripe';
-
-const PaymentModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
-
-
-    // const stripe = new Stripe(process.env.NEXT_PUBLIC_PUBLISHABLE_KEY)
+const PaymentModal = ({ isOpen, onClose, isModal,lessonPrice,currency}) => {
 
   if (!isOpen && isModal) return null
 
@@ -31,7 +26,7 @@ const PaymentModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => 
         <XCancelIcon className="w-[25px] h-[50px]"/>
         </button>}
 
-        <PaymentPage amount={30} currency="cad"/>
+        <PaymentPage amount={lessonPrice} currency={currency}/>
 
       </div>
     </div>

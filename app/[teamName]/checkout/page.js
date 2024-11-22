@@ -20,7 +20,7 @@ export default function CheckoutPage() {
     const pathName = usePathname();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const { checkoutData, setCheckoutData } = useCheckout();
-    const coachPhoto="https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg"
+    const swimTeamPhoto="https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg"
     const swimTeamName = "Neptunes Swimming Academy"
     const currency = "CAD"
     const [isLoginOption,setIsLoginOptions] = useState(false)
@@ -122,7 +122,7 @@ export default function CheckoutPage() {
             shadow-[0_0_10px_rgba(0,0,0,0.1)] ">  
                 <div className="flex items-center  mb-[10px] space-x-[4px] items-end">
                         <img
-                            src={coachPhoto}
+                            src={swimTeamPhoto}
                             className=
                             " w-[100px] h-[100px] rounded-[10px]"
                         />
@@ -297,7 +297,7 @@ export default function CheckoutPage() {
                 
                 <div className="flex items-center mt-[10px]">
                         <img
-                            src={coachPhoto}
+                            src={swimTeamPhoto}
                             className=
                             " w-[100px] h-[100px] rounded-[10px]"
                         />
