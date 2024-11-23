@@ -1,6 +1,6 @@
 import Image from "next/image";
 import DynamicScreen from "./components/DynamicScreen";
-import TopBar from "./components/TopBar";
+import TopBar from "./components/TopBarComps/TopBar";
 import SearchBar from "./components/searchBarComps/SearchBar";
 import SwimTeamsMenu from "./components/SwimTeamsMenu";
 

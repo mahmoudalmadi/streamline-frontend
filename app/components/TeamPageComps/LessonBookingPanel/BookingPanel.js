@@ -69,7 +69,8 @@ setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice}) {
 
     return(
         <>
-        <div className="relative flex flex-col w-full  border border-gray-300 rounded-xl cursor-pointer">
+        <div className="relative flex flex-col w-full  border border-gray-300 rounded-xl cursor-pointer"
+        style={{zIndex:20}}>
 
                 <div className="relative border-b border-gray-300 p-2"
                 onClick={toggleIsLessonTypeDropdownVisible}

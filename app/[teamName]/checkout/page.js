@@ -2,7 +2,7 @@
 
 import DynamicScreen from "../../components/DynamicScreen";
 
-import TopBar from "../../components/TopBar";
+import TopBar from "../../components/TopBarComps/TopBar";
 import { useState, useRef, useEffect } from "react";
 import { useRouter,usePathname } from "next/navigation";
 import { useCheckout } from "../../contexts/CheckoutContext";

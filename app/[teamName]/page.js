@@ -5,7 +5,7 @@ import ImageViewer from "../components/ImageViewer";
 import BookingPanel from "../components/TeamPageComps/LessonBookingPanel/BookingPanel";
 import SwimClubDescription from "../components/SwimClubDescription";
 import Map from "../components/TeamPageComps/Map"
-import TopBar from "../components/TopBar";
+import TopBar from "../components/TopBarComps/TopBar";
 import SafetyCertified from "../../public/SafetyCertified.svg"
 import { useState, useRef, useEffect } from "react";
 import AmenitiesSection from "../components/TeamPageComps/AmenitiesSection";
@@ -319,8 +319,9 @@ export default function TeamPage()  {
         
 
         {/* BOTTOM OF MOBILE PAGE BOOKING PANEL */}
-        <div className=" p-[20px] border border-gray-300 rounded-xl
+        <div className="relative p-[20px] border border-gray-300 rounded-xl
         shadow-[0_0_10px_rgba(0,0,0,0.1)] "
+        style={{zIndex:10}}
         >
             
             <div className="flex mb-[10px] font-bold space-x-[4px] items-end">

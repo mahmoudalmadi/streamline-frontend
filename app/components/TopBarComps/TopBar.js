@@ -1,11 +1,12 @@
 "use client";
 
-import StreamlineLogo from '../../public/streamlineLogo.svg'
+import StreamlineLogo from '../../../public/streamlineLogo.svg'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react';
-import AuthModal from './AuthModal';
-import { monitorAuthState, logout } from "../hooks/authHooks/firebaseAuth";
-import { useAuth } from '../contexts/AuthContext';
+import AuthModal from '../AuthModal';
+import { monitorAuthState, logout } from "../../hooks/authHooks/firebaseAuth";
+import { useAuth } from '../../contexts/AuthContext';
+import AccountSection from './AccountSection';
 
 const TopBar = () => {
 
@@ -49,7 +50,7 @@ const TopBar = () => {
             <StreamlineLogo className="w-[130px] h-[50px]"/>
             </button>
 
-            {user ?
+            {/* {user ?
             <button onClick={()=>{logout()}}>
             <div className=' text-streamlineBlue text-[14px] font-semibold'>
                 Log out
@@ -72,7 +73,8 @@ const TopBar = () => {
                 </div>
                 </button>
             </div> 
-            }
+            } */}
+            <AccountSection/>
 
             <AuthModal isOpen={isModalOpen} onClose={closeModal} isLogin={isLogin}
             switchModalType={switchModalType} isModal={true}/>

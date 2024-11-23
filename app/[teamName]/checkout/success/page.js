@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import DynamicScreen from "../../../components/DynamicScreen";
-import TopBar from "../../../components/TopBar";
+import TopBar from "../../../components/TopBarComps/TopBar";
 import EquipmentSection from "@/app/components/EquipmentMenu/EquipmentSection";
 
 
