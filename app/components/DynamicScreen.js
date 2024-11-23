@@ -1,17 +1,17 @@
 import BottomTab from "./BottomTab";
 
-
-const DynamicScreen = ({children, className=""}) => {
-
-    return(
-        <div className={`w-full md:w-[85%] lg:w-[85%] p-6 ${className}`}>
+const DynamicScreen = ({ children, className = "" }) => {
+    return (
+        <div className={`w-full md:w-[85%] lg:w-[85%] p-[25px] ${className}`}>
             {children}
-            <div className="flex-col">
-            <div className="h-[0.5px] bg-gray-500"/>
-            <BottomTab/>
+            <div className="flex-col relative left-[-25px] mt-[30px]"> {/* Set this as a relative parent */}
+                <div className="h-[0.5px] bg-gray-500 w-screen" />
+                <div className="absolute left-0 right-0 w-screen"> {/* BottomTab styles */}
+                    <BottomTab />
+                </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default DynamicScreen;
