@@ -1,10 +1,7 @@
 import MoveLeft from "../../public/MoveLeft.svg"
 import MoveRight from "../../public/MoveRight.svg"
-import XCancelIcon from "../../public/XCancelIcon.svg"
-import { useState } from "react";
 
 export default function ImageViewer({images,currentIndex,closeModal,setCurrentIndex}){
-
 
     const showNextImage = () => {
         setCurrentIndex((currentIndex + 1) % images.length);

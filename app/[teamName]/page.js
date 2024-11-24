@@ -128,11 +128,11 @@ export default function TeamPage()  {
 
     // Scroll to the target div when the button is clicked
     const scrollToDiv = () => {
-    checkAvailabilityRef.current?.scrollIntoView({ behavior: "smooth" });
+    checkAvailabilityRef.current?.scrollIntoView({ behavior: "smooth",block:'center' });
     };
 
     const scrollToCoachDiv = () => {
-        coachRef.current?.scrollIntoView({ behavior: "smooth" });
+        coachRef.current?.scrollIntoView({ behavior: "smooth",block:'center' });
     };
     
     const [scrollY, setScrollY] = useState(0);
@@ -245,15 +245,15 @@ export default function TeamPage()  {
 
         </div>
 
-        <div className="flex items-center space-x-[10px] mt-[15px] cursor-pointer"
+        <div className="flex items-center space-x-[10px] mt-[15px]"
         >
         <img
                     src={coachPhoto}
                     className=
-                    " w-[50px] h-[50px] rounded-[100px]"
+                    " w-[50px] h-[50px] rounded-[100px] cursor-pointer"
                     onClick={scrollToCoachDiv}
                 />
-            <div className="font-bold">
+            <div className="font-bold cursor-pointer" onClick={scrollToCoachDiv} >
             Coach {coachName}
             </div>
         </div>

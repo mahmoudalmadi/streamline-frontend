@@ -31,7 +31,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
     <div className={isModal? "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" 
     : "flex items-center justify-center"}>
       <div className=
-      {isModal?"relative flex flex-col bg-white p-6 rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] w-96 items-center":
+      {isModal?"relative flex flex-col bg-white p-[25px] px-[33px] rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] w-96 items-center":
       "flex flex-col w-full bg-white p-6 rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] items-center"}>
         
         {isModal &&

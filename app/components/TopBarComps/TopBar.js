@@ -16,7 +16,8 @@ const TopBar = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isLogin, setIsLogin] = useState(false)
 
-    const openModal = () => setIsModalOpen(true)
+    function openModal() { 
+        setIsModalOpen(true)}
     const closeModal = () => setIsModalOpen(false)
     const switchModalType = () => setIsLogin(!isLogin)
 
@@ -24,25 +25,7 @@ const TopBar = () => {
         router.push('/')
     }
 
-    // const [user, setUser] = useState(null);
-
-    // useEffect(() => {
-    //   const unsubscribe = monitorAuthState((currentUser) => {
-    //     if (currentUser) {
-    //       setUser(currentUser);
-    //     } else {
-    //       setUser(null);
-    //     }
-    //   });
-  
-    //   return () => {
-    //     if (typeof unsubscribe === 'function') {
-    //       unsubscribe();
-    //     }
-    //   };
-    // }, []);
-
-
+    console.log("HELLO", openModal)
 
     return (
         <div className='flex justify-between items-center'>
@@ -74,7 +57,7 @@ const TopBar = () => {
                 </button>
             </div> 
             } */}
-            <AccountSection/>
+            <AccountSection openLogInModal={openModal} setIsLogin={setIsLogin}/>
 
             <AuthModal isOpen={isModalOpen} onClose={closeModal} isLogin={isLogin}
             switchModalType={switchModalType} isModal={true}/>
