@@ -25,7 +25,6 @@ const TopBar = () => {
         router.push('/')
     }
 
-    console.log("HELLO", openModal)
 
     return (
         <div className='flex justify-between items-center'>

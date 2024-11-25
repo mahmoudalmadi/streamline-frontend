@@ -36,7 +36,7 @@ export default function ProfileEntryEditor({prompt, placeholder, response, setRe
           placeholder={placeholder}
           onChange={(event) => handleChange(divRef,event,setResponse)}
           className="w-full text-gray-700 border border-gray-300 rounded-[12px]  
-          resize-none overflow-auto overflow-hidden pl-[7px] pt-[7px]
+          resize-none overflow-auto overflow-hidden pl-[7px] pt-[7px] 
           focus:outline-none focus:border-blue-500" 
           />
           :

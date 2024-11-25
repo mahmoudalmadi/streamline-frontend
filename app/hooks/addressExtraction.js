@@ -1,35 +1,55 @@
+import CONFIG from "@/config";
 
 
 async function resolveShortLink(shortUrl) {
     try {
-      const response = await fetch(shortUrl, { method: "HEAD", redirect: "manual" });
-      if (response.status === 302) {
-        return response.headers.get("location"); // Get the redirect URL
-      } else {
-        throw new Error("Failed to resolve short link");
+        const query = new URLSearchParams({ shortUrl });
+      const response = await fetch(CONFIG.backendRoute+`resolve-short-link?${query}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to resolve short link");
       }
+  
+      const data = await response.json();
+      console.log("Resolved URL:", data.resolvedUrl);
+      return data.resolvedUrl;
     } catch (error) {
       console.error("Error resolving short link:", error.message);
       throw error;
     }
   }
+  
 
   async function getAddressFromCoords(lat, lng, apiKey) {
-    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
     try {
-      const response = await fetch(geocodeUrl);
-      const data = await response.json();
-      if (data.results && data.results[0]) {
-        return data.results[0].formatted_address; // Return the first address result
-      } else {
-        throw new Error("No address found for the given coordinates");
+      const query = new URLSearchParams({ lat, lng, apiKey });
+      const response = await fetch(CONFIG.backendRoute+ `get-address-from-coords?${query}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to fetch address");
       }
+  
+      const data = await response.json();
+      console.log("Fetched Address:", data.address);
+      return data.address;
     } catch (error) {
       console.error("Error fetching address:", error.message);
       throw error;
     }
   }
-
+  
 
 export default async function extractAddressFromGoogleLink({addressLink}){
 
@@ -62,5 +82,6 @@ export default async function extractAddressFromGoogleLink({addressLink}){
         console.error("Failed to fetch address.");
       }
 
-    return address;
+      console.log("package",lat,lng,address)
+    return {lat,lng, address};
 }
