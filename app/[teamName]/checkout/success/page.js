@@ -19,7 +19,7 @@ export default function SuccessfulCheckout() {
         router.push(`/`)
     }
   return (
-    <div className="flex  justify-center items-centers">
+    <div className="flex  justify-center items-center">
       <DynamicScreen className=" h-screen">
 
         <TopBar/>
