@@ -7,6 +7,7 @@ import LessonTypeDropdown from "./LessonTypeDropdown";
 import { useState } from "react";
 
 import PriceDropdown from "./PriceDropdown";
+import CONFIG from "@/config";
 const SearchBar = () => {
 
     // lesson location dropdown setup
@@ -88,20 +89,8 @@ const SearchBar = () => {
         setIsLessonTimingDropdownVisible(false);
         setTimeout(() => setIsLessonTimingDropdownClosing(false), 500); // Reset after a short delay
     };
-    const [daysOfWeek,setDaysOfWeek] = useState([
-        {id:1, day: 'Monday', checked:false },
-        {id:2, day: 'Tuesday', checked:false },
-        {id:3, day: 'Wednesday', checked:false},
-        {id:4, day: 'Thursday', checked:false},
-        {id:5, day: 'Friday', checked:false },
-        {id:6, day: 'Saturday', checked:false },
-        {id:7, day: 'Sunday', checked:false},
-      ]);
-    const [timesOfDay,setTimesOfDay] = useState([
-        {id:1, timeOfDay: '9 AM - 12 PM',checked:false},
-        {id:2, timeOfDay: '3 PM - 6 PM',checked:false},
-        {id:3, timeOfDay: '6 PM - 9 PM',checked:false}
-    ]);
+    const [daysOfWeek,setDaysOfWeek] = useState(CONFIG.daysOfWeek);
+    const [timesOfDay,setTimesOfDay] = useState(CONFIG.timesOfDay);
 
 
     return(

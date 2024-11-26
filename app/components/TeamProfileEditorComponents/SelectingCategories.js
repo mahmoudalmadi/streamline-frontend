@@ -60,7 +60,7 @@ export default function SelectingCategories({categoryTypes, programs, setProgram
                 handleInputChange(index, "level", e.target.value)
                 }
                 placeholder={`${categoryTypes.slice(0,categoryTypes.length-1)} ${index + 1}`}
-                className="text-gray-700 flex-1 mr-[8px] border border-gray-300 rounded-[12px]    
+                className="text-gray-700 w-[60%] mr-[8px] border border-gray-300 rounded-[12px]    
           resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
           focus:outline-none focus:border-blue-500" 
           />
@@ -68,7 +68,7 @@ export default function SelectingCategories({categoryTypes, programs, setProgram
                 value={program.name}
                 onChange={(e) => handleInputChange(index, "name", e.target.value)}
                 style={{ marginRight: "10px" }}
-                className="cursor-pointer"
+                className="flex w-[40%] cursor-pointer"
                 
             >
                 <option value="" disabled>

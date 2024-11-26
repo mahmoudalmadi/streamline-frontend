@@ -7,11 +7,18 @@ import { useState } from "react";
 import GoogleAddyEntryEditor from "@/app/components/TeamProfileEditorComponents/GoogleAddressInput";
 import SelectingCategories from "@/app/components/TeamProfileEditorComponents/SelectingCategories";
 import CONFIG from "@/config";
+import ImageUploader from "@/app/components/TeamProfileEditorComponents/ImageUploader";
+import AmenitiesSelection from "@/app/components/TeamProfileEditorComponents/AmentitiesSelection";
+import DaysHoursOperations from "@/app/components/TeamProfileEditorComponents/DaysHoursOperation";
 
 
 export default function TeamProfileEditor() {
 
     const teamName = "Neptunes Swimming Academy"
+    const [coachImg, setCoachImg] = useState([]);
+    const [logoImg, setLogoImg] = useState([]);
+    const [locationImgs, setLocationImgs] = useState([]);
+    const [selectedAmenities, setSelectedAmenities] = useState([])
 
     const [newTeamName,setNewTeamName] = useState(teamName)
     const [swimTeamDescription, setSwimTeamDescription] = useState("")
@@ -20,6 +27,8 @@ export default function TeamProfileEditor() {
     const [coords, setCoords] = useState(null)
     const [headCoachName, setHeadCoachName] = useState("")
     const [headCoachBio, setHeadCoachBio] = useState("")
+    const [province, setProvince] = useState("")
+    const [city, setCity] = useState("")
 
     const [programLevels, setProgramLevels] = useState([
         { level: "", category: "" },
@@ -28,6 +37,9 @@ export default function TeamProfileEditor() {
     const [programTypes, setProgramTypes] = useState([
     { level: "", category: "" },
     ]);
+
+    const [daysOfWeek,setDaysOfWeek] = useState(CONFIG.daysOfWeek);
+    const [timesOfDay,setTimesOfDay] = useState(CONFIG.timesOfDay);
 
     return(
         <div className="flex justify-center items-center h-full">
@@ -53,9 +65,9 @@ export default function TeamProfileEditor() {
             className="relative w-full h-[1px] bg-gray-200 mt-[5px]"
           />  
 
-        <div className="mt-[10px] space-y-[10px]">
+        <div className="mt-[10px] space-y-[15px]">
 
-        <div className="font-bold text-streamlineBlue text-[18px]">
+        <div className="font-bold text-streamlineBlue text-[18px] mt-[16px]">
             Team Information
         </div>
         <ProfileEntryEditor
@@ -72,12 +84,18 @@ export default function TeamProfileEditor() {
         placeholder={"Talk about your swim team's culture, offerings, history, staff etc..."}
         isLong={true}
         />
+        <ImageUploader allowMultiple={false} images={logoImg} setImages={setLogoImg}
+        buttonMessage={
+            logoImg.length!=0?"Replace Team Logo Image":"Upload Team Logo Image"}/>
 
+        <div
+        className="h-[8px]"
+        />
         <div
             className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
           />  
 
-        <div className="font-bold text-streamlineBlue text-[18px] pt-[5px]">
+        <div className="font-bold text-streamlineBlue text-[18px] pt-[15px]">
             Location Information
         </div>
 
@@ -91,11 +109,31 @@ export default function TeamProfileEditor() {
         setAddress={setAddress}
         setCoords={setCoords}
         coords={coords}
+        city={city}
+        setCity={setCity}
+        province={province}
+        setProvince={setProvince}
         />
 
+        <ImageUploader allowMultiple={true} images={locationImgs} setImages={setLocationImgs}
+        buttonMessage={
+        logoImg.length===0?"Upload Location Photos":"Add Location Photos"}/>
+
+        <AmenitiesSelection 
+        selectedAmenities={selectedAmenities}
+        setSelectedAmenities={setSelectedAmenities}
+        amenitiesIcons={CONFIG.amenitiesIcons}/>
+
+        <div
+        className="h-[5px]"
+        />
         <div
             className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
           />  
+
+        <div
+        className="h-[8px]"
+        />
 
         <div className="font-bold text-streamlineBlue text-[18px]">
             Programs Offered at This Location
@@ -111,12 +149,15 @@ export default function TeamProfileEditor() {
         setPrograms={setProgramTypes}
         categoryDict={CONFIG.lessonTypes}/>
 
+        <DaysHoursOperations daysOfWeek={daysOfWeek} setDaysOfWeek={setDaysOfWeek}
+        timesOfDay={timesOfDay} setTimesOfDay={setTimesOfDay}/>
 
-        <div className="h-[4px]"/>
+        <div className="h-[6px]"/>
 
         <div
             className="relative w-full h-[1px] bg-gray-200 mt-[15px]"
           />  
+        <div className="h-[6px]"/>
 
         <div className="font-bold text-streamlineBlue text-[18px] pt-[4px]">
             Head Coach Information
@@ -137,6 +178,10 @@ export default function TeamProfileEditor() {
         placeholder={"Talk about the head coach's experiences, history, fun facts, etc..."}
         isLong={true}
         />
+
+        <ImageUploader allowMultiple={false} images={coachImg} setImages={setCoachImg}
+        buttonMessage={
+            coachImg.length!=0?"Replace Head Coach Photo":"Upload Head Coach Photo"}/>
 
         </div>
 
