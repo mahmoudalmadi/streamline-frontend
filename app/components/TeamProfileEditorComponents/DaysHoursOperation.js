@@ -48,7 +48,7 @@ export default function DaysHoursOperations({daysOfWeek,setDaysOfWeek,timesOfDay
                     {timesOfDay.map((item, index) => (
                         <div
                         key={index}
-                        className={`flex pl-3 pr-3 w-full py-[5px] mb-[10px]  rounded-xl whitespace-nowrap items-center space-x-1.5
+                        className={`flex pl-3 pr-3 w-full py-[5px] mb-[20px] rounded-xl whitespace-nowrap items-center 
                         ${
                             item.checked
                             ? "border-2 border-streamlineBlue text-streamlineBlue font-bold"

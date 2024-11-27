@@ -11,7 +11,6 @@ import ImageUploader from "@/app/components/TeamProfileEditorComponents/ImageUpl
 import AmenitiesSelection from "@/app/components/TeamProfileEditorComponents/AmentitiesSelection";
 import DaysHoursOperations from "@/app/components/TeamProfileEditorComponents/DaysHoursOperation";
 
-
 export default function TeamProfileEditor() {
 
     const teamName = "Neptunes Swimming Academy"
@@ -125,7 +124,7 @@ export default function TeamProfileEditor() {
         amenitiesIcons={CONFIG.amenitiesIcons}/>
 
         <div
-        className="h-[5px]"
+        className="h-[8px]"
         />
         <div
             className="relative w-full h-[1px] bg-gray-200 mt-[10px]"

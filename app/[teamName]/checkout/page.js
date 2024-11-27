@@ -9,7 +9,7 @@ import { useCheckout } from "../../contexts/CheckoutContext";
 import DateTimePicker from "@/app/components/TeamPageComps/LessonBookingPanel/DateTimePicker";
 import BlackMoveLeft from "../../../public/BlackMoveLeft.svg"
 import LessonTypeDropdown from "@/app/components/searchBarComps/LessonTypeDropdown";
-import AuthModal from "@/app/components/AuthModal";
+import AuthModal from "@/app/components/AuthModalComps/AuthModal";
 import PaymentModal from "@/app/components/PaymentModal";
 import { useAuth } from "@/app/contexts/AuthContext";
 

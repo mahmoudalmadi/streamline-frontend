@@ -2,11 +2,12 @@
 
 // Modal.js
 import React from 'react'
-import XCancelIcon from '../../public/XCancelIcon.svg'
-import EmailIcon from '../../public/emailIcon.svg'
-import RedWarningIcon from "../../public/RedWarningIcon.svg"
+import XCancelIcon from '../../../public/XCancelIcon.svg'
+import EmailIcon from '../../../public/emailIcon.svg'
+import RedWarningIcon from "../../../public/RedWarningIcon.svg"
 import { useState } from 'react';
-import { emailSignUp, emailLogin } from '../hooks/authHooks/firebaseAuth';
+import { emailSignUp, emailLogin } from '../../hooks/authHooks/firebaseAuth';
+import CompleteSignUpDetails from './CompleteSignUpDetails';
 
 const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
@@ -14,6 +15,10 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState('')
     const [errorMessage,setErrorMessage] = useState('')
+    const [finishSignUpDetails, setFinishSignUpDetails] = useState(false)
+    const [isEmailCollected, setIsEmailCollected] = useState(false)
+    const [isPhoneNumberCollected, setIsPhoneNumberCollected] = useState(false)
+    const [underEighteen, setUnderEighteen] = useState("")
 
     function extractContent(str) {
         const match = str.match(/:(.*?)(?=\()/);
@@ -31,7 +36,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
     <div className={isModal? "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" 
     : "flex items-center justify-center"}>
       <div className=
-      {isModal?"relative flex flex-col bg-white p-[25px] px-[33px] rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] w-96 items-center":
+      {isModal?"relative flex flex-col bg-white p-[25px] px-[33px] max-h-[800px] overflow-y-auto rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] w-96 items-center":
       "flex flex-col w-full bg-white p-6 rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] items-center"}>
         
         {isModal &&
@@ -41,10 +46,16 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
             ()=>{onClose(); setErrorMessage("")}}>
         <XCancelIcon className="w-[25px] h-[50px]"/>
         </button>}
-
+        {true?
+        <CompleteSignUpDetails 
+        underEighteen={underEighteen}
+        setUnderEighteen={setUnderEighteen}
+        />
+        :
+        <>        
         {isLogin ?
         <>
-        <div className="flex  font-bold">
+        <div className="flex text-streamlineBlue font-bold">
           Log In
         </div>
         
@@ -141,7 +152,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         </div>
         </>:
         <>
-        <div className="flex  font-bold ">
+        <div className="flex text-streamlineBlue font-bold ">
           Create a New Account
         </div>
         
@@ -235,7 +246,8 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         </div>
         </>
         }
-
+        </>
+        }
       </div>
     </div>
   )

@@ -3,7 +3,7 @@
 import StreamlineLogo from '../../../public/streamlineLogo.svg'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react';
-import AuthModal from '../AuthModal';
+import AuthModal from '../AuthModalComps/AuthModal';
 import { monitorAuthState, logout } from "../../hooks/authHooks/firebaseAuth";
 import { useAuth } from '../../contexts/AuthContext';
 import AccountSection from './AccountSection';
@@ -25,6 +25,7 @@ const TopBar = () => {
         router.push('/')
     }
 
+    console.log(user)
 
     return (
         <div className='flex justify-between items-center'>
@@ -32,30 +33,6 @@ const TopBar = () => {
             <StreamlineLogo className="w-[130px] h-[50px]"/>
             </button>
 
-            {/* {user ?
-            <button onClick={()=>{logout()}}>
-            <div className=' text-streamlineBlue text-[14px] font-semibold'>
-                Log out
-            </div>
-            </button>
-            :
-            <div className='flex flex-row space-x-4 items-center'>
-                <button onClick={()=>{openModal();setIsLogin(true)}}>
-                <div className=' text-streamlineBlue text-[14px] font-semibold'>
-                    Log In
-                </div>
-                </button>
-
-                <button onClick={()=>{openModal();setIsLogin(false)}}>
-                <div 
-                className=
-                'text-white bg-streamlineBlue px-2 py-2 text-[14px] rounded-xl font-semibold'
-                >
-                    Sign Up
-                </div>
-                </button>
-            </div> 
-            } */}
             <AccountSection openLogInModal={openModal} setIsLogin={setIsLogin}/>
 
             <AuthModal isOpen={isModalOpen} onClose={closeModal} isLogin={isLogin}
