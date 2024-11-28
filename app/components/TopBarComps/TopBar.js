@@ -7,6 +7,7 @@ import AuthModal from '../AuthModalComps/AuthModal';
 import { monitorAuthState, logout } from "../../hooks/authHooks/firebaseAuth";
 import { useAuth } from '../../contexts/AuthContext';
 import AccountSection from './AccountSection';
+import { SignUpProvider } from '../AuthModalComps/SignUpProvider';
 
 const TopBar = () => {
 
@@ -25,9 +26,8 @@ const TopBar = () => {
         router.push('/')
     }
 
-    console.log(user)
-
     return (
+        <SignUpProvider>
         <div className='flex justify-between items-center'>
             <button onClick={redirectHome}>
             <StreamlineLogo className="w-[130px] h-[50px]"/>
@@ -39,6 +39,7 @@ const TopBar = () => {
             switchModalType={switchModalType} isModal={true}/>
 
         </div>
+        </SignUpProvider>
     )
 
 }

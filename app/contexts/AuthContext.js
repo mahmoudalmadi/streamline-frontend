@@ -14,7 +14,7 @@ export const useAuth = () => {
 // AuthProvider component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-
+ 
   useEffect(() => {
     const unsubscribe = monitorAuthState((currentUser) => {
       setUser(currentUser || null);

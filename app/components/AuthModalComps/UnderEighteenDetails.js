@@ -1,13 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import ProfileEntryEditor from "../TeamProfileEditorComponents/ProfileEntryEditor";
+import { useSignUpContext } from "./SignUpProvider";
+import MultiFieldEntryEditor from "./MultiFieldEntryEditor";
+
 
 export default function UnderEighteenDetails() {
 
 
-    const [kids, setKids] = useState([{ id: 1, fullName: "", dateOfBirth: null }]);
+    const {guardianInfo, setGuardianInfo, kids, setKids, hasEmail, hasNumber} = useSignUpContext()
+    const [guardianFullName, setGuardianFullName] = useState("")
 
     const handleInputChange = (id, field, value) => {
         setKids((prevKids) =>
@@ -15,7 +19,23 @@ export default function UnderEighteenDetails() {
             kid.id === id ? { ...kid, [field]: value } : kid
         )
         );
+        console.log(kids)
     };
+
+    useEffect(()=>{
+        setGuardianInfo(prevState => ({
+            ...prevState,
+            fullName: guardianFullName,
+          }));
+          console.log(guardianInfo)
+    },[guardianFullName])
+
+    const handleGuardianInfoChange = (e, field) => {
+        setGuardianInfo(prevState => ({
+          ...prevState,
+          field: e.target.value
+        }));
+      };
 
     const addKid = () => {
         setKids((prevKids) => [
@@ -39,8 +59,20 @@ export default function UnderEighteenDetails() {
         <ProfileEntryEditor 
         prompt={"Gaurdian Full Name"} 
         placeholder={"Full name"}
-        
+        response={guardianFullName}
+        setResponse={setGuardianFullName}
         />
+
+        {
+            !hasEmail&&
+            <MultiFieldEntryEditor
+            prompt={"Guardian Email"}
+            placeholder={"Email Address"}
+            field={"emailAddress"}
+            fieldResponse={guardianInfo}
+            setFieldResponse={setGuardianInfo}
+            />
+        }
 
         <h2 className="text-xl font-semibold mb-4">Enter Kid(s) Information</h2>
         {kids.map((kid, index) => (

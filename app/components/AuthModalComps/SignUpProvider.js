@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 
-const SignUpContext = createContext(undefined);
+const SignUpContext = createContext();
 
 export const useSignUpContext = () => {
     const context = useContext(SignUpContext);
@@ -11,11 +11,13 @@ export const useSignUpContext = () => {
 };
 
 export const SignUpProvider = ({ children }) => {
-    const [gaurdianInfo, setGuardianInfo] = useState({ emailAddress: '', phoneNumber: '', fullName:'',dateOfBirth:null});
+    const [guardianInfo, setGuardianInfo] = useState({ emailAddress: '', phoneNumber: '', fullName:'',dateOfBirth:null});
     const [kids, setKids] = useState([{ id: 1, fullName: "", dateOfBirth: null }]);
+    const [hasNumber, setHasNumber] = useState(false)
+    const [hasEmail, setHasEmail] = useState(false)
 
     return (
-        <SignUpContext.Provider value={{ gaurdianInfo, setGuardianInfo, kids, setKids }}>
+        <SignUpContext.Provider value={{ guardianInfo, setGuardianInfo, kids, setKids, hasNumber,setHasNumber,hasEmail,setHasEmail }}>
             {children}
         </SignUpContext.Provider>
     );
