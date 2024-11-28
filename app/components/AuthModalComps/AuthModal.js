@@ -8,7 +8,7 @@ import RedWarningIcon from "../../../public/RedWarningIcon.svg"
 import { useState } from 'react';
 import { emailSignUp, emailLogin } from '../../hooks/authHooks/firebaseAuth';
 import CompleteSignUpDetails from './CompleteSignUpDetails';
-import { SignUpProvider, useSignUpContext } from './SignUpProvider';
+import { SignUpProvider, useSignUpContext } from '../../contexts/SignUpProvider';
 
 const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
@@ -47,7 +47,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
     <div className={isModal? "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" 
     : "flex items-center justify-center"}>
       <div className=
-      {isModal?"relative flex flex-col bg-white p-[25px] px-[10px] max-h-[800px] overflow-y-auto rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] w-96 items-center":
+      {isModal?"relative flex flex-col bg-white p-[25px] px-[10px] max-h-[650px] overflow-y-auto rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] w-96 items-center":
       "flex flex-col w-full bg-white p-6 rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] items-center"}>
         
         {isModal &&

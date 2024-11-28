@@ -7,7 +7,7 @@ import AuthModal from '../AuthModalComps/AuthModal';
 import { monitorAuthState, logout } from "../../hooks/authHooks/firebaseAuth";
 import { useAuth } from '../../contexts/AuthContext';
 import AccountSection from './AccountSection';
-import { SignUpProvider } from '../AuthModalComps/SignUpProvider';
+import { SignUpProvider } from '../../contexts/SignUpProvider';
 
 const TopBar = () => {
 

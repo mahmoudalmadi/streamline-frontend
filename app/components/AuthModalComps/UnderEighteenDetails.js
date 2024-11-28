@@ -3,12 +3,18 @@
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import ProfileEntryEditor from "../TeamProfileEditorComponents/ProfileEntryEditor";
-import { useSignUpContext } from "./SignUpProvider";
+import { useSignUpContext } from "../../contexts/SignUpProvider";
 import MultiFieldEntryEditor from "./MultiFieldEntryEditor";
-
+import "react-datepicker/dist/react-datepicker.css";
+import "react-day-picker/style.css";
+import ChildBirthDatePicker from "./BirthDatePicker";
 
 export default function UnderEighteenDetails() {
+    const [isPickerOpen, setIsPickerOpen] = useState(false);
 
+    const toggleDatePicker = () => {
+        setIsPickerOpen(!isPickerOpen);
+    };
 
     const {guardianInfo, setGuardianInfo, kids, setKids, hasEmail, hasNumber} = useSignUpContext()
     const [guardianFullName, setGuardianFullName] = useState("")
@@ -19,7 +25,7 @@ export default function UnderEighteenDetails() {
             kid.id === id ? { ...kid, [field]: value } : kid
         )
         );
-        console.log(kids)
+        console.log(JSON.stringify(kids))
     };
 
     useEffect(()=>{
@@ -27,7 +33,6 @@ export default function UnderEighteenDetails() {
             ...prevState,
             fullName: guardianFullName,
           }));
-          console.log(guardianInfo)
     },[guardianFullName])
 
     const handleGuardianInfoChange = (e, field) => {
@@ -54,10 +59,10 @@ export default function UnderEighteenDetails() {
     };
 
     return (
-        <div className="w-full mx-auto">
+        <div className="w-full mx-auto space-y-[10px] mt-[10px]">
         
         <ProfileEntryEditor 
-        prompt={"Gaurdian Full Name"} 
+        prompt={"Guardian Full Name"} 
         placeholder={"Full name"}
         response={guardianFullName}
         setResponse={setGuardianFullName}
@@ -74,16 +79,25 @@ export default function UnderEighteenDetails() {
             />
         }
 
-        <h2 className="text-xl font-semibold mb-4">Enter Kid(s) Information</h2>
+        <div 
+        className="text-[15px] font-semibold mb-[3px] leading-[8px] pt-[10px]">
+            Enter Swimmer(s) Information
+        </div>
+        <div className="text-[13px] leading-[14px] pb-[7px]">
+            Please include any swimmers older than 18 as well. Swimmers can be added/removed later
+        </div>
         {kids.map((kid, index) => (
             <div
             key={kid.id}
-            className="mb-6 p-4 border border-gray-300 rounded-lg shadow-sm"
+            className="relative mb-6 p-[10px] border border-gray-300 rounded-lg shadow-sm"
             >
-            <h4 className="text-lg font-medium mb-3">Kid {index + 1}</h4>
-            <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name:
+            <div className="text-lg font-medium mb-[4px]">
+                Swimmer {index + 1}
+            </div>
+            <div className="flex space-x-[10px]">
+            <div className="mb-[8px] w-[95%]">
+                <label className="block font-bold text-sm  text-gray-700 mb-1">
+                Full Name
                 </label>
                 <input
                 type="text"
@@ -92,45 +106,82 @@ export default function UnderEighteenDetails() {
                     handleInputChange(kid.id, "fullName", e.target.value)
                 }
                 placeholder="Enter full name"
-                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-gray-700 border border-gray-300 rounded-[12px]    text-[15px]
+          resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
+          focus:outline-none focus:border-blue-500" 
                 />
             </div>
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                Date of Birth:
+            <div className="relative">
+                <label className="block text-sm font-bold text-gray-700 mb-1">
+                    Date of Birth
                 </label>
-                <DatePicker
-                selected={kid.dateOfBirth}
-                onChange={(date) =>
-                    handleInputChange(kid.id, "dateOfBirth", date)
-                }
-                placeholderText="Select date"
-                dateFormat="yyyy-MM-dd"
-                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                <input
+                    type="text"
+                    value={kid.dateOfBirth ? kid.dateOfBirth.toLocaleDateString() : ""}
+                    placeholder="Select birthday"
+                    readOnly
+                    onClick={toggleDatePicker}
+                    className="w-full text-gray-700 border border-gray-300 rounded-[12px] text-[15px]    
+          resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
+          focus:outline-none focus:border-blue-500" 
                 />
+                {isPickerOpen && (
+                    <>
+                        {/* Backdrop */}
+                        <div
+                            className="fixed inset-0 bg-black bg-opacity-50 z-20"
+                            onClick={() => {setIsPickerOpen(false), console.log(kid)}} // Close on backdrop click
+                        >
+                        </div>
+                        {/* Centered DatePicker */}
+                        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 bg-white p-4 rounded-[15px] shadow-lg">
+                            <ChildBirthDatePicker
+                            id={kid.id}
+                            kid={kid}
+                            handleInputChange={handleInputChange}
+                            setIsPickerOpen={setIsPickerOpen}
+                            />                            
+                        </div>
+                    </>
+                )}
+            </div>
             </div>
             {kids.length > 1 && (
                 <button
                 onClick={() => removeKid(kid.id)}
-                className="mt-4 bg-red-500 text-white py-2 px-4 rounded shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                className=" flex rounded  items-center align-center w-full mr-0"
                 >
-                Remove Kid
+                <div className="text-red-500 font-bold mb-[2px] mr-[5px]">
+                    x
+                </div>
+                <div className="text-red-500 text-[14px]">
+                    Remove Swimmer
+                </div>
                 </button>
             )}
             </div>
         ))}
+        <div>
         <button
             onClick={addKid}
-            className="mb-4 bg-blue-500 text-white py-2 px-6 rounded shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className=" flex rounded  items-center align-center w-full mr-0"
         >
-            Add Another Kid
+            <div className="text-streamlineBlue font-bold mr-[5px]">
+                    +
+                </div>
+                <div className="text-streamlineBlue text-[14px] font-bold">
+                    Add Another Swimmer
+                </div>
         </button>
+        <div className="flex w-full align-center justify-center mt-[10px]">
         <button
             onClick={handleSubmit}
-            className="bg-green-500 text-white py-2 px-6 rounded shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
+            className="bg-streamlineBlue font-bold text-white py-2 px-6 rounded-full shadow hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-green-400"
         >
-            Submit
+            Create account
         </button>
+        </div>
+        </div>
         </div>
     );
 }

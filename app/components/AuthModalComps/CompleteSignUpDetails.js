@@ -19,7 +19,7 @@ export default function CompleteSignUpDetails(
             />
             <div className="max-h-[800px] overflow-y-auto">
             <div className="px-[13px]">
-            <div className="mt-[15px]">
+            <div className="mt-[15px] leading-[18px]">
                 Are you looking for lessons for a swimmer under 18?
             </div>
             <div className="flex justify-center">
