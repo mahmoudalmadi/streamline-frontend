@@ -35,7 +35,8 @@ const CONFIG = {
         {id:1, timeOfDay: '9 AM - 12 PM',checked:false},
         {id:2, timeOfDay: '3 PM - 6 PM',checked:false},
         {id:3, timeOfDay: '6 PM - 9 PM',checked:false}
-    ]
+    ],
+    contactInfoDisclaimer:"* Your contact information will be used only to communicate where necessary once you have booked a lesson with a swim team"
 }
 
 export default CONFIG;

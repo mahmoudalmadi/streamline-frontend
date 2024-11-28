@@ -78,7 +78,7 @@ export const ChildBirthDatePicker = ({ kid, handleInputChange, setIsPickerOpen }
   );
 };
 
-export const NormalBirthDatePicker = ({ setPersonInfo, setIsPickerOpen }) => {
+export const NormalBirthDatePicker = ({ setPersonInfo,personInfo, setIsPickerOpen }) => {
 
     const handleDateChange = (date) => {
       setPersonInfo(prevState => ({
@@ -92,7 +92,7 @@ export const NormalBirthDatePicker = ({ setPersonInfo, setIsPickerOpen }) => {
       <div className="relative">
         <DayPicker
           mode="single"
-          selected={kid.dateOfBirth}
+          selected={personInfo.dateOfBirth}
           onSelect={handleDateChange}
           captionLayout="dropdown"
           components={{

@@ -8,7 +8,7 @@ import RedWarningIcon from "../../../public/RedWarningIcon.svg"
 import { useState } from 'react';
 import { emailSignUp, emailLogin } from '../../hooks/authHooks/firebaseAuth';
 import CompleteSignUpDetails from './CompleteSignUpDetails';
-import { SignUpProvider, useSignUpContext } from '../../contexts/SignUpProvider';
+import {  useSignUpContext } from '../../contexts/SignUpProvider';
 
 const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
@@ -47,7 +47,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
     <div className={isModal? "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" 
     : "flex items-center justify-center"}>
       <div className=
-      {isModal?"relative flex flex-col bg-white p-[25px] px-[10px] max-h-[650px] overflow-y-auto rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] w-96 items-center":
+      {isModal?"relative flex flex-col bg-white p-[25px] px-[10px] max-h-[650px] overflow-y-auto rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] w-[440px] items-center":
       "flex flex-col w-full bg-white p-6 rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] items-center"}>
         
         {isModal &&
@@ -128,9 +128,10 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         </div>}
         </div>
 
-        <div className="flex items-center justify-center py-2 rounded-full
+        <div className={`flex items-center justify-center py-2 rounded-full
         mt-[20px] font-bold bg-streamlineBlue text-white w-full text-center
-        cursor-pointer" onClick={async()=>{
+        ${email.length>0 && password.length>3 ? 'cursor-pointer':'opacity-50 '}`}
+        onClick={async()=>{
             try{
             await emailLogin({email:email,password:password});
             if(isModal){onClose()}
@@ -173,7 +174,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         className='absolute w-full h-[1px] bg-gray-300 top-[55px]'
         />}
 
-        <div className='px-[13px]'>
+        <div >
         <div className={isModal?'w-full mt-[40px]':'w-full'}>
         {isModal && <div className='font-bold '>
             Welcome to Experience Streamline

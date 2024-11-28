@@ -1,12 +1,22 @@
 "use client";
 
-import { useState } from "react"
 import UnderEighteenDetails from "./UnderEighteenDetails";
 import OverEighteenDetails from "./OverEighteenDetails";
+import { useSignUpContext } from "@/app/contexts/SignUpProvider";
 
 
 export default function CompleteSignUpDetails(
     {underEighteen, setUnderEighteen}) {
+
+    const {setGuardianInfo,guardianInfo} = useSignUpContext();
+
+    const setAccountType = (isGuardian) => {
+        setGuardianInfo(prevState => ({
+            ...prevState,
+            isGuardian: isGuardian,
+          }));
+        console.log(guardianInfo)
+    }
 
     return(
         <>
@@ -22,9 +32,9 @@ export default function CompleteSignUpDetails(
             <div className="mt-[15px] leading-[18px]">
                 Are you looking for lessons for a swimmer under 18?
             </div>
-            <div className="flex justify-center">
+            <div className="flex justify-center mt-[7px]">
                 <div className="flex space-x-[6px] items-center px-[30px] cursor-pointer"
-                onClick={()=>{setUnderEighteen(true)}}>
+                onClick={()=>{setUnderEighteen(true);setAccountType(true)}}>
                     <div className={
                         underEighteen?
                         `bg-streamlineBlue w-[15px] h-[15px] `
@@ -38,7 +48,7 @@ export default function CompleteSignUpDetails(
                     </div>
                 </div>
                 <div className="flex space-x-[6px] items-center px-[30px] cursor-pointer"
-                onClick={()=>{setUnderEighteen(false)}}>
+                onClick={()=>{setUnderEighteen(false);setAccountType(false)}}>
                     <div className={
                         underEighteen===false?
                         `bg-streamlineBlue w-[15px] h-[15px] `:
