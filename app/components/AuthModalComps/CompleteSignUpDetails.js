@@ -6,7 +6,7 @@ import { useSignUpContext } from "@/app/contexts/SignUpProvider";
 
 
 export default function CompleteSignUpDetails(
-    {underEighteen, setUnderEighteen}) {
+    {underEighteen, setUnderEighteen, setFinishSignUpDetails}) {
 
     const {setGuardianInfo,guardianInfo} = useSignUpContext();
 
@@ -20,9 +20,19 @@ export default function CompleteSignUpDetails(
 
     return(
         <>
-            <div className="flex  font-bold text-streamlineBlue bg-white pb-[6px]">
-                Complete Sign Up
-            </div>            
+            <div className="relative flex text-streamlineBlue w-full items-center justify-center">
+            <div className='absolute flex left-[-12px] items-center cursor-pointer' onClick={()=>{setFinishSignUpDetails(false)}}>
+                <div>
+                <BlackMoveLeft/>
+                </div>
+                <div className='text-black font-semibold text-[13px] ml-[4px]'>
+                    Go back
+                </div>
+            </div>
+            <div className='font-bold'>
+              Complete sign up 
+            </div>
+            </div>
 
             <div
             className={'absolute w-full h-[1px] bg-gray-300 top-[55px]'}

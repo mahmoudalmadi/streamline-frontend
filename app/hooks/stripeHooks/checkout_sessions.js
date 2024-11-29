@@ -4,7 +4,7 @@ import { useState } from 'react';
 import CONFIG from '@/config';
 import { useRouter,usePathname } from "next/navigation";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLE_KEY);
+const stripePromise = loadStripe("pk_test_51QKsR9GTTdOtC6sxIREmlRsNnOLWvueQHerGPwHktFePzWJybb7x5WYWumGntmDdQplODFJm87iobrwhYhU3pfIe008rYIO8nD");
 
 function PaymentForm({ amount, currency }) {
   const stripe = useStripe();
