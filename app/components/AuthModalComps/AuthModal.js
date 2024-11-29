@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { emailSignUp, emailLogin } from '../../hooks/authHooks/firebaseAuth';
 import CompleteSignUpDetails from './CompleteSignUpDetails';
 import {  useSignUpContext } from '../../contexts/SignUpProvider';
+import BlackMoveLeft from "../../../public/BlackMoveLeft.svg";
 
 const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
@@ -58,7 +59,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         <XCancelIcon className="w-[25px] h-[50px]"/>
         </button>}
         {finishSignUpDetails?
-        <CompleteSignUpDetails 
+        <CompleteSignUpDetails
         underEighteen={underEighteen}
         setUnderEighteen={setUnderEighteen}
         />
@@ -166,8 +167,10 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         </div>
         </>:
         <>
-        <div className="flex text-streamlineBlue font-bold ">
-          Create a New Account
+        <div className="relative flex text-streamlineBlue w-full items-center justify-center">
+            <div className='font-bold'>
+              Create a New Account
+            </div>
         </div>
         
         {isModal&& <div
