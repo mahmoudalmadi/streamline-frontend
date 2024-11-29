@@ -62,7 +62,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         <CompleteSignUpDetails
         underEighteen={underEighteen}
         setUnderEighteen={setUnderEighteen}
-        />
+        />  
         :
         <>        
         {isLogin ?
