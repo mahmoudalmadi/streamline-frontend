@@ -60,6 +60,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         </button>}
         {finishSignUpDetails?
         <CompleteSignUpDetails
+        setFinishSignUpDetails={setFinishSignUpDetails}
         underEighteen={underEighteen}
         setUnderEighteen={setUnderEighteen}
         />  
@@ -90,6 +91,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
             borderTopLeftRadius:20
         }}>
             <input
+            value={email}
             className='w-full outline-none'
             placeholder='Email Address'
             onChange={(e)=>{setEmail(e.target.value);setErrorMessage("")}}
@@ -102,6 +104,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
             borderBottomRightRadius:20
         }}>
             <input
+            value={password}
             placeholder="Password"
             className='w-full outline-none'
             onChange={(e)=>{setPassword(e.target.value); setErrorMessage("")}}
@@ -190,6 +193,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
             borderTopLeftRadius:20
         }}>
             <input
+            value={guardianInfo.emailAddress}
             className='w-full outline-none'
             placeholder='Email Address'
             onChange={(e)=>{setEmail(e.target.value);setErrorMessage("")}}
@@ -202,6 +206,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
             borderBottomRightRadius:20
         }}>
             <input
+            value={password}
             placeholder="Password"
             className='w-full outline-none'
             onChange={(e)=>{setPassword(e.target.value); setErrorMessage("")}}

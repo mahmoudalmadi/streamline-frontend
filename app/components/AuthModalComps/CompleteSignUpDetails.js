@@ -3,7 +3,7 @@
 import UnderEighteenDetails from "./UnderEighteenDetails";
 import OverEighteenDetails from "./OverEighteenDetails";
 import { useSignUpContext } from "@/app/contexts/SignUpProvider";
-
+import BlackMoveLeft from "../../../public/BlackMoveLeft.svg"
 
 export default function CompleteSignUpDetails(
     {underEighteen, setUnderEighteen, setFinishSignUpDetails}) {
@@ -21,7 +21,7 @@ export default function CompleteSignUpDetails(
     return(
         <>
             <div className="relative flex text-streamlineBlue w-full items-center justify-center">
-            <div className='absolute flex left-[-12px] items-center cursor-pointer' onClick={()=>{setFinishSignUpDetails(false)}}>
+            <div className='absolute flex left-[-2px] items-center cursor-pointer' onClick={()=>{setFinishSignUpDetails(false)}}>
                 <div>
                 <BlackMoveLeft/>
                 </div>
