@@ -2,7 +2,7 @@ import BottomTab from "./BottomTab";
 
 const DynamicScreen = ({ children, className = "" }) => {
     return (
-        <div className={`w-full md:w-[85%] lg:w-[85%] p-[25px] ${className}`}>
+        <div className={`w-full md:w-[85%] lg:w-[85%] p-[15px] ${className}`}>
             <div className="relative z-10">{/* Children container with higher z-index */}
                 {children}
             </div>

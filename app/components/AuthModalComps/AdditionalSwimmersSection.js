@@ -1,6 +1,7 @@
-import { useSignUpContext } from "@/app/contexts/SignUpProvider";
 import ChildBirthDatePicker from "./BirthDatePicker"
+import { useSignUpContext } from "@/app/contexts/SignUpProvider";
 import { useState } from "react";
+import isUnderEighteen from "@/app/hooks/isUnderEighteen";
 
 export default function AdditionalSwimmersSection({isMinor}) {
 
@@ -15,9 +16,17 @@ export default function AdditionalSwimmersSection({isMinor}) {
     const handleInputChange = (id, field, value) => {
         setKids((prevKids) =>
         prevKids.map((kid) =>
-            kid.id === id ? { ...kid, [field]: value } : kid
+        kid.id === id ? { ...kid, [field]: value } : kid
         )
         );
+        if(field==="dateOfBirth"){
+            const isMinor = isUnderEighteen(value)
+            setKids((prevKids) =>
+            prevKids.map((kid) =>
+            kid.id === id ? { ...kid, ["isMinor"]: isMinor } : kid
+            )
+            );
+        }
     };
 
     const addKid = () => {

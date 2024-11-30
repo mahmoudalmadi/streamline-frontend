@@ -1,0 +1,49 @@
+import { doc, setDoc, collection, addDoc } from "firebase/firestore";
+import db from "../../components/firebaseClient"; // Adjust the import path to your Firebase config file
+  
+const addAccountDetails = async (accountData) => {
+    try {
+      // Validate fields in accountData
+  
+      const accountCollection = collection(db, "accounts"); // Change 'accounts' to your desired collection name
+  
+      const newDocRef = doc(accountCollection); // Auto-generate a document ID
+      await setDoc(newDocRef, {
+        accountType: accountData.accountType,
+        dateJoined: accountData.dateJoined,
+        emailAddress: accountData.emailAddress,
+        firebaseId: accountData.firebaseId,
+        fullName: accountData.fullName,
+        phoneNumber: accountData.phoneNumber,
+      });
+  
+      console.log("Account added successfully with ID:", newDocRef.id);
+    } catch (error) {
+      console.error("Error adding account: ", error);
+    }
+  };
+  
+  const addAccountDependants = async (
+    {dependantsList, fireBaseId}
+  ) => {
+    try {
+  
+      const dependantsCollection = collection(db, "accountDependants"); // Adjust the collection name as needed
+  
+      const addPromises = dependantsList.map(async (dependant) => {
+        await addDoc(dependantsCollection, {
+          accountFirebaseId: firebaseId,
+          dateOfBirth: dependant.dateOfBirth, // Ensure this is a Date object
+          fullName: dependant.fullName,
+          isMinor: dependant.isMinor, // Boolean value
+        });
+      });
+  
+      await Promise.all(addPromises); // Wait for all additions to complete
+      console.log("All dependants added successfully!");
+    } catch (error) {
+      console.error("Error adding dependants: ", error);
+    }
+  };
+
+export {addAccountDetails, addAccountDependants}

@@ -11,13 +11,14 @@ export const useSignUpContext = () => {
 };
 
 export const SignUpProvider = ({ children }) => {
-    const [guardianInfo, setGuardianInfo] = useState({ emailAddress: '', phoneNumber: '', fullName:'',dateOfBirth:null,isGuardian:null});
-    const [kids, setKids] = useState([{ id: 1, fullName: "", dateOfBirth: null }]);
+    const [guardianInfo, setGuardianInfo] = useState({ emailAddress: '', phoneNumber: '', fullName:'',isValidNum:null, dateOfBirth:null,isGuardian:null,password:"",signUpMethod:""});
+    const [kids, setKids] = useState([{ id: 1, fullName: "", dateOfBirth: null, isMinor:null }]);
     const [hasNumber, setHasNumber] = useState(false)
     const [hasEmail, setHasEmail] = useState(false)
+    const [errorMessage,setErrorMessage] = useState('')
 
     return (
-        <SignUpContext.Provider value={{ guardianInfo, setGuardianInfo, kids, setKids, hasNumber,setHasNumber,hasEmail,setHasEmail }}>
+        <SignUpContext.Provider value={{ guardianInfo, setGuardianInfo, kids, setKids, hasNumber,setHasNumber,hasEmail,setHasEmail,errorMessage,setErrorMessage}}>
             {children}
         </SignUpContext.Provider>
     );

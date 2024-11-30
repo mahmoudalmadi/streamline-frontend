@@ -11,11 +11,14 @@ import ChildBirthDatePicker from "./BirthDatePicker";
 import MultiFieldPhoneEntry from "./MultiFieldPhoneEntry";
 import AdditionalSwimmersSection from "./AdditionalSwimmersSection";
 import CONFIG from "@/config";
+import validateFields from "@/app/hooks/firestoreHooks/validateFields";
+import { emailSignUp } from "@/app/hooks/authHooks/firebaseAuth";
 
-export default function UnderEighteenDetails() {
+export default function UnderEighteenDetails({setFinishSignUpDetails}) {
     
-    const {guardianInfo, setGuardianInfo, kids, setKids, hasEmail, hasNumber} = useSignUpContext()
+    const {guardianInfo, setGuardianInfo, kids, setKids, hasEmail, hasNumber, setErrorMessage} = useSignUpContext()
     const [guardianFullName, setGuardianFullName] = useState("")
+    const [incompleteFieldsError, setIncompleteFieldsError] = useState(false)
 
     useEffect(()=>{
         setGuardianInfo(prevState => ({
@@ -24,19 +27,61 @@ export default function UnderEighteenDetails() {
           }));
     },[guardianFullName])
 
-    const handleSubmit = () => {
-        console.log("Kids Information:", kids);
-        alert("Kids Information Saved! Check the console for details.");
-    };
+    function extractContent(str) {
+        const match = str.match(/:(.*?)(?=\()/);
+        return match ? match[1].trim() : null; // Return the content or null if no match is found
+    }
+
+    function extractLatterContent(str) {
+        const match = str.match(/\/(.*?)(?=\))/);
+        return match ? match[1].trim() : null; // Return the content or null if no match is found
+    }
+
+    useEffect(()=>{
+    if(guardianInfo["isValidNum"]){
+        setIncompleteFieldsError(false)
+    }
+    }
+    ,[guardianInfo["isValidNum"]]
+    )
+
+
+    const handleSubmit = async() => {
+        try{
+            validateFields({data:guardianInfo, isGuardian:guardianInfo.isGuardian})
+            for (const swimmer of kids){
+                validateFields({data:swimmer})
+            }
+            setIncompleteFieldsError(false)
+            if (guardianInfo.signUpMethod==="email"){
+                console.log("heeee")
+            const userId = await emailSignUp({email:guardianInfo.email,password:guardianInfo.password})
+            console.log("eeddd", userId)
+            }
+        }catch(error){
+            console.log("step 1",error.message)
+                if (error.message.includes("auth")){
+                    console.log("step 2")
+                    const errMessage = extractContent(error.message)
+                    const errMessageTwo = extractLatterContent(error.message)
+                    const finalErrMessage = errMessage + " (" + errMessageTwo + ")"
+                    setErrorMessage(finalErrMessage)
+                    setFinishSignUpDetails(false)
+                }else{
+                setIncompleteFieldsError(true)
+                }
+            }
+        }
 
     return (
         <div className="w-full mx-auto space-y-[10px] mt-[10px]">
-        
-        <ProfileEntryEditor 
-        prompt={"Guardian Full Name"} 
-        placeholder={"Full name"}
-        response={guardianFullName}
-        setResponse={setGuardianFullName}
+
+        <MultiFieldEntryEditor
+            prompt={"Your Full Name"}
+            placeholder={"Full Name"}
+            field={"fullName"}
+            fieldResponse={guardianInfo}
+            setFieldResponse={setGuardianInfo}
         />
 
         {
@@ -64,6 +109,14 @@ export default function UnderEighteenDetails() {
         </div>
         
         <AdditionalSwimmersSection isMinor={true}/>
+
+        {incompleteFieldsError &&
+        <div className="text-center text-red-500 text-[14px] font-bold">
+            {guardianInfo["isValidNum"] ?
+            "Please ensure all the fields above are completely filled out":
+            "Please ensure you have entered a correct phone number"
+            }
+        </div>}
 
         <div>
         <div className="flex w-full align-center justify-center mt-[10px]">

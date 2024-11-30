@@ -15,13 +15,12 @@ export default function CompleteSignUpDetails(
             ...prevState,
             isGuardian: isGuardian,
           }));
-        console.log(guardianInfo)
     }
 
     return(
         <>
-            <div className="relative flex text-streamlineBlue w-full items-center justify-center">
-            <div className='absolute flex left-[-2px] items-center cursor-pointer' onClick={()=>{setFinishSignUpDetails(false)}}>
+            <div className="relative flex text-streamlineBlue w-full items-center justify-center bg-white">
+            <div className='absolute flex left-[-2px] bottom-[8px] items-center cursor-pointer' onClick={()=>{setFinishSignUpDetails(false)}}>
                 <div>
                 <BlackMoveLeft/>
                 </div>
@@ -29,7 +28,7 @@ export default function CompleteSignUpDetails(
                     Go back
                 </div>
             </div>
-            <div className='font-bold'>
+            <div className='font-bold pb-[6px]'>
               Complete sign up 
             </div>
             </div>
@@ -74,11 +73,11 @@ export default function CompleteSignUpDetails(
             </div>
             
             {underEighteen===false?
-            <OverEighteenDetails/>
+            <OverEighteenDetails setFinishSignUpDetails={setFinishSignUpDetails}/>
             :
             <>
             {underEighteen &&
-            <UnderEighteenDetails/>}
+            <UnderEighteenDetails setFinishSignUpDetails={setFinishSignUpDetails}/>}
             </>
             }
             </div>

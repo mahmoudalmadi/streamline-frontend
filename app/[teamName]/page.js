@@ -270,9 +270,11 @@ export default function TeamPage()  {
 
         {/* SAFETY CERTIFICATION SECTION */}
         <div className="flex items-center mt-[15px]">
+        <div>
         <SafetyCertified className="
         md:w-[180px]
         w-[180px] h-[100px] mt-[12px]"/>
+        </div>
         <div className="flex flex-col text-[18px] font-bold ml-[10px]">
             <div>
                 Safety Certified

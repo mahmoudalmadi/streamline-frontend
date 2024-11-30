@@ -16,31 +16,33 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
     const [showPassword, setShowPassword] = useState(false)
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState('')
-    const [errorMessage,setErrorMessage] = useState('')
+    
     const [finishSignUpDetails, setFinishSignUpDetails] = useState(false)
     const [isEmailCollected, setIsEmailCollected] = useState(false)
     const [isPhoneNumberCollected, setIsPhoneNumberCollected] = useState(false)
     const [underEighteen, setUnderEighteen] = useState(null)
 
-    const {guardianInfo, setGuardianInfo, kids, setKids} = useSignUpContext();
+    const {guardianInfo, setGuardianInfo, kids, setKids,errorMessage,setErrorMessage} = useSignUpContext();
 
     useEffect(()=>{
         setGuardianInfo(prevState => ({
             ...prevState,
             emailAddress: email,
           }));
-        console.log(guardianInfo)
     },[email])
+    useEffect(()=>{
+        setGuardianInfo(prevState => ({
+            ...prevState,
+            password: password,
+          }));
+    },[password])
 
-    function extractContent(str) {
-        const match = str.match(/:(.*?)(?=\()/);
-        return match ? match[1].trim() : null; // Return the content or null if no match is found
-    }
-
-    function extractLatterContent(str) {
-        const match = str.match(/\/(.*?)(?=\))/);
-        return match ? match[1].trim() : null; // Return the content or null if no match is found
-    }
+    useEffect(()=>{
+        setGuardianInfo(prevState => ({
+            ...prevState,
+            signUpMethod: "email",
+          }));
+    },[])
 
   if (!isOpen && isModal) return null
 
