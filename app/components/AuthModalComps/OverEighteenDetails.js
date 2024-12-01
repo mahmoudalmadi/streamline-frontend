@@ -26,24 +26,24 @@ export default function OverEighteenDetails({setFinishSignUpDetails}) {
             }
         }
         setIncompleteFieldsError(false)
-        if (guardianInfo.signUpMethod==="email"){
-            console.log("heeee")
-        // const userId = await emailSignUp({email:guardianInfo.email,password:guardianInfo.password})
+        let userId; 
 
+        if (guardianInfo.signUpMethod==="email"){
+            console.log(JSON.stringify(guardianInfo))
+        userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password})
+        console.log(userId.uid)
         const accountDetails={
             accountType:"guardian",
             dateJoined:new Date(),
             emailAddress: guardianInfo.emailAddress,
-            firebaseId: "24342sadsdasSADasd",
+            firebaseId: userId.uid,
             fullName: guardianInfo.fullName,
             phoneNumber: guardianInfo.phoneNumber,
         }
-
         addAccountDetails({accountData:accountDetails})
         if (wannaAddSwimmers){
         addAccountDependants({dependantsList: kids, fireBaseId:"2312sadASDAS"})
         }
-        console.log("eeddd", userId)
         }
     }catch(error){
             

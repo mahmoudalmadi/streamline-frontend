@@ -19,8 +19,8 @@ export default function CompleteSignUpDetails(
 
     return(
         <>
-            <div className="relative flex text-streamlineBlue w-full items-center justify-center bg-white">
-            <div className='absolute flex left-[-2px] bottom-[8px] items-center cursor-pointer' onClick={()=>{setFinishSignUpDetails(false)}}>
+            <div className="relative flex text-streamlineBlue w-full items-center justify-center ">
+            <div className='absolute z-100 flex left-[-2px] bottom-[8px] items-center cursor-pointer' onClick={()=>{setFinishSignUpDetails(false)}}>
                 <div>
                 <BlackMoveLeft/>
                 </div>
@@ -28,7 +28,7 @@ export default function CompleteSignUpDetails(
                     Go back
                 </div>
             </div>
-            <div className='font-bold pb-[6px]'>
+            <div className='relative font-bold pb-[6px] z-10 bg-white'>
               Complete sign up 
             </div>
             </div>
