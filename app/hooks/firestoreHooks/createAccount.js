@@ -7,7 +7,7 @@ const addAccountDetails = async ({accountData}) => {
       const accountCollection = collection(db, "Account"); // Change 'accounts' to your desired collection name
       
       const newDocRef = doc(accountCollection); // Auto-generate a document ID
-      console.log("IM IN",accountData.accountType)
+
       await setDoc(newDocRef, {
         accountType: accountData.accountType,
         dateJoined: accountData.dateJoined,
@@ -24,7 +24,7 @@ const addAccountDetails = async ({accountData}) => {
   };
   
   const addAccountDependants = async (
-    {dependantsList, fireBaseId}
+    {dependantsList, firebaseId}
   ) => {
     try {
   

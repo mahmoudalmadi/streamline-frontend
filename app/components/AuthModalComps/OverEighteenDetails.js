@@ -11,7 +11,7 @@ import validateFields from "@/app/hooks/firestoreHooks/validateFields";
 import { emailSignUp } from "@/app/hooks/authHooks/firebaseAuth";
 import { addAccountDependants, addAccountDetails } from "@/app/hooks/firestoreHooks/createAccount";
 
-export default function OverEighteenDetails({setFinishSignUpDetails}) {
+export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
 
     const {guardianInfo, setGuardianInfo, hasEmail, hasNumber,kids,setErrorMessage} = useSignUpContext()
     const [wannaAddSwimmers,setWannaAddSwimmers] =useState()
@@ -31,22 +31,23 @@ export default function OverEighteenDetails({setFinishSignUpDetails}) {
         if (guardianInfo.signUpMethod==="email"){
             console.log(JSON.stringify(guardianInfo))
         userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password})
-        console.log(userId.uid)
-        const accountDetails={
-            accountType:"guardian",
-            dateJoined:new Date(),
-            emailAddress: guardianInfo.emailAddress,
-            firebaseId: userId.uid,
-            fullName: guardianInfo.fullName,
-            phoneNumber: guardianInfo.phoneNumber,
-        }
-        addAccountDetails({accountData:accountDetails})
-        if (wannaAddSwimmers){
-        addAccountDependants({dependantsList: kids, fireBaseId:"2312sadASDAS"})
-        }
-        }
+
+    }
+    const accountDetails={
+        accountType:"individual",
+        dateJoined:new Date(),
+        emailAddress: guardianInfo.emailAddress,
+        firebaseId: userId.uid,
+        fullName: guardianInfo.fullName,
+        phoneNumber: guardianInfo.phoneNumber,
+    }
+    addAccountDetails({accountData:accountDetails})
+    if (wannaAddSwimmers){
+    addAccountDependants({dependantsList: kids, firebaseId:userId.uid})
+    }
+    onClose();
     }catch(error){
-            
+            console.log(error)
             if (error.message.includes("auth")){
                 const errMessage = extractContent(error.message)
                 const errMessageTwo = extractLatterContent(error.message)

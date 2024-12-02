@@ -13,8 +13,9 @@ import AdditionalSwimmersSection from "./AdditionalSwimmersSection";
 import CONFIG from "@/config";
 import validateFields from "@/app/hooks/firestoreHooks/validateFields";
 import { emailSignUp } from "@/app/hooks/authHooks/firebaseAuth";
+import { addAccountDependants, addAccountDetails } from "@/app/hooks/firestoreHooks/createAccount";
 
-export default function UnderEighteenDetails({setFinishSignUpDetails}) {
+export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) {
     
     const {guardianInfo, setGuardianInfo, kids, setKids, hasEmail, hasNumber, setErrorMessage} = useSignUpContext()
     const [guardianFullName, setGuardianFullName] = useState("")
@@ -53,15 +54,30 @@ export default function UnderEighteenDetails({setFinishSignUpDetails}) {
                 validateFields({data:swimmer})
             }
             setIncompleteFieldsError(false)
+            let userId; 
+
             if (guardianInfo.signUpMethod==="email"){
-                console.log("heeee")
-            const userId = await emailSignUp({email:guardianInfo.email,password:guardianInfo.password})
-            console.log("eeddd", userId)
+                console.log(JSON.stringify(guardianInfo))
+            userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password})
             }
+        
+        const accountDetails={
+            accountType:"guardian",
+            dateJoined:new Date(),
+            emailAddress: guardianInfo.emailAddress,
+            firebaseId: userId.uid,
+            fullName: guardianInfo.fullName,
+            phoneNumber: guardianInfo.phoneNumber,
+        }
+        addAccountDetails({accountData:accountDetails})
+        
+        addAccountDependants({dependantsList: kids, firebaseId:userId.uid})
+        
+        onClose()
+        
         }catch(error){
-            console.log("step 1",error.message)
+                console.log(error)
                 if (error.message.includes("auth")){
-                    console.log("step 2")
                     const errMessage = extractContent(error.message)
                     const errMessageTwo = extractLatterContent(error.message)
                     const finalErrMessage = errMessage + " (" + errMessageTwo + ")"

@@ -6,7 +6,7 @@ import { useSignUpContext } from "@/app/contexts/SignUpProvider";
 import BlackMoveLeft from "../../../public/BlackMoveLeft.svg"
 
 export default function CompleteSignUpDetails(
-    {underEighteen, setUnderEighteen, setFinishSignUpDetails}) {
+    {underEighteen, setUnderEighteen, setFinishSignUpDetails,onClose}) {
 
     const {setGuardianInfo,guardianInfo} = useSignUpContext();
 
@@ -73,11 +73,11 @@ export default function CompleteSignUpDetails(
             </div>
             
             {underEighteen===false?
-            <OverEighteenDetails setFinishSignUpDetails={setFinishSignUpDetails}/>
+            <OverEighteenDetails setFinishSignUpDetails={setFinishSignUpDetails} onClose={onClose}/>
             :
             <>
             {underEighteen &&
-            <UnderEighteenDetails setFinishSignUpDetails={setFinishSignUpDetails}/>}
+            <UnderEighteenDetails setFinishSignUpDetails={setFinishSignUpDetails} onClose={onClose}/>}
             </>
             }
             </div>

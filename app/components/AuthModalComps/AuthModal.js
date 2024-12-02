@@ -65,6 +65,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         setFinishSignUpDetails={setFinishSignUpDetails}
         underEighteen={underEighteen}
         setUnderEighteen={setUnderEighteen}
+        onClose={onClose}
         />  
         :
         <>        
@@ -139,6 +140,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         ${email.length>0 && password.length>3 ? 'cursor-pointer':'opacity-50 '}`}
         onClick={async()=>{
             try{
+                console.log("errr messa",errorMessage)
             await emailLogin({email:email,password:password});
             if(isModal){onClose()}
             }

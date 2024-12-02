@@ -9,11 +9,9 @@ import {
 // Signup
 export const emailSignUp = async ({email, password}) => {
   try {
-    console.log("WUFFFF", email, password)
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     return userCredential.user;
   } catch (error) {
-    console.log("WUFFFF2")
     console.error("Signup Error: ", error.message);
     throw error;
   }
