@@ -93,7 +93,9 @@ export default function TeamProfileEditor() {
         <div
             className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
           />  
-
+        <div
+        className="h-[1px]"
+        />
         <div className="font-bold text-streamlineBlue text-[18px] pt-[15px]">
             Location Information
         </div>
