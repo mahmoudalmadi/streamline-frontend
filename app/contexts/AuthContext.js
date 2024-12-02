@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { monitorAuthState } from '../hooks/authHooks/firebaseAuth'; // Ensure this is correctly imported
-import { getUserByFirebaseId } from '../hooks/firestoreHooks/user/getUser';
+import { getUserByFirebaseId, getDependantsByFirebaseId } from '../hooks/firestoreHooks/user/getUser';
 
 // Create the AuthContext
 const AuthContext = createContext();
@@ -18,12 +18,12 @@ export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState({"userData":null, "otherSwimmers":null});
  
   useEffect(() => {
-    const unsubscribe = monitorAuthState((currentUser) => {
+    const unsubscribe = monitorAuthState(async(currentUser) => {
       setUser(currentUser || null);
 
       if (currentUser){
-      const userData = getUserByFirebaseId({firebaseId:currentUser.uid})
-      const otherSwimmers = getDependantsByFirebaseId({firebaseId:currentUser.uid})
+      const userData = await getUserByFirebaseId({firebaseId:currentUser.uid})
+      const otherSwimmers = await getDependantsByFirebaseId({firebaseId:currentUser.uid})
 
         console.log("OTHER SWIMS", otherSwimmers)
         if(otherSwimmers){
@@ -39,9 +39,6 @@ export const AuthProvider = ({ children }) => {
             }))
         }
     }
-      ;
-
-      setUserInfo(userData)
       
     });
 
@@ -54,7 +51,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, setUser, userInfo, setUserInfo }}>
       {children}
     </AuthContext.Provider>
   );

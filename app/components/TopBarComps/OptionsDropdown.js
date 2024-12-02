@@ -6,8 +6,9 @@ import { useRouter } from 'next/navigation';
 const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
 
     const divRef = useRef(null);
-    const {user, setUser} = useAuth();
+    const {user, userInfo} = useAuth();
     const router = useRouter();
+
     const teamName = "Neptunes Swimming Academy";
 
     const handleClickOutside = (event) => {
@@ -47,8 +48,15 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                         <div className='px-[10px] text-[14px] text-gray-700 w-full hover:bg-gray-100 
                         py-[7px]' 
                         onClick={()=>{
+                            if(userInfo.userData.accountType==="team"){
                             router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/profile`)
-                            }}
+                            }
+                            else{
+                            router.push(`/user/${userInfo.userData.firebaseId}`)
+                            }
+                            onClose()
+                        }
+                    }   
                         >
                             Profile
                         </div>

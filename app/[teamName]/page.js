@@ -7,10 +7,11 @@ import SwimClubDescription from "../components/SwimClubDescription";
 import Map from "../components/TeamPageComps/Map"
 import TopBar from "../components/TopBarComps/TopBar";
 import SafetyCertified from "../../public/SafetyCertified.svg"
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import AmenitiesSection from "../components/TeamPageComps/AmenitiesSection";
 import HeadCoachSection from "../components/TeamPageComps/HeadCoachSection";
 import { useRouter, useSearchParams,usePathname } from "next/navigation";
+import { useAuth } from "../contexts/AuthContext";
 
 
 export default function TeamPage()  {
@@ -33,7 +34,6 @@ export default function TeamPage()  {
     Outside of coaching, Stefan enjoys sharing his knowledge through workshops and seminars, inspiring the next generation of swimmers and coaches alike. His vision for Neptunes Swimming Academy is not just about winning medals but also about building character, discipline, and lifelong friendships among athletes.\
     With Stefan Todorov at the helm, Neptunes Swimming Academy continues to be a beacon of hope and achievement in the world of competitive swimming."
 
-    
     const pathName = usePathname();
     const teamName = pathName.split('/').pop();
 

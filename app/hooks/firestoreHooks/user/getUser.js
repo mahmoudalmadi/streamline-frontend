@@ -27,7 +27,7 @@ const getUserByFirebaseId = async ({firebaseId}) => {
 const getDependantsByFirebaseId = async ({firebaseId}) => {
     try {
       const accountCollection = collection(db, "accountDependants"); // Reference the 'Account' collection
-      const q = query(accountCollection, where("firebaseId", "==", firebaseId)); // Query by firebaseId
+      const q = query(accountCollection, where("accountFirebaseId", "==", firebaseId)); // Query by firebaseId
   
       const querySnapshot = await getDocs(q); // Execute the query
   

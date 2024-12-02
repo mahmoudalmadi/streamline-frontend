@@ -24,6 +24,16 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
     const {guardianInfo, setGuardianInfo, kids, setKids,errorMessage,setErrorMessage} = useSignUpContext();
 
+    function extractContent(str) {
+        const match = str.match(/:(.*?)(?=\()/);
+        return match ? match[1].trim() : null; // Return the content or null if no match is found
+    }
+
+    function extractLatterContent(str) {
+        const match = str.match(/\/(.*?)(?=\))/);
+        return match ? match[1].trim() : null; // Return the content or null if no match is found
+    }
+
     useEffect(()=>{
         setGuardianInfo(prevState => ({
             ...prevState,
@@ -140,11 +150,13 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         ${email.length>0 && password.length>3 ? 'cursor-pointer':'opacity-50 '}`}
         onClick={async()=>{
             try{
-                console.log("errr messa",errorMessage)
+                
             await emailLogin({email:email,password:password});
+            
             if(isModal){onClose()}
             }
             catch(error){
+                
             const errMessage = extractContent(error.message)
             const errMessageTwo = extractLatterContent(error.message)
             const finalErrMessage = errMessage + " (" + errMessageTwo + ")"
