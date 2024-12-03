@@ -28,6 +28,11 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
         };
     }, [isVisible]);
 
+    const loginQuery = {state:"login"};
+    const signUpQuery = {state:"signup"};
+    const teamsLoginQuery = new URLSearchParams(loginQuery).toString();
+    const teamsSignupQuery = new URLSearchParams(signUpQuery).toString();
+
     return (
         isVisible && (
             <div
@@ -70,12 +75,41 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                     </div>
                     :
                     <div className='w-[150px]'>
+                        <div
+                        className='px-[10px] text-[14px] text-gray-500 w-full 
+                        pt-[3px] pb-[3px]'
+                        >
+                        Swimmers
+                        </div>
+                        
                         <div className='px-[10px] text-[14px] text-gray-700 w-full hover:bg-gray-100 
                         py-[10px]' onClick={()=>{openLogInModal();setIsLogin(true),onClose()}}>
                             Log in
                         </div>
                         <div className='py-[10px] px-[10px] text-[14px] text-gray-700 w-full hover:bg-gray-100'
                         onClick={()=>{openLogInModal();setIsLogin(false); onClose()}}>
+                            Sign up
+                        </div>
+                        
+                        <div className='w-full bg-gray-200 h-[1px]'/>
+
+                        <div
+                        className='px-[10px] text-[14px] text-gray-500 w-full 
+                        pt-[6px] pb-[3px]'
+                        >
+                        
+                        Teams
+                        </div>
+                        <div className='px-[10px] text-[14px] text-gray-700 w-full hover:bg-gray-100 
+                        py-[10px]' onClick={()=>{
+                            router.push(`/teams?${teamsLoginQuery}`)
+                        }}>
+                            Log in
+                        </div>
+                        <div className='py-[10px] px-[10px] text-[14px] text-gray-700 w-full hover:bg-gray-100'
+                         onClick={()=>{
+                            router.push(`/teams?${teamsSignupQuery}`)
+                        }}>
                             Sign up
                         </div>
                     </div>
