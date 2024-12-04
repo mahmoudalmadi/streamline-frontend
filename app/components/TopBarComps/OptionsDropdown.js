@@ -67,7 +67,7 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                         </div>
                         <div className='w-full bg-gray-200 h-[1px]'/>
                         <div className='py-[7px] px-[8px] text-[14px] text-gray-700 w-full hover:bg-gray-100'
-                        onClick={()=>{logout(); onClose()}}>
+                        onClick={()=>{logout(router); onClose()}}>
                             Log out
                         </div>
                     </div>

@@ -7,11 +7,11 @@ const addAccountDetails = async ({accountData}) => {
       const accountCollection = collection(db, "Account"); // Change 'accounts' to your desired collection name
       
       const newDocRef = doc(accountCollection); // Auto-generate a document ID
-
+      
       await setDoc(newDocRef, {
         accountType: accountData.accountType,
         dateJoined: accountData.dateJoined,
-        emailAddress: accountData.emailAddress,
+        emailAddress: accountData.emailAddress.toLowerCase(),
         firebaseId: accountData.firebaseId,
         fullName: accountData.fullName,
         phoneNumber: accountData.phoneNumber,

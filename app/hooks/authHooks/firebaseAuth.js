@@ -5,6 +5,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
+import { useRouter } from "next/navigation"
 
 // Signup
 export const emailSignUp = async ({email, password}) => {
@@ -20,6 +21,7 @@ export const emailSignUp = async ({email, password}) => {
 // Login
 export const emailLogin = async ({email, password}) => {
   try {
+    console.log(email, password)
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return userCredential.user;
   } catch (error) {
@@ -29,8 +31,10 @@ export const emailLogin = async ({email, password}) => {
 };
 
 // Logout
-export const logout = async () => {
+export const logout = async (router) => {
   try {
+    router.push("/")
+    window.location.reload()
     await signOut(auth);
   } catch (error) {
     console.error("Logout Error: ", error.message);

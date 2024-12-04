@@ -1,14 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import DynamicScreen from "../components/DynamicScreen";
-import StreamlineLogo from "../../public/streamlineLogo.svg";
+import DynamicScreen from "../DynamicScreen";
+import StreamlineLogo from "../../../public/streamlineLogo.svg";
+import LoginSignUp from "./LoginSignUp";
 
 export default function ClientTeamsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const stateValue = searchParams.get("state");
 
+  const [isLogin, setIsLogin]  = useState(stateValue=="login");
+  const [isSignUp, setIsSignUp] = useState(stateValue=="signup");
+
+  const switchModalType = () => {
+    setIsLogin(!isLogin)
+    setIsSignUp(!isSignUp)
+  }
   const redirectHome = () => {
     router.push("/");
   };
@@ -36,17 +45,19 @@ export default function ClientTeamsPage() {
             Welcome to the Experience Streamline Teams Portal
           </div>
 
-          {stateValue ? (
-            <div className="flex bg-white rounded-[10px] py-[10px] w-[50%] justify-center mt-[20px]">
-              {stateValue}
+          {stateValue || isLogin || isSignUp ? (
+            <div className="flex justify-center">
+              <LoginSignUp isSignUp={isSignUp} isLogin={isLogin} setIsLogin={setIsLogin} setIsSignUp={setIsSignUp} switchModalType={switchModalType}/>
             </div>
           ) : (
             <div className="flex flex-col space-y-[10px] py-[20px]">
-              <div className="flex w-full font-bold bg-white px-[30px] py-[10px] rounded-full justify-center cursor-pointer">
+              <div className="flex w-full font-bold bg-white px-[30px] py-[10px] rounded-full justify-center cursor-pointer"
+              onClick={()=>{setIsLogin(true);setIsSignUp(false)}}>
                 Log In Existing Team Account
               </div>
 
-              <div className="flex w-full font-bold bg-white px-[20px] py-[10px] rounded-full justify-center cursor-pointer">
+              <div className="flex w-full font-bold bg-white px-[20px] py-[10px] rounded-full justify-center cursor-pointer"
+              onClick={()=>{setIsLogin(false);setIsSignUp(true)}}>
                 Create New Team Account
               </div>
             </div>

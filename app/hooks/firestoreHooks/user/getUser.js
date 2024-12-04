@@ -1,4 +1,4 @@
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, QueryStartAtConstraint } from "firebase/firestore";
 import { db } from "@/app/components/firebaseClient";
 
 const getUserByFirebaseId = async ({firebaseId}) => {
@@ -46,5 +46,38 @@ const getDependantsByFirebaseId = async ({firebaseId}) => {
       throw error; // Re-throw error for further handling
     }
   };
+
+  export async function checkAccountExists({ value, valueType, accountType })  {
+    try {
+      // Reference the Account collection
+      const accountCollection = collection(db, "Account");
+      console.log(value,valueType)
+      // Construct Firestore query based on valueType
+      let q;
+      if (accountType!="team")
+      {
+        q = query(
+        accountCollection,
+        where(valueType, "==", value), // Check for email or phone
+        where("accountType", "in", ["guardian","individual"]) // Check for accountType
+      );
+      }else{
+        q = query(
+          accountCollection,
+          where(valueType, "==", value), // Check for email or phone
+          where("accountType", "==", accountType) // Check for accountType
+        );
+      }
+  
+      // Execute the query
+      const querySnapshot = await getDocs(q);
+      console.log("QUERY SNAPS", querySnapshot)
+      // Return true if at least one document matches, otherwise false
+      return !querySnapshot.empty;
+    } catch (error) {
+      console.error("Error checking account:", error);
+      throw error;
+    }
+  }
 
 export {getUserByFirebaseId, getDependantsByFirebaseId};

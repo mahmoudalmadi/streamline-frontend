@@ -10,6 +10,7 @@ import { emailSignUp, emailLogin } from '../../hooks/authHooks/firebaseAuth';
 import CompleteSignUpDetails from './CompleteSignUpDetails';
 import {  useSignUpContext } from '../../contexts/SignUpProvider';
 import BlackMoveLeft from "../../../public/BlackMoveLeft.svg";
+import { checkAccountExists } from '@/app/hooks/firestoreHooks/user/getUser';
 
 const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
@@ -151,15 +152,25 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         onClick={async()=>{
             try{
                 
+            const accountExists = await checkAccountExists({valueType:"emailAddress",value:email,accountType:"guardian"})
+            if (!accountExists){
+                throw("ExistenceError")
+            }
+
             await emailLogin({email:email,password:password});
-            
+            window.location.reload()
             if(isModal){onClose()}
             }
             catch(error){
-                
+                console.log(error)
+            let finalErrMessage    
+            if (error === "ExistenceError"){
+                finalErrMessage="A swimmer account with the following credentials does not exist"
+            }else{
             const errMessage = extractContent(error.message)
             const errMessageTwo = extractLatterContent(error.message)
-            const finalErrMessage = errMessage + " (" + errMessageTwo + ")"
+            finalErrMessage = errMessage + " (" + errMessageTwo + ")"
+            }
             setErrorMessage(finalErrMessage)
             }
             }}>
