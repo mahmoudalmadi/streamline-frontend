@@ -10,6 +10,7 @@ export default function TeamLogin({switchModalType}){
 
     const router=useRouter();
     const isModal=false;
+    const teamName="Neptunes Swimming Academy"
 
     const {handleTeamRegistrantInfo, teamRegistrantInfo,errorMessage,setErrorMessage} = useTeamSignUpContext();
     const [showPassword,setShowPassword] = useState(false);
@@ -106,12 +107,12 @@ export default function TeamLogin({switchModalType}){
             if (!accountExists){
                 throw("ExistenceError")
             }
-            emailLogin({email:teamRegistrantInfo.emailAddress,password:teamRegistrantInfo.password});
-            router.push("/")
+            await emailLogin({email:teamRegistrantInfo.emailAddress,password:teamRegistrantInfo.password});
+            
+            router.push(`/${teamName}/profile`)
             if(isModal){onClose()}
             }
             catch(error){
-                console.log(error)
             let finalErrMessage    
             if (error === "ExistenceError"){
                 finalErrMessage="A team account with the following credentials does not exist"
@@ -119,6 +120,7 @@ export default function TeamLogin({switchModalType}){
             const errMessage = extractContent(error.message)
             const errMessageTwo = extractLatterContent(error.message)
             finalErrMessage = errMessage + " (" + errMessageTwo + ")"
+            
             }
             setErrorMessage(finalErrMessage)
             }

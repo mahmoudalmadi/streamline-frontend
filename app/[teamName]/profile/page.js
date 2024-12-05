@@ -10,8 +10,14 @@ import CONFIG from "@/config";
 import ImageUploader from "@/app/components/TeamProfileEditorComponents/ImageUploader";
 import AmenitiesSelection from "@/app/components/TeamProfileEditorComponents/AmentitiesSelection";
 import DaysHoursOperations from "@/app/components/TeamProfileEditorComponents/DaysHoursOperation";
+import { useSearchParams } from "next/navigation";
 
 export default function TeamProfileEditor() {
+
+    const searchParams = useSearchParams();
+    const phoneNumber = searchParams.get("phoneNumber");
+    const emailAddress = searchParams.get("emailAddress");
+    const fullName = searchParams.get("fullName");
 
     const teamName = "Neptunes Swimming Academy"
     const [coachImg, setCoachImg] = useState([]);

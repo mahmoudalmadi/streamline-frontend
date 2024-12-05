@@ -16,6 +16,22 @@ export default function TeamSignUp({switchModalType}){
     const {handleTeamRegistrantInfo, teamRegistrantInfo,errorMessage,setErrorMessage,setTeamRegistrantInfo} = useTeamSignUpContext();
     const [showPassword,setShowPassword] = useState(false);
 
+    const handleNavigate = () => {
+        const fullName = "John Doe";
+        const phoneNumber = "1234567890";
+        const emailAddress = "john.doe@example.com";
+    
+        // Construct the query string
+        const query = new URLSearchParams({
+          fullName,
+          phoneNumber,
+          emailAddress,
+        }).toString();
+    
+        // Navigate to teamName/profile with query parameters
+        router.push(`/${teamRegistrantInfo.teamName}/profile?${query}`);
+      };
+
     function extractContent(str) {
         const match = str.match(/:(.*?)(?=\()/);
         return match ? match[1].trim() : null; // Return the content or null if no match is found
@@ -122,33 +138,10 @@ export default function TeamSignUp({switchModalType}){
 
         <div className={`flex items-center justify-center py-2 rounded-full
         mt-[20px] font-bold bg-streamlineBlue text-white w-full text-center
-        ${teamRegistrantInfo.emailAddress.length>0 && teamRegistrantInfo.password.length>3 ? 'cursor-pointer':'opacity-50 '}`}
-        onClick={async()=>{
-            if(teamRegistrantInfo.emailAddress.length>0 && teamRegistrantInfo.password.length>3){
-            try{
-                
-            const accountExists = await checkAccountExists({valueType:"emailAddress",value:teamRegistrantInfo.emailAddress,accountType:"team"})
-            if (!accountExists){
-                throw("ExistenceError")
-            }
-            emailLogin({email:teamRegistrantInfo.emailAddress,password:teamRegistrantInfo.password});
-            router.push("/")
-            if(isModal){onClose()}
-            }
-            catch(error){
-                console.log(error)
-            let finalErrMessage    
-            if (error === "ExistenceError"){
-                finalErrMessage="A team account with the following credentials does not exist"
-            }else{
-            const errMessage = extractContent(error.message)
-            const errMessageTwo = extractLatterContent(error.message)
-            finalErrMessage = errMessage + " (" + errMessageTwo + ")"
-            }
-            setErrorMessage(finalErrMessage)
-            }
-            }
-            }}>
+        ${teamRegistrantInfo.emailAddress.length>0 && teamRegistrantInfo.isValidNum && teamRegistrantInfo.fullName.length>1 && teamRegistrantInfo.teamName.length>1 ? 'cursor-pointer':'opacity-50 '}`}
+        onClick={()=>{
+            handleNavigate()
+        }}>
             Complete Team Details
         </div>
         </div>
