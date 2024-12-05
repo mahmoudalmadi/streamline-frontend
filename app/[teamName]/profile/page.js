@@ -15,11 +15,12 @@ import { useSearchParams } from "next/navigation";
 export default function TeamProfileEditor() {
 
     const searchParams = useSearchParams();
-    const phoneNumber = searchParams.get("phoneNumber");
-    const emailAddress = searchParams.get("emailAddress");
-    const fullName = searchParams.get("fullName");
-
-    const teamName = "Neptunes Swimming Academy"
+    const teamName = searchParams.get("teamName");
+    const isSigningUp = searchParams.get("isSigningUp");
+    
+    const [fullName, setFullName] = useState(searchParams?searchParams.get("fullName"):"")
+    const [phoneNumber, setPhoneNumber] = useState(searchParams?searchParams.get("phoneNumber"):"")
+    const [emailAddress, setEmailAddress] = useState(searchParams?searchParams.get("emailAddress"):"")
     const [coachImg, setCoachImg] = useState([]);
     const [logoImg, setLogoImg] = useState([]);
     const [locationImgs, setLocationImgs] = useState([]);
@@ -66,13 +67,16 @@ export default function TeamProfileEditor() {
           {teamName} Profile
         </div>
 
+        {isSigningUp && <div className="text-gray-500 leading-[14px] mb-[20px]">
+          Please complete the fields below and submit to complete signing up your team
+        </div>}
         <div
             className="relative w-full h-[1px] bg-gray-200 mt-[5px]"
           />  
 
         <div className="mt-[10px] space-y-[15px]">
 
-        <div className="font-bold text-streamlineBlue text-[18px] mt-[16px]">
+        <div className="font-bold text-streamlineBlue text-[18px] mt-[16px] l">
             Team Information
         </div>
         <ProfileEntryEditor
@@ -96,6 +100,40 @@ export default function TeamProfileEditor() {
         <div
         className="h-[8px]"
         />
+
+        <div
+            className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
+          />  
+
+        <div
+        className="h-[10px]"
+        />
+
+        <div className="font-bold text-streamlineBlue text-[18px] mt-[16px]">
+            Contact Information
+        </div>
+        <ProfileEntryEditor
+        prompt={"Contact Name"}
+        response={fullName}
+        setResponse={setNewTeamName}
+        placeholder={"Team Name"}
+        isLong={false}
+        />
+        <ProfileEntryEditor
+        prompt={"Swim Team Description"}
+        response={swimTeamDescription}
+        setResponse={setSwimTeamDescription}
+        placeholder={"Talk about your swim team's culture, offerings, history, staff etc..."}
+        isLong={true}
+        />
+        <ImageUploader allowMultiple={false} images={logoImg} setImages={setLogoImg}
+        buttonMessage={
+            logoImg.length!=0?"Replace Team Logo Image":"Upload Team Logo Image"}/>
+
+        <div
+        className="h-[8px]"
+        />
+
         <div
             className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
           />  

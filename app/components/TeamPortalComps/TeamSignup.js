@@ -17,19 +17,23 @@ export default function TeamSignUp({switchModalType}){
     const [showPassword,setShowPassword] = useState(false);
 
     const handleNavigate = () => {
-        const fullName = "John Doe";
-        const phoneNumber = "1234567890";
-        const emailAddress = "john.doe@example.com";
+        const fullName = teamRegistrantInfo.fullName;
+        const phoneNumber = teamRegistrantInfo.phoneNumber;
+        const emailAddress = teamRegistrantInfo.emailAddress;
+        const teamName = teamRegistrantInfo.teamName;
+        const isSigningUp = true
     
         // Construct the query string
         const query = new URLSearchParams({
           fullName,
           phoneNumber,
           emailAddress,
+          teamName,
+          isSigningUp
         }).toString();
     
         // Navigate to teamName/profile with query parameters
-        router.push(`/${teamRegistrantInfo.teamName}/profile?${query}`);
+        router.push(`/${teamRegistrantInfo.teamName.toLowerCase().replace(" ","")}/profile?${query}`);
       };
 
     function extractContent(str) {
@@ -95,6 +99,10 @@ export default function TeamSignUp({switchModalType}){
         setFieldResponse={setTeamRegistrantInfo}
         field={"emailAddress"}
         isLong={false}/>
+
+        <div className="text-[12px] text-streamlineBlue">
+            This contact information will be used to contact you regarding prospective swimmers. It will also be displayed on your public team profile. Additional contact information can be added later.
+        </div>
         
             {/* <div>
             <div className="text-[15px] font-bold mb-[3px]">
