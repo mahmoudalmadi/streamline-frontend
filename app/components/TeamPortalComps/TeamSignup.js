@@ -77,7 +77,7 @@ export default function TeamSignUp({switchModalType}){
         />
 
         <MultiFieldEntryEditor
-        prompt="Account Holder Name"
+        prompt="Contact Full Name"
         placeholder={"Full Name"}
         fieldResponse={teamRegistrantInfo}
         setFieldResponse={setTeamRegistrantInfo}
@@ -100,8 +100,8 @@ export default function TeamSignUp({switchModalType}){
         field={"emailAddress"}
         isLong={false}/>
 
-        <div className="text-[12px] text-streamlineBlue">
-            This contact information will be used to contact you regarding prospective swimmers. It will also be displayed on your public team profile. Additional contact information can be added later.
+        <div className="text-[12px] text-streamlineBlue leading-[15px]">
+            This information will be used for login credentials and/or to contact you by prospective swimmers. It will also be displayed on your public team profile. Additional contact information can be added later.
         </div>
         
             {/* <div>

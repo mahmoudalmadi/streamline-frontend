@@ -3,7 +3,7 @@
 import DynamicScreen from "@/app/components/DynamicScreen";
 import ProfileEntryEditor from "@/app/components/TeamProfileEditorComponents/ProfileEntryEditor";
 import TopBar from "@/app/components/TopBarComps/TopBar";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import GoogleAddyEntryEditor from "@/app/components/TeamProfileEditorComponents/GoogleAddressInput";
 import SelectingCategories from "@/app/components/TeamProfileEditorComponents/SelectingCategories";
 import CONFIG from "@/config";
@@ -11,15 +11,16 @@ import ImageUploader from "@/app/components/TeamProfileEditorComponents/ImageUpl
 import AmenitiesSelection from "@/app/components/TeamProfileEditorComponents/AmentitiesSelection";
 import DaysHoursOperations from "@/app/components/TeamProfileEditorComponents/DaysHoursOperation";
 import { useSearchParams } from "next/navigation";
+import MultiFieldPhoneEntry from "@/app/components/AuthModalComps/MultiFieldPhoneEntry";
 
 export default function TeamProfileEditor() {
 
     const searchParams = useSearchParams();
-    const teamName = searchParams.get("teamName");
     const isSigningUp = searchParams.get("isSigningUp");
     
+    const teamName = searchParams.get("teamName");
     const [fullName, setFullName] = useState(searchParams?searchParams.get("fullName"):"")
-    const [phoneNumber, setPhoneNumber] = useState(searchParams?searchParams.get("phoneNumber"):"")
+    const [phoneNumberObj, setPhoneNumberObj] = useState({phoneNumber:searchParams?searchParams.get("phoneNumber"):"", isValid:null})
     const [emailAddress, setEmailAddress] = useState(searchParams?searchParams.get("emailAddress"):"")
     const [coachImg, setCoachImg] = useState([]);
     const [logoImg, setLogoImg] = useState([]);
@@ -46,6 +47,72 @@ export default function TeamProfileEditor() {
 
     const [daysOfWeek,setDaysOfWeek] = useState(CONFIG.daysOfWeek);
     const [timesOfDay,setTimesOfDay] = useState(CONFIG.timesOfDay);
+
+    const [isDaysSet,setIsDaysSet] = useState(false)
+    const [isTimesSet,setIsTimesSet] = useState(false)
+
+    useEffect(()=>{
+      for (const day in daysOfWeek){
+        if (day.checked){
+          setIsDaysSet(true)      
+        }
+      }
+    },[daysOfWeek])
+    useEffect(()=>{
+      for (const time in timesOfDay){
+        if(time.checked){
+          setIsTimesSet(true)
+        }
+      }
+    },[timesOfDay])
+
+    const isFirstRender = useRef(true);
+    let teamMetadata;
+    useEffect(( )=>{
+      if (isFirstRender.current){
+        console.log("FIRST RENDER BB")
+        isFirstRender.current=false;
+      }else{
+        teamMetadata = {
+          teamInfo:{
+            teamName:teamName,
+            swimTeamDescription:swimTeamDescription,
+            logoImg:logoImg
+          },
+          contactInfo:{
+            emailAddress:emailAddress,
+            phoneNumber:phoneNumberObj.phoneNumber,
+            contactName:fullName
+          },
+          locationInfo:{
+            address:address,
+            city:city,
+            province:province,
+            longitude:coords?coords['long']:null,
+            latitude:coords?coords['lat']:null,
+            amenities:selectedAmenities,
+            locationImgs:locationImgs
+          },
+          programsOffered:{
+            opDays:daysOfWeek,
+            opTimes:timesOfDay,
+            skillLevels:programLevels,
+            programTypes:programTypes,          
+          },
+          coachInfo:{
+            fullName:headCoachName,
+            description:headCoachBio,
+            coachImg:coachImg
+          }
+        }
+      }
+
+    },[teamName,swimTeamDescription,logoImg,emailAddress,phoneNumberObj,fullName,address,city,province,coords,selectedAmenities,locationImgs,daysOfWeek,timesOfDay,programLevels,programTypes,headCoachName,headCoachBio,coachImg])
+
+    const handleSubmit = () => {
+      
+
+    }
 
     return(
         <div className="flex justify-center items-center h-full">
@@ -115,20 +182,27 @@ export default function TeamProfileEditor() {
         <ProfileEntryEditor
         prompt={"Contact Name"}
         response={fullName}
-        setResponse={setNewTeamName}
-        placeholder={"Team Name"}
+        setResponse={setFullName}
+        placeholder={"Full Name"}
         isLong={false}
         />
+        
         <ProfileEntryEditor
-        prompt={"Swim Team Description"}
-        response={swimTeamDescription}
-        setResponse={setSwimTeamDescription}
-        placeholder={"Talk about your swim team's culture, offerings, history, staff etc..."}
-        isLong={true}
+        prompt={"Team Contact Email"}
+        response={emailAddress}
+        setResponse={setEmailAddress}
+        placeholder={"Email Address"}
+        isLong={false}
         />
-        <ImageUploader allowMultiple={false} images={logoImg} setImages={setLogoImg}
-        buttonMessage={
-            logoImg.length!=0?"Replace Team Logo Image":"Upload Team Logo Image"}/>
+
+        <MultiFieldPhoneEntry 
+        prompt="Contact Phone Number"
+        placeholder={"Phone Number"}
+        fieldResponse={phoneNumberObj}
+        setFieldResponse={setPhoneNumberObj}
+        field="phoneNumber"
+        customLength={"w-[40%]"}
+        />
 
         <div
         className="h-[8px]"
@@ -162,7 +236,7 @@ export default function TeamProfileEditor() {
 
         <ImageUploader allowMultiple={true} images={locationImgs} setImages={setLocationImgs}
         buttonMessage={
-        logoImg.length===0?"Upload Location Photos":"Add Location Photos"}/>
+        locationImgs.length===0?"Upload Location Photos":"Add Location Photos"}/>
 
         <AmenitiesSelection 
         selectedAmenities={selectedAmenities}
