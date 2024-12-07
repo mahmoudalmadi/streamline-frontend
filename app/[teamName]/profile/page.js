@@ -111,6 +111,21 @@ export default function TeamProfileEditor() {
 
     const handleSubmit = () => {
       
+      // USE THIS FUNCTION ONLY IF SIGNING UP
+      
+      // CHECK TO ENSURE NO EMPTY FIELDS
+
+      // ENSURE SIGN UP METHOD IS SUCCESSFULL
+
+      // SEND TO BACKEND
+
+      // ROUTE EM TO THE DASHBOARD
+
+    }
+
+    const handleUpdate = () => {
+
+      // JUST UPDATE THE WHOLE DAMN THING OR AT LEAST BREAK IT DOWN TO COLLECTIONS THAT MATTER POTENTIALLY
 
     }
 
