@@ -75,19 +75,25 @@ export default function TeamProfileEditor() {
     const isFirstRender = useRef(true);
     const [teamMetadata,setTeamMetadata] = useState([])
 
-    const changeField = ({setDict, field,value}) => {
-      
-      setDict(prevState => ({
-        ...prevState,
-        [field]: value,
-      }));
+    const changeField = ({ setDict, field, value }) => {
+      setDict(prevState => {
+        if (prevState[field] === value) {
+          // No state change required
+          return prevState;
+        }
+        // Update state only if the value is different
+        return {
+          ...prevState,
+          [field]: value,
+        };
+      });
+    };    
 
-    }
-    const [teamInfo,setTeamInfo] = useState({"teamName":teamName,"swimTeamDescription":swimTeamDescription,"logoImg":logoImg})
+    const [teamInfo,setTeamInfo] = useState({"teamName":teamName,"swimTeamDescription":swimTeamDescription,"logoImg":logoImg,"sport":"swimming"})
     const [contactInfo, setContactInfo] = useState({"emailAddress":emailAddress, "phoneNumber":phoneNumberObj?phoneNumberObj.phoneNumber:"","contactName":fullName})
     const [locationData,setLocationData] = useState({"address":address,"city":city,"province":province,"country":country,
-    "longitude": coords ? coords["long"] : null,
-    "latitude": coords ? coords["lat"] : null,
+    "longitude": coords ? coords.lng : null,
+    "latitude": coords ? coords.lat : null,
     "amenities": selectedAmenities,
     "locationImgs": locationImgs})
     const [programsOffered,setProgramsOffered] = useState({
@@ -111,7 +117,7 @@ export default function TeamProfileEditor() {
         changeField({setDict:setTeamInfo,field:"swimTeamDescription",value:swimTeamDescription})
         changeField({setDict:setTeamInfo,field:"logoImg",value:logoImg})
         changeField({setDict:setTeamInfo,field:"teamName",value:teamName})
-        console.log(programLevels)
+        
         changeField({setDict:setContactInfo,field:"emailAddress",value:emailAddress})
         changeField({setDict:setContactInfo,field:"phoneNumber",value:phoneNumberObj?phoneNumberObj.phoneNumber:""})
         changeField({setDict:setContactInfo,field:"contactName",value:fullName})
@@ -120,8 +126,8 @@ export default function TeamProfileEditor() {
         changeField({setDict:setLocationData,field:"city",value:city})
         changeField({setDict:setLocationData,field:"province",value:province})
         changeField({setDict:setLocationData,field:"country",value:country})
-        changeField({setDict:setLocationData,field:"longitude",value:coords ? coords["long"] : null})
-        changeField({setDict:setLocationData,field:"latitude",value:coords ? coords["long"] : null})
+        changeField({setDict:setLocationData,field:"longitude",value:coords ? coords.lng : null})
+        changeField({setDict:setLocationData,field:"latitude",value:coords ? coords.lat : null})
         changeField({setDict:setLocationData,field:"amenities",value:selectedAmenities})
         changeField({setDict:setLocationData,field:"locationImgs",value:locationImgs})
         
@@ -134,6 +140,7 @@ export default function TeamProfileEditor() {
         changeField({setDict:setCoachInfo,field:"description","value":headCoachBio})
         changeField({setDict:setCoachInfo,field:"coachImg","value":coachImg})
       };
+      
 
       setIsMissingPrograms(false)
       setIsMissingCoachInfo(false)
@@ -159,8 +166,8 @@ export default function TeamProfileEditor() {
     };
 
     const verifyDataComplete = () => {
-      
       // USE THIS FUNCTION ONLY IF SIGNING UP
+      console.log("WATATDASKDJASLKD",programsOffered)
       // let metaData
       let metaData = {
         "teamInfo":teamInfo,
@@ -173,7 +180,6 @@ export default function TeamProfileEditor() {
       if (metaData)
       {
       for (const [key, value] of Object.entries(metaData)) {
-        console.log(key,value)
       try{
         validateFields({data:value})
         if (key==="programsOffered"){
@@ -187,6 +193,7 @@ export default function TeamProfileEditor() {
               else{
               missingHoursCounter+=1;
               setHourOfOpError(day.day + " is missing hours of operation")
+              throw new Error("missing hops")
               }
             if (missingHoursCounter===0){
               setHourOfOpError("")
@@ -200,6 +207,7 @@ export default function TeamProfileEditor() {
 
         }
       }catch(error){
+        console.log(error,programsOffered.skillLevels)
         //GO TO KEY PART OF PAGE
         if (key.toString()==="teamInfo"){
         setIsMissingTeamInfo(true)
@@ -289,7 +297,7 @@ export default function TeamProfileEditor() {
         placeholder={"Talk about your swim team's culture, offerings, history, staff etc..."}
         isLong={true}
         />
-        <ImageUploader allowMultiple={false} images={logoImg} setImages={setLogoImg}
+        <ImageUploader allowMultiple={false} images={logoImg} setImages={setLogoImg} prompt={"Logo Image"}
         buttonMessage={
             logoImg.length!=0?"Replace Team Logo Image":"Upload Team Logo Image"}/>
 
@@ -337,7 +345,7 @@ export default function TeamProfileEditor() {
         fieldResponse={phoneNumberObj}
         setFieldResponse={setPhoneNumberObj}
         field="phoneNumber"
-        customLength={"w-[40%]"}
+        customLength={"w-[190px]"}
         />
 
         <div
@@ -379,7 +387,7 @@ export default function TeamProfileEditor() {
         setProvince={setProvince}
         />
 
-        <ImageUploader allowMultiple={true} images={locationImgs} setImages={setLocationImgs}
+        <ImageUploader allowMultiple={true} images={locationImgs} setImages={setLocationImgs} prompt={"Location Images (at least 5 images)"}
         buttonMessage={
         locationImgs.length===0?"Upload Location Photos":"Add Location Photos"}/>
 
@@ -457,7 +465,7 @@ export default function TeamProfileEditor() {
         isLong={true}
         />
 
-        <ImageUploader allowMultiple={false} images={coachImg} setImages={setCoachImg}
+        <ImageUploader allowMultiple={false} images={coachImg} setImages={setCoachImg} prompt={"Head Coach Photo"}
         buttonMessage={
             coachImg.length!=0?"Replace Head Coach Photo":"Upload Head Coach Photo"}/>
 

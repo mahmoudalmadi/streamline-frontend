@@ -43,9 +43,9 @@ export default function DaysHoursOperations({daysOfWeek,setDaysOfWeek,hourOfOpEr
               {hourOfOpError}
             </div>}
             <div className="flex mt-2 pr-1.5">
-                <div className="flex flex-1 space-x-[30px] mt-[10px]">
+                <div className="flex flex-1 space-x-[25px] mt-[10px]">
                     {/* Preferred Days */}
-                    <div className="flex flex-col justify-center w-[150px]">
+                    <div className="flex flex-col justify-center w-[145px]">
 
                     {daysOfWeek.map((item, index) => (
                         <div className="flex items-center">
@@ -88,7 +88,7 @@ export default function DaysHoursOperations({daysOfWeek,setDaysOfWeek,hourOfOpEr
                         hours of operation
                         </div>
                         </div>
-                        <div className="flex space-x-[40px]">
+                        <div className="flex space-x-[25px]">
                         <div>
                         {CONFIG.hoursOfOps.slice(0,12).map((item, index) => (
                             <div

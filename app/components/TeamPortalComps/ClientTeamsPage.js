@@ -24,7 +24,7 @@ export default function ClientTeamsPage() {
 
   return (
     <div
-      className="bg-custom-radial"
+      className="bg-custom-radial w-screen overflow-x-hidden"
       style={{
         "--tw-gradient-from": "#28C8ED",
         "--tw-gradient-to": "#FFFFFF",
@@ -33,7 +33,7 @@ export default function ClientTeamsPage() {
         height: "110vh",
       }}
     >
-      <DynamicScreen>
+    <DynamicScreen>
         <div>
           <button onClick={redirectHome}>
             <StreamlineLogo className="w-[130px] h-[50px]" />
@@ -64,6 +64,6 @@ export default function ClientTeamsPage() {
           )}
         </div>
       </DynamicScreen>
-    </div>
+      </div>
   );
 }

@@ -65,12 +65,12 @@ export default function SelectingCategories({categoryTypes, programs, setProgram
           focus:outline-none focus:border-blue-500" 
           />
             <select
-                value={program.name || ""}
-                onChange={(e) => handleInputChange(index, "name", e.target.value)}
+                value={program.category || ""}
+                onChange={(e) => handleInputChange(index, "category", e.target.value)}
                 style={{ marginRight: "10px" }}
                 className="flex w-[40%] cursor-pointer"
             >
-                <option value="" disabled>
+                <option value={""} disabled>
                 Select category
                 </option>
                 {categories.map((option, i) => (

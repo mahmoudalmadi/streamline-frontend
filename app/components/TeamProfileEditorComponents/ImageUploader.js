@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages }) => {
+const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages,prompt }) => {
 
   const handleImageUpload = (event) => {
     const files = event.target.files;
@@ -34,8 +34,11 @@ const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages }) => {
   };
 
   return (
-    <div>
+    <div className="pb-[8px]">
       {/* Hidden file input */}
+      <div className="text-[15px] font-bold mb-[6px]">
+        {prompt}
+      </div>
       <label
         className="font-bold bg-white border border-streamlineBlue text-streamlineBlue border-[1.5] rounded-full text-[15px] " 
         style={{

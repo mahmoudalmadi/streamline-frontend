@@ -24,7 +24,28 @@ async function resolveShortLink(shortUrl) {
       throw error;
     }
   }
+
+  async function geocodeAddress(address) {
+    const apiKey = "YOUR_API_KEY"; // Replace with your Google API key
+    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
   
+    try {
+      const response = await fetch(geocodeUrl);
+      const data = await response.json();
+  
+      if (data.results && data.results.length > 0) {
+        const location = data.results[0].geometry.location; // Extract coordinates
+        console.log(`Coordinates for "${address}":`, location);
+        return location; // { lat: <latitude>, lng: <longitude> }
+      } else {
+        console.error("No results found for the given address.");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error geocoding address:", error);
+      return null;
+    }
+  }
 
   async function getAddressFromCoords(lat, lng, apiKey) {
     try {
@@ -51,7 +72,7 @@ async function resolveShortLink(shortUrl) {
   }
   
 
-export default async function extractAddressFromGoogleLink({addressLink}){
+export async function extractAddressFromGoogleLink({addressLink}){
 
     let fullUrl;
 
@@ -84,4 +105,30 @@ export default async function extractAddressFromGoogleLink({addressLink}){
 
       console.log("package",lat,lng,address)
     return {lat,lng, address};
+}
+
+export async function getCoordinatesFromAddress({address}) {
+  const backendUrl = CONFIG.backendRoute+'geocode'; // Replace with your backend's URL
+
+  try {
+      const response = await fetch(backendUrl, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ address }), // Send the address in the request body
+      });
+
+      if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch coordinates');
+      }
+
+      const data = await response.json();
+      console.log(`Coordinates for "${address}":`, data.location);
+      return data.location; // { lat: <latitude>, lng: <longitude> }
+  } catch (error) {
+      console.error('Error fetching coordinates:', error.message);
+      return null;
+  }
 }

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import extractAddressFromGoogleLink from "@/app/hooks/addressExtraction";
+import { getCoordinatesFromAddress } from "@/app/hooks/addressExtraction";
 
 export default function GoogleAddyEntryEditor({prompt, placeholder, response, setResponse,isLong,address,setAddress,
 coords, setCoords, city, setCity, province, setCountry,country, setProvince}) {
@@ -7,6 +8,8 @@ coords, setCoords, city, setCity, province, setCountry,country, setProvince}) {
     const divRef = useRef(null);
     const [errorMessage,setErrorMessage] = useState("")
     const [cityStateError, setCityStateError] = useState("")
+    const [streetAddress, setStreetAddress] = useState("")
+    const [postalCode, setPostalCode] = useState("")
 
     const autoResize = (boxRef) => {
         const textarea = boxRef.current;
@@ -16,107 +19,108 @@ coords, setCoords, city, setCity, province, setCountry,country, setProvince}) {
         }
       };
 
-    const handleChange = async(boxRef,event,setText) => {
-        autoResize(boxRef);  // Call to resize the textarea
-        if(event && setText){
-        setText(event.target.value)
-        if (event.target.value!=""){
-        try{
-        const {lat,lng,address} = await extractAddressFromGoogleLink({addressLink:event.target.value})
-        setAddress(address)
-        setCoords({"lat":lat,"lng":lng})
-        try{
-          extractCityAndState(address)
-        }catch{
+    // const handleChange = async(boxRef,event,setText) => {
+    //     autoResize(boxRef);  // Call to resize the textarea
+    //     if(event && setText){
+    //     setText(event.target.value)
+    //     if (event.target.value!=""){
+    //     try{
+    //     const {lat,lng,address} = await extractAddressFromGoogleLink({addressLink:event.target.value})
+    //     setAddress(address)
+        
+    //     setCoords({"lat":lat,"lng":lng})
+    //     try{
+    //       extractCityAndState(address)
+    //     }catch{
           
-        }
-        }
-        catch(error){
-          setErrorMessage("Please make sure you entered a correct Google Maps link for the intended location")
-          console.log(errorMessage)
-        }
-        }else{
-          setErrorMessage("")
-        } 
-        }
-      }
+    //     }
+    //     }
+    //     catch(error){
+    //       setErrorMessage("Please make sure you entered a correct Google Maps link for the intended location")
+    //       console.log(errorMessage)
+    //     }
+    //     }else{
+    //       setErrorMessage("")
+    //     } 
+    //     }
+    //   }
 
-    function extractCityAndState(address) {
-      // Split the address by commas
-      const parts = address.split(',');
+    // function extractCityAndState(address) {
+    //   // Split the address by commas
+    //   const parts = address.split(',');
       
-      // Assuming the format is consistent, extract city and state
-      if (parts.length >= 2) {
-        const city = parts[1].trim(); // City is usually the second part
-        const stateZip = parts[2].trim(); // State and ZIP are usually the third part
-        const country = parts[parts.length-1].trim();
+    //   // Assuming the format is consistent, extract city and state
+    //   if (parts.length >= 2) {
+    //     const city = parts[1].trim(); // City is usually the second part
+    //     const stateZip = parts[2].trim(); // State and ZIP are usually the third part
+    //     const country = parts[parts.length-1].trim();
 
-        // Split state and ZIP
-        const state = stateZip.split(' ')[0]; // State is before the space
-        setCity(city)
-        setProvince(state)
-        setCountry(country)
-      } else {
-        setCityStateError("nada")
-        throw new Error('Address format is not correct');
-      }
-    }
+    //     // Split state and ZIP
+    //     const state = stateZip.split(' ')[0]; // State is before the space
+    //     setCity(city)
+    //     setProvince(state)
+    //     setCountry(country)
+    //   } else {
+    //     setCityStateError("nada")
+    //     throw new Error('Address format is not correct');
+    //   }
+    // }
+    useEffect(() => {
+      const fetchCoordinates = async () => {
+          if (
+              streetAddress.length > 0 &&
+              city.length > 0 &&
+              province.length > 0 &&
+              postalCode.length > 0 &&
+              country.length > 0
+          ) {
+              const locInfoList = [streetAddress, city, province, postalCode, country];
+  
+              let combinedAddress = locInfoList.join(", ");
+              setAddress(combinedAddress);
+              try {
+                  const retreivedCoords = await getCoordinatesFromAddress({ address: combinedAddress });
+                  setCoords(retreivedCoords);
+                  console.log(retreivedCoords);
+              } catch (error) {
+                  console.log(error);
+              }
+          }
+      };
+  
+      fetchCoordinates();
+  }, [streetAddress, city, province, postalCode, country]);  
+
+
 
     return(
 
         <>
-        <div className="pb-[10px]">
-        <div className="text-[15px] mb-[3px] font-bold">
-            {prompt}
-        </div>
-          {
-            isLong?
-          <textarea 
-          value={response}
-          ref={divRef}
-          placeholder={placeholder}
-          onChange={async(event) => await handleChange(divRef,event,setResponse)}
-          className="w-full text-gray-700 border border-gray-300 rounded-[12px]  
-          resize-none overflow-auto overflow-hidden pl-[7px] pt-[7px]
-          focus:outline-none focus:border-blue-500" 
-          />
-          :
-          <input
-          value={response}
-          ref={divRef}
-          placeholder={placeholder}
-          onChange={async(event) => await handleChange(divRef,event,setResponse)}
-          className="w-full text-gray-700 border border-gray-300 rounded-[12px]    
-          resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
-          focus:outline-none focus:border-blue-500" 
-          />
-          }
-          <div className="text-red-500 text-[14px]">
-            {errorMessage}
-          </div>
-        {address &&  
-        <>
-        <div className="text-[15px] mb-[3px] mt-[8px] text-streamlineBlue font-bold">
-            Retrieved Address (please edit if incorrect)
-          </div>
-
-          <div className="text-[15px] mb-[3px] font-bold">
+        <div className="pb-[10px] w-[80%]">
+          <div className="text-[15px] mb-[3px] font-bold mb-[8px]">
             Full Address
           </div>
+          <div className="w-full flex items-center">
+          <div className="text-[15px] mb-[3px]  mr-[9px]">
+            Street Address
+          </div>
           <input
-          value={address}
+          value={streetAddress}
           ref={divRef}
-          onChange={(event) => setAddress(event.target.value)}
-          className="w-full text-gray-700 border border-gray-300 rounded-[12px]    
-          resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
+          onChange={(event) => setStreetAddress(event.target.value)}
+          className="flex-1 text-gray-700 border border-gray-300 rounded-[12px]    
+          resize-none overflow-auto overflow-hidden pt-[3px] pb-[2px] pl-[9px]
           focus:outline-none focus:border-blue-500" 
           />
+          </div>
           {cityStateError.length>0  &&
           <div className="mt-[7px] font-bold text-streamlineBlue">
             Please enter the city and state
           </div>}
-          <div className="flex items-center mt-[10px]">
-            <div className="text-[15px]  font-bold mr-[8px]">
+          <div className="flex flex-col mt-[10px] space-y-[10px]">
+            <div className="flex items-center">
+            <div className="flex w-[50%] items-center">
+            <div className="text-[15px] mr-[8px]">
               City
             </div>
             <input
@@ -127,7 +131,8 @@ coords, setCoords, city, setCity, province, setCountry,country, setProvince}) {
             resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
             focus:outline-none focus:border-blue-500 mr-[8px]" 
             />
-            <div className="text-[15px]  font-bold mr-[8px] ml-[8px]">
+            </div>
+            <div className="text-[15px]  mr-[8px] ml-[8px]">
               Province
             </div>
             <input
@@ -136,9 +141,24 @@ coords, setCoords, city, setCity, province, setCountry,country, setProvince}) {
             onChange={(event) => setProvince(event.target.value)}
             className=" text-gray-700 border border-gray-300 rounded-[12px]    
             resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
+            focus:outline-none focus:border-blue-500 " 
+            />
+            </div>
+            <div className="flex items-center">
+            <div className="flex w-[50%] items-center">
+            <div className="flex text-[15px] w-[160px] ">
+              Postal Code
+            </div>
+            <input
+            value={postalCode}
+            ref={divRef}
+            onChange={(event) => setPostalCode(event.target.value)}
+            className="text-gray-700 border border-gray-300 rounded-[12px]    
+            resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
             focus:outline-none focus:border-blue-500 mr-[8px]" 
             />
-            <div className="text-[15px] font-bold mr-[8px] ml-[8px]">
+            </div>
+            <div className="text-[15px]  mr-[8px] ml-[8px]">
               Country
             </div>
             <input
@@ -147,11 +167,10 @@ coords, setCoords, city, setCity, province, setCountry,country, setProvince}) {
             onChange={(event) => setCountry(event.target.value)}
             className="text-gray-700 border border-gray-300 rounded-[12px]    
             resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
-            focus:outline-none focus:border-blue-500 mr-[8px]" 
+            focus:outline-none focus:border-blue-500" 
             />
-          </div>
-        </>
-          }
+            </div>
+            </div>
         </div>
         </>
     )
