@@ -37,11 +37,10 @@ const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages }) => {
     <div>
       {/* Hidden file input */}
       <label
-        className="font-bold bg-streamlineBlue rounded-full text-[15px]" 
+        className="font-bold bg-white border border-streamlineBlue text-streamlineBlue border-[1.5] rounded-full text-[15px] " 
         style={{
           display: "inline-block",
           padding: "10px 20px",
-          color: "white",
           cursor: "pointer",
           marginBottom: "10px",
         }}
@@ -58,7 +57,7 @@ const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages }) => {
 
       {/* Drag-and-Drop Container */}
       <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="image-list" direction="horizontal">
+        <Droppable droppableId="image-list" direction="horizontal" isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false}>
           {(provided) => (
             <div
               ref={provided.innerRef}

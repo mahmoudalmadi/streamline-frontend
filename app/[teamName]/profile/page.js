@@ -12,6 +12,7 @@ import AmenitiesSelection from "@/app/components/TeamProfileEditorComponents/Ame
 import DaysHoursOperations from "@/app/components/TeamProfileEditorComponents/DaysHoursOperation";
 import { useSearchParams } from "next/navigation";
 import MultiFieldPhoneEntry from "@/app/components/AuthModalComps/MultiFieldPhoneEntry";
+import validateFields from "@/app/hooks/firestoreHooks/validateFields";
 
 export default function TeamProfileEditor() {
 
@@ -36,6 +37,7 @@ export default function TeamProfileEditor() {
     const [headCoachBio, setHeadCoachBio] = useState("")
     const [province, setProvince] = useState("")
     const [city, setCity] = useState("")
+    const [country,setCountry] = useState("")
 
     const [programLevels, setProgramLevels] = useState([
         { level: "", category: "" },
@@ -51,10 +53,14 @@ export default function TeamProfileEditor() {
     const [isDaysSet,setIsDaysSet] = useState(false)
     const [isTimesSet,setIsTimesSet] = useState(false)
 
+    const [hourOfOpError,setHourOfOpError] = useState("")
     useEffect(()=>{
-      for (const day in daysOfWeek){
+      for (const dayNum in daysOfWeek){
+        let day = daysOfWeek[dayNum]
         if (day.checked){
-          setIsDaysSet(true)      
+          if (day.hoursOfOps.length>0)
+          {setIsDaysSet(true)
+          }
         }
       }
     },[daysOfWeek])
@@ -67,54 +73,155 @@ export default function TeamProfileEditor() {
     },[timesOfDay])
 
     const isFirstRender = useRef(true);
-    let teamMetadata;
-    useEffect(( )=>{
+    const [teamMetadata,setTeamMetadata] = useState([])
+
+    const changeField = ({setDict, field,value}) => {
+      
+      setDict(prevState => ({
+        ...prevState,
+        [field]: value,
+      }));
+
+    }
+    const [teamInfo,setTeamInfo] = useState({"teamName":teamName,"swimTeamDescription":swimTeamDescription,"logoImg":logoImg})
+    const [contactInfo, setContactInfo] = useState({"emailAddress":emailAddress, "phoneNumber":phoneNumberObj?phoneNumberObj.phoneNumber:"","contactName":fullName})
+    const [locationData,setLocationData] = useState({"address":address,"city":city,"province":province,"country":country,
+    "longitude": coords ? coords["long"] : null,
+    "latitude": coords ? coords["lat"] : null,
+    "amenities": selectedAmenities,
+    "locationImgs": locationImgs})
+    const [programsOffered,setProgramsOffered] = useState({
+      "opDays": daysOfWeek,
+      "opTimes": timesOfDay,
+      "skillLevels": programLevels,
+      "programTypes": programTypes,
+    })
+    const [coachInfo, setCoachInfo] = useState({
+      "fullName": headCoachName,
+      "description": headCoachBio,
+      "coachImg": coachImg,
+      "coachType": "Head Coach"
+    })
+
+    useEffect(()=>{
       if (isFirstRender.current){
-        console.log("FIRST RENDER BB")
         isFirstRender.current=false;
       }else{
-        teamMetadata = {
-          teamInfo:{
-            teamName:teamName,
-            swimTeamDescription:swimTeamDescription,
-            logoImg:logoImg
-          },
-          contactInfo:{
-            emailAddress:emailAddress,
-            phoneNumber:phoneNumberObj.phoneNumber,
-            contactName:fullName
-          },
-          locationInfo:{
-            address:address,
-            city:city,
-            province:province,
-            longitude:coords?coords['long']:null,
-            latitude:coords?coords['lat']:null,
-            amenities:selectedAmenities,
-            locationImgs:locationImgs
-          },
-          programsOffered:{
-            opDays:daysOfWeek,
-            opTimes:timesOfDay,
-            skillLevels:programLevels,
-            programTypes:programTypes,          
-          },
-          coachInfo:{
-            fullName:headCoachName,
-            description:headCoachBio,
-            coachImg:coachImg
-          }
-        }
-      }
+        
+        changeField({setDict:setTeamInfo,field:"swimTeamDescription",value:swimTeamDescription})
+        changeField({setDict:setTeamInfo,field:"logoImg",value:logoImg})
+        changeField({setDict:setTeamInfo,field:"teamName",value:teamName})
+        console.log(programLevels)
+        changeField({setDict:setContactInfo,field:"emailAddress",value:emailAddress})
+        changeField({setDict:setContactInfo,field:"phoneNumber",value:phoneNumberObj?phoneNumberObj.phoneNumber:""})
+        changeField({setDict:setContactInfo,field:"contactName",value:fullName})
 
-    },[teamName,swimTeamDescription,logoImg,emailAddress,phoneNumberObj,fullName,address,city,province,coords,selectedAmenities,locationImgs,daysOfWeek,timesOfDay,programLevels,programTypes,headCoachName,headCoachBio,coachImg])
+        changeField({setDict:setLocationData,field:"address",value:address})
+        changeField({setDict:setLocationData,field:"city",value:city})
+        changeField({setDict:setLocationData,field:"province",value:province})
+        changeField({setDict:setLocationData,field:"country",value:country})
+        changeField({setDict:setLocationData,field:"longitude",value:coords ? coords["long"] : null})
+        changeField({setDict:setLocationData,field:"latitude",value:coords ? coords["long"] : null})
+        changeField({setDict:setLocationData,field:"amenities",value:selectedAmenities})
+        changeField({setDict:setLocationData,field:"locationImgs",value:locationImgs})
+        
+        changeField({setDict:setProgramsOffered, field:"opDays",value:daysOfWeek})
+        changeField({setDict:setProgramsOffered, field:"opTimes",value:timesOfDay})
+        changeField({setDict:setProgramsOffered, field:"skillLevels",value:programLevels})
+        changeField({setDict:setProgramsOffered, field:"programTypes",value:programTypes})
 
-    const handleSubmit = () => {
+        changeField({setDict:setCoachInfo,field:"fullName","value":headCoachName})
+        changeField({setDict:setCoachInfo,field:"description","value":headCoachBio})
+        changeField({setDict:setCoachInfo,field:"coachImg","value":coachImg})
+      };
+
+      setIsMissingPrograms(false)
+      setIsMissingCoachInfo(false)
+      setIsMissingContact(false)
+      setIsMissingTeamInfo(false)
+      setIsMissingLocationDivRef(false)
+    },[teamName,swimTeamDescription
+      ,logoImg,emailAddress,phoneNumberObj,fullName,address,city,province,coords,selectedAmenities,locationImgs,daysOfWeek,timesOfDay,programLevels,programTypes,headCoachName,headCoachBio,coachImg])
+
+    const [isMissingCoachInfo,setIsMissingCoachInfo]=useState(false)
+    const coachInfoDivRef=useRef()
+    const [isMissingProgramsOffered,setIsMissingPrograms]=useState(false)
+    const programsOfferedDivRef=useRef()
+    const [isMissingLocation,setIsMissingLocationDivRef]=useState(false)
+    const locationDivRef=useRef()
+    const [isMissingContact,setIsMissingContact]=useState(false)
+    const contactDivRef=useRef()
+    const [isMissingTeamInfo, setIsMissingTeamInfo]=useState(false)
+    const teamInfoDivRef=useRef()
+
+    const scrollToDiv = ({toDiv}) => {
+      toDiv.current?.scrollIntoView({ behavior: "smooth",block:'center' });
+    };
+
+    const verifyDataComplete = () => {
       
       // USE THIS FUNCTION ONLY IF SIGNING UP
-      
-      // CHECK TO ENSURE NO EMPTY FIELDS
+      // let metaData
+      let metaData = {
+        "teamInfo":teamInfo,
+        "contactInfo":contactInfo,
+        "locationInfo":locationData,
+        "programsOffered":programsOffered,
+        "coachInfo":coachInfo
+      }
+      // CHECK TO ENSURE NO EMPTY FIELDS AND ENSURE TODS AND DOWS ARE GG
+      if (metaData)
+      {
+      for (const [key, value] of Object.entries(metaData)) {
+        console.log(key,value)
+      try{
+        validateFields({data:value})
+        if (key==="programsOffered"){
+          let missingHoursCounter=0;
+          for (const dayNum in daysOfWeek){
+            let day = daysOfWeek[dayNum]
+            if (day.checked){
+              if (day.hoursOfOps.length>0)
+              {setIsDaysSet(true)
+              }
+              else{
+              missingHoursCounter+=1;
+              setHourOfOpError(day.day + " is missing hours of operation")
+              }
+            if (missingHoursCounter===0){
+              setHourOfOpError("")
+            }
 
+            }
+          }
+          if(!isDaysSet){
+            throw new Error("bad");
+          }
+
+        }
+      }catch(error){
+        //GO TO KEY PART OF PAGE
+        if (key.toString()==="teamInfo"){
+        setIsMissingTeamInfo(true)
+        scrollToDiv({toDiv:teamInfoDivRef})
+        }else if(key.toString()==="contactInfo"){
+        setIsMissingContact(true)
+        scrollToDiv({toDiv:contactDivRef})
+        }else if(key.toString()==="locationInfo"){
+          setIsMissingLocationDivRef(true)
+          scrollToDiv({toDiv:locationDivRef})
+        }else if(key.toString()==="programsOffered"){
+          setIsMissingPrograms(true)
+          scrollToDiv({toDiv:programsOfferedDivRef})
+        }else if(key.toString()==="coachInfo"){
+          setIsMissingCoachInfo(true)
+          scrollToDiv({toDiv:coachInfoDivRef})
+        }
+        break
+
+      }
+      }
+      }
       // ENSURE SIGN UP METHOD IS SUCCESSFULL
 
       // SEND TO BACKEND
@@ -130,7 +237,7 @@ export default function TeamProfileEditor() {
     }
 
     return(
-        <div className="flex justify-center items-center h-full">
+      <div className="flex justify-center items-center h-full">
       <DynamicScreen className=" h-full">
 
         <TopBar/>
@@ -156,10 +263,17 @@ export default function TeamProfileEditor() {
             className="relative w-full h-[1px] bg-gray-200 mt-[5px]"
           />  
 
-        <div className="mt-[10px] space-y-[15px]">
+        <div className="mt-[10px] space-y-[20px]">
 
-        <div className="font-bold text-streamlineBlue text-[18px] mt-[16px] l">
+        <div className="font-bold text-streamlineBlue text-[18px] mt-[16px]"
+        ref={teamInfoDivRef}>
+            <div>
             Team Information
+            </div>
+            {isMissingTeamInfo &&
+            <div className="text-red-500 text-[15px]">
+              Please ensure you have completed all the fields in this section
+            </div>}
         </div>
         <ProfileEntryEditor
         prompt={"Team Name"}
@@ -191,8 +305,15 @@ export default function TeamProfileEditor() {
         className="h-[10px]"
         />
 
-        <div className="font-bold text-streamlineBlue text-[18px] mt-[16px]">
+        <div className="font-bold text-streamlineBlue text-[18px] mt-[16px]"
+        ref={contactDivRef}>
+            <div>
             Contact Information
+            </div>
+            {isMissingContact &&
+            <div className="text-red-500 text-[15px]">
+              Please ensure you have completed all the fields in this section
+            </div>}
         </div>
         <ProfileEntryEditor
         prompt={"Contact Name"}
@@ -229,8 +350,15 @@ export default function TeamProfileEditor() {
         <div
         className="h-[1px]"
         />
-        <div className="font-bold text-streamlineBlue text-[18px] pt-[15px]">
+        <div className="font-bold text-streamlineBlue text-[18px] pt-[15px]"
+        ref={locationDivRef}>
+            <div>
             Location Information
+            </div>
+            {isMissingLocation &&
+            <div className="text-red-500 text-[15px]">
+              Please ensure you have completed all the fields in this section
+            </div>}
         </div>
 
         <GoogleAddyEntryEditor
@@ -246,6 +374,8 @@ export default function TeamProfileEditor() {
         city={city}
         setCity={setCity}
         province={province}
+        country={country}
+        setCountry={setCountry}
         setProvince={setProvince}
         />
 
@@ -269,8 +399,15 @@ export default function TeamProfileEditor() {
         className="h-[8px]"
         />
 
-        <div className="font-bold text-streamlineBlue text-[18px]">
-            Programs Offered at This Location
+        <div className="font-bold text-streamlineBlue text-[18px]"
+        ref={programsOfferedDivRef}>
+            <div>
+            Programs Offered at this Location
+            </div>
+            {isMissingProgramsOffered &&
+            <div className="text-red-500 text-[15px]">
+              Please ensure you have completed all the fields in this section
+            </div>}
         </div>
 
         <SelectingCategories categoryTypes={"Program Levels"}
@@ -283,8 +420,8 @@ export default function TeamProfileEditor() {
         setPrograms={setProgramTypes}
         categoryDict={CONFIG.lessonTypes}/>
 
-        <DaysHoursOperations daysOfWeek={daysOfWeek} setDaysOfWeek={setDaysOfWeek}
-        timesOfDay={timesOfDay} setTimesOfDay={setTimesOfDay}/>
+        <DaysHoursOperations daysOfWeek={daysOfWeek} setDaysOfWeek={setDaysOfWeek} hourOfOpError=
+        {hourOfOpError}/>
 
         <div className="h-[6px]"/>
 
@@ -293,8 +430,15 @@ export default function TeamProfileEditor() {
           />  
         <div className="h-[6px]"/>
 
-        <div className="font-bold text-streamlineBlue text-[18px] pt-[4px]">
+        <div className="font-bold text-streamlineBlue text-[18px] pt-[4px]"
+        ref={coachInfoDivRef}>
+            <div>
             Head Coach Information
+            </div>
+            {isMissingCoachInfo &&
+            <div className="text-red-500 text-[15px]">
+              Please ensure you have completed all the fields in this section
+            </div>}
         </div>
         
         <ProfileEntryEditor
@@ -320,6 +464,23 @@ export default function TeamProfileEditor() {
         </div>
 
         <div>
+          
+        <div
+            className="relative w-full h-[1px] bg-gray-200 mt-[15px]"
+          />  
+        <div className="h-[10px]"/>
+
+          <div className="flex-col">
+
+            <div className="flex justify-center space-x-[15px]">
+            
+            <div className="bg-streamlineBlue text-white font-bold mt-[20px] text-[15px] px-[20px] py-[10px] rounded-full cursor-pointer" onClick={()=>{verifyDataComplete()}}>
+              Save Information and Complete Sign Up
+            </div>
+
+            </div>
+
+          </div>
 
         </div>
 

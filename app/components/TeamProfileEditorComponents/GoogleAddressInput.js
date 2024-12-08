@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import extractAddressFromGoogleLink from "@/app/hooks/addressExtraction";
 
 export default function GoogleAddyEntryEditor({prompt, placeholder, response, setResponse,isLong,address,setAddress,
-coords, setCoords, city, setCity, province, setProvince}) {
+coords, setCoords, city, setCity, province, setCountry,country, setProvince}) {
 
     const divRef = useRef(null);
     const [errorMessage,setErrorMessage] = useState("")
@@ -28,7 +28,7 @@ coords, setCoords, city, setCity, province, setProvince}) {
         try{
           extractCityAndState(address)
         }catch{
-          set
+          
         }
         }
         catch(error){
@@ -42,22 +42,20 @@ coords, setCoords, city, setCity, province, setProvince}) {
       }
 
     function extractCityAndState(address) {
-      console.log("HOL UP IM COOKING", address)
       // Split the address by commas
       const parts = address.split(',');
-    
+      
       // Assuming the format is consistent, extract city and state
       if (parts.length >= 2) {
-        console.log("INSIDE CONDITIONS")
         const city = parts[1].trim(); // City is usually the second part
         const stateZip = parts[2].trim(); // State and ZIP are usually the third part
-        console.log("halF", city, stateZip)
+        const country = parts[parts.length-1].trim();
+
         // Split state and ZIP
         const state = stateZip.split(' ')[0]; // State is before the space
-        console.log("3/4",state)
         setCity(city)
         setProvince(state)
-        console.log("DIONE COOKING", city, state)
+        setCountry(country)
       } else {
         setCityStateError("nada")
         throw new Error('Address format is not correct');
@@ -108,7 +106,7 @@ coords, setCoords, city, setCity, province, setProvince}) {
           <input
           value={address}
           ref={divRef}
-          onChange={async(event) => await handleChange(divRef,event,setAddress)}
+          onChange={(event) => setAddress(event.target.value)}
           className="w-full text-gray-700 border border-gray-300 rounded-[12px]    
           resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
           focus:outline-none focus:border-blue-500" 
@@ -124,7 +122,7 @@ coords, setCoords, city, setCity, province, setProvince}) {
             <input
             value={city}
             ref={divRef}
-            onChange={async(event) => await handleChange(divRef,event,setCity)}
+            onChange={(event) => setCity(event.target.value)}
             className=" text-gray-700 border border-gray-300 rounded-[12px]    
             resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
             focus:outline-none focus:border-blue-500 mr-[8px]" 
@@ -135,8 +133,19 @@ coords, setCoords, city, setCity, province, setProvince}) {
             <input
             value={province}
             ref={divRef}
-            onChange={async(event) => await handleChange(divRef,event,setProvince)}
+            onChange={(event) => setProvince(event.target.value)}
             className=" text-gray-700 border border-gray-300 rounded-[12px]    
+            resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
+            focus:outline-none focus:border-blue-500 mr-[8px]" 
+            />
+            <div className="text-[15px] font-bold mr-[8px] ml-[8px]">
+              Country
+            </div>
+            <input
+            value={country}
+            ref={divRef}
+            onChange={(event) => setCountry(event.target.value)}
+            className="text-gray-700 border border-gray-300 rounded-[12px]    
             resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
             focus:outline-none focus:border-blue-500 mr-[8px]" 
             />
