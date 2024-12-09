@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
 
-export default function ProfileEntryEditor({prompt, placeholder, response, setResponse,isLong}) {
+export default function ProfileEntryEditor({prompt, placeholder, response, setResponse,isLong,uneditable}) {
 
     const divRef = useRef(null);
 
@@ -45,9 +45,10 @@ export default function ProfileEntryEditor({prompt, placeholder, response, setRe
           ref={divRef}
           placeholder={placeholder}
           onChange={(event) => handleChange(divRef,event,setResponse)}
-          className="w-full text-gray-700 border border-gray-300 rounded-[12px]    
+          disabled={uneditable}
+          className={`w-full text-gray-700 border border-gray-300 rounded-[12px]    
           resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
-          focus:outline-none focus:border-blue-500 text-[15px]" 
+          focus:outline-none focus:border-blue-500 text-[15px] ${uneditable ?"bg-gray-300":""}`} 
           />
           }
         </div>

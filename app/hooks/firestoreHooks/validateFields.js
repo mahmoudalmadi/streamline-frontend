@@ -1,13 +1,16 @@
 const validateFields = ({data, isGuardian}) => {
+
   for (const [key, value] of Object.entries(data)) {
+    
     if((key==="programTypes") || (key==="skillLevels")){
       try{
       for (const level in value)
       {
-        validateFields({data:value[level]})}
+        validateFields({data:value[level]})
+      }
     }
       catch(error){
-        throw new Error(`Invalid value for field "${key}": Cannot be null, undefined, an empty string, or an empty array`)
+        throw new Error(`Hi ,Invalid value for field "${key}" with value "${JSON.stringify(value)}": Cannot be null, undefined, an empty string, or an empty array`)
       }
     } else if (
       value === null ||
@@ -20,7 +23,7 @@ const validateFields = ({data, isGuardian}) => {
       }
       else {
         console.log(key,value)
-        throw new Error(`Invalid value for field "${key}": Cannot be null, undefined, an empty string, or an empty array`);
+        throw new Error(`Invalid value for field "${key}" with value "${JSON.stringify(value)}": Cannot be null, undefined, an empty string, or an empty array`);
       }
     }
   }

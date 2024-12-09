@@ -13,21 +13,30 @@ import DaysHoursOperations from "@/app/components/TeamProfileEditorComponents/Da
 import { useSearchParams } from "next/navigation";
 import MultiFieldPhoneEntry from "@/app/components/AuthModalComps/MultiFieldPhoneEntry";
 import validateFields from "@/app/hooks/firestoreHooks/validateFields";
+import EmailIcon from '../../../public/emailIcon.svg'
+import EmailSignUpWidget from "@/app/components/TeamProfileEditorComponents/EmailSignUpWidget";
 
 export default function TeamProfileEditor() {
 
     const searchParams = useSearchParams();
     const isSigningUp = searchParams.get("isSigningUp");
     
+    const [isInfoVerified, setIsInfoVerified] = useState(false)
+
     const teamName = searchParams.get("teamName");
     const [fullName, setFullName] = useState(searchParams?searchParams.get("fullName"):"")
     const [phoneNumberObj, setPhoneNumberObj] = useState({phoneNumber:searchParams?searchParams.get("phoneNumber"):"", isValid:null})
     const [emailAddress, setEmailAddress] = useState(searchParams?searchParams.get("emailAddress"):"")
+    const [password, setPassword] = useState("")
     const [coachImg, setCoachImg] = useState([]);
     const [logoImg, setLogoImg] = useState([]);
     const [locationImgs, setLocationImgs] = useState([]);
     const [selectedAmenities, setSelectedAmenities] = useState([])
 
+    const [useDifferentEmailThanContact, setUseDifferentEmailThanContact] = useState(false)
+    const [alternativeSignUpEmail, setAlternativeSignUpEmail] = useState("")
+
+    const [choseSignUpMethod, setChoseSignUpMethod] = useState("")
     const [newTeamName,setNewTeamName] = useState(teamName)
     const [swimTeamDescription, setSwimTeamDescription] = useState("")
     const [googleMapsLink, setGoogleMapsLink] = useState("")
@@ -167,7 +176,6 @@ export default function TeamProfileEditor() {
 
     const verifyDataComplete = () => {
       // USE THIS FUNCTION ONLY IF SIGNING UP
-      console.log("WATATDASKDJASLKD",programsOffered)
       // let metaData
       let metaData = {
         "teamInfo":teamInfo,
@@ -205,9 +213,9 @@ export default function TeamProfileEditor() {
             throw new Error("bad");
           }
 
+        return true
         }
       }catch(error){
-        console.log(error,programsOffered.skillLevels)
         //GO TO KEY PART OF PAGE
         if (key.toString()==="teamInfo"){
         setIsMissingTeamInfo(true)
@@ -225,8 +233,9 @@ export default function TeamProfileEditor() {
           setIsMissingCoachInfo(true)
           scrollToDiv({toDiv:coachInfoDivRef})
         }
-        break
 
+        return false
+        
       }
       }
       }
@@ -235,6 +244,32 @@ export default function TeamProfileEditor() {
       // SEND TO BACKEND
 
       // ROUTE EM TO THE DASHBOARD
+
+    }
+
+    const completeSignUp = () => {
+
+      //SIGN UP EMAIL ON FIREBASE AUTH 
+      //get: firebaseId
+
+      //ADD ACCOUNT INFO TO FIRESTORE
+      //info piece:
+      //accountType: "team"
+      //dateJoined: new Date()
+      //fullName of Contact
+      //phoneNumber
+      
+      //ADD TEAM INFO TO FIRESTORE
+      //contactEmail
+      // contactName
+      // firebaseId
+      // logoPhotoURL
+      // phoneNumber
+      // sport
+      // teamDescription
+      // teamName
+
+      //
 
     }
 
@@ -478,15 +513,44 @@ export default function TeamProfileEditor() {
           />  
         <div className="h-[10px]"/>
 
-          <div className="flex-col">
+          <div className="flex-col w-full mt-[20px]">
 
+            {isInfoVerified?
             <div className="flex justify-center space-x-[15px]">
             
-            <div className="bg-streamlineBlue text-white font-bold mt-[20px] text-[15px] px-[20px] py-[10px] rounded-full cursor-pointer" onClick={()=>{verifyDataComplete()}}>
+            <div className="bg-streamlineBlue text-white font-bold mt-[20px] text-[15px] px-[20px] py-[10px] rounded-full cursor-pointer" onClick={()=>{
+              
+              const isVerified = verifyDataComplete()
+              
+
+              }}>
               Save Information and Complete Sign Up
             </div>
 
             </div>
+            :
+            choseSignUpMethod.length===0?
+            <div className="flex w-full flex-col items-center justify-center">
+
+                <div className="text-center mt-[10px] font-bold">
+                  Choose Sign Up Method
+                </div>
+
+                <div className="flex py-2 rounded-2xl
+                items-center justify-center relative
+                border border-gray-300 px-3 text-[14px]
+                mt-[20px] font-bold  w-[290px] text-center cursor-pointer"
+                onClick={
+                  ()=>{setChoseSignUpMethod("email")}
+                }>
+                    <div className='absolute left-[15px] top-[9px]'>
+                        <EmailIcon className="w-[40px] h-[30px]"/>
+                    </div>
+                    Sign Up with Email
+                </div>
+            </div>:
+              <EmailSignUpWidget setAlternativeSignUpEmail={setAlternativeSignUpEmail} alternativeSignUpEmail={alternativeSignUpEmail} useDifferentEmailThanContact={useDifferentEmailThanContact} setUseDifferentEmailThanContact={setUseDifferentEmailThanContact} emailAddress={emailAddress} setEmailAddress={setEmailAddress} password={password} setPassword={setPassword}/>
+            }
 
           </div>
 

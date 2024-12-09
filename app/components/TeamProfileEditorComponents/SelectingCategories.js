@@ -6,7 +6,7 @@ import { useState } from "react";
 export default function SelectingCategories({categoryTypes, programs, setPrograms, categoryDict}) {
 
     const handleAddLevel = () => {
-        setPrograms([...programs, { level: "", name: "" }]);
+        setPrograms([...programs, { level: "", category: "" }]);
       };
     
     const handleRemoveLevel = (index) => {
