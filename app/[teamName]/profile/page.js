@@ -254,13 +254,15 @@ export default function TeamProfileEditor() {
 
       //ADD ACCOUNT INFO TO FIRESTORE
       //info piece:
-      //accountType: "team"
-      //dateJoined: new Date()
-      //fullName of Contact
+      //accountType
+      //dateJoined
+      //fullName
       //phoneNumber
+      //emailAddress
+      //firebaseId
       
       //ADD TEAM INFO TO FIRESTORE
-      //contactEmail
+      // contactEmail
       // contactName
       // firebaseId
       // logoPhotoURL
@@ -269,7 +271,27 @@ export default function TeamProfileEditor() {
       // teamDescription
       // teamName
 
-      //
+      //ADD to Location collectio
+      // address
+      // city
+      // country
+      // latitude
+      // longitude
+      // state
+      // teamId
+
+      //ADD to OperationDayTime collection BUT IT TAKES IN A LIST OF OBJECTS WITH THE SAME FIELDS showed below EXCEPT FOR LOCATIONID AND TEAMID, ITS PROVIDED ONCE AS A VARIABLE
+      // day
+      // hour
+      // locationId
+      // teamId
+
+      //ADD to Amenities collection but it takes in A LIST OF OBJECTS WITH THE SAME FIELDS showed below EXCEPT FOR LOCATIONID AND TEAMID, ITS PROVIDED ONCE AS A VARIABLE
+      // amenityId
+      // locationId
+      // teamId
+
+      //TODO ADD 
 
     }
 
