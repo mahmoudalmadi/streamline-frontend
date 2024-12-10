@@ -98,8 +98,11 @@ export default function TeamProfileEditor() {
       });
     };    
 
-    const [teamInfo,setTeamInfo] = useState({"teamName":teamName,"swimTeamDescription":swimTeamDescription,"logoImg":logoImg,"sport":"swimming"})
-    const [contactInfo, setContactInfo] = useState({"emailAddress":emailAddress, "phoneNumber":phoneNumberObj?phoneNumberObj.phoneNumber:"","contactName":fullName})
+    const [teamInfo,setTeamInfo] = useState({"teamName":teamName,"swimTeamDescription":swimTeamDescription,
+    "logoImg":logoImg,
+    "sport":"swimming"})
+    const [contactInfo, setContactInfo] = useState({
+      "emailAddress":emailAddress, "phoneNumber":phoneNumberObj?phoneNumberObj.phoneNumber:"","contactName":fullName})
     const [locationData,setLocationData] = useState({"address":address,"city":city,"province":province,"country":country,
     "longitude": coords ? coords.lng : null,
     "latitude": coords ? coords.lat : null,
@@ -271,7 +274,7 @@ export default function TeamProfileEditor() {
       // teamDescription
       // teamName
 
-      //ADD to Location collectio
+      //ADD to Location collection the following fields
       // address
       // city
       // country
@@ -286,12 +289,36 @@ export default function TeamProfileEditor() {
       // locationId
       // teamId
 
-      //ADD to Amenities collection but it takes in A LIST OF OBJECTS WITH THE SAME FIELDS showed below EXCEPT FOR LOCATIONID AND TEAMID, ITS PROVIDED ONCE AS A VARIABLE
+      //ADD to Amenities collection but it takes in A LIST OF amentiy ids EXCEPT FOR LOCATIONID AND TEAMID, theyre PROVIDED ONCE AS A VARIABLE
       // amenityId
       // locationId
       // teamId
 
-      //TODO ADD 
+      // ADD to SkillLevel collection but it takes in a list of objects with THE SAME FIELDS showed below EXCEPT FOR LOCATIONID AND TEAMID, theyre PROVIDED ONCE AS A VARIABLE 
+      // category
+      // lessonLevel
+      // locationId
+      // teamId
+
+      // ADD to LessonType collection but it takes in a list of objects with THE SAME FIELDS showed below EXCEPT FOR LOCATIONID AND TEAMID, theyre PROVIDED ONCE AS A VARIABLE 
+      // category
+      // lessonType
+      // locationId
+      // teamId
+
+      // ADD to Images collection but it takes in a list of image URLs but LOCATIONID, TEAMID, and photoType, are PROVIDED ONCE AS A VARIABLE 
+      // photoURL
+      // photoType
+      // locationId
+      // teamId
+
+      // Add the following piieces of information
+      // coachBio
+      // coachType
+      // coachName
+      // locationId
+      // photoURL
+      // teamId
 
     }
 

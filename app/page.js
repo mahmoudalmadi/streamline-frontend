@@ -5,17 +5,28 @@ import SearchBar from "./components/searchBarComps/SearchBar";
 import SwimTeamsMenu from "./components/SwimTeamsMenu";
 
 export default function Home() {
+  
   return (
     <div className="flex  justify-center items-center">
       <DynamicScreen className=" h-screen">
 
         <TopBar/>
 
+
+
         <div
         className="relative flex flex-col items-center justify-center w-full"
         >
-          <div className="flex font-bold text-[24px] text-center mb-2 mt-2">
-            Find Your Swim Team
+          <div className="flex font-bold text-[18px] text-center mb-2 mt-2">
+            <div>
+            Find Your
+            </div>
+            <div className="px-[8px] ">
+            Swim
+            </div>
+            <div>
+            Team
+            </div>
           </div>
 
 
@@ -31,7 +42,7 @@ export default function Home() {
 
         </div>
 
-        <div className="text-[20px] font-semibold mt-[12px] mb-4">
+        <div className="text-[18px] font-semibold mt-[14px] mb-4">
           Partnered Swim Teams
         </div>
 
