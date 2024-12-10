@@ -60,7 +60,8 @@ const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages,prompt }
 
       {/* Drag-and-Drop Container */}
       <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="image-list" direction="horizontal" isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false}>
+        <Droppable droppableId="image-list" direction="horizontal" 
+         isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false}>
           {(provided) => (
             <div
               ref={provided.innerRef}
@@ -68,7 +69,7 @@ const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages,prompt }
               style={{ display: "flex", gap: "15px", flexWrap: "wrap" }}
             >
               {images.map((image, index) => (
-                <Draggable key={image.id} draggableId={image.id} index={index}>
+                <Draggable key={image.id} droppableId={"image-list"} draggableId={image.id} index={index}>
                   {(provided) => (
                     <div
                       ref={provided.innerRef}
