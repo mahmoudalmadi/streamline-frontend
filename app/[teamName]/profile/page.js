@@ -337,276 +337,279 @@ export default function TeamProfileEditor() {
         <div
         className="relative flex flex-col items-center justify-center w-full"
         >
-        <div
-            className="relative w-screen h-[1px] bg-gray-200 mt-[18px]"
-          />  
+          <div
+              className="relative w-screen h-[1px] bg-gray-200 mt-[18px]"
+            />  
 
-        <div className="flex flex-col w-full">
+          <div className="flex flex-col w-full">
 
-        <div className="text-[18px]
-        font-bold items-start mt-[20px] mb-[15px] leading-[18px]">
-          {teamName} Profile
-        </div>
+              <div className="text-[18px]
+              font-bold items-start mt-[20px] mb-[15px] leading-[18px]">
+                {teamName} Profile
+              </div>
 
-        {isSigningUp && <div className="text-gray-500 leading-[14px] mb-[20px]">
-          Please complete the fields below and submit to complete signing up your team
-        </div>}
-        <div
-            className="relative w-full h-[1px] bg-gray-200 mt-[5px]"
-          />  
+              {isSigningUp && <div className="text-gray-500 leading-[14px] mb-[20px]">
+                Please complete the fields below and submit to complete signing up your team
+              </div>}
+              <div
+                  className="relative w-full h-[1px] bg-gray-200 mt-[5px]"
+                />  
 
-        <div className="mt-[10px] space-y-[20px]">
+              <div className="mt-[10px] space-y-[20px]">
 
-        <div className="font-bold text-streamlineBlue text-[18px] mt-[16px]"
-        ref={teamInfoDivRef}>
-            <div>
-            Team Information
-            </div>
-            {isMissingTeamInfo &&
-            <div className="text-red-500 text-[15px]">
-              Please ensure you have completed all the fields in this section
-            </div>}
-        </div>
-        <ProfileEntryEditor
-        prompt={"Team Name"}
-        response={newTeamName}
-        setResponse={setNewTeamName}
-        placeholder={"Team Name"}
-        isLong={false}
-        />
-        <ProfileEntryEditor
-        prompt={"Swim Team Description"}
-        response={swimTeamDescription}
-        setResponse={setSwimTeamDescription}
-        placeholder={"Talk about your swim team's culture, offerings, history, staff etc..."}
-        isLong={true}
-        />
-        <ImageUploader allowMultiple={false} images={logoImg} setImages={setLogoImg} prompt={"Logo Image"}
-        buttonMessage={
-            logoImg.length!=0?"Replace Team Logo Image":"Upload Team Logo Image"}/>
+              <div className="font-bold text-streamlineBlue text-[18px] mt-[16px]"
+              ref={teamInfoDivRef}>
+                  <div>
+                  Team Information
+                  </div>
+                  {isMissingTeamInfo &&
+                  <div className="text-red-500 text-[15px]">
+                    Please ensure you have completed all the fields in this section
+                  </div>}
+              </div>
+              <ProfileEntryEditor
+              prompt={"Team Name"}
+              response={newTeamName}
+              setResponse={setNewTeamName}
+              placeholder={"Team Name"}
+              isLong={false}
+              />
+              <ProfileEntryEditor
+              prompt={"Swim Team Description"}
+              response={swimTeamDescription}
+              setResponse={setSwimTeamDescription}
+              placeholder={"Talk about your swim team's culture, offerings, history, staff etc..."}
+              isLong={true}
+              />
+              <ImageUploader allowMultiple={false} images={logoImg} setImages={setLogoImg} prompt={"Logo Image"}
+              buttonMessage={
+                  logoImg.length!=0?"Replace Team Logo Image":"Upload Team Logo Image"}/>
 
-        <div
-        className="h-[8px]"
-        />
+              <div
+              className="h-[8px]"
+              />
 
-        <div
-            className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
-          />  
+              <div
+                  className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
+                />  
 
-        <div
-        className="h-[10px]"
-        />
+              <div
+              className="h-[10px]"
+              />
 
-        <div className="font-bold text-streamlineBlue text-[18px] mt-[16px]"
-        ref={contactDivRef}>
-            <div>
-            Contact Information
-            </div>
-            {isMissingContact &&
-            <div className="text-red-500 text-[15px]">
-              Please ensure you have completed all the fields in this section
-            </div>}
-        </div>
-        <ProfileEntryEditor
-        prompt={"Contact Name"}
-        response={fullName}
-        setResponse={setFullName}
-        placeholder={"Full Name"}
-        isLong={false}
-        />
-        
-        <ProfileEntryEditor
-        prompt={"Team Contact Email"}
-        response={emailAddress}
-        setResponse={setEmailAddress}
-        placeholder={"Email Address"}
-        isLong={false}
-        />
-
-        <MultiFieldPhoneEntry 
-        prompt="Contact Phone Number"
-        placeholder={"Phone Number"}
-        fieldResponse={phoneNumberObj}
-        setFieldResponse={setPhoneNumberObj}
-        field="phoneNumber"
-        customLength={"w-[190px]"}
-        />
-
-        <div
-        className="h-[8px]"
-        />
-
-        <div
-            className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
-          />  
-        <div
-        className="h-[1px]"
-        />
-        <div className="font-bold text-streamlineBlue text-[18px] pt-[15px]"
-        ref={locationDivRef}>
-            <div>
-            Location Information
-            </div>
-            {isMissingLocation &&
-            <div className="text-red-500 text-[15px]">
-              Please ensure you have completed all the fields in this section
-            </div>}
-        </div>
-
-        <GoogleAddyEntryEditor
-        prompt={"Swim Team Location"}
-        response={googleMapsLink}
-        setResponse={setGoogleMapsLink}
-        placeholder={"Google Maps Link"}
-        isLong={false}
-        address={address}
-        setAddress={setAddress}
-        setCoords={setCoords}
-        coords={coords}
-        city={city}
-        setCity={setCity}
-        province={province}
-        country={country}
-        setCountry={setCountry}
-        setProvince={setProvince}
-        />
-
-        <ImageUploader allowMultiple={true} images={locationImgs} setImages={setLocationImgs} prompt={"Location Images (at least 5 images)"}
-        buttonMessage={
-        locationImgs.length===0?"Upload Location Photos":"Add Location Photos"}/>
-
-        <AmenitiesSelection 
-        selectedAmenities={selectedAmenities}
-        setSelectedAmenities={setSelectedAmenities}
-        amenitiesIcons={CONFIG.amenitiesIcons}/>
-
-        <div
-        className="h-[8px]"
-        />
-        <div
-            className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
-          />  
-
-        <div
-        className="h-[8px]"
-        />
-
-        <div className="font-bold text-streamlineBlue text-[18px]"
-        ref={programsOfferedDivRef}>
-            <div>
-            Programs Offered at this Location
-            </div>
-            {isMissingProgramsOffered &&
-            <div className="text-red-500 text-[15px]">
-              Please ensure you have completed all the fields in this section
-            </div>}
-        </div>
-
-        <SelectingCategories categoryTypes={"Program Levels"}
-        programs={programLevels}
-        setPrograms={setProgramLevels}
-        categoryDict={CONFIG.skillLevels}/>
-
-        <SelectingCategories categoryTypes={"Program Class Sizes"}
-        programs={programTypes}
-        setPrograms={setProgramTypes}
-        categoryDict={CONFIG.lessonTypes}/>
-
-        <DaysHoursOperations daysOfWeek={daysOfWeek} setDaysOfWeek={setDaysOfWeek} hourOfOpError=
-        {hourOfOpError}/>
-
-        <div className="h-[6px]"/>
-
-        <div
-            className="relative w-full h-[1px] bg-gray-200 mt-[15px]"
-          />  
-        <div className="h-[6px]"/>
-
-        <div className="font-bold text-streamlineBlue text-[18px] pt-[4px]"
-        ref={coachInfoDivRef}>
-            <div>
-            Head Coach Information
-            </div>
-            {isMissingCoachInfo &&
-            <div className="text-red-500 text-[15px]">
-              Please ensure you have completed all the fields in this section
-            </div>}
-        </div>
-        
-        <ProfileEntryEditor
-        prompt={"Head Coach Name"}
-        response={headCoachName}
-        setResponse={setHeadCoachName}
-        placeholder={"Coach Name"}
-        isLong={false}
-        />
-
-        <ProfileEntryEditor
-        prompt={"Head Coach Bio"}
-        response={headCoachBio}
-        setResponse={setHeadCoachBio}
-        placeholder={"Talk about the head coach's experiences, history, fun facts, etc..."}
-        isLong={true}
-        />
-
-        <ImageUploader allowMultiple={false} images={coachImg} setImages={setCoachImg} prompt={"Head Coach Photo"}
-        buttonMessage={
-            coachImg.length!=0?"Replace Head Coach Photo":"Upload Head Coach Photo"}/>
-
-        </div>
-
-        <div>
-          
-        <div
-            className="relative w-full h-[1px] bg-gray-200 mt-[15px]"
-          />  
-        <div className="h-[10px]"/>
-
-          <div className="flex-col w-full mt-[20px]">
-
-            {isInfoVerified?
-            <div className="flex justify-center space-x-[15px]">
-            
-            <div className="bg-streamlineBlue text-white font-bold mt-[20px] text-[15px] px-[20px] py-[10px] rounded-full cursor-pointer" onClick={()=>{
+              <div className="font-bold text-streamlineBlue text-[18px] mt-[16px]"
+              ref={contactDivRef}>
+                  <div>
+                  Contact Information
+                  </div>
+                  {isMissingContact &&
+                  <div className="text-red-500 text-[15px]">
+                    Please ensure you have completed all the fields in this section
+                  </div>}
+              </div>
+              <ProfileEntryEditor
+              prompt={"Contact Name"}
+              response={fullName}
+              setResponse={setFullName}
+              placeholder={"Full Name"}
+              isLong={false}
+              />
               
-              const isVerified = verifyDataComplete()
+              <ProfileEntryEditor
+              prompt={"Team Contact Email"}
+              response={emailAddress}
+              setResponse={setEmailAddress}
+              placeholder={"Email Address"}
+              isLong={false}
+              />
+
+              <MultiFieldPhoneEntry 
+              prompt="Contact Phone Number"
+              placeholder={"Phone Number"}
+              fieldResponse={phoneNumberObj}
+              setFieldResponse={setPhoneNumberObj}
+              field="phoneNumber"
+              customLength={"w-[190px]"}
+              />
+
+              <div
+              className="h-[8px]"
+              />
+
+              <div
+                  className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
+                />  
+              <div
+              className="h-[1px]"
+              />
+              <>
+              </>
+              <div className="font-bold text-streamlineBlue text-[18px] pt-[15px]"
+              ref={locationDivRef}>
+                  <div>
+                  Location Information
+                  </div>
+                  {isMissingLocation &&
+                  <div className="text-red-500 text-[15px]">
+                    Please ensure you have completed all the fields in this section
+                  </div>}
+              </div>
+
+              <GoogleAddyEntryEditor
+              prompt={"Swim Team Location"}
+              response={googleMapsLink}
+              setResponse={setGoogleMapsLink}
+              placeholder={"Google Maps Link"}
+              isLong={false}
+              address={address}
+              setAddress={setAddress}
+              setCoords={setCoords}
+              coords={coords}
+              city={city}
+              setCity={setCity}
+              province={province}
+              country={country}
+              setCountry={setCountry}
+              setProvince={setProvince}
+              />
+
+              <ImageUploader allowMultiple={true} images={locationImgs} setImages={setLocationImgs} prompt={"Location Images (at least 5 images)"}
+              buttonMessage={
+              locationImgs.length===0?"Upload Location Photos":"Add Location Photos"}/>
+
+              <AmenitiesSelection 
+              selectedAmenities={selectedAmenities}
+              setSelectedAmenities={setSelectedAmenities}
+              amenitiesIcons={CONFIG.amenitiesIcons}/>
+
+              <div
+              className="h-[8px]"
+              />
+              <div
+                  className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
+                />  
+
+              <div
+              className="h-[8px]"
+              />
+
+              <div className="font-bold text-streamlineBlue text-[18px]"
+              ref={programsOfferedDivRef}>
+                  <div>
+                  Programs Offered at this Location
+                  </div>
+                  {isMissingProgramsOffered &&
+                  <div className="text-red-500 text-[15px]">
+                    Please ensure you have completed all the fields in this section
+                  </div>}
+              </div>
+
+              <SelectingCategories categoryTypes={"Program Levels"}
+              programs={programLevels}
+              setPrograms={setProgramLevels}
+              categoryDict={CONFIG.skillLevels}/>
+
+              <SelectingCategories categoryTypes={"Program Class Sizes"}
+              programs={programTypes}
+              setPrograms={setProgramTypes}
+              categoryDict={CONFIG.lessonTypes}/>
+
+              <DaysHoursOperations daysOfWeek={daysOfWeek} setDaysOfWeek={setDaysOfWeek} hourOfOpError=
+              {hourOfOpError}/>
+
+              <div className="h-[6px]"/>
+
+              <div
+                  className="relative w-full h-[1px] bg-gray-200 mt-[15px]"
+                />  
+              <div className="h-[6px]"/>
+
+              <div className="font-bold text-streamlineBlue text-[18px] pt-[4px]"
+              ref={coachInfoDivRef}>
+                  <div>
+                  Head Coach Information
+                  </div>
+                  {isMissingCoachInfo &&
+                  <div className="text-red-500 text-[15px]">
+                    Please ensure you have completed all the fields in this section
+                  </div>}
+              </div>
               
+              <ProfileEntryEditor
+              prompt={"Head Coach Name"}
+              response={headCoachName}
+              setResponse={setHeadCoachName}
+              placeholder={"Coach Name"}
+              isLong={false}
+              />
 
-              }}>
-              Save Information and Complete Sign Up
-            </div>
+              <ProfileEntryEditor
+              prompt={"Head Coach Bio"}
+              response={headCoachBio}
+              setResponse={setHeadCoachBio}
+              placeholder={"Talk about the head coach's experiences, history, fun facts, etc..."}
+              isLong={true}
+              />
 
-            </div>
-            :
-            choseSignUpMethod.length===0?
-            <div className="flex w-full flex-col items-center justify-center">
+              <ImageUploader allowMultiple={false} images={coachImg} setImages={setCoachImg} prompt={"Head Coach Photo"}
+              buttonMessage={
+                  coachImg.length!=0?"Replace Head Coach Photo":"Upload Head Coach Photo"}/>
 
-                <div className="text-center mt-[10px] font-bold">
-                  Choose Sign Up Method
+              </div>
+
+              {/* SIGN UP AND SUBMIT MENU */}
+              <div>
+                
+              <div
+                  className="relative w-full h-[1px] bg-gray-200 mt-[15px]"
+                />  
+              <div className="h-[10px]"/>
+
+                <div className="flex-col w-full mt-[20px]">
+
+                  {isInfoVerified?
+                  <div className="flex justify-center space-x-[15px]">
+                  
+                  <div className="bg-streamlineBlue text-white font-bold mt-[20px] text-[15px] px-[20px] py-[10px] rounded-full cursor-pointer" onClick={()=>{
+                    
+                    const isVerified = verifyDataComplete()
+                    
+
+                    }}>
+                    Save Information and Complete Sign Up
+                  </div>
+
+                  </div>
+                  :
+                  choseSignUpMethod.length===0?
+                  <div className="flex w-full flex-col items-center justify-center">
+
+                      <div className="text-center mt-[10px] font-bold">
+                        Choose Sign Up Method
+                      </div>
+
+                      <div className="flex py-2 rounded-2xl
+                      items-center justify-center relative
+                      border border-gray-300 px-3 text-[14px]
+                      mt-[20px] font-bold  w-[290px] text-center cursor-pointer"
+                      onClick={
+                        ()=>{setChoseSignUpMethod("email")}
+                      }>
+                          <div className='absolute left-[15px] top-[9px]'>
+                              <EmailIcon className="w-[40px] h-[30px]"/>
+                          </div>
+                          Sign Up with Email
+                      </div>
+                  </div>:
+                    <EmailSignUpWidget setAlternativeSignUpEmail={setAlternativeSignUpEmail} alternativeSignUpEmail={alternativeSignUpEmail} useDifferentEmailThanContact={useDifferentEmailThanContact} setUseDifferentEmailThanContact={setUseDifferentEmailThanContact} emailAddress={emailAddress} setEmailAddress={setEmailAddress} password={password} setPassword={setPassword}/>
+                  }
+
                 </div>
 
-                <div className="flex py-2 rounded-2xl
-                items-center justify-center relative
-                border border-gray-300 px-3 text-[14px]
-                mt-[20px] font-bold  w-[290px] text-center cursor-pointer"
-                onClick={
-                  ()=>{setChoseSignUpMethod("email")}
-                }>
-                    <div className='absolute left-[15px] top-[9px]'>
-                        <EmailIcon className="w-[40px] h-[30px]"/>
-                    </div>
-                    Sign Up with Email
-                </div>
-            </div>:
-              <EmailSignUpWidget setAlternativeSignUpEmail={setAlternativeSignUpEmail} alternativeSignUpEmail={alternativeSignUpEmail} useDifferentEmailThanContact={useDifferentEmailThanContact} setUseDifferentEmailThanContact={setUseDifferentEmailThanContact} emailAddress={emailAddress} setEmailAddress={setEmailAddress} password={password} setPassword={setPassword}/>
-            }
+              </div>
+
 
           </div>
-
-        </div>
-
-
-        </div>
         </div>
         </DynamicScreen>
         </div>

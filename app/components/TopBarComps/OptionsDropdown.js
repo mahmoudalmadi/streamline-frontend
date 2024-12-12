@@ -96,7 +96,7 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                         <div
                         className='px-[10px] text-[14px] text-gray-500 w-full 
                         pt-[6px] pb-[3px]' 
-                        onClick={router.push('neptunes/teamDashboard')}
+                        onClick={()=>router.push('/neptunes/teamDashboard')}
                         >
                         Teams
                         </div>
