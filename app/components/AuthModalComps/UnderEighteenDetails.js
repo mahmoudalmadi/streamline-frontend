@@ -57,7 +57,6 @@ export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) 
             let userId; 
 
             if (guardianInfo.signUpMethod==="email"){
-                console.log(JSON.stringify(guardianInfo))
             userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password})
             }
         
@@ -76,7 +75,6 @@ export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) 
         onClose()
         
         }catch(error){
-                console.log(error)
                 if (error.message.includes("auth")){
                     const errMessage = extractContent(error.message)
                     const errMessageTwo = extractLatterContent(error.message)

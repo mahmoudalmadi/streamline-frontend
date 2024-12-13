@@ -3,34 +3,67 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages,prompt }) => {
 
-  const handleImageUpload = (event) => {
+  const [displayableImages, setDisplayableImages] = useState([]);
+
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file); // Reads file and converts to Base64
+      reader.onload = () => resolve(reader.result.split(',')[1]); // Extract Base64 content
+      reader.onerror = (error) => reject(error);
+    });
+  }
+
+  const handleImageUpload = async (event) => {
     const files = event.target.files;
     if (!files) return;
 
-    const newImages = Array.from(files).map((file) => ({
-      id: `${file.name}-${Date.now()}`, // Unique ID for each file
-      url: URL.createObjectURL(file),
-    }));
+    try {
+      const newImages = await Promise.all(
+        Array.from(files).map(async (file) => {
+            return {
+              id: `${file.name}-${Date.now()}`,
+              file, // Store the actual file for later upload
+              url: URL.createObjectURL(file), 
+            };
+        })
+        
+      );
+  
+      if (allowMultiple) {
+        setImages((prevImages) => [...prevImages, ...newImages]);
+        setDisplayableImages((prevDisplayable) => [
+          ...prevDisplayable,
+          ...newImages.map((img) => ({ id: img.id, url: img.url })),
+        ]);
+      } else {
+        setImages(newImages.slice(0, 1)); // Replace the existing image for single upload
+        setDisplayableImages(newImages.slice(0, 1).map((img) => ({ id: img.id, url: img.url })));
 
-    if (allowMultiple) {
-      setImages((prevImages) => [...prevImages, ...newImages]);
-    } else {
-      setImages(newImages.slice(0, 1)); // Replace the existing image for single upload
+      }
+    } catch (error) {
+      console.error('Error uploading images:', error);
     }
   };
 
   const handleRemoveImage = (id) => {
     setImages((prevImages) => prevImages.filter((image) => image.id !== id));
+    setDisplayableImages((prevImages) => prevImages.filter((image) => image.id !== id));
   };
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
 
-    const reorderedImages = Array.from(images);
+    const reorderedImages = Array.from(displayableImages);
     const [movedImage] = reorderedImages.splice(result.source.index, 1);
     reorderedImages.splice(result.destination.index, 0, movedImage);
+    setDisplayableImages(reorderedImages);
 
-    setImages(reorderedImages);
+    const reorderedImagesTwo = Array.from(images);
+    const [movedImageTwo] = reorderedImagesTwo.splice(result.source.index, 1);
+    reorderedImagesTwo.splice(result.destination.index, 0, movedImageTwo);
+    setImages(reorderedImagesTwo);
+    
   };
 
   return (
@@ -68,7 +101,7 @@ const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages,prompt }
               {...provided.droppableProps}
               style={{ display: "flex", gap: "15px", flexWrap: "wrap" }}
             >
-              {images.map((image, index) => (
+              {displayableImages.map((image, index) => (
                 <Draggable key={image.id} droppableId={"image-list"} draggableId={image.id} index={index}>
                   {(provided) => (
                     <div

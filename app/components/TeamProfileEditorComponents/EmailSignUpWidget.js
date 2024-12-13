@@ -2,11 +2,18 @@
 
 import PasswordEntry from "../AuthModalComps/PasswordEntry";
 import ProfileEntryEditor from "./ProfileEntryEditor";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import RedWarningIcon from "public/RedWarningIcon.svg";
+import { extractContent } from "@/app/hooks/authHooks/errorMessageProcessing";
+import { extractLatterContent } from "@/app/hooks/authHooks/errorMessageProcessing";
 
-const EmailSignupWidget = ({setAlternativeSignUpEmail, alternativeSignUpEmail, useDifferentEmailThanContact, setUseDifferentEmailThanContact, emailAddress, setEmailAddress, password, setPassword}) => {
+const EmailSignupWidget = ({setAlternativeSignUpEmail, alternativeSignUpEmail, useDifferentEmailThanContact, setUseDifferentEmailThanContact, emailAddress, setEmailAddress, password, setPassword, completeSignUp}) => {
 
     const [errorMessage, setErrorMessage] = useState("")
+
+    useEffect(()=>{
+        setErrorMessage("")
+    },[emailAddress,alternativeSignUpEmail,password])
 
     return(
         <div className="flex flex-col w-full bg-white p-[20px] rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] items-center justify-center  space-y-[5px]">
@@ -43,8 +50,35 @@ const EmailSignupWidget = ({setAlternativeSignUpEmail, alternativeSignUpEmail, u
             setErrorMessage={setErrorMessage}
             />
             </div>
+            <div className="">
+            {errorMessage.length!=0 &&
+        <div className='flex mt-[7px] items-center'>
+            <div className='w-[20px]'>
+            <RedWarningIcon/>
+            </div>
+            <div className='text-[11px] mt-[3px] ml-[5px]'
+            style={{color:'#FF0000'}}>
+                {errorMessage}
+            </div>
+        </div>}
+            </div>
             <div className="h-[10px]"/>
-            <div className="flex justify-center rounded-[20px] font-bold text-white bg-streamlineBlue py-[7px] w-[130px] mt-[20px] cursor-pointer">
+
+            <div className="flex justify-center rounded-[20px] font-bold text-white bg-streamlineBlue py-[7px] w-[130px] mt-[20px] cursor-pointer"
+            onClick={async()=>{try{await completeSignUp()}
+            catch(error){
+                console.log("made it",error)
+                if (error.message.includes("auth")){
+                    const errMessage = extractContent(error.message)
+                    const errMessageTwo = extractLatterContent(error.message)
+                    const finalErrMessage = errMessage + " (" + errMessageTwo + ")"
+                    setErrorMessage(finalErrMessage)
+                    console.log(finalErrMessage)
+                    setFinishSignUpDetails(false)
+                }else{
+                setErrorMessage("An error has occurred, please try again later.")
+                }
+            }}}>
                 Sign Up
             </div>
 

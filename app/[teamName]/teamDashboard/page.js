@@ -86,7 +86,7 @@ export default function TeamDashboard() {
             </div>
 
             <div className="flex">
-            <div className="flex space-x-[5px] rounded-full text-white font-bold items-center px-[14px] bg-green-400 py-[8px] mt-[10px] cursor-pointer">
+            <div className="flex space-x-[5px] rounded-full text-white font-bold items-center px-[14px] bg-green-500 py-[8px] mt-[10px] cursor-pointer">
                 <div className="text-[15px]">
                 +
                 </div>
@@ -122,11 +122,18 @@ export default function TeamDashboard() {
                     </div>
                     <div className="w-full h-[0.5px] bg-streamlineBlue mt-[3px] mb-[8px]"/>
                     <div className="flex-col">
+                        {weeklyTrialLessons.length>0 ?
+                        <div className="w-full p-[20px] flex justify-center font-bold text-gray-400">
+                            There are no trial lessons requested or scheduled this week
+                        </div>
+                        :
+                        <>
                         {
                         weeklyTrialLessons.map((item,index) => (
                             <div 
                             key={index}
                             className={`flex items-center w-full rounded-[10px]
+                            py-[6px]
                             ${index%2 == 0 ? "bg-gray-100" :""} cursor-pointer
                             hover:bg-gray-200 w-full`}>
                                 <div className="w-[25%] p-[5px]">
@@ -151,6 +158,8 @@ export default function TeamDashboard() {
 
                             </div>            
                         ))
+                        }
+                        </>
                         }
     
                     </div>

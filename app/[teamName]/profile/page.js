@@ -15,6 +15,10 @@ import MultiFieldPhoneEntry from "@/app/components/AuthModalComps/MultiFieldPhon
 import validateFields from "@/app/hooks/firestoreHooks/validateFields";
 import EmailIcon from '../../../public/emailIcon.svg'
 import EmailSignUpWidget from "@/app/components/TeamProfileEditorComponents/EmailSignUpWidget";
+import { addInfoAsJson } from "@/app/hooks/firestoreHooks/addInfoAsJson";
+import { emailSignUp } from "@/app/hooks/authHooks/firebaseAuth";
+import { uploadImagesToS3 } from "@/app/hooks/awsHooks/uploadToS3";
+import { addListOfJsons, generateJsonList } from "@/app/hooks/firestoreHooks/addInfoAsList";
 
 export default function TeamProfileEditor() {
 
@@ -38,7 +42,7 @@ export default function TeamProfileEditor() {
 
     const [choseSignUpMethod, setChoseSignUpMethod] = useState("")
     const [newTeamName,setNewTeamName] = useState(teamName)
-    const [swimTeamDescription, setSwimTeamDescription] = useState("")
+    const [teamDescription, setTeamDescription] = useState("")
     const [googleMapsLink, setGoogleMapsLink] = useState("")
     const [address,setAddress] = useState("")
     const [coords, setCoords] = useState(null)
@@ -98,7 +102,7 @@ export default function TeamProfileEditor() {
       });
     };    
 
-    const [teamInfo,setTeamInfo] = useState({"teamName":teamName,"swimTeamDescription":swimTeamDescription,
+    const [teamInfo,setTeamInfo] = useState({"teamName":teamName,"teamDescription":teamDescription,
     "logoImg":logoImg,
     "sport":"swimming"})
     const [contactInfo, setContactInfo] = useState({
@@ -126,7 +130,7 @@ export default function TeamProfileEditor() {
         isFirstRender.current=false;
       }else{
         
-        changeField({setDict:setTeamInfo,field:"swimTeamDescription",value:swimTeamDescription})
+        changeField({setDict:setTeamInfo,field:"teamDescription",value:teamDescription})
         changeField({setDict:setTeamInfo,field:"logoImg",value:logoImg})
         changeField({setDict:setTeamInfo,field:"teamName",value:teamName})
         
@@ -159,7 +163,7 @@ export default function TeamProfileEditor() {
       setIsMissingContact(false)
       setIsMissingTeamInfo(false)
       setIsMissingLocationDivRef(false)
-    },[teamName,swimTeamDescription
+    },[teamName,teamDescription
       ,logoImg,emailAddress,phoneNumberObj,fullName,address,city,province,coords,selectedAmenities,locationImgs,daysOfWeek,timesOfDay,programLevels,programTypes,headCoachName,headCoachBio,coachImg])
 
     const [isMissingCoachInfo,setIsMissingCoachInfo]=useState(false)
@@ -192,6 +196,7 @@ export default function TeamProfileEditor() {
       {
       for (const [key, value] of Object.entries(metaData)) {
       try{
+        console.log(key)
         validateFields({data:value})
         if (key==="programsOffered"){
           let missingHoursCounter=0;
@@ -216,8 +221,8 @@ export default function TeamProfileEditor() {
             throw new Error("bad");
           }
 
-        return true
         }
+       
       }catch(error){
         //GO TO KEY PART OF PAGE
         if (key.toString()==="teamInfo"){
@@ -240,7 +245,8 @@ export default function TeamProfileEditor() {
         return false
         
       }
-      }
+    }
+      return true
       }
       // ENSURE SIGN UP METHOD IS SUCCESSFULL
 
@@ -250,38 +256,68 @@ export default function TeamProfileEditor() {
 
     }
 
-    const completeSignUp = () => {
+    const completeSignUp = async () => {
 
+      
+      console.log("HELLO0A")
       //SIGN UP EMAIL ON FIREBASE AUTH 
       //get: firebaseId
+      try{
+        // const firebaseId = await emailSignUp({email:useDifferentEmailThanContact?alternativeSignUpEmail:contactInfo.emailAddress,password:password})
 
-      //ADD ACCOUNT INFO TO FIRESTORE
-      //info piece:
-      //accountType
-      //dateJoined
-      //fullName
-      //phoneNumber
-      //emailAddress
-      //firebaseId
+        // FIRESTORE ACCOUNT INFO - DONE
+        //const accountId = await addInfoAsJson({jsonInfo:{
+        //   accountType:"team",
+        //   dateJoined:new Date(),
+        //   emailAddress:contactInfo.emailAddress,
+        //   firebaseId:firebaseId.uid,
+        //   fullName:contactInfo.contactName,
+        //   phoneNumber:contactInfo.phoneNumber,
+        //   uploadTimestamp:new Date()
+        // },collectionName:"Account"})
+
+        // FIRESTORE TEAM INFO - DONE
+        // const logoUrlList = await uploadImagesToS3({s3Uri:"s3://streamlineplatform/logoImgs/",files:logoImg})
+        // console.log(logoUrlList)
+        // const teamId = await addInfoAsJson({jsonInfo:{
+        //   contactEmail:contactInfo.emailAddress,
+        //   contactName:contactInfo.contactName,
+        //   firebaseId:firebaseId,
+        //   logoPhotoURL:logoUrlList[0],
+        //   phoneNumber: contactInfo.phoneNumber,
+        //   sport:"swimming",
+        //   teamDescription:teamInfo.teamDescription,
+        //   teamName:teamInfo.teamName,
+        //   uploadTimestamp:new Date(),
+        // },collectionName:"Team"})
+
+        // FIRESTORE LOCATION INFO
+        // const locationId = await addInfoAsJson({jsonInfo:{
+        //   address:locationData.address,
+        //   city:locationData.city,
+        //   country:locationData.country,
+        //   latitude:locationData.latitude?locationData.latitude:"na",
+        //   longitude:locationData.longitude?locationData.longitude:"na",
+        //   state:locationData.province,
+        //   teamId:teamId,
+        //   uploadTimestamp:new Date()
+        // },collectionName:"Location"})
+
+        // FIRESTORE + AWS LOCATION IMGS
+        // const locationImageList = await uploadImagesToS3({s3Uri:"s3://streamlineplatform/locationImages/",files:locationImgs})
+        // const imagesFirestoreJsons = generateJsonList(locationImageList,
+        // {locationId:locationId},
+        // {photoType:"location"},
+        // {teamId:teamId},
+        // {uploadTimestamp:new Date()})
+        // const imageFirestoreIds = await addListOfJsons({jsonList:imagesFirestoreJsons,collectionName:"Images"})
+
+
+
+      }catch(error){
+        throw error;
+      }
       
-      //ADD TEAM INFO TO FIRESTORE
-      // contactEmail
-      // contactName
-      // firebaseId
-      // logoPhotoURL
-      // phoneNumber
-      // sport
-      // teamDescription
-      // teamName
-
-      //ADD to Location collection the following fields
-      // address
-      // city
-      // country
-      // latitude
-      // longitude
-      // state
-      // teamId
 
       //ADD to OperationDayTime collection BUT IT TAKES IN A LIST OF OBJECTS WITH THE SAME FIELDS showed below EXCEPT FOR LOCATIONID AND TEAMID, ITS PROVIDED ONCE AS A VARIABLE
       // day
@@ -376,8 +412,8 @@ export default function TeamProfileEditor() {
               />
               <ProfileEntryEditor
               prompt={"Swim Team Description"}
-              response={swimTeamDescription}
-              setResponse={setSwimTeamDescription}
+              response={teamDescription}
+              setResponse={setTeamDescription}
               placeholder={"Talk about your swim team's culture, offerings, history, staff etc..."}
               isLong={true}
               />
@@ -473,7 +509,7 @@ export default function TeamProfileEditor() {
               setProvince={setProvince}
               />
 
-              <ImageUploader allowMultiple={true} images={locationImgs} setImages={setLocationImgs} prompt={"Location Images (at least 5 images)"}
+              <ImageUploader allowMultiple={true} images={locationImgs} setImages={setLocationImgs} prompt={"Location Images (at least 5 images) - drag to reorder"}
               buttonMessage={
               locationImgs.length===0?"Upload Location Photos":"Add Location Photos"}/>
 
@@ -565,7 +601,7 @@ export default function TeamProfileEditor() {
                 />  
               <div className="h-[10px]"/>
 
-                <div className="flex-col w-full mt-[20px]">
+                <div className="flex-col w-full mt-[10px] mb-[10px]">
 
                   {isInfoVerified?
                   <div className="flex justify-center space-x-[15px]">
@@ -574,6 +610,7 @@ export default function TeamProfileEditor() {
                     
                     const isVerified = verifyDataComplete()
                     
+                    setIsInfoVerified(isVerified)
 
                     }}>
                     Save Information and Complete Sign Up
@@ -581,10 +618,10 @@ export default function TeamProfileEditor() {
 
                   </div>
                   :
-                  choseSignUpMethod.length===0?
+                  choseSignUpMethod.length!=0?
                   <div className="flex w-full flex-col items-center justify-center">
 
-                      <div className="text-center mt-[10px] font-bold">
+                      <div className="text-center mt-[10px] font-bold text-streamlineBlue">
                         Choose Sign Up Method
                       </div>
 
@@ -601,7 +638,9 @@ export default function TeamProfileEditor() {
                           Sign Up with Email
                       </div>
                   </div>:
-                    <EmailSignUpWidget setAlternativeSignUpEmail={setAlternativeSignUpEmail} alternativeSignUpEmail={alternativeSignUpEmail} useDifferentEmailThanContact={useDifferentEmailThanContact} setUseDifferentEmailThanContact={setUseDifferentEmailThanContact} emailAddress={emailAddress} setEmailAddress={setEmailAddress} password={password} setPassword={setPassword}/>
+                    <EmailSignUpWidget setAlternativeSignUpEmail={setAlternativeSignUpEmail} alternativeSignUpEmail={alternativeSignUpEmail} useDifferentEmailThanContact={useDifferentEmailThanContact} setUseDifferentEmailThanContact={setUseDifferentEmailThanContact} emailAddress={emailAddress} setEmailAddress={setEmailAddress} password={password} setPassword={setPassword}
+                    completeSignUp={completeSignUp}
+                    />
                   }
 
                 </div>
