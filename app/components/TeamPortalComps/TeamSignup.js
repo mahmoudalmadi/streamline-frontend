@@ -148,7 +148,9 @@ export default function TeamSignUp({switchModalType}){
         mt-[20px] font-bold bg-streamlineBlue text-white w-full text-center
         ${teamRegistrantInfo.emailAddress.length>0 && teamRegistrantInfo.isValidNum && teamRegistrantInfo.fullName.length>1 && teamRegistrantInfo.teamName.length>1 ? 'cursor-pointer':'opacity-50 '}`}
         onClick={()=>{
+            if(teamRegistrantInfo.emailAddress.length>0 && teamRegistrantInfo.isValidNum && teamRegistrantInfo.fullName.length>1 && teamRegistrantInfo.teamName.length>1){
             handleNavigate()
+            }
         }}>
             Complete Team Details
         </div>

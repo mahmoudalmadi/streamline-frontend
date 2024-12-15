@@ -30,11 +30,20 @@ export const addListOfJsons = async ({ jsonList, collectionName }) => {
 };
 
 
-export function generateJsonList (iterableList, ...manualFields) {
+export function generateJsonList (iterableList, listName, ...manualFields) {
   const manualFieldsObject = Object.assign({}, ...manualFields);
   
   return iterableList.map(item => ({
     ...manualFieldsObject,
-    iterableList: item
+    [listName]: item
+  }));
+}
+
+export function generateJsonListGivenJsons (iterableList, ...manualFields) {
+  const manualFieldsObject = Object.assign({}, ...manualFields);
+  
+  return iterableList.map(item => ({
+    ...manualFieldsObject,
+    ...item
   }));
 }

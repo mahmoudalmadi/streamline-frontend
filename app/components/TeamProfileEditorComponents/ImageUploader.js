@@ -1,18 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import dynamic from 'next/dynamic';
+
+
+// Dynamically import DragDropContext without SSR
+const DragDropContextNoSSR = dynamic(
+  () => import('react-beautiful-dnd').then((mod) => mod.DragDropContext),
+  { ssr: false }
+);
 
 const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages,prompt }) => {
 
   const [displayableImages, setDisplayableImages] = useState([]);
-
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file); // Reads file and converts to Base64
-      reader.onload = () => resolve(reader.result.split(',')[1]); // Extract Base64 content
-      reader.onerror = (error) => reject(error);
-    });
-  }
+  const [isReady, setIsReady] = useState(false);
 
   const handleImageUpload = async (event) => {
     const files = event.target.files;

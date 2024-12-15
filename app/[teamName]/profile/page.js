@@ -10,7 +10,7 @@ import CONFIG from "@/config";
 import ImageUploader from "@/app/components/TeamProfileEditorComponents/ImageUploader";
 import AmenitiesSelection from "@/app/components/TeamProfileEditorComponents/AmentitiesSelection";
 import DaysHoursOperations from "@/app/components/TeamProfileEditorComponents/DaysHoursOperation";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import MultiFieldPhoneEntry from "@/app/components/AuthModalComps/MultiFieldPhoneEntry";
 import validateFields from "@/app/hooks/firestoreHooks/validateFields";
 import EmailIcon from '../../../public/emailIcon.svg'
@@ -18,11 +18,23 @@ import EmailSignUpWidget from "@/app/components/TeamProfileEditorComponents/Emai
 import { addInfoAsJson } from "@/app/hooks/firestoreHooks/addInfoAsJson";
 import { emailSignUp } from "@/app/hooks/authHooks/firebaseAuth";
 import { uploadImagesToS3 } from "@/app/hooks/awsHooks/uploadToS3";
-import { addListOfJsons, generateJsonList } from "@/app/hooks/firestoreHooks/addInfoAsList";
+import { addListOfJsons, generateJsonList, generateJsonListGivenJsons } from "@/app/hooks/firestoreHooks/addInfoAsList";
 
 export default function TeamProfileEditor() {
 
-    const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!searchParams.get('refreshed')) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('refreshed', 'true');
+
+      router.replace(`?${params.toString()}`); // Update the URL without full reload
+      window.location.reload(); // Trigger the reload
+    }
+  }, [searchParams, router]);
+
     const isSigningUp = searchParams.get("isSigningUp");
     
     const [isInfoVerified, setIsInfoVerified] = useState(false)
@@ -83,6 +95,7 @@ export default function TeamProfileEditor() {
           setIsTimesSet(true)
         }
       }
+      
     },[timesOfDay])
 
     const isFirstRender = useRef(true);
@@ -126,6 +139,7 @@ export default function TeamProfileEditor() {
     })
 
     useEffect(()=>{
+      console.log(programLevels,programTypes)
       if (isFirstRender.current){
         isFirstRender.current=false;
       }else{
@@ -196,7 +210,6 @@ export default function TeamProfileEditor() {
       {
       for (const [key, value] of Object.entries(metaData)) {
       try{
-        console.log(key)
         validateFields({data:value})
         if (key==="programsOffered"){
           let missingHoursCounter=0;
@@ -259,88 +272,104 @@ export default function TeamProfileEditor() {
     const completeSignUp = async () => {
 
       
-      console.log("HELLO0A")
       //SIGN UP EMAIL ON FIREBASE AUTH 
       //get: firebaseId
       try{
-        // const firebaseId = await emailSignUp({email:useDifferentEmailThanContact?alternativeSignUpEmail:contactInfo.emailAddress,password:password})
+        const firebaseId = await emailSignUp({email:useDifferentEmailThanContact?alternativeSignUpEmail:contactInfo.emailAddress,password:password})
 
         // FIRESTORE ACCOUNT INFO - DONE
-        //const accountId = await addInfoAsJson({jsonInfo:{
-        //   accountType:"team",
-        //   dateJoined:new Date(),
-        //   emailAddress:contactInfo.emailAddress,
-        //   firebaseId:firebaseId.uid,
-        //   fullName:contactInfo.contactName,
-        //   phoneNumber:contactInfo.phoneNumber,
-        //   uploadTimestamp:new Date()
-        // },collectionName:"Account"})
+        const accountId = await addInfoAsJson({jsonInfo:{
+          accountType:"team",
+          dateJoined:new Date(),
+          emailAddress:contactInfo.emailAddress,
+          firebaseId:firebaseId.uid,
+          fullName:contactInfo.contactName,
+          phoneNumber:contactInfo.phoneNumber,
+          uploadTimestamp:new Date()
+        },collectionName:"Account"})
 
         // FIRESTORE TEAM INFO - DONE
-        // const logoUrlList = await uploadImagesToS3({s3Uri:"s3://streamlineplatform/logoImgs/",files:logoImg})
-        // console.log(logoUrlList)
-        // const teamId = await addInfoAsJson({jsonInfo:{
-        //   contactEmail:contactInfo.emailAddress,
-        //   contactName:contactInfo.contactName,
-        //   firebaseId:firebaseId,
-        //   logoPhotoURL:logoUrlList[0],
-        //   phoneNumber: contactInfo.phoneNumber,
-        //   sport:"swimming",
-        //   teamDescription:teamInfo.teamDescription,
-        //   teamName:teamInfo.teamName,
-        //   uploadTimestamp:new Date(),
-        // },collectionName:"Team"})
+        const logoUrlList = await uploadImagesToS3({s3Uri:"s3://streamlineplatform/logoImgs/",files:logoImg})
+        const teamId = await addInfoAsJson({jsonInfo:{
+          contactEmail:contactInfo.emailAddress,
+          contactName:contactInfo.contactName,
+          firebaseId:firebaseId.uid,
+          logoPhotoURL:logoUrlList[0],
+          phoneNumber: contactInfo.phoneNumber,
+          sport:"swimming",
+          teamDescription:teamInfo.teamDescription,
+          teamName:teamInfo.teamName,
+          uploadTimestamp:new Date(),
+        },collectionName:"Team"})
 
         // FIRESTORE LOCATION INFO
-        // const locationId = await addInfoAsJson({jsonInfo:{
-        //   address:locationData.address,
-        //   city:locationData.city,
-        //   country:locationData.country,
-        //   latitude:locationData.latitude?locationData.latitude:"na",
-        //   longitude:locationData.longitude?locationData.longitude:"na",
-        //   state:locationData.province,
-        //   teamId:teamId,
-        //   uploadTimestamp:new Date()
-        // },collectionName:"Location"})
+        const locationId = await addInfoAsJson({jsonInfo:{
+          address:locationData.address,
+          city:locationData.city,
+          country:locationData.country,
+          latitude:locationData.latitude?locationData.latitude:"na",
+          longitude:locationData.longitude?locationData.longitude:"na",
+          state:locationData.province,
+          teamId:teamId,
+          uploadTimestamp:new Date()
+        },collectionName:"Location"})
 
         // FIRESTORE + AWS LOCATION IMGS
-        // const locationImageList = await uploadImagesToS3({s3Uri:"s3://streamlineplatform/locationImages/",files:locationImgs})
-        // const imagesFirestoreJsons = generateJsonList(locationImageList,
-        // {locationId:locationId},
-        // {photoType:"location"},
-        // {teamId:teamId},
-        // {uploadTimestamp:new Date()})
-        // const imageFirestoreIds = await addListOfJsons({jsonList:imagesFirestoreJsons,collectionName:"Images"})
+        const locationImageList = await uploadImagesToS3({s3Uri:"s3://streamlineplatform/locationImages/",files:locationImgs})
+        const imagesFirestoreJsons = generateJsonList(locationImageList,"imageUrl",
+        {locationId:locationId},
+        {photoType:"location"},
+        {teamId:teamId},
+        {uploadTimestamp:new Date()})
+        const imageFirestoreIds = await addListOfJsons({jsonList:imagesFirestoreJsons,collectionName:"Images"})
 
+        // FIRESTORE OPERATION DAYS/TIMES
+        let dayTimes = []
+        for (const day of programsOffered.opDays)
+        {
+          if (day.hoursOfOps.length>0){
+            const dayHours = generateJsonList(day.hoursOfOps,"hour",
+            {day:day.day},
+            {locationId:locationId},
+            {teamId:teamId})
+            dayTimes.push(...dayHours)
+            console.log(JSON.stringify(dayTimes))
+          }
+        }
+        const dayTimeIds = await addListOfJsons({jsonList:dayTimes,collectionName:"OperationDayTime"})
 
+        // FIRESTORE AMENITIES
+        const firestoreAmenities = generateJsonList(selectedAmenities,"selectedAmenities",{locationId:locationId},{teamId:teamId}) 
+        const amenityIds = await addListOfJsons({jsonList:firestoreAmenities,
+        collectionName:"Amenities"})
+        
+        //FIRESTORE PROGRAM LEVELS
+        const firestoreSkillLevels = generateJsonListGivenJsons(programLevels,{locationId:locationId,teamId:teamId})
+        const programLevelIds = await addListOfJsons({jsonList:firestoreSkillLevels,
+        collectionName:"SkillLevel"})
+
+        //FIRESTORE PROGRAM TYPES
+        const firestoreProgramTypes = generateJsonListGivenJsons(programTypes,{locationId:locationId,teamId:teamId})
+        const programTypesIds = await addListOfJsons({jsonList:firestoreProgramTypes,
+        collectionName:"LessonType"})
+        
+        // FIRESTORE COACH INFO
+        const coachPhotoUrl = await uploadImagesToS3({s3Uri:"s3://streamlineplatform/coachPhotos/",files:coachImg})
+        const coachEntryId = await addInfoAsJson({jsonInfo:{
+          coachBio:coachInfo.description,
+          coachName:coachInfo.fullName,
+          coachType:coachInfo.coachType,
+          locationId:locationId,
+          photoUrl:coachPhotoUrl[0],
+          teamId:teamId
+        },collectionName:"Coach"})
+
+        console.log("TEAM INFO UPLOADED SUCCESSFULLY :)")
 
       }catch(error){
         throw error;
       }
-      
 
-      //ADD to OperationDayTime collection BUT IT TAKES IN A LIST OF OBJECTS WITH THE SAME FIELDS showed below EXCEPT FOR LOCATIONID AND TEAMID, ITS PROVIDED ONCE AS A VARIABLE
-      // day
-      // hour
-      // locationId
-      // teamId
-
-      //ADD to Amenities collection but it takes in A LIST OF amentiy ids EXCEPT FOR LOCATIONID AND TEAMID, theyre PROVIDED ONCE AS A VARIABLE
-      // amenityId
-      // locationId
-      // teamId
-
-      // ADD to SkillLevel collection but it takes in a list of objects with THE SAME FIELDS showed below EXCEPT FOR LOCATIONID AND TEAMID, theyre PROVIDED ONCE AS A VARIABLE 
-      // category
-      // lessonLevel
-      // locationId
-      // teamId
-
-      // ADD to LessonType collection but it takes in a list of objects with THE SAME FIELDS showed below EXCEPT FOR LOCATIONID AND TEAMID, theyre PROVIDED ONCE AS A VARIABLE 
-      // category
-      // lessonType
-      // locationId
-      // teamId
 
       // ADD to Images collection but it takes in a list of image URLs but LOCATIONID, TEAMID, and photoType, are PROVIDED ONCE AS A VARIABLE 
       // photoURL
@@ -603,7 +632,7 @@ export default function TeamProfileEditor() {
 
                 <div className="flex-col w-full mt-[10px] mb-[10px]">
 
-                  {isInfoVerified?
+                  {!isInfoVerified?
                   <div className="flex justify-center space-x-[15px]">
                   
                   <div className="bg-streamlineBlue text-white font-bold mt-[20px] text-[15px] px-[20px] py-[10px] rounded-full cursor-pointer" onClick={()=>{
@@ -618,7 +647,7 @@ export default function TeamProfileEditor() {
 
                   </div>
                   :
-                  choseSignUpMethod.length!=0?
+                  choseSignUpMethod.length===0?
                   <div className="flex w-full flex-col items-center justify-center">
 
                       <div className="text-center mt-[10px] font-bold text-streamlineBlue">

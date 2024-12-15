@@ -48,7 +48,7 @@ export default function DaysHoursOperations({daysOfWeek,setDaysOfWeek,hourOfOpEr
                     <div className="flex flex-col justify-center w-[145px]">
 
                     {daysOfWeek.map((item, index) => (
-                        <div className="flex items-center">
+                        <div key={index} className="flex items-center">
 
                             <div
                             key={index}
