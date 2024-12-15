@@ -25,13 +25,15 @@ export default function LoadingScreen({loadingMessage}){
             className="relative w-screen left-[-3%] h-[1px] bg-gray-200 mt-[18px]"
             />  
             <div className="flex text-[18px] h-screen font-bold items-center left-1/2">
-                <div className="absolute left-1/2 transform -translate-x-1/2  bottom-[59%]">
-                <Spinner/>
-                </div>        
-                <div className="absolute text-streamlineBlue left-1/2 transform -translate-x-1/2 bottom-[55%]">
-                {loadingMessage}
+                <div className="absolute left-1/2 transform -translate-x-1/2  bottom-[54%] flex flex-col items-center">
+                    <div className="justify-center ">
+                    <Spinner/>
+                    </div>        
+                    <div className="text-streamlineBlue mt-[16px] text-center">
+                    {loadingMessage}
+                    </div>
                 </div>
-                </div>
+            </div>
             </DynamicScreen>
         </div>
         );

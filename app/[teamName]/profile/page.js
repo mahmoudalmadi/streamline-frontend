@@ -4,6 +4,7 @@ import DynamicScreen from "@/app/components/DynamicScreen";
 import ProfileEntryEditor from "@/app/components/TeamProfileEditorComponents/ProfileEntryEditor";
 import TopBar from "@/app/components/TopBarComps/TopBar";
 import { useEffect, useRef, useState } from "react";
+import { changeField } from "@/app/hooks/changeField";
 import GoogleAddyEntryEditor from "@/app/components/TeamProfileEditorComponents/GoogleAddressInput";
 import SelectingCategories from "@/app/components/TeamProfileEditorComponents/SelectingCategories";
 import CONFIG from "@/config";
@@ -19,23 +20,39 @@ import { addInfoAsJson } from "@/app/hooks/firestoreHooks/addInfoAsJson";
 import { emailSignUp } from "@/app/hooks/authHooks/firebaseAuth";
 import { uploadImagesToS3 } from "@/app/hooks/awsHooks/uploadToS3";
 import { addListOfJsons, generateJsonList, generateJsonListGivenJsons } from "@/app/hooks/firestoreHooks/addInfoAsList";
+import LoadingScreen from "@/app/components/loadingScreen";
+import { getEntriesByMatching } from "@/app/hooks/firestoreHooks/getEntriesByMatching";
+import { useAuth } from "@/app/contexts/AuthContext";
+import TeamInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/TeamInfoWrapper";
+import ContactInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/ContactInfoWrapper";
+import LocationInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/LocationInfoWrapper";
+import ProgramOfferingsWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/ProgramOfferingsWrapper";
+import HeadCoachWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/HeadCoachWrapper";
 
 export default function TeamProfileEditor() {
 
   const searchParams = useSearchParams();
   const router = useRouter();
-
+  const [isLoading,setIsLoading] = useState(false)
+  const [firstLoading,setFirstLoading]=useState(true)
+  const {user, setUser} = useAuth()
+  const isSigningUp = searchParams.get("isSigningUp");
+  const params = new URLSearchParams(searchParams.toString());
   useEffect(() => {
-    if (!searchParams.get('refreshed')) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set('refreshed', 'true');
-
+    // Get current search params
+  
+    if (!params.has('refreshed')) {
+      params.set('refreshed', 'true'); // Add 'refreshed' flag to URL
       router.replace(`?${params.toString()}`); // Update the URL without full reload
-      window.location.reload(); // Trigger the reload
+      window.location.reload(); // Trigger a full page reload
+    } else {
+      if(isSigningUp){
+      setFirstLoading(false); // Proceed if already refreshed
+      }
     }
   }, [searchParams, router]);
+  
 
-    const isSigningUp = searchParams.get("isSigningUp");
     
     const [isInfoVerified, setIsInfoVerified] = useState(false)
 
@@ -55,28 +72,26 @@ export default function TeamProfileEditor() {
     const [choseSignUpMethod, setChoseSignUpMethod] = useState("")
     const [newTeamName,setNewTeamName] = useState(teamName)
     const [teamDescription, setTeamDescription] = useState("")
-    const [googleMapsLink, setGoogleMapsLink] = useState("")
+
+
     const [address,setAddress] = useState("")
     const [coords, setCoords] = useState(null)
-    const [headCoachName, setHeadCoachName] = useState("")
-    const [headCoachBio, setHeadCoachBio] = useState("")
     const [province, setProvince] = useState("")
     const [city, setCity] = useState("")
     const [country,setCountry] = useState("")
+    
+    const [headCoachName, setHeadCoachName] = useState("")
+    const [headCoachBio, setHeadCoachBio] = useState("")
 
     const [programLevels, setProgramLevels] = useState([
         { level: "", category: "" },
       ]);
-
     const [programTypes, setProgramTypes] = useState([
     { level: "", category: "" },
     ]);
-
     const [daysOfWeek,setDaysOfWeek] = useState(CONFIG.daysOfWeek);
     const [timesOfDay,setTimesOfDay] = useState(CONFIG.timesOfDay);
-
     const [isDaysSet,setIsDaysSet] = useState(false)
-    const [isTimesSet,setIsTimesSet] = useState(false)
 
     const [hourOfOpError,setHourOfOpError] = useState("")
     useEffect(()=>{
@@ -89,31 +104,8 @@ export default function TeamProfileEditor() {
         }
       }
     },[daysOfWeek])
-    useEffect(()=>{
-      for (const time in timesOfDay){
-        if(time.checked){
-          setIsTimesSet(true)
-        }
-      }
-      
-    },[timesOfDay])
 
     const isFirstRender = useRef(true);
-    const [teamMetadata,setTeamMetadata] = useState([])
-
-    const changeField = ({ setDict, field, value }) => {
-      setDict(prevState => {
-        if (prevState[field] === value) {
-          // No state change required
-          return prevState;
-        }
-        // Update state only if the value is different
-        return {
-          ...prevState,
-          [field]: value,
-        };
-      });
-    };    
 
     const [teamInfo,setTeamInfo] = useState({"teamName":teamName,"teamDescription":teamDescription,
     "logoImg":logoImg,
@@ -138,10 +130,106 @@ export default function TeamProfileEditor() {
       "coachType": "Head Coach"
     })
 
+    const [retrievedTeamInfo,setRetrievedTeamInfo] = useState({})
+    const [retrievedLocationInfo,setRetrievedLocationInfo] = useState({})
+    const [retrievedAmenitiesInfo, setRetrievedAmenitiesInfo] = useState({})
+    const [retrievedDaysTimesOps, setRetrievedDaysTimesOps] = useState({})
+    const [retrievedLessonType, setRetrievedLessonType] = useState({})
+    const [retrievedLocationImages,setRetrievedLocationImages] = useState({})
+    const [retrievedSkillLevel,setRetrievedSkillLevel] = useState({})
+    const [retrievedCoachInfo,setRetrievedCoachInfo] = useState({})
+
+    const transformImagesListToJsons = ({list}) => {
+      return list.map(item => ({
+        id: item.imageUrl,
+        url: item.imageUrl
+      }));
+    };
+    const extractAmenities = (jsonList) => {
+      return jsonList.map(item => item.selectedAmenities);
+    };
+
+    const transformToDaysOfWeek = (data) => {
+      const daysTemplate = CONFIG.daysOfWeek
+      // Group data by day and add hours to the corresponding day in the template
+      data.forEach(({ day, hour }) => {
+        const dayEntry = daysTemplate.find((d) => d.day.toLowerCase() === day.toLowerCase());
+        if (dayEntry) {
+          dayEntry.checked = true; // Mark the day as checked since it has data
+          dayEntry.hoursOfOps.push(hour);
+        }
+      });
+    
+      return daysTemplate;
+    };
+
+    const getFirestoreInfo = async()=>{
+        if(user ){
+
+          const firestoreTeamInfo=await getEntriesByMatching({collectionName:"Team",fields:{firebaseId:user.uid}})
+          setRetrievedTeamInfo(firestoreTeamInfo[0])
+          setNewTeamName(firestoreTeamInfo[0].teamName)
+          setTeamDescription(firestoreTeamInfo[0].teamDescription)
+          setLogoImg([{id:firestoreTeamInfo[0].logoPhotoURL,url:firestoreTeamInfo[0].logoPhotoURL}])
+          setFullName(firestoreTeamInfo[0].contactName)
+          setEmailAddress(firestoreTeamInfo[0].contactEmail)
+          changeField({setDict:setPhoneNumberObj,field:"phoneNumber",value:firestoreTeamInfo[0].phoneNumber})
+
+          const teamId = firestoreTeamInfo[0].id
+
+          const firestoreTeamLocations=await getEntriesByMatching({collectionName:"Location",
+          fields:{teamId:teamId}})
+          // setRetrievedLocationInfo(firestoreTeamLocations)
+          setAddress(firestoreTeamLocations[0].address)
+
+          for (const location of firestoreTeamLocations){
+            const locationId = location.id
+
+            const firestoreDaysOfOp = await getEntriesByMatching({collectionName:"OperationDayTime", fields:{teamId:teamId,locationId:locationId}})
+            const processedDaysHours = transformToDaysOfWeek(firestoreDaysOfOp)
+            setRetrievedDaysTimesOps(processedDaysHours)
+            setDaysOfWeek(processedDaysHours)
+
+            const firestoreLocationAmenities = await getEntriesByMatching({collectionName:"Amenities", fields:{teamId:teamId,locationId:locationId}})
+            const processedAmenities = extractAmenities(firestoreLocationAmenities)
+            setSelectedAmenities(processedAmenities)
+            setRetrievedAmenitiesInfo(processedAmenities)
+            
+            const firestoreLocationLessonTypes = await getEntriesByMatching({collectionName:"LessonType", fields:{teamId:teamId,locationId:locationId}})
+            setRetrievedLessonType(firestoreLocationLessonTypes)
+            setProgramTypes(firestoreLocationLessonTypes)
+
+            const firestoreLocationSkillLevel = await getEntriesByMatching({collectionName:"SkillLevel", fields:{teamId:teamId,locationId:locationId}})
+            setRetrievedSkillLevel(firestoreLocationSkillLevel)
+            setProgramLevels(firestoreLocationSkillLevel)
+
+            const firestoreLocationCoach = await getEntriesByMatching({collectionName:"Coach", fields:{teamId:teamId,locationId:locationId}})
+            setRetrievedCoachInfo(firestoreLocationCoach)
+            setHeadCoachName(firestoreLocationCoach[0].coachName)
+            setHeadCoachBio(firestoreLocationCoach[0].coachBio)
+            setCoachImg([{id:firestoreLocationCoach[0].photoUrl,url:firestoreLocationCoach[0].photoUrl}])
+
+            const firestoreLocationImages = await getEntriesByMatching({collectionName:"Images", fields:{teamId:teamId,locationId:locationId}})
+            const formattedLocationImages = transformImagesListToJsons({list:firestoreLocationImages})
+            setRetrievedLocationImages(formattedLocationImages)
+            setLocationImgs(formattedLocationImages)
+
+          }
+        }
+      }
+
     useEffect(()=>{
-      console.log(programLevels,programTypes)
+      if(user && params.has('refreshed')){
+        getFirestoreInfo()
+        setFirstLoading(false)
+      }
+    },[user])
+
+    useEffect(()=>{
       if (isFirstRender.current){
+
         isFirstRender.current=false;
+
       }else{
         
         changeField({setDict:setTeamInfo,field:"teamDescription",value:teamDescription})
@@ -271,9 +359,10 @@ export default function TeamProfileEditor() {
 
     const completeSignUp = async () => {
 
+      window.scrollTo(0, 0);
       
-      //SIGN UP EMAIL ON FIREBASE AUTH 
-      //get: firebaseId
+      setIsLoading(true)
+      
       try{
         const firebaseId = await emailSignUp({email:useDifferentEmailThanContact?alternativeSignUpEmail:contactInfo.emailAddress,password:password})
 
@@ -333,7 +422,6 @@ export default function TeamProfileEditor() {
             {locationId:locationId},
             {teamId:teamId})
             dayTimes.push(...dayHours)
-            console.log(JSON.stringify(dayTimes))
           }
         }
         const dayTimeIds = await addListOfJsons({jsonList:dayTimes,collectionName:"OperationDayTime"})
@@ -363,34 +451,25 @@ export default function TeamProfileEditor() {
           photoUrl:coachPhotoUrl[0],
           teamId:teamId
         },collectionName:"Coach"})
-
-        console.log("TEAM INFO UPLOADED SUCCESSFULLY :)")
-
       }catch(error){
+        setIsLoading(false)
         throw error;
       }
 
-
-      // ADD to Images collection but it takes in a list of image URLs but LOCATIONID, TEAMID, and photoType, are PROVIDED ONCE AS A VARIABLE 
-      // photoURL
-      // photoType
-      // locationId
-      // teamId
-
-      // Add the following piieces of information
-      // coachBio
-      // coachType
-      // coachName
-      // locationId
-      // photoURL
-      // teamId
+      setIsLoading(false)
 
     }
+    
 
     const handleUpdate = () => {
 
       // JUST UPDATE THE WHOLE DAMN THING OR AT LEAST BREAK IT DOWN TO COLLECTIONS THAT MATTER POTENTIALLY
 
+    }
+
+    if (isLoading || firstLoading){
+      return<LoadingScreen loadingMessage={
+        firstLoading?`${isSigningUp?"Loading sign up page":"Loading team profile page"}`:"Creating your new team account"}/>
     }
 
     return(
@@ -432,26 +511,13 @@ export default function TeamProfileEditor() {
                     Please ensure you have completed all the fields in this section
                   </div>}
               </div>
-              <ProfileEntryEditor
-              prompt={"Team Name"}
-              response={newTeamName}
-              setResponse={setNewTeamName}
-              placeholder={"Team Name"}
-              isLong={false}
-              />
-              <ProfileEntryEditor
-              prompt={"Swim Team Description"}
-              response={teamDescription}
-              setResponse={setTeamDescription}
-              placeholder={"Talk about your swim team's culture, offerings, history, staff etc..."}
-              isLong={true}
-              />
-              <ImageUploader allowMultiple={false} images={logoImg} setImages={setLogoImg} prompt={"Logo Image"}
-              buttonMessage={
-                  logoImg.length!=0?"Replace Team Logo Image":"Upload Team Logo Image"}/>
-
-              <div
-              className="h-[8px]"
+              <TeamInfoWrapper
+              newTeamName={newTeamName}
+              setNewTeamName={newTeamName}
+              teamDescription={teamDescription}
+              setTeamDescription={setTeamDescription}
+              logoImg={logoImg}
+              setLogoImg={setLogoImg}
               />
 
               <div
@@ -472,33 +538,13 @@ export default function TeamProfileEditor() {
                     Please ensure you have completed all the fields in this section
                   </div>}
               </div>
-              <ProfileEntryEditor
-              prompt={"Contact Name"}
-              response={fullName}
-              setResponse={setFullName}
-              placeholder={"Full Name"}
-              isLong={false}
-              />
-              
-              <ProfileEntryEditor
-              prompt={"Team Contact Email"}
-              response={emailAddress}
-              setResponse={setEmailAddress}
-              placeholder={"Email Address"}
-              isLong={false}
-              />
-
-              <MultiFieldPhoneEntry 
-              prompt="Contact Phone Number"
-              placeholder={"Phone Number"}
-              fieldResponse={phoneNumberObj}
-              setFieldResponse={setPhoneNumberObj}
-              field="phoneNumber"
-              customLength={"w-[190px]"}
-              />
-
-              <div
-              className="h-[8px]"
+              <ContactInfoWrapper
+              fullName={fullName}
+              setFullName={setFullName}
+              emailAddress={emailAddress}
+              setEmailAddress={setEmailAddress}
+              phoneNumberObj={phoneNumberObj}
+              setPhoneNumberObj={setPhoneNumberObj}
               />
 
               <div
@@ -509,122 +555,61 @@ export default function TeamProfileEditor() {
               />
               <>
               </>
-              <div className="font-bold text-streamlineBlue text-[18px] pt-[15px]"
-              ref={locationDivRef}>
-                  <div>
-                  Location Information
-                  </div>
-                  {isMissingLocation &&
-                  <div className="text-red-500 text-[15px]">
-                    Please ensure you have completed all the fields in this section
-                  </div>}
-              </div>
-
-              <GoogleAddyEntryEditor
-              prompt={"Swim Team Location"}
-              response={googleMapsLink}
-              setResponse={setGoogleMapsLink}
-              placeholder={"Google Maps Link"}
-              isLong={false}
+              
+              <LocationInfoWrapper
+              locationDivRef={locationDivRef}
               address={address}
               setAddress={setAddress}
               setCoords={setCoords}
-              coords={coords}
-              city={city}
               setCity={setCity}
-              province={province}
-              country={country}
-              setCountry={setCountry}
+              isMissingLocation={isMissingLocation}
+              city={city}
               setProvince={setProvince}
-              />
-
-              <ImageUploader allowMultiple={true} images={locationImgs} setImages={setLocationImgs} prompt={"Location Images (at least 5 images) - drag to reorder"}
-              buttonMessage={
-              locationImgs.length===0?"Upload Location Photos":"Add Location Photos"}/>
-
-              <AmenitiesSelection 
+              coords={coords}
+              province={province}
+              setCountry={setCountry}
+              locationImgs={locationImgs}
+              setLocationImgs={setLocationImgs}
               selectedAmenities={selectedAmenities}
               setSelectedAmenities={setSelectedAmenities}
-              amenitiesIcons={CONFIG.amenitiesIcons}/>
-
-              <div
-              className="h-[8px]"
               />
-              <div
-                  className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
-                />  
 
               <div
               className="h-[8px]"
               />
 
-              <div className="font-bold text-streamlineBlue text-[18px]"
-              ref={programsOfferedDivRef}>
-                  <div>
-                  Programs Offered at this Location
-                  </div>
-                  {isMissingProgramsOffered &&
-                  <div className="text-red-500 text-[15px]">
-                    Please ensure you have completed all the fields in this section
-                  </div>}
-              </div>
-
-              <SelectingCategories categoryTypes={"Program Levels"}
-              programs={programLevels}
-              setPrograms={setProgramLevels}
-              categoryDict={CONFIG.skillLevels}/>
-
-              <SelectingCategories categoryTypes={"Program Class Sizes"}
-              programs={programTypes}
-              setPrograms={setProgramTypes}
-              categoryDict={CONFIG.lessonTypes}/>
-
-              <DaysHoursOperations daysOfWeek={daysOfWeek} setDaysOfWeek={setDaysOfWeek} hourOfOpError=
-              {hourOfOpError}/>
-
+              <ProgramOfferingsWrapper
+              programsOfferedDivRef={programsOfferedDivRef}
+              isMissingProgramsOffered={isMissingProgramsOffered}
+              programLevels={programLevels}
+              setProgramLevels={setProgramLevels}
+              programTypes={programTypes}
+              setProgramTypes={setProgramTypes}
+              daysOfWeek={daysOfWeek}
+              setDaysOfWeek={setDaysOfWeek}
+              hourOfOpError={hourOfOpError}
+              />
               <div className="h-[6px]"/>
 
-              <div
-                  className="relative w-full h-[1px] bg-gray-200 mt-[15px]"
-                />  
-              <div className="h-[6px]"/>
 
-              <div className="font-bold text-streamlineBlue text-[18px] pt-[4px]"
-              ref={coachInfoDivRef}>
-                  <div>
-                  Head Coach Information
-                  </div>
-                  {isMissingCoachInfo &&
-                  <div className="text-red-500 text-[15px]">
-                    Please ensure you have completed all the fields in this section
-                  </div>}
-              </div>
-              
-              <ProfileEntryEditor
-              prompt={"Head Coach Name"}
-              response={headCoachName}
-              setResponse={setHeadCoachName}
-              placeholder={"Coach Name"}
-              isLong={false}
+              <HeadCoachWrapper
+              coachInfoDivRef={coachInfoDivRef}
+              isMissingCoachInfo={isMissingCoachInfo}
+              headCoachBio={headCoachBio}
+              headCoachName={headCoachName}
+              setHeadCoachBio={setHeadCoachBio}
+              setHeadCoachName={setHeadCoachName}
+              coachImg={coachImg}
+              setCoachImg={setCoachImg}
               />
-
-              <ProfileEntryEditor
-              prompt={"Head Coach Bio"}
-              response={headCoachBio}
-              setResponse={setHeadCoachBio}
-              placeholder={"Talk about the head coach's experiences, history, fun facts, etc..."}
-              isLong={true}
-              />
-
-              <ImageUploader allowMultiple={false} images={coachImg} setImages={setCoachImg} prompt={"Head Coach Photo"}
-              buttonMessage={
-                  coachImg.length!=0?"Replace Head Coach Photo":"Upload Head Coach Photo"}/>
 
               </div>
 
               {/* SIGN UP AND SUBMIT MENU */}
               <div>
                 
+              {isSigningUp &&
+                <>
               <div
                   className="relative w-full h-[1px] bg-gray-200 mt-[15px]"
                 />  
@@ -673,6 +658,9 @@ export default function TeamProfileEditor() {
                   }
 
                 </div>
+              </>
+                }
+
 
               </div>
 

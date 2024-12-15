@@ -172,8 +172,7 @@ export default function TeamPage()  {
                     src={images[0]}
                     onClick={()=>{openModal(0)}}
                     className=
-                    "  object-cover w-full h-full cursor-pointer
-                    rounded-[15px]"
+                    "  object-cover w-full h-full cursor-pointer rounded-[15px]"
                 />
                 </div>
             

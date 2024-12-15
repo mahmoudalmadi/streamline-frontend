@@ -11,14 +11,43 @@ coords, setCoords, city, setCity, province, setCountry,country, setProvince}) {
     const [streetAddress, setStreetAddress] = useState("")
     const [postalCode, setPostalCode] = useState("")
 
-    const autoResize = (boxRef) => {
-        const textarea = boxRef.current;
-        if (textarea) {
-          textarea.style.height = 'inherit';  // Temporarily make height adequate to the content
-          textarea.style.height = `${textarea.scrollHeight}px`;  // Set height to scrollHeight to remove the scrollbar
-        }
+    const parseAddress = (address) => {
+      const parts = address.split(",").map(part => part.trim());
+    
+      if (parts.length < 5) {
+        throw new Error("Address format is invalid. Expected format: 'Street Address, City, State, PostalCode, Country'");
+      }
+    
+      const [streetAddress, city, statePostal, postalCode, country] = parts;
+    
+      const state = statePostal.split(" ")[0];
+    
+      return {
+        streetAddress,
+        city,
+        state,
+        postalCode,
+        country,
       };
+    };
 
+    const [isFirstTime, setIsFirstTime] = useState(true)
+    useEffect(()=>{
+      if (address.length>0 && isFirstTime){
+        try{  
+        const brokenUpAddress =  parseAddress(address)
+        console.log("BROKEN UP", brokenUpAddress)
+        setStreetAddress(brokenUpAddress.streetAddress)
+        setCity(brokenUpAddress.city)
+        setProvince(brokenUpAddress.state)
+        setPostalCode(brokenUpAddress.postalCode)
+        setCountry(brokenUpAddress.country)
+        }catch(error){
+          console.log("no address to break up")
+        }
+        setIsFirstTime(false)
+      }
+    },[address])
     // const handleChange = async(boxRef,event,setText) => {
     //     autoResize(boxRef);  // Call to resize the textarea
     //     if(event && setText){

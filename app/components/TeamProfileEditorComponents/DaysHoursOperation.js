@@ -76,7 +76,7 @@ export default function DaysHoursOperations({daysOfWeek,setDaysOfWeek,hourOfOpEr
                     <div className="flex flex-col items-center align-center justify-center">
 
                         {!daysOfWeek[selectedDayId-1].checked ?
-                        <div>
+                        <div className="text-gray-400 font-bold">
                             Select a day to assign hours of operation
                         </div>:
                         <>

@@ -1,18 +1,9 @@
 import React, { useState, useEffect} from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import dynamic from 'next/dynamic';
-
-
-// Dynamically import DragDropContext without SSR
-const DragDropContextNoSSR = dynamic(
-  () => import('react-beautiful-dnd').then((mod) => mod.DragDropContext),
-  { ssr: false }
-);
 
 const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages,prompt }) => {
 
   const [displayableImages, setDisplayableImages] = useState([]);
-  const [isReady, setIsReady] = useState(false);
 
   const handleImageUpload = async (event) => {
     const files = event.target.files;
@@ -22,7 +13,7 @@ const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages,prompt }
       const newImages = await Promise.all(
         Array.from(files).map(async (file) => {
             return {
-              id: `${file.name}-${Date.now()}`,
+              id: `${Date.now()}-${file.name}`,
               file, // Store the actual file for later upload
               url: URL.createObjectURL(file), 
             };
@@ -101,7 +92,7 @@ const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages,prompt }
               {...provided.droppableProps}
               style={{ display: "flex", gap: "15px", flexWrap: "wrap" }}
             >
-              {displayableImages.map((image, index) => (
+              {images.map((image, index) => (
                 <Draggable key={image.id} droppableId={"image-list"} draggableId={image.id} index={index}>
                   {(provided) => (
                     <div
