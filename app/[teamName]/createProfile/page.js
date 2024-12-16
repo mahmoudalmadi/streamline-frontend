@@ -16,12 +16,12 @@ import MultiFieldPhoneEntry from "@/app/components/AuthModalComps/MultiFieldPhon
 import validateFields from "@/app/hooks/firestoreHooks/validateFields";
 import EmailIcon from '../../../public/emailIcon.svg'
 import EmailSignUpWidget from "@/app/components/TeamProfileEditorComponents/EmailSignUpWidget";
-import { addInfoAsJson } from "@/app/hooks/firestoreHooks/addInfoAsJson";
+import { addInfoAsJson } from "@/app/hooks/firestoreHooks/adding/addInfoAsJson";
 import { emailSignUp } from "@/app/hooks/authHooks/firebaseAuth";
 import { uploadImagesToS3 } from "@/app/hooks/awsHooks/uploadToS3";
-import { addListOfJsons, generateJsonList, generateJsonListGivenJsons } from "@/app/hooks/firestoreHooks/addInfoAsList";
+import { addListOfJsons, generateJsonList, generateJsonListGivenJsons } from "@/app/hooks/firestoreHooks/adding/addInfoAsList";
 import LoadingScreen from "@/app/components/loadingScreen";
-import { getEntriesByMatching } from "@/app/hooks/firestoreHooks/getEntriesByMatching";
+import { getEntriesByMatching } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByMatching";
 import { useAuth } from "@/app/contexts/AuthContext";
 import TeamInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/TeamInfoWrapper";
 import ContactInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/ContactInfoWrapper";
@@ -35,7 +35,7 @@ export default function TeamProfileEditor() {
   const router = useRouter();
   const [isLoading,setIsLoading] = useState(false)
   const [firstLoading,setFirstLoading]=useState(true)
-  const {user, setUser} = useAuth()
+  const {user, setUser,userInfo} = useAuth()
   const isSigningUp = searchParams.get("isSigningUp");
   const params = new URLSearchParams(searchParams.toString());
   useEffect(() => {
@@ -51,14 +51,12 @@ export default function TeamProfileEditor() {
       }
     }
   }, [searchParams, router]);
-  
-
     
     const [isInfoVerified, setIsInfoVerified] = useState(false)
 
     const teamName = searchParams.get("teamName");
     const [fullName, setFullName] = useState(searchParams?searchParams.get("fullName"):"")
-    const [phoneNumberObj, setPhoneNumberObj] = useState({phoneNumber:searchParams?searchParams.get("phoneNumber"):"", isValid:null})
+    const [phoneNumberObj, setPhoneNumberObj] = useState({phoneNumber:searchParams?searchParams.get("phoneNumber"):"", isValid:true})
     const [emailAddress, setEmailAddress] = useState(searchParams?searchParams.get("emailAddress"):"")
     const [password, setPassword] = useState("")
     const [coachImg, setCoachImg] = useState([]);
@@ -218,12 +216,12 @@ export default function TeamProfileEditor() {
         }
       }
 
-    useEffect(()=>{
-      if(user && params.has('refreshed')){
-        getFirestoreInfo()
-        setFirstLoading(false)
-      }
-    },[user])
+    // useEffect(()=>{
+    //   if(user && params.has('refreshed')){
+    //     getFirestoreInfo()
+    //     setFirstLoading(false)
+    //   }
+    // },[user])
 
     useEffect(()=>{
       if (isFirstRender.current){
@@ -299,6 +297,13 @@ export default function TeamProfileEditor() {
       for (const [key, value] of Object.entries(metaData)) {
       try{
         validateFields({data:value})
+        if (key==="contactInfo"){
+          if(phoneNumberObj.isValid){
+
+          }else{
+            throw new Error("invalid phone number")
+          }
+        }
         if (key==="programsOffered"){
           let missingHoursCounter=0;
           for (const dayNum in daysOfWeek){
@@ -451,12 +456,15 @@ export default function TeamProfileEditor() {
           photoUrl:coachPhotoUrl[0],
           teamId:teamId
         },collectionName:"Coach"})
+
       }catch(error){
-        setIsLoading(false)
+        router.push(`/${newTeamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
+        // setIsLoading(false)
         throw error;
       }
-
-      setIsLoading(false)
+      
+      router.push(`/${newTeamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
+      // setIsLoading(false)
 
     }
     
@@ -535,7 +543,7 @@ export default function TeamProfileEditor() {
                   </div>
                   {isMissingContact &&
                   <div className="text-red-500 text-[15px]">
-                    Please ensure you have completed all the fields in this section
+                    Please ensure you have properly completed all the fields in this section
                   </div>}
               </div>
               <ContactInfoWrapper

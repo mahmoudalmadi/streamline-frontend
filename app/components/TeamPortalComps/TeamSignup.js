@@ -146,9 +146,9 @@ export default function TeamSignUp({switchModalType}){
 
         <div className={`flex items-center justify-center py-2 rounded-full
         mt-[20px] font-bold bg-streamlineBlue text-white w-full text-center
-        ${teamRegistrantInfo.emailAddress.length>0 && teamRegistrantInfo.isValidNum && teamRegistrantInfo.fullName.length>1 && teamRegistrantInfo.teamName.length>1 ? 'cursor-pointer':'opacity-50 '}`}
+        ${teamRegistrantInfo.emailAddress.length>0 && teamRegistrantInfo.isValid && teamRegistrantInfo.fullName.length>1 && teamRegistrantInfo.teamName.length>1 ? 'cursor-pointer':'opacity-50 '}`}
         onClick={()=>{
-            if(teamRegistrantInfo.emailAddress.length>0 && teamRegistrantInfo.isValidNum && teamRegistrantInfo.fullName.length>1 && teamRegistrantInfo.teamName.length>1){
+            if(teamRegistrantInfo.emailAddress.length>0 && teamRegistrantInfo.isValid && teamRegistrantInfo.fullName.length>1 && teamRegistrantInfo.teamName.length>1){
             handleNavigate()
             }
         }}>

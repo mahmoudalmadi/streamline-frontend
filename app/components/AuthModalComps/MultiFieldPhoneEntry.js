@@ -19,13 +19,13 @@ export default function MultiFieldPhoneEntry({prompt, placeholder, fieldResponse
         setIsValid(true); // Valid number
         setFieldResponse(prevState => ({
           ...prevState,
-          ["isValidNum"]: true,
+          ["isValid"]: true,
         }));
       } else {
         setIsValid(false); // Invalid number
         setFieldResponse(prevState => ({
           ...prevState,
-          ["isValidNum"]: null,
+          ["isValid"]: null,
         }));
       }
     };

@@ -12,6 +12,10 @@ import LoadingScreen from "@/app/components/loadingScreen";
 import LoadingSubScreen from "@/app/components/loadingSubscreen";
 import TeamInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/TeamInfoWrapper";
 import SwimClubDescription from "@/app/components/SwimClubDescription";
+import { changeField } from "@/app/hooks/changeField";
+import ContactInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/ContactInfoWrapper";
+import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/editingEntryByAllFields";
+import validateFields from "@/app/hooks/firestoreHooks/validateFields";
 
 
 export default function TeamProfilePage() {
@@ -19,7 +23,7 @@ export default function TeamProfilePage() {
     const [locations, setLocations] = useState([{
         address:"Banana St, Dallas, TX"
     }])
-    const {userInfo} = useAuth()
+    const {userInfo,user} = useAuth()
 
     // TEAMINFO STATES
     const [newTeamName,setNewTeamName] =useState("")
@@ -27,19 +31,44 @@ export default function TeamProfilePage() {
     const [teamLogo,setTeamLogo]=useState([])
 
     const [isLoading,setIsLoading]=useState(true)
+    
+    //CONTACT INFO STATES
+    const [phoneNumberObj, setPhoneNumberObj] = useState({phoneNumber:"", isValid:null})
+    const [emailAddress,setEmailAddress]= useState("")
+    const [contactName,setContactName]=useState("")
 
     const [enableSaveTeamInfoChanges,setEnableSaveTeamInfoChanges]=useState(false)
+    const [mustFixTeamInfo, setMustFixTeamInfo] =useState(false)
+    const [mustFixContactInfo, setMustFixContactInfo] =useState(false)
+
+    const [enableSaveContactInfoChanges,setEnableContactInfoChanges]=useState(false)
     useEffect(()=>{
         if(editingTeamInfo){
             setEnableSaveTeamInfoChanges(true)
         }
+        setMustFixTeamInfo(false)
     },[newTeamName,teamDescription,teamLogo])
+    
+    useEffect(()=>{
+        if(editingContactInfo){
+            setEnableContactInfoChanges(true)
+        }
+        setMustFixContactInfo(false)
+    },[emailAddress,contactName,phoneNumberObj])
 
     useEffect(()=>{
         if(userInfo.teamInfo){
+            //TEAM INFO
             setNewTeamName(userInfo.teamInfo.teamName)
             setTeamDescription(userInfo.teamInfo.teamDescription)
             setTeamLogo([{id:userInfo.teamInfo.logoPhotoURL,url:userInfo.teamInfo.logoPhotoURL}])
+
+            //CONTACT INFO
+            changeField({setDict:setPhoneNumberObj,field:"phoneNumber",value:userInfo.teamInfo.phoneNumber})
+            changeField({setDict:setPhoneNumberObj,field:"isValid",value:true})
+            setEmailAddress(userInfo.teamInfo.contactEmail)
+            setContactName(userInfo.teamInfo.contactName)
+
             setIsLoading(false)
         }
     },[userInfo])
@@ -86,20 +115,48 @@ export default function TeamProfilePage() {
                 </div>:
                 <div className="space-y-[8px] mt-[8px]">
                     <TeamInfoWrapper newTeamName={newTeamName} setNewTeamName={setNewTeamName} teamDescription={teamDescription} setTeamDescription={setTeamDescription} logoImg={teamLogo} setLogoImg={setTeamLogo}/>
+                    {mustFixTeamInfo&&
+                    <div className="text-red-500 font-bold text-[14px]">
+                        Please ensure all fields are completed correctly and try again
+                    </div>}
                     <div className="flex justify-end space-x-[12px] items-center pb-[8px]">
                         <div className="text-streamlineBlue px-[10px]  py-[6px] border border-[1px] border-streamlineBlue text-[14px] rounded-full font-bold cursor-pointer"
                         onClick={()=>{
+                            setNewTeamName(userInfo.teamInfo.teamName)
+                            setTeamDescription(userInfo.teamInfo.teamDescription)
+                            setTeamLogo([{id:userInfo.teamInfo.logoPhotoURL,url:userInfo.teamInfo.logoPhotoURL}])
+                            setMustFixTeamInfo(false)
                             setEditingTeamInfo(!editingTeamInfo)
                         }}
                         >
                             Cancel
                         </div>
                         <div className={`px-[10px] py-[6px] text-[14px] font-bold text-white bg-streamlineBlue rounded-full ${enableSaveTeamInfoChanges?"cursor-pointer":"opacity-50"}`}
-                        onClick={()=>{
+                        onClick={async()=>{
                             if(enableSaveTeamInfoChanges){
-                                console.log("HIIII!!")
-                                setEditingTeamInfo(false)
                                 setEnableSaveTeamInfoChanges(false)
+                                try
+                                {validateFields({data:{
+                                    teamName:newTeamName,
+                                    teamDescription:teamDescription,
+                                    logoPhotoURL:teamLogo[0].url
+                                }})
+                                setEditingTeamInfo(false)
+                                await editingMatchingEntriesByAllFields({
+                                    collectionName:"Team",
+                                    matchParams:{
+                                        firebaseId:user.uid
+                                    },
+                                    updateData:{
+                                        teamName:newTeamName,
+                                        logoPhotoURL:teamLogo[0].url,
+                                        teamDescription:teamDescription
+                                    }
+                                })
+                                window.location.reload()
+                                }catch(error){
+                                    setMustFixTeamInfo(true)
+                                }
                             }
                         }}>
                             Save changes
@@ -124,18 +181,19 @@ export default function TeamProfilePage() {
                     Edit contact info
                 </div>
                 </div>
+                
                 {!editingContactInfo ?
                 <div className="space-y-[3px]">
                     <div className="flex">
                     <div className="flex text-[16px] font-bold">Contact name: 
                     </div>
                     <div className="ml-[4px]">
-                    {userInfo.teamInfo.contactName}
+                    {contactName}
                     </div>
                     </div>
                     <div className="flex text-[16px] items-center space-x-[6px]"><EmailIcon/>
                     <div className="mt-[1px] text-[16px]">
-                    {userInfo.userData.emailAddress} 
+                    {emailAddress} 
                     </div>
                     </div>
                     <div className="flex text-[16px] items-center space-x-[6px]">
@@ -145,14 +203,68 @@ export default function TeamProfilePage() {
                         />
                     </div>
                     <div className="mt-[1px]">
-                    {userInfo.userData.phoneNumber} 
+                    {phoneNumberObj.phoneNumber} 
                     </div></div>
                     <div>
                     
                     </div>
                 </div>:
-                <div>
-                    <TeamInfoWrapper />
+                <div className="space-y-[6px]">
+                    <ContactInfoWrapper emailAddress={emailAddress} setEmailAddress={setEmailAddress} fullName={contactName} setFullName={setContactName} phoneNumberObj={phoneNumberObj} setPhoneNumberObj={setPhoneNumberObj}/>
+                    {mustFixContactInfo&&
+                    <div className="text-red-500 font-bold text-[14px] pb-[5px]">
+                        Please ensure all fields are completed correctly and try again
+                    </div>}
+                    <div className="flex justify-end space-x-[12px] items-center pb-[8px]">
+                        <div className="text-streamlineBlue px-[10px]  py-[6px] border border-[1px] border-streamlineBlue text-[14px] rounded-full font-bold cursor-pointer"
+                        onClick={()=>{
+                            setContactName(userInfo.teamInfo.contactName)
+                            setEmailAddress(userInfo.teamInfo.contactEmail)
+                            changeField({setDict:setPhoneNumberObj,field:"phoneNumber",value:userInfo.teamInfo.phoneNumber})
+                            changeField({setDict:setPhoneNumberObj,field:"isValid",value:true})
+                            setMustFixContactInfo(false)
+                            setEditingContactInfo(!editingContactInfo)
+                        }}
+                        >
+                            Cancel
+                        </div>
+                        <div className={`px-[10px] py-[6px] text-[14px] font-bold text-white bg-streamlineBlue rounded-full ${enableSaveContactInfoChanges?"cursor-pointer":"opacity-50"}`}
+                        onClick={async()=>{
+                            if(enableSaveContactInfoChanges){
+   
+                                setEnableContactInfoChanges(false)
+                                try
+                                {
+                                    if (phoneNumberObj.isValid){
+
+                                    }else{
+                                        throw new Error("invalid phone number")
+                                    }
+                                validateFields({data:{
+                                    contactName:contactName,
+                                    phoneNumber:phoneNumberObj.phoneNumber,
+                                    contactEmail:emailAddress
+                                }})
+                                setEditingContactInfo(false)
+                                await editingMatchingEntriesByAllFields({
+                                    collectionName:"Team",
+                                    matchParams:{
+                                        firebaseId:user.uid
+                                    },
+                                    updateData:{
+                                        contactName:contactName,
+                                        phoneNumber:phoneNumberObj.phoneNumber,
+                                        contactEmail:emailAddress
+                                    }
+                                })
+                                }catch(error){
+                                    setMustFixContactInfo(true)
+                                }
+                            }
+                        }}>
+                            Save changes
+                        </div>        
+                    </div>
                 </div>
                 }
                 </div>

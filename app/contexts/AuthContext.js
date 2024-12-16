@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { monitorAuthState } from '../hooks/authHooks/firebaseAuth'; // Ensure this is correctly imported
 import { getUserByFirebaseId, getDependantsByFirebaseId } from '../hooks/firestoreHooks/user/getUser';
-import { getEntriesByMatching } from '../hooks/firestoreHooks/getEntriesByMatching';
+import { getEntriesByMatching } from '../hooks/firestoreHooks/retrieving/getEntriesByMatching';
 
 // Create the AuthContext
 const AuthContext = createContext();

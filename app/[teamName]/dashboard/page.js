@@ -3,12 +3,14 @@
 import DynamicScreen from "@/app/components/DynamicScreen";
 import TeamDashHeader from "@/app/components/TeamDashboard/TeamDashHeader";
 import TopBar from "@/app/components/TopBarComps/TopBar";
+import { useAuth } from "@/app/contexts/AuthContext";
 import CONFIG from "@/config";
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import LoadingSubScreen from "@/app/components/loadingSubscreen";
 
 export default function TeamDashboard() {
 
+    const {userInfo}= useAuth();
     const [locations, setLocations] = useState([{
         address:"Banana St, Dallas, TX"
     }])
@@ -39,15 +41,28 @@ export default function TeamDashboard() {
     ])
 
     const timesOfDay = CONFIG.timesOfDay
+    const [isLoading,setIsLoading]=useState(true)
+    useEffect(()=>{
+        if(userInfo.teamInfo){
 
+            setIsLoading(false)
+        }
+    },[userInfo])
 
     return(
 
         <div className="flex overflow-x-hidden justify-center items-center">
       <DynamicScreen className=" h-screen">
 
-            <TeamDashHeader selectedPage={"dashboard"}/>
 
+            <div className="h-screen">
+            <TeamDashHeader selectedPage={"dashboard"}/>
+            {  isLoading?
+            <div className="items-center">
+                <LoadingSubScreen loadingMessage={"Loading team profile"}/>
+            </div>
+            :
+            <>
             <div className="flex justify-between items-center">
                 <div className="flex  space-x-[5px] border border-gray-200 rounded-full shadow-[0_5px_6px_rgba(0,0,0,0.1)] py-[8px] px-[16px] items-center">
                     <div className="font-bold">
@@ -154,6 +169,9 @@ export default function TeamDashboard() {
     
                     </div>
                 </div>
+            </div>
+            </>
+            }
             </div>
 
             </DynamicScreen>

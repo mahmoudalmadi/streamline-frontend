@@ -24,8 +24,7 @@ const AccountSection = ({openLogInModal, setIsLogin}) => {
     const [showIt, setShowIt] = useState(false)
 
     const [userName,setUsername] = useState(" ")
-    useEffect(()=>{
-        
+    useEffect(()=>{        
         if(userInfo.userData){
             if(userInfo.userData.account=="team"){
                 if (userInfo.teamInfo){

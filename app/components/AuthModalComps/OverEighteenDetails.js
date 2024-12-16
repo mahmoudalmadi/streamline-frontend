@@ -71,11 +71,11 @@ export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
     }
 
     useEffect(()=>{
-        if(guardianInfo["isValidNum"]){
+        if(guardianInfo["isValid"]){
             setIncompleteFieldsError(false)
         }
         }
-        ,[guardianInfo["isValidNum"]]
+        ,[guardianInfo["isValid"]]
         )
 
     return(
@@ -150,7 +150,7 @@ export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
         }
         {incompleteFieldsError &&
         <div className="text-center text-red-500 text-[14px] font-bold">
-            {guardianInfo["isValidNum"] ?
+            {guardianInfo["isValid"] ?
             "Please ensure all the fields above are completely filled out":
             "Please ensure you have entered a correct phone number"}
         </div>}
