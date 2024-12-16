@@ -1,6 +1,7 @@
 "use client";
 
 import DynamicScreen from "@/app/components/DynamicScreen";
+import TeamDashHeader from "@/app/components/TeamDashboard/TeamDashHeader";
 import TopBar from "@/app/components/TopBarComps/TopBar";
 import CONFIG from "@/config";
 import { useState } from "react";
@@ -45,17 +46,7 @@ export default function TeamDashboard() {
         <div className="flex overflow-x-hidden justify-center items-center">
       <DynamicScreen className=" h-screen">
 
-                <TopBar/>
-                <div
-                    className="relative z-0 w-[2000px] left-[-100px] h-[1px] bg-gray-200 mt-[18px]"
-                />
-
-            <div className="h-[40px]"/>
-
-            <div className="text-[18px] font-bold">
-                Weekly Dashboard
-            </div>
-            <div className="w-full h-[1px] bg-gray-200 mt-[5px] mb-[20px]"/>
+            <TeamDashHeader selectedPage={"dashboard"}/>
 
             <div className="flex justify-between items-center">
                 <div className="flex  space-x-[5px] border border-gray-200 rounded-full shadow-[0_5px_6px_rgba(0,0,0,0.1)] py-[8px] px-[16px] items-center">
@@ -80,7 +71,6 @@ export default function TeamDashboard() {
                 {/* HEADERS */}
                 <div>
                     <div className="font-bold">
-                        {weeklyTrialLessons[0].name}
                     </div>
                 </div>
             </div>
@@ -122,7 +112,7 @@ export default function TeamDashboard() {
                     </div>
                     <div className="w-full h-[0.5px] bg-streamlineBlue mt-[3px] mb-[8px]"/>
                     <div className="flex-col">
-                        {weeklyTrialLessons.length>0 ?
+                        {weeklyTrialLessons.length===0 ?
                         <div className="w-full p-[20px] flex justify-center font-bold text-gray-400">
                             There are no trial lessons requested or scheduled this week
                         </div>

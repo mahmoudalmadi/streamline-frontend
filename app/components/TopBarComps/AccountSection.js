@@ -8,7 +8,7 @@ import ProfileIcon from '../../../public/ProfileIcon.svg';
 
 const AccountSection = ({openLogInModal, setIsLogin}) => {
 
-    const {user, setUser} = useAuth();
+    const {user, setUser,userInfo} = useAuth();
 
     const [isVisible, setIsVisible] = useState(false);
     const [isDropdownClosing, setIsDropdownClosing] = useState(false);
@@ -21,8 +21,22 @@ const AccountSection = ({openLogInModal, setIsLogin}) => {
         toggleVisibility(false);
         setTimeout(() => setIsDropdownClosing(false), 500); // Reset after a short delay
     };
+    const [showIt, setShowIt] = useState(false)
 
-    const userName = "Mahmoud"
+    const [userName,setUsername] = useState(" ")
+    useEffect(()=>{
+        
+        if(userInfo.userData){
+            if(userInfo.userData.account=="team"){
+                if (userInfo.teamInfo){
+                setUsername(userInfo.teamInfo.teamName)
+                }
+            }else{
+                setUsername(userInfo.userData.fullName)
+            }
+        }
+    },[userInfo])
+    
     return(
         
         <div className="flex relative border border-gray-200 border-[1px] rounded-full items-center justify-between space-x-[12px] px-[12px] py-[5px] cursor-pointer"
@@ -30,7 +44,7 @@ const AccountSection = ({openLogInModal, setIsLogin}) => {
             {/* <img src="SettingsIcon.png"/> */}
             <SettingsIcon/>
 
-            {user? 
+            {userInfo.userData? 
             <div className="flex bg-black rounded-full text-white text-[15px] w-[28px] h-[28px] items-center justify-center ">
             {userName.charAt(0).toUpperCase()}
             </div> 

@@ -17,7 +17,7 @@ const SwimClubDescription = ({ swimClubDescription }) => {
     }, []);
 
     return (
-        <div className="mt-[18px]">
+        <div className="mt-[0px]">
             <div
                 ref={contentRef}
                 className={`${showFullText ? "" : "line-clamp-5"}`}

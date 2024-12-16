@@ -2,7 +2,6 @@ import ImageUploader from "../ImageUploader";
 import ProfileEntryEditor from "../ProfileEntryEditor";
 
 export default function TeamInfoWrapper({newTeamName,setNewTeamName,teamDescription,setTeamDescription,logoImg,setLogoImg}){
-
     return(
         <>
             <ProfileEntryEditor

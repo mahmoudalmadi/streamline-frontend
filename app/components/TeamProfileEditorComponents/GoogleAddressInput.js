@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import extractAddressFromGoogleLink from "@/app/hooks/addressExtraction";
 import { getCoordinatesFromAddress } from "@/app/hooks/addressExtraction";
 
-export default function GoogleAddyEntryEditor({prompt, placeholder, response, setResponse,isLong,address,setAddress,
+export default function GoogleAddyEntryEditor({address,setAddress,
 coords, setCoords, city, setCity, province, setCountry,country, setProvince}) {
 
     const divRef = useRef(null);

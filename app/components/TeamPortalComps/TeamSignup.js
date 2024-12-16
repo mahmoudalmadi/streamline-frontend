@@ -33,7 +33,7 @@ export default function TeamSignUp({switchModalType}){
         }).toString();
     
         // Navigate to teamName/profile with query parameters
-        router.push(`/${teamRegistrantInfo.teamName.toLowerCase().replace(" ","")}/profile?${query}`);
+        router.push(`/${teamRegistrantInfo.teamName.toLowerCase().replace(" ","")}/createProfile?${query}`);
       };
 
     function extractContent(str) {

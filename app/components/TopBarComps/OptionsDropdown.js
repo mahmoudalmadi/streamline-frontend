@@ -9,7 +9,12 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
     const {user, userInfo} = useAuth();
     const router = useRouter();
 
-    const teamName = "Neptunes Swimming Academy";
+    const [teamName, setTeamName] =useState("");
+    useEffect(()=>{
+        if (userInfo.teamInfo){
+            setTeamName(userInfo.teamInfo.teamName)
+        }
+    },[userInfo])
 
     const handleClickOutside = (event) => {
         if (divRef.current && !divRef.current.contains(event.target)) {
@@ -64,6 +69,17 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                     }   
                         >
                             Profile
+                        </div>
+                        <div className='py-[7px] px-[8px] text-[14px] text-gray-700 w-full hover:bg-gray-100'
+                        onClick={()=>{
+                            if(userInfo.userData.accountType==="team")
+                            {
+                                router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
+                            }else{
+                                router.push(`/user/${userInfo.userData.firebaseId}/dashboard`)
+                            }
+                            }}>
+                            Dashboard
                         </div>
                         <div className='w-full bg-gray-200 h-[1px]'/>
                         <div className='py-[7px] px-[8px] text-[14px] text-gray-700 w-full hover:bg-gray-100'

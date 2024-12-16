@@ -11,7 +11,7 @@ import { SignUpProvider } from '../../contexts/SignUpProvider';
 
 const TopBar = () => {
 
-    const {user, setUser} = useAuth();
+    const {userInfo} = useAuth();
 
     const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -23,14 +23,32 @@ const TopBar = () => {
     const switchModalType = () => setIsLogin(!isLogin)
 
     const redirectHome = () => {
+        if(!useOtherLogo){
         router.push('/')
+        }
     }
+
+    const [useOtherLogo, setUseOtherLogo]=useState(false)
+    const [teamLogo, setTeamLogo] = useState(false)
+    // useEffect(()=>{
+    //     if (userInfo.teamInfo){
+    //         setTeamLogo(userInfo.teamInfo.logoPhotoURL)
+    //         setUseOtherLogo(true)
+    //     }
+    // },[userInfo])
 
     return (
         <SignUpProvider>
         <div className='flex justify-between items-center'>
             <button onClick={redirectHome}>
-            <StreamlineLogo className="w-[130px] h-[50px]"/>
+            {
+                !useOtherLogo?
+                <StreamlineLogo className="w-[130px] h-[50px]"/>:
+                <img
+                src={teamLogo}
+                className='w-[80px]'
+                />
+            }
             </button>
 
             <AccountSection openLogInModal={openModal} setIsLogin={setIsLogin}/>

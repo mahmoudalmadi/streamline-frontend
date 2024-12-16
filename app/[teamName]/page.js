@@ -260,7 +260,7 @@ export default function TeamPage()  {
         <div
             className="relative w-full h-[1px] bg-gray-200 mt-[30px]"
           />  
-
+        <div className="h-[25px]"/>
         <SwimClubDescription swimClubDescription={swimClubDescription}/>
 
         <div

@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { monitorAuthState } from '../hooks/authHooks/firebaseAuth'; // Ensure this is correctly imported
 import { getUserByFirebaseId, getDependantsByFirebaseId } from '../hooks/firestoreHooks/user/getUser';
+import { getEntriesByMatching } from '../hooks/firestoreHooks/getEntriesByMatching';
 
 // Create the AuthContext
 const AuthContext = createContext();
@@ -25,7 +26,6 @@ export const AuthProvider = ({ children }) => {
       const userData = await getUserByFirebaseId({firebaseId:currentUser.uid})
       const otherSwimmers = await getDependantsByFirebaseId({firebaseId:currentUser.uid})
 
-        console.log("OTHER SWIMS", otherSwimmers)
         if(otherSwimmers){
         setUserInfo((prevInfo) => ({
         ...prevInfo, // Retain existing keys in the state object
@@ -36,6 +36,14 @@ export const AuthProvider = ({ children }) => {
           setUserInfo((prevInfo) => ({
             ...prevInfo, // Retain existing keys in the state object
             userData: userData,
+            }))
+        }
+        
+        if (userData.accountType=="team"){
+          const teamInfo = await getEntriesByMatching({collectionName:"Team",fields:{firebaseId:currentUser.uid}})
+          setUserInfo((prevInfo) => ({
+            ...prevInfo, // Retain existing keys in the state object
+            teamInfo: teamInfo[0],
             }))
         }
     }
