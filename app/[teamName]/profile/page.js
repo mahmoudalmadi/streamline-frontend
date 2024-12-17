@@ -16,6 +16,9 @@ import { changeField } from "@/app/hooks/changeField";
 import ContactInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/ContactInfoWrapper";
 import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/editingEntryByAllFields";
 import validateFields from "@/app/hooks/firestoreHooks/validateFields";
+import TeamProfileLocationsSection from "@/app/components/TeamProfileEditorComponents/TeamProfileLocationsSection";
+import { getEntriesByMatching } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByMatching";
+import { parseAddress } from "@/app/hooks/addressExtraction";
 
 
 export default function TeamProfilePage() {
@@ -56,22 +59,53 @@ export default function TeamProfilePage() {
         setMustFixContactInfo(false)
     },[emailAddress,contactName,phoneNumberObj])
 
-    useEffect(()=>{
-        if(userInfo.teamInfo){
-            //TEAM INFO
-            setNewTeamName(userInfo.teamInfo.teamName)
-            setTeamDescription(userInfo.teamInfo.teamDescription)
-            setTeamLogo([{id:userInfo.teamInfo.logoPhotoURL,url:userInfo.teamInfo.logoPhotoURL}])
+    const [locationInfo, setLocationInfo] = useState([])
+    const [allParsedAddresess,setAllParsedAddresses]=useState([])
 
-            //CONTACT INFO
-            changeField({setDict:setPhoneNumberObj,field:"phoneNumber",value:userInfo.teamInfo.phoneNumber})
-            changeField({setDict:setPhoneNumberObj,field:"isValid",value:true})
-            setEmailAddress(userInfo.teamInfo.contactEmail)
-            setContactName(userInfo.teamInfo.contactName)
-
-            setIsLoading(false)
+    useEffect(() => {
+        if (userInfo.teamInfo) {
+          // TEAM INFO
+          setNewTeamName(userInfo.teamInfo.teamName);
+          setTeamDescription(userInfo.teamInfo.teamDescription);
+          setTeamLogo([{ id: userInfo.teamInfo.logoPhotoURL, url: userInfo.teamInfo.logoPhotoURL }]);
+      
+          // CONTACT INFO
+          changeField({ setDict: setPhoneNumberObj, field: "phoneNumber", value: userInfo.teamInfo.phoneNumber });
+          changeField({ setDict: setPhoneNumberObj, field: "isValid", value: true });
+          setEmailAddress(userInfo.teamInfo.contactEmail);
+          setContactName(userInfo.teamInfo.contactName);
+      
+          getLocationInfo(); // Call after it's defined
         }
-    },[userInfo])
+      
+        // Define the function BEFORE calling it
+        async function getLocationInfo() {
+      
+          const locationsInfo = await getEntriesByMatching({
+            collectionName: "Location",
+            fields: { teamId: userInfo.teamInfo.id },
+          });
+          
+          const parsedAddresses = []
+          for (const location of locationsInfo) {
+            location.images = await getEntriesByMatching({
+              collectionName: "Images",
+              fields: {
+                teamId: userInfo.teamInfo.id,
+                locationId: location.id,
+                photoType: "location",
+              },
+            });
+            const parsedAddress = parseAddress({address:location.address})
+            parsedAddresses.push(parsedAddress)
+          }
+
+          setLocationInfo(locationsInfo)
+          setAllParsedAddresses(parsedAddresses)
+          setIsLoading(false);
+        }
+      }, [userInfo]);
+      
 
     const [editingTeamInfo,setEditingTeamInfo]=useState(false)
     const [editingContactInfo,setEditingContactInfo]=useState(false)
@@ -268,6 +302,12 @@ export default function TeamProfilePage() {
                 </div>
                 }
                 </div>
+
+                <div className="w-full h-[1px] bg-gray-200 mt-[18px] mb-[18px]"/>
+
+                {/* LOCATION SECTION */}
+                <TeamProfileLocationsSection locationsInfo={locationInfo} parsedAddresses={allParsedAddresess}/>
+
             </div>
             }
            

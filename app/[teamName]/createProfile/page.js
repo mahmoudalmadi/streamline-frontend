@@ -405,6 +405,7 @@ export default function TeamProfileEditor() {
           longitude:locationData.longitude?locationData.longitude:"na",
           state:locationData.province,
           teamId:teamId,
+          status:"Pending Verification",
           uploadTimestamp:new Date()
         },collectionName:"Location"})
 

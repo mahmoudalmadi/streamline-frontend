@@ -132,3 +132,23 @@ export async function getCoordinatesFromAddress({address}) {
       return null;
   }
 }
+
+export const parseAddress = ({address}) => {
+  const parts = address.split(",").map(part => part.trim());
+
+  if (parts.length < 5) {
+    throw new Error("Address format is invalid. Expected format: 'Street Address, City, State, PostalCode, Country'");
+  }
+
+  const [streetAddress, city, statePostal, postalCode, country] = parts;
+
+  const state = statePostal.split(" ")[0];
+
+  return {
+    streetAddress,
+    city,
+    state,
+    postalCode,
+    country,
+  };
+};
