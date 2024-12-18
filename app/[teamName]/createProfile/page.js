@@ -28,6 +28,8 @@ import ContactInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wra
 import LocationInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/LocationInfoWrapper";
 import ProgramOfferingsWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/ProgramOfferingsWrapper";
 import HeadCoachWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/HeadCoachWrapper";
+import BlackMoveLeft from "../../../public/BlackMoveLeft.svg"
+
 
 export default function TeamProfileEditor() {
 
@@ -44,7 +46,9 @@ export default function TeamProfileEditor() {
     if (!params.has('refreshed')) {
       params.set('refreshed', 'true'); // Add 'refreshed' flag to URL
       router.replace(`?${params.toString()}`); // Update the URL without full reload
-      window.location.reload(); // Trigger a full page reload
+      // setTimeout(()=>{
+        window.location.reload(); // Trigger a full page reload
+      // },400)
     } else {
       if(isSigningUp){
       setFirstLoading(false); // Proceed if already refreshed
@@ -66,6 +70,7 @@ export default function TeamProfileEditor() {
 
     const [useDifferentEmailThanContact, setUseDifferentEmailThanContact] = useState(false)
     const [alternativeSignUpEmail, setAlternativeSignUpEmail] = useState("")
+    const [emailWidgetError,setEmailWidgetError]=useState("")
 
     const [choseSignUpMethod, setChoseSignUpMethod] = useState("")
     const [newTeamName,setNewTeamName] = useState(teamName)
@@ -328,6 +333,7 @@ export default function TeamProfileEditor() {
           }
 
         }
+        window.scrollTo(0, 0);
        
       }catch(error){
         //GO TO KEY PART OF PAGE
@@ -352,6 +358,12 @@ export default function TeamProfileEditor() {
         
       }
     }
+
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+  
       return true
       }
       // ENSURE SIGN UP METHOD IS SUCCESSFULL
@@ -369,6 +381,7 @@ export default function TeamProfileEditor() {
       setIsLoading(true)
       
       try{
+        
         const firebaseId = await emailSignUp({email:useDifferentEmailThanContact?alternativeSignUpEmail:contactInfo.emailAddress,password:password})
 
         // FIRESTORE ACCOUNT INFO - DONE
@@ -458,13 +471,17 @@ export default function TeamProfileEditor() {
           teamId:teamId
         },collectionName:"Coach"})
 
-      }catch(error){
+
         router.push(`/${newTeamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
-        // setIsLoading(false)
+      }catch(error){
+        if (error.message.includes("auth")){
+          setIsLoading(false)
+        }else{
+          router.push(`/${newTeamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
+        }
         throw error;
       }
       
-      router.push(`/${newTeamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
       // setIsLoading(false)
 
     }
@@ -482,6 +499,7 @@ export default function TeamProfileEditor() {
     }
 
     return(
+      !firstLoading &&
       <div className="flex justify-center items-center h-full">
       <DynamicScreen className=" h-full">
 
@@ -490,12 +508,15 @@ export default function TeamProfileEditor() {
         <div
         className="relative flex flex-col items-center justify-center w-full"
         >
-          <div
+          {!isInfoVerified &&
+            <div
               className="relative w-screen h-[1px] bg-gray-200 mt-[18px]"
-            />  
+            />  }
 
           <div className="flex flex-col w-full">
 
+              {!isInfoVerified&&
+              <>
               <div className="text-[18px]
               font-bold items-start mt-[20px] mb-[15px] leading-[18px]">
                 {teamName} Profile
@@ -507,6 +528,7 @@ export default function TeamProfileEditor() {
               <div
                   className="relative w-full h-[1px] bg-gray-200 mt-[5px]"
                 />  
+
 
               <div className="mt-[10px] space-y-[20px]">
 
@@ -615,6 +637,9 @@ export default function TeamProfileEditor() {
 
               </div>
 
+              </>
+              }
+
               {/* SIGN UP AND SUBMIT MENU */}
               <div>
                 
@@ -643,7 +668,7 @@ export default function TeamProfileEditor() {
                   </div>
                   :
                   choseSignUpMethod.length===0?
-                  <div className="flex w-full flex-col items-center justify-center">
+                  <div className="flex w-full flex-col items-center justify-center h-screen">
 
                       <div className="text-center mt-[10px] font-bold text-streamlineBlue">
                         Choose Sign Up Method
@@ -662,11 +687,29 @@ export default function TeamProfileEditor() {
                           Sign Up with Email
                       </div>
                   </div>:
-                    <EmailSignUpWidget setAlternativeSignUpEmail={setAlternativeSignUpEmail} alternativeSignUpEmail={alternativeSignUpEmail} useDifferentEmailThanContact={useDifferentEmailThanContact} setUseDifferentEmailThanContact={setUseDifferentEmailThanContact} emailAddress={emailAddress} setEmailAddress={setEmailAddress} password={password} setPassword={setPassword}
-                    completeSignUp={completeSignUp}
-                    />
+                    <div className="h-screen flex-col justify-center items-center">
+                      <EmailSignUpWidget setAlternativeSignUpEmail={setAlternativeSignUpEmail} alternativeSignUpEmail={alternativeSignUpEmail} useDifferentEmailThanContact={useDifferentEmailThanContact} setUseDifferentEmailThanContact={setUseDifferentEmailThanContact} emailAddress={emailAddress} setEmailAddress={setEmailAddress} password={password} setPassword={setPassword}
+                      completeSignUp={completeSignUp}
+                      errorMessage={emailWidgetError}
+                      setErrorMessage={setEmailWidgetError}
+                      />
+                    </div>
                   }
 
+                  {isInfoVerified &&
+                  <div className="flex w-full h-full items-start justify-center mt-[15px] ">
+                    <div className="flex  border border-black rounded-full space-x-[8px] px-[18px] py-[10px] items-center cursor-pointer" onClick={()=>{
+                      setIsInfoVerified(!isInfoVerified)
+                    }}>
+                    <div>
+                      <BlackMoveLeft/>
+                    </div>
+                    <div>
+                      Return to editing team profile
+                    </div>
+                    </div>
+                  </div>
+                }
                 </div>
               </>
                 }

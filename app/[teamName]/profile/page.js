@@ -7,7 +7,7 @@ import { useAuth } from "@/app/contexts/AuthContext";
 import EmailIcon from '../../../public/emailIcon.svg'
 
 import CONFIG from "@/config";
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import LoadingScreen from "@/app/components/loadingScreen";
 import LoadingSubScreen from "@/app/components/loadingSubscreen";
 import TeamInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/TeamInfoWrapper";
@@ -16,10 +16,9 @@ import { changeField } from "@/app/hooks/changeField";
 import ContactInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/ContactInfoWrapper";
 import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/editingEntryByAllFields";
 import validateFields from "@/app/hooks/firestoreHooks/validateFields";
-import TeamProfileLocationsSection from "@/app/components/TeamProfileEditorComponents/TeamProfileLocationsSection";
+import TeamProfileLocationsSection from "@/app/components/TeamProfileEditorComponents/ProfileLocationComps/TeamProfileLocationsSection";
 import { getEntriesByMatching } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByMatching";
 import { parseAddress } from "@/app/hooks/addressExtraction";
-
 
 export default function TeamProfilePage() {
 
@@ -61,22 +60,42 @@ export default function TeamProfilePage() {
 
     const [locationInfo, setLocationInfo] = useState([])
     const [allParsedAddresess,setAllParsedAddresses]=useState([])
+    const intervalRef = useRef(null);
+    const triggerTimeRef = useRef(null);
 
     useEffect(() => {
-        if (userInfo.teamInfo) {
-          // TEAM INFO
-          setNewTeamName(userInfo.teamInfo.teamName);
-          setTeamDescription(userInfo.teamInfo.teamDescription);
-          setTeamLogo([{ id: userInfo.teamInfo.logoPhotoURL, url: userInfo.teamInfo.logoPhotoURL }]);
-      
-          // CONTACT INFO
-          changeField({ setDict: setPhoneNumberObj, field: "phoneNumber", value: userInfo.teamInfo.phoneNumber });
-          changeField({ setDict: setPhoneNumberObj, field: "isValid", value: true });
-          setEmailAddress(userInfo.teamInfo.contactEmail);
-          setContactName(userInfo.teamInfo.contactName);
-      
-          getLocationInfo(); // Call after it's defined
-        }
+        triggerTimeRef.current = Date.now(); // Set trigger time
+
+        // Start an interval to check elapsed time
+        intervalRef.current = setInterval(() => {
+
+                const elapsed = Date.now() - triggerTimeRef.current;
+
+                console.log(`Elapsed time: ${elapsed}ms`);
+                    if (userInfo.teamInfo) {
+                        clearInterval(intervalRef.current); // Break the interval
+                        // TEAM INFO
+                        setNewTeamName(userInfo.teamInfo.teamName);
+                        setTeamDescription(userInfo.teamInfo.teamDescription);
+                        setTeamLogo([{ id: userInfo.teamInfo.logoPhotoURL, url: userInfo.teamInfo.logoPhotoURL }]);
+                        
+                        // CONTACT INFO
+                        changeField({ setDict: setPhoneNumberObj, field: "phoneNumber", value: userInfo.teamInfo.phoneNumber });
+                        changeField({ setDict: setPhoneNumberObj, field: "isValid", value: true });
+                        setEmailAddress(userInfo.teamInfo.contactEmail);
+                        setContactName(userInfo.teamInfo.contactName);
+                        
+                        getLocationInfo(); // Call after it's defined
+                        setIsLoading(false)
+                    }
+                if (elapsed >= 5000) {
+                    window.location.reload()
+                }
+            
+        }, 1000); // Check every second
+        // Cleanup on unmount
+        return () => clearInterval(intervalRef.current);
+
       
         // Define the function BEFORE calling it
         async function getLocationInfo() {

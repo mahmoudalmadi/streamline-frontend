@@ -1,4 +1,4 @@
-// import { md } from 'react-icons/fa';
+import InfoDropdown from "../InfoDropdown";
 
 export default function TeamProfileLocationsSection({ locationsInfo, parsedAddresses }) {
     return (
@@ -10,7 +10,7 @@ export default function TeamProfileLocationsSection({ locationsInfo, parsedAddre
           {locationsInfo.map((location, idx) => (
             <div
               key={idx}
-              className="shadow-[0_0_10px_rgba(0,0,0,0.1)] w-[70%] sm:w-[80%] md:w-[50%] mx-auto md:mx-0 border border-gray-200 rounded-[20px] py-[5px] px-[10px] space-x-[10px] flex items-center"
+              className="shadow-[0_0_10px_rgba(0,0,0,0.1)] w-[70%] sm:w-[80%] md:w-[50%] mx-auto md:mx-0 border border-gray-200 rounded-[20px] py-[15px] px-[12px] space-x-[10px] flex items-center"
             >
               {/* Image with 1:1 Aspect Ratio */}
               <div className="w-[40%] aspect-[1/1] rounded-[10px] overflow-hidden">
@@ -33,7 +33,8 @@ export default function TeamProfileLocationsSection({ locationsInfo, parsedAddre
                 <div className="flex-col text-[15px] mt-[2px]">
                   <div className="flex-col">
                     <div>
-                    <div className="mr-2 pb-[3px] ">Status</div>
+                    <div className="mr-2 pb-[7px] ">Status</div>
+        
                     </div>
                     <div
                       className={`font-bold leading-[1px] mt-[1px] ${

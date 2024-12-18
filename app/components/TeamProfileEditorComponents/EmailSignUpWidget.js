@@ -7,13 +7,8 @@ import RedWarningIcon from "public/RedWarningIcon.svg";
 import { extractContent } from "@/app/hooks/authHooks/errorMessageProcessing";
 import { extractLatterContent } from "@/app/hooks/authHooks/errorMessageProcessing";
 
-const EmailSignupWidget = ({setAlternativeSignUpEmail, alternativeSignUpEmail, useDifferentEmailThanContact, setUseDifferentEmailThanContact, emailAddress, setEmailAddress, password, setPassword, completeSignUp}) => {
+const EmailSignupWidget = ({setAlternativeSignUpEmail, alternativeSignUpEmail, useDifferentEmailThanContact, setUseDifferentEmailThanContact, emailAddress, setEmailAddress, password, setPassword, completeSignUp, errorMessage,setErrorMessage}) => {
 
-    const [errorMessage, setErrorMessage] = useState("")
-
-    useEffect(()=>{
-        setErrorMessage("")
-    },[emailAddress,alternativeSignUpEmail,password])
 
     return(
         <div className="flex flex-col w-full bg-white p-[20px] rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] items-center justify-center  space-y-[5px]">
@@ -31,6 +26,7 @@ const EmailSignupWidget = ({setAlternativeSignUpEmail, alternativeSignUpEmail, u
             setResponse={useDifferentEmailThanContact?setAlternativeSignUpEmail:setEmailAddress}
             isLong={false}
             uneditable={!useDifferentEmailThanContact}
+            clearErrorMessage={setErrorMessage}
             />
             <label className="flex items-center space-x-2">
                 <input
@@ -67,14 +63,13 @@ const EmailSignupWidget = ({setAlternativeSignUpEmail, alternativeSignUpEmail, u
             <div className="flex justify-center rounded-[20px] font-bold text-white bg-streamlineBlue py-[7px] w-[130px] mt-[20px] cursor-pointer"
             onClick={async()=>{try{await completeSignUp()}
             catch(error){
-                console.log("made it",error)
                 if (error.message.includes("auth")){
                     const errMessage = extractContent(error.message)
                     const errMessageTwo = extractLatterContent(error.message)
                     const finalErrMessage = errMessage + " (" + errMessageTwo + ")"
                     setErrorMessage(finalErrMessage)
-                    console.log(finalErrMessage)
-                    setFinishSignUpDetails(false)
+                    console.log("hiii???",finalErrMessage)
+                    // setFinishSignUpDetails(false)
                 }else{
                 setErrorMessage("An error has occurred, please try again later.")
                 }

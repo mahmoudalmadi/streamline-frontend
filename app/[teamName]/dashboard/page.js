@@ -5,7 +5,7 @@ import TeamDashHeader from "@/app/components/TeamDashboard/TeamDashHeader";
 import TopBar from "@/app/components/TopBarComps/TopBar";
 import { useAuth } from "@/app/contexts/AuthContext";
 import CONFIG from "@/config";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import LoadingSubScreen from "@/app/components/loadingSubscreen";
 
 export default function TeamDashboard() {
@@ -15,7 +15,6 @@ export default function TeamDashboard() {
         address:"Banana St, Dallas, TX"
     }])
     const [location, setLocation] = useState(locations[0]["address"]) 
-
     const [weeklyTrialLessons, setWeeklyTrialLessons] = useState([
         {
             name:"Mahmoud Al-Madi",
@@ -40,13 +39,33 @@ export default function TeamDashboard() {
         }
     ])
 
+    const triggerTimeRef = useRef(null); // Use a ref instead of state
+    const intervalRef = useRef(null);
     const timesOfDay = CONFIG.timesOfDay
     const [isLoading,setIsLoading]=useState(true)
+    
     useEffect(()=>{
-        if(userInfo.teamInfo){
+        triggerTimeRef.current = Date.now(); // Set trigger time
 
-            setIsLoading(false)
-        }
+        console.log("AKSDJSALKJDSALK")
+        // Start an interval to check elapsed time
+        intervalRef.current = setInterval(() => {
+                const elapsed = Date.now() - triggerTimeRef.current;
+
+                console.log(`Elapsed time: ${elapsed}ms`);
+                if(userInfo.teamInfo){
+        
+                    setIsLoading(false)
+                    clearInterval(intervalRef.current); // Break the interval
+                }
+
+                if (elapsed >= 5000) {
+                    window.location.reload()
+                }
+        }, 1000); // Check every second
+        // Cleanup on unmount
+        return () => clearInterval(intervalRef.current);
+
     },[userInfo])
 
     return(
@@ -62,7 +81,7 @@ export default function TeamDashboard() {
                 <LoadingSubScreen loadingMessage={"Loading team profile"}/>
             </div>
             :
-            <>
+            <div className="h-screen flex-col">
             <div className="flex justify-between items-center">
                 <div className="flex  space-x-[5px] border border-gray-200 rounded-full shadow-[0_5px_6px_rgba(0,0,0,0.1)] py-[8px] px-[16px] items-center">
                     <div className="font-bold">
@@ -81,7 +100,7 @@ export default function TeamDashboard() {
                 </div>                
             </div>
 
-            {/* TRIAL LESSONS LIST */}
+         
             <div className="text-red-500 bg-gray-200 w-full h-[400px] mt-[20px]">
                 {/* HEADERS */}
                 <div>
@@ -101,11 +120,13 @@ export default function TeamDashboard() {
             </div>
             </div>
 
-            <div className="font-bold text-streamlineBlue text-[15px] mt-[10px]">
+            {/* TRIAL LESSONS LIST */}
+            <div>
+            <div className="flex font-bold text-streamlineBlue text-[15px] mt-[10px]">
                 Trial lessons this week
             </div>
-            <div className="w-full h-[1px] bg-gray-200 mt-[5px] mb-[15px]"/>
-            <div className=" w-full mt-[10px] text-[15px]">
+            <div className="flex w-full h-[1px] bg-gray-200 mt-[5px] mb-[15px]"/>
+            <div className="flex w-full mt-[10px] text-[15px]">
                 <div className="">
                     {/* HEADERS */}
                     <div className="flex p-[3px]">
@@ -170,10 +191,13 @@ export default function TeamDashboard() {
                     </div>
                 </div>
             </div>
-            </>
+            </div>
+            </div>
             }
             </div>
+            <div className="h-[350px]">
 
+            </div>
             </DynamicScreen>
             </div>
 

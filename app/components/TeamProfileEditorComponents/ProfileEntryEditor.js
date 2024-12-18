@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
 
-export default function ProfileEntryEditor({prompt, placeholder, response, setResponse,isLong,uneditable}) {
+export default function ProfileEntryEditor({prompt, placeholder, response, setResponse,isLong,uneditable,clearErrorMessage}) {
 
     const divRef = useRef(null);
 
@@ -18,6 +18,9 @@ export default function ProfileEntryEditor({prompt, placeholder, response, setRe
         autoResize(boxRef);  // Call to resize the textarea
         if(event && setText){
         setText(event.target.value)
+        }
+        if(clearErrorMessage){
+          clearErrorMessage("")
         }
       }
 
