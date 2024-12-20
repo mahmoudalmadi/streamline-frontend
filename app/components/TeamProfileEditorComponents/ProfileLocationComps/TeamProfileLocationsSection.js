@@ -20,7 +20,7 @@ export default function TeamProfileLocationsSection({ locationsInfo, parsedAddre
           {locationsInfo.map((location, idx) => (
             <div
               key={idx}
-              className="shadow-[0_0_10px_rgba(0,0,0,0.1)] w-[70%] sm:w-[80%] md:w-[50%] mx-auto md:mx-0 border border-gray-200 rounded-[20px] py-[15px] px-[12px] space-x-[10px] flex items-center"
+              className="shadow-[0_0_10px_rgba(0,0,0,0.1)] sm:w-[90%] md:w-[50%] mx-auto md:mx-0 border border-gray-200 rounded-[20px] py-[15px] px-[12px] space-x-[10px] flex items-center"
             >
               {/* Image with 1:1 Aspect Ratio */}
               <div className="w-[40%] aspect-[1/1] rounded-[10px] overflow-hidden">
