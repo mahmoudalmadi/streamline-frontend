@@ -60,6 +60,10 @@ export default function TeamProfileLocationsSection({ locationsInfo, parsedAddre
                   </div>
                 </div>
               </div>
+
+              <div className="pr-[5px]">
+                b
+              </div>
             </div>
           ))}
         </div>
