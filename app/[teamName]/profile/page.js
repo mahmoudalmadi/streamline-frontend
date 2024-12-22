@@ -144,7 +144,7 @@ export default function TeamProfilePage() {
                 
                 {/* TEAM INFO SECTION */}
                 <div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-[16px]">
                 <div className="text-[18px] font-bold text-streamlineBlue">
                     Team Info
                 </div>
@@ -225,7 +225,7 @@ export default function TeamProfilePage() {
 
                 {/* CONTACT INFO SECTION */}
                 <div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-[14px]">
                 <div className="text-[18px] font-bold text-streamlineBlue">
                     Contact Info
                 </div>
