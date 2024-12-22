@@ -1,4 +1,5 @@
 import InfoDropdown from "../InfoDropdown";
+import ThreeDotMenu from "../../../../public/ThreeDotMenu.svg";
 
 export default function TeamProfileLocationsSection({ locationsInfo, parsedAddresses }) {
     return (
@@ -20,7 +21,7 @@ export default function TeamProfileLocationsSection({ locationsInfo, parsedAddre
           {locationsInfo.map((location, idx) => (
             <div
               key={idx}
-              className="shadow-[0_0_10px_rgba(0,0,0,0.1)] sm:w-[90%] md:w-[50%] mx-auto md:mx-0 border border-gray-200 rounded-[20px] py-[15px] px-[12px] space-x-[10px] flex items-center"
+              className="shadow-[0_4px_3px_rgba(0,0,0,0.1)] sm:w-[90%] md:w-[50%] mx-auto md:mx-0 border border-gray-200 rounded-[20px] hover:bg-gray-100 py-[15px] px-[12px] space-x-[10px] flex items-center pointer-events-none"
             >
               {/* Image with 1:1 Aspect Ratio */}
               <div className="w-[40%] aspect-[1/1] rounded-[10px] overflow-hidden">
@@ -61,8 +62,10 @@ export default function TeamProfileLocationsSection({ locationsInfo, parsedAddre
                 </div>
               </div>
 
-              <div className="pr-[5px]">
-                b
+              <div className="flex items-center justify-center pr-[5px] justify-center pl-[5px]  py-[8px] rounded-full hover:bg-gray-200 cursor-pointer pointer-events-auto"
+              onMouseEnter={(e) => e.stopPropagation()} // Prevent parent hover
+              >
+                <ThreeDotMenu/>
               </div>
             </div>
           ))}
