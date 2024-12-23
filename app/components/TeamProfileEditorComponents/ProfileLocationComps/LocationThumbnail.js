@@ -12,9 +12,8 @@ import GenericOptionsDropdown from "../../GenericOptionsDropdown";
 //                 <InfoDropdown isVisible={isVisible} onClose={handleCloseDropdown} categories={categoryDict}/>
 //                 </div>
 
-export default function LocationThumbnail({location,parsedAddresses,idx}){
-    
-    // info dropdown
+export default function LocationThumbnail({location, pullLocoInfo}){
+
     const [showThreeDotMenu,setShowThreeDotMenu]=useState(location.status=="Pending Verifications")
     const [isVisible, setIsVisible] = useState(false);
     const [isDropdownClosing, setIsDropdownClosing] = useState(false);
@@ -43,12 +42,14 @@ export default function LocationThumbnail({location,parsedAddresses,idx}){
 
     return(
             <div
-              className="shadow-[0_4px_3px_rgba(0,0,0,0.1)] hover:shadow-[0_2px_10px_rgba(0,0,0,0.1)] sm:w-[80%] md:w-[50%] mx-auto md:mx-0 border border-gray-200 rounded-[20px] py-[15px] px-[12px] space-x-[10px] flex items-center cursor-pointer"
-            >
+              className="shadow-[0_4px_3px_rgba(0,0,0,0.1)] hover:shadow-[0_2px_10px_rgba(0,0,0,0.1)] w-[80%] md:w-[50%] mx-auto md:mx-0 border border-gray-200 rounded-[20px] py-[15px] px-[12px] space-x-[10px] flex items-center cursor-pointer"
+              
+              onClick={async()=>{await pullLocoInfo({locationId:location.id})}}
+              >
               {/* Image with 1:1 Aspect Ratio */}
               <div className="w-[37%] aspect-[1/1] rounded-[10px] overflow-hidden">
                 <img
-                  src={location.images[0]?.imageUrl || "/placeholder.jpg"}
+                  src={location.images[0]?.url || "/placeholder.jpg"}
                   alt="Location"
                   className="w-full h-full object-cover"
                 />
@@ -57,10 +58,10 @@ export default function LocationThumbnail({location,parsedAddresses,idx}){
               {/* Address and Status */}
               <div className="flex flex-col flex-1">
                 <div className="flex-col text-[15px] font-bold pb-[5px] leading-[16px]">
-                  <div className="">{parsedAddresses[idx]?.streetAddress || "Unknown St Address"}</div>
+                  <div className="">{location?.parsedAddress?.streetAddress || "Unknown St Address"}</div>
                   <div className="flex space-x-[5px]">
-                  <div>{parsedAddresses[idx]?.city || "Unknown City"}, </div>
-                  <div>{parsedAddresses[idx]?.state || "Unknown State"}</div>
+                  <div>{location.parsedAddress?.city || "Unknown City"}, </div>
+                  <div>{location.parsedAddress?.state || "Unknown State"}</div>
                   </div>
                 </div>
                 <div className="flex-col text-[15px] mt-[2px]">

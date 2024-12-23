@@ -2,13 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import extractAddressFromGoogleLink from "@/app/hooks/addressExtraction";
 import { getCoordinatesFromAddress } from "@/app/hooks/addressExtraction";
 
-export default function GoogleAddyEntryEditor({address,setAddress,
-coords, setCoords, city, setCity, province, setCountry,country, setProvince}) {
+export default function GoogleAddyEntryEditor({address,setAddress,streetAddress,setStreetAddress, coords, setCoords, city, setCity, province, setCountry,country, setProvince}) {
 
     const divRef = useRef(null);
     const [errorMessage,setErrorMessage] = useState("")
     const [cityStateError, setCityStateError] = useState("")
-    const [streetAddress, setStreetAddress] = useState("")
     const [postalCode, setPostalCode] = useState("")
 
     const parseAddress = (address) => {

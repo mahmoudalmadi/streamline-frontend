@@ -10,15 +10,17 @@ import CONFIG from "@/config";
 import { useEffect, useState,useRef } from "react";
 import LoadingScreen from "@/app/components/loadingScreen";
 import LoadingSubScreen from "@/app/components/loadingSubscreen";
-import TeamInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/TeamInfoWrapper";
+import TeamInfoWrapper from "@/app/components/TeamProfileEditorComponents/EditorWrappers/TeamInfoWrapper";
 import SwimClubDescription from "@/app/components/SwimClubDescription";
 import { changeField } from "@/app/hooks/changeField";
-import ContactInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/ContactInfoWrapper";
+import ContactInfoWrapper from "@/app/components/TeamProfileEditorComponents/EditorWrappers/ContactInfoWrapper";
 import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/editingEntryByAllFields";
 import validateFields from "@/app/hooks/firestoreHooks/validateFields";
 import TeamProfileLocationsSection from "@/app/components/TeamProfileEditorComponents/ProfileLocationComps/TeamProfileLocationsSection";
 import { getEntriesByMatching } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByMatching";
 import { parseAddress } from "@/app/hooks/addressExtraction";
+import AmenitiesSection from "@/app/components/TeamPageComps/AmenitiesSection";
+import {  transformImagesListToJsons } from "@/app/hooks/firestoreHooks/retrieving/adjustingRetrievedData";
 
 export default function TeamProfilePage() {
 
@@ -27,6 +29,7 @@ export default function TeamProfilePage() {
     }])
     const {userInfo,user} = useAuth()
 
+    const images = [{url:"https://streamlineplatform.s3.us-east-2.amazonaws.com/coachPhotos/1734483412515-unnamed.jpg"},{url:"https://streamlineplatform.s3.us-east-2.amazonaws.com/coachPhotos/1734483412515-unnamed.jpg"}]
     // TEAMINFO STATES
     const [newTeamName,setNewTeamName] =useState("")
     const [teamDescription,setTeamDescription] = useState("")
@@ -107,7 +110,7 @@ export default function TeamProfilePage() {
           
           const parsedAddresses = []
           for (const location of locationsInfo) {
-            location.images = await getEntriesByMatching({
+            const firestoreLocationImages = await getEntriesByMatching({
               collectionName: "Images",
               fields: {
                 teamId: userInfo.teamInfo.id,
@@ -115,10 +118,15 @@ export default function TeamProfilePage() {
                 photoType: "location",
               },
             });
+            
+            const formattedLocationImages = transformImagesListToJsons({list:firestoreLocationImages})
+            location.images = formattedLocationImages
+
             const parsedAddress = parseAddress({address:location.address})
             parsedAddresses.push(parsedAddress)
+            location.parsedAddress = parsedAddress
+            console.log(location)
           }
-
           setLocationInfo(locationsInfo)
           setAllParsedAddresses(parsedAddresses)
           setIsLoading(false);
@@ -132,8 +140,8 @@ export default function TeamProfilePage() {
     return(
 
         <div className="flex overflow-x-hidden justify-center items-center">
-          <DynamicScreen className="h-screen">
-            <div className="h-screen">
+          <DynamicScreen className="">
+            <div className="">
             <TeamDashHeader selectedPage={"profile"}/>
             {  isLoading?
             <div className="items-center">
@@ -160,10 +168,73 @@ export default function TeamProfilePage() {
                     className="w-[60px]"/>
                     <div className="text-[16px]">{newTeamName}</div>
                     </div>
-                    <div className="font-bold text-[16px]">Team description</div>    
+                    <div className="font-bold text-[16px] pt-[8px]">Team description</div>    
                     <SwimClubDescription swimClubDescription={teamDescription}/>  
                     <div>
+
+                    <div className="font-bold text-[16px] pt-[8px]">Address</div>    
+                    <div className="flex-col">
+                    <div className="leading-[16px] mt-[4px]">Street Address</div>
+                    <div className="flex">
+                    <div>City</div><div>, State</div><div>, ZipCode</div><div>, Country</div>
+                        </div>
+                    </div>
+
+                    <div className="font-bold text-[16px] pt-[8px]">Location Images</div>    
+                    <div className="flex space-x-[20px] py-[4px] mb-[4px]">
+                    {images.map((image, index) => (
+                
                     
+                  
+                    <div
+                        className="relative"
+                    >
+                      {/* Badge with Number */}
+
+                      
+                        <div
+                        style={{
+                          position: "absolute",
+                          top: "5px",
+                          left: "5px",
+                          backgroundColor: "rgba(0, 0, 0, 0.7)",
+                          color: "white",
+                          borderRadius: "50%",
+                          width: "20px",
+                          height: "20px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "12px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {index + 1}
+                      </div>
+
+                      {/* Image Preview */}
+                      <img
+                        src={image.url}
+                        alt={`uploaded-${index}`}
+                        style={{
+                          width: "120px",
+                          height: "auto",
+                          objectFit: "contain",
+                          borderRadius: "5px",
+                        }}
+                      />
+
+                    </div>
+                  )
+                
+                     )}
+                    </div>
+
+                    <div className="font-bold text-[16px] pt-[8px]">Amenities</div>  
+                    <div>
+                    <AmenitiesSection amenities={[1,2,3]} withoutHeader={true}/>
+                    </div>
+
                     </div>
                 </div>:
                 <div className="space-y-[8px] mt-[8px]">

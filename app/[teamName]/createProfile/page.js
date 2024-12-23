@@ -23,11 +23,11 @@ import { addListOfJsons, generateJsonList, generateJsonListGivenJsons } from "@/
 import LoadingScreen from "@/app/components/loadingScreen";
 import { getEntriesByMatching } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByMatching";
 import { useAuth } from "@/app/contexts/AuthContext";
-import TeamInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/TeamInfoWrapper";
-import ContactInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/ContactInfoWrapper";
-import LocationInfoWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/LocationInfoWrapper";
-import ProgramOfferingsWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/ProgramOfferingsWrapper";
-import HeadCoachWrapper from "@/app/components/TeamProfileEditorComponents/Wrappers/HeadCoachWrapper";
+import TeamInfoWrapper from "@/app/components/TeamProfileEditorComponents/EditorWrappers/TeamInfoWrapper";
+import ContactInfoWrapper from "@/app/components/TeamProfileEditorComponents/EditorWrappers/ContactInfoWrapper";
+import LocationInfoWrapper from "@/app/components/TeamProfileEditorComponents/EditorWrappers/LocationInfoWrapper";
+import ProgramOfferingsWrapper from "@/app/components/TeamProfileEditorComponents/EditorWrappers/ProgramOfferingsWrapper";
+import HeadCoachWrapper from "@/app/components/TeamProfileEditorComponents/EditorWrappers/HeadCoachWrapper";
 import BlackMoveLeft from "../../../public/BlackMoveLeft.svg"
 
 
@@ -79,6 +79,7 @@ export default function TeamProfileEditor() {
 
     const [address,setAddress] = useState("")
     const [coords, setCoords] = useState(null)
+    const [streetAddress,setStreetAddress]=useState("")
     const [province, setProvince] = useState("")
     const [city, setCity] = useState("")
     const [country,setCountry] = useState("")
@@ -590,6 +591,8 @@ export default function TeamProfileEditor() {
               <LocationInfoWrapper
               locationDivRef={locationDivRef}
               address={address}
+              streetAddress={streetAddress}
+              setStreetAddress={setStreetAddress}
               setAddress={setAddress}
               setCoords={setCoords}
               setCity={setCity}

@@ -1,6 +1,6 @@
 
 
-export default function AmenitiesSelection(
+export default function  AmenitiesSelection(
     {selectedAmenities, setSelectedAmenities, amenitiesIcons}
 ){
 

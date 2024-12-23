@@ -4,16 +4,17 @@ import AmenitiesSelection from "../AmentitiesSelection"
 import CONFIG from "@/config"
 
 export default function LocationInfoWrapper({
-    locationDivRef,address,setAddress,setCoords,setCity,setProvince,coords,city,province,setCountry,country,locationImgs,setLocationImgs,selectedAmenities,setSelectedAmenities,isMissingLocation
+    locationDivRef,address,setAddress,streetAddress,setStreetAddress,setCoords,setCity,setProvince,coords,city,province,setCountry,country,locationImgs,setLocationImgs,selectedAmenities,setSelectedAmenities,isMissingLocation,noHeader
 }){
 
+    console.log("INSIDE LOCO WRAPPER", selectedAmenities)
     return(
         <>
             <div className="font-bold text-streamlineBlue text-[18px] pt-[15px]"
               ref={locationDivRef}>
-                  <div>
+                  {!noHeader && <div>
                   Location Information
-                  </div>
+                  </div>}
                   {isMissingLocation &&
                   <div className="text-red-500 text-[15px]">
                     Please ensure you have completed all the fields in this section
@@ -23,6 +24,8 @@ export default function LocationInfoWrapper({
               <GoogleAddyEntryEditor
               address={address}
               setAddress={setAddress}
+              streetAddress={streetAddress}
+              setStreetAddress={setStreetAddress}
               setCoords={setCoords}
               coords={coords}
               city={city}
@@ -45,9 +48,9 @@ export default function LocationInfoWrapper({
               <div
               className="h-[8px]"
               />
-              <div
+              {!noHeader && <div
                   className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
-                />  
+                />  }
         </>
     )
 }
