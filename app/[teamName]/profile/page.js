@@ -74,7 +74,6 @@ export default function TeamProfilePage() {
 
                 const elapsed = Date.now() - triggerTimeRef.current;
 
-                console.log(`Elapsed time: ${elapsed}ms`);
                     if (userInfo.teamInfo) {
                         clearInterval(intervalRef.current); // Break the interval
                         // TEAM INFO
@@ -125,7 +124,6 @@ export default function TeamProfilePage() {
             const parsedAddress = parseAddress({address:location.address})
             parsedAddresses.push(parsedAddress)
             location.parsedAddress = parsedAddress
-            console.log(location)
           }
           setLocationInfo(locationsInfo)
           setAllParsedAddresses(parsedAddresses)
@@ -139,7 +137,7 @@ export default function TeamProfilePage() {
     
     return(
 
-        <div className="flex overflow-x-hidden justify-center items-center">
+        // <div className="flex overflow-x-hidden justify-center items-center">
           <DynamicScreen className="">
             <div className="">
             <TeamDashHeader selectedPage={"profile"}/>
@@ -403,7 +401,7 @@ export default function TeamProfilePage() {
            
            </div>
             </DynamicScreen>
-        </div>
+        // </div>
 
 
     )

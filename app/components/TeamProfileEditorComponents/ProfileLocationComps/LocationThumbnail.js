@@ -26,7 +26,6 @@ export default function LocationThumbnail({location, pullLocoInfo}){
         toggleVisibility(false);
         setTimeout(() => setIsDropdownClosing(false), 500); // Reset after a short delay
     };
-    console.log(location)
     // options dropdown
     const [isOptionsVisible, setIsOptionsVisible] = useState(false);
     const [isOptionsDropdownClosing, setIsOptionsDropdownClosing] = useState(false);

@@ -28,6 +28,7 @@ export default function TeamProfileLocationsSection({ locationsInfo }) {
       fields:{
         locationId:locationId
       }})
+      
       const locoAmenitiesArray = []
       for (const locoAm of locoAmenitiesFirestore){
         locoAmenitiesArray.push(locoAm.selectedAmenities)
@@ -45,7 +46,7 @@ export default function TeamProfileLocationsSection({ locationsInfo }) {
 
       const firestoreLocationCoach = await getEntriesByMatching({collectionName:"Coach", fields:{locationId:locationId}})
       setRetrievedCoachInfo(firestoreLocationCoach)
-      console.log("ED OF LOCO PULL")
+
       const chosenLocation = findJsonById(locationsInfo,locationId)
       setLocationBeingView(chosenLocation)
       setIsViewingLocationInfo(true)

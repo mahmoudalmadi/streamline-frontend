@@ -3,21 +3,36 @@ import EditableInfoSection from "../EditableInfoSection";
 import { useState } from "react";
 import DisplayLocationInfo from "../InfoDisplayWrappers/DisplayLocationInfo";
 import LocationInfoWrapper from "../EditorWrappers/LocationInfoWrapper";
+import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/editingEntryByAllFields";
+import { uploadImagesToS3 } from "@/app/hooks/awsHooks/uploadToS3";
+import { getEntriesByMatching } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByMatching";
+import { deleteMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/deleteEntriesByMatchingFields";
+import extractFieldFromJsonList from "@/app/hooks/extractFieldFromJSONList";
+import deleteS3Objects from "@/app/hooks/awsHooks/deleteFromS3";
+import { generateJsonList } from "@/app/hooks/firestoreHooks/adding/addInfoAsList";
+import { addListOfJsons } from "@/app/hooks/firestoreHooks/adding/addInfoAsList";
 
 export default function ViewLocationInfo({locationsInfo, retrievedAmenities,setRetrievedAmenities}){
 
     const [address, setAddress] = useState(locationsInfo.address)
-  const [coords, setCoords] = useState(locationsInfo.longitude!="na"?{"lng":locationsInfo.longitude,"lat":locationsInfo.latitude}:null)
+  const [coords, setCoords] = useState(locationsInfo.longitude!="na"?{"lng":locationsInfo.longitude,"lat":locationsInfo.latitude}:{"lng":"na","lat":"na"})
   const [streetAddress,setStreetAddress]=useState(locationsInfo.parsedAddress.streetAddress ? locationsInfo.parsedAddress.streetAddress : "")
   const [city,setCity]=useState(locationsInfo.parsedAddress.city ? locationsInfo.parsedAddress.city : "")
   const [postalCode,setPostalCode]=useState(locationsInfo.parsedAddress.postalCode ? locationsInfo.parsedAddress.postalCode : "")
   const [country,setCountry]=useState(locationsInfo.parsedAddress.country ? locationsInfo.parsedAddress.country : "")
   const [province,setProvince]=useState(locationsInfo.parsedAddress.state ? locationsInfo.parsedAddress.state : "")
-
   const [locationImgs,setLocationImgs]=useState(locationsInfo.images)
-  const defaulAmenitiesList = retrievedAmenities;
 
-    return(
+    const [defaultAmenitiesList,setDefaultAmenititesList] = useState(retrievedAmenities)  
+    const [defaultStreetAddress,setDefaultStreetAddress]=useState(locationsInfo.parsedAddress.streetAddress ? locationsInfo.parsedAddress.streetAddress : "")
+    const [defaultCity, setDefaultCity]=useState(locationsInfo.parsedAddress.city ? locationsInfo.parsedAddress.city : "")
+    const [defaultState, setDefaultState]=useState(locationsInfo.parsedAddress.city ? locationsInfo.parsedAddress.city : "")
+    const [defaultPostalCode,setDefaultPostalCode]=useState(locationsInfo.parsedAddress.postalCode ? locationsInfo.parsedAddress.postalCode : "")
+    const [defaultCountry,setDefaultCountry]=useState(locationsInfo.parsedAddress.country ? locationsInfo.parsedAddress.country : "")
+    const [defaultAddress,setDefaultAddress]=useState(locationsInfo.parsedAddress.state ? locationsInfo.parsedAddress.state : "")
+    const [defaultImages,setDefaultImages]=useState(locationsInfo.images)
+  
+  return(
 
         <>
 
@@ -32,6 +47,8 @@ export default function ViewLocationInfo({locationsInfo, retrievedAmenities,setR
         "city":city,
         "province":province,
         "setCountry":setCountry,
+        postalCode:postalCode,
+        setPostalCode:setPostalCode,
         country:country,
         streetAddress:streetAddress,
         setStreetAddress:setStreetAddress,
@@ -53,39 +70,112 @@ export default function ViewLocationInfo({locationsInfo, retrievedAmenities,setR
         locationImages:locationImgs,
         amenitiesList:retrievedAmenities
       }}
-      editButtonText={"Edit location info/image"} 
+      editButtonText={"location info/images"} 
       savingDefaultValuesOnCancel={
         [
-          {streetAddress:locationsInfo.parsedAddress.streetAddress ? locationsInfo.parsedAddress.streetAddress : "",
-          setStreetAddress:setStreetAddress
+          {value:defaultStreetAddress,
+          setter:setStreetAddress
           },
           {
-            city:locationsInfo.parsedAddress.city ? locationsInfo.parsedAddress.city : "",
-            setCity:setCity
+            value:defaultCity,
+            setter:setCity
           },
           {
-            postalCode:locationsInfo.parsedAddress.postalCode ? locationsInfo.parsedAddress.postalCode : "",
-            setPostalCode:setPostalCode
+            value:defaultPostalCode,
+            setter:setPostalCode
           },
           {
-            country:locationsInfo.parsedAddress.country ? locationsInfo.parsedAddress.country : "", setCountry:setCountry            
+            country:defaultCountry, setCountry:setCountry            
           },
           {
-            province:locationsInfo.parsedAddress.state ? locationsInfo.parsedAddress.state : "",setProvince:setProvince
+            value:defaultState,setter:setProvince
           },{
-            address:locationsInfo.address,setAddress:setAddress
+            value:defaultAddress,setter:setAddress
           },
-          {locationImgs:locationsInfo.image,setLocationImgs},
-          {retrievedAmenities:defaulAmenitiesList,setRetrievedAmenities}
+          {value:defaultImages,setter:setLocationImgs},
+          {value:defaultAmenitiesList,setter:setRetrievedAmenities}
+        ]
+    }
+    toUpdateDefaultsOnSave={
+        [{value:address,setter:setDefaultAddress},
+        {value:city,setter:setDefaultCity},
+        {value:postalCode,setter:setDefaultPostalCode},
+        {value:country,setter:setDefaultCountry},
+        {value:province,setter:setDefaultState},
+        {value:locationImgs,setter:setDefaultImages},
+        {value:streetAddress,setter:setDefaultStreetAddress},
+        {value:retrievedAmenities,setter:setDefaultAmenititesList}
         ]
     }
     allStatesJson={
         {streetAddress:streetAddress,
         city:city,province:province,country:country,postalCode:postalCode,locationImgs,
         retrievedAmenities:retrievedAmenities
-
         }}
     headerText={"Location Info"}
+    onEdit={async()=>{
+
+        try{
+        await editingMatchingEntriesByAllFields({collectionName:"Location",matchParams:{id:"rX2adjtpfute9WhWmHeA"},
+        updateData:{address:address,
+        city:city,
+        state:province,
+        country:country,
+        latitude:coords.lat,
+        longitude:coords.lng,
+        editTimestamp:new Date()}})
+
+        if(defaultImages!=locationImgs){// REMOVE LOCATION IMAGES
+            console.log("UFCKING AROUND WITH IMGEAS")
+        const allImages = await getEntriesByMatching({collectionName:"Images",
+        fields:{locationId:locationsInfo.id}})
+        const listOfUrls = extractFieldFromJsonList({jsonList:locationImgs,fieldName:"url"})
+        const setOfUrls = new Set(listOfUrls)
+        const imagesToDelete = []
+        console.log("SET OF URLSS", setOfUrls)
+        for(const image of allImages){
+            if(!setOfUrls.has(image.imageUrl)){
+                imagesToDelete.push(image)
+            }else{
+                console.log("the mf IS IN SET", image.imageUrl)
+            }
+        }
+        const urlsToDelete = extractFieldFromJsonList({jsonList:imagesToDelete,fieldName:"imageUrl"})
+
+        if(urlsToDelete.length>0){
+        const deletingS3ImagesResult = await deleteS3Objects({urls:urlsToDelete})
+        deleteMatchingEntriesByAllFields({collectionName:"Images",matchParams:{
+            imageUrl:locationsInfo.id
+        }})}
+    
+        // ADD LOCATION IMAGES
+        const locationImageList = await uploadImagesToS3({s3Uri:"s3://streamlineplatform/locationImages/",files:locationImgs})
+        const imagesFirestoreJsons = generateJsonList(locationImageList,"imageUrl",
+        {locationId:locationsInfo.id},
+        {photoType:"location"},
+        {teamId:locationsInfo.teamId},
+        {uploadTimestamp:new Date()})
+        
+        const imageFirestoreIds = await addListOfJsons({jsonList:imagesFirestoreJsons,collectionName:"Images"})
+        
+        }
+
+
+        if(retrievedAmenities!=defaultAmenitiesList){
+        await deleteMatchingEntriesByAllFields({collectionName:"Amenities",matchParams:{
+            locationId:locationsInfo.id
+        }})
+        const firestoreAmenities = generateJsonList(retrievedAmenities,"selectedAmenities",{locationId:locationsInfo.id},{teamId:locationsInfo.teamId},{uploadTimestamp:new Date()}) 
+        const amenityIds = await addListOfJsons({jsonList:firestoreAmenities,
+        collectionName:"Amenities"})
+        }
+
+    }catch(error)
+    {
+        console.log(error)
+    }
+    }
+    }
     />
 
 

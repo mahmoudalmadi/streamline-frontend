@@ -80,6 +80,7 @@ export default function TeamProfileEditor() {
     const [address,setAddress] = useState("")
     const [coords, setCoords] = useState(null)
     const [streetAddress,setStreetAddress]=useState("")
+    const [postalCode,setPostalCode]=useState("")
     const [province, setProvince] = useState("")
     const [city, setCity] = useState("")
     const [country,setCountry] = useState("")
@@ -590,6 +591,8 @@ export default function TeamProfileEditor() {
               
               <LocationInfoWrapper
               locationDivRef={locationDivRef}
+              setPostalCode={setPostalCode}
+              postalCode={postalCode}
               address={address}
               streetAddress={streetAddress}
               setStreetAddress={setStreetAddress}

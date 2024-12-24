@@ -8,7 +8,9 @@ export const fetchPresignedUrls = async ({files, s3Uri}) => {
       },
       body: JSON.stringify({
         s3Uri,
-        files: files.map((file) => ({
+        files: files
+        .filter((file) => file.file && file.file.name)
+        .map((file) => ({
           fileName: file.file.name,
           fileType: file.file.type,
         })),
@@ -25,12 +27,12 @@ export const fetchPresignedUrls = async ({files, s3Uri}) => {
   
 export const uploadImagesToS3 = async ({files, s3Uri}) => {
     try {
+      const filteredFiles = files.filter((file) => file.file && file.file.name)
       // Fetch pre-signed URLs for all files
-      const presignedUrls = await fetchPresignedUrls({files:files, s3Uri:s3Uri});
-        
+      const presignedUrls = await fetchPresignedUrls({files:filteredFiles, s3Uri:s3Uri});
       // Upload each file using its corresponding pre-signed URL
       const uploadPromises = presignedUrls.map(({ url }, index) => {
-        const file = files[index].file;
+        const file = filteredFiles[index].file;
         return fetch(url, {
           method: 'PUT',
           body: file,

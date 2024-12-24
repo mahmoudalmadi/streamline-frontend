@@ -2,8 +2,6 @@ import AmenitiesSection from "../../TeamPageComps/AmenitiesSection"
 
 export default function DisplayLocationInfo({parsedAddress,locationImages,amenitiesList}){
 
-  console.log("INSIDE display LOC INFO " ,locationImages)
-
     return(
 
         <div>
@@ -17,7 +15,7 @@ export default function DisplayLocationInfo({parsedAddress,locationImages,amenit
                     </div>
 
                     <div className="font-bold text-[16px] pt-[8px]">Location Images</div>    
-                    <div className="flex space-x-[20px] py-[4px] mb-[4px]">
+                    <div className="flex flex-wrap gap-[20px] py-[4px] mb-[4px]">
                     {locationImages.map((image, index) => (
                 
                     

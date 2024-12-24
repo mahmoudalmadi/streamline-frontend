@@ -4,10 +4,9 @@ import AmenitiesSelection from "../AmentitiesSelection"
 import CONFIG from "@/config"
 
 export default function LocationInfoWrapper({
-    locationDivRef,address,setAddress,streetAddress,setStreetAddress,setCoords,setCity,setProvince,coords,city,province,setCountry,country,locationImgs,setLocationImgs,selectedAmenities,setSelectedAmenities,isMissingLocation,noHeader
+    locationDivRef,address,setAddress,streetAddress,setStreetAddress,setCoords,setCity, postalCode,setPostalCode,setProvince,coords,city,province,setCountry,country,locationImgs,setLocationImgs,selectedAmenities,setSelectedAmenities,isMissingLocation,noHeader
 }){
 
-    console.log("INSIDE LOCO WRAPPER", selectedAmenities)
     return(
         <>
             <div className="font-bold text-streamlineBlue text-[18px] pt-[15px]"
@@ -26,6 +25,8 @@ export default function LocationInfoWrapper({
               setAddress={setAddress}
               streetAddress={streetAddress}
               setStreetAddress={setStreetAddress}
+              setPostalCode={setPostalCode}
+              postalCode={postalCode}
               setCoords={setCoords}
               coords={coords}
               city={city}

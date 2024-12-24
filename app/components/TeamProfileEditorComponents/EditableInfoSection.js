@@ -2,16 +2,30 @@
 
 import { useEffect, useState } from "react";
 import validateFields from "@/app/hooks/firestoreHooks/validateFields";
+import { useRef } from "react";
 
-export default function EditableInfoSection({EditableInfoWrapper,GeneralInfoDisplayWrapper,fields,displayFields,editButtonText,valueSettersJson,savingDefaultValuesOnCancel,allStatesJson,onEdit,headerText}){
+export default function EditableInfoSection({EditableInfoWrapper,GeneralInfoDisplayWrapper,fields,displayFields,editButtonText,valueSettersJson,savingDefaultValuesOnCancel,toUpdateDefaultsOnSave, allStatesJson,onEdit,headerText}){
 
-    console.log("MY DISPLAY FIELDS", displayFields)
 
     const [isEditingWrapperInfo,setIsEditingWrapperInfo] =useState(false)
     const [mustFixInputInfo,setMustFixInputInfo]=useState(false)
 
     const saveDefaultValuesOnCancel = ({actions}) => {
-        console.log("SAVE DEF VALS ACRTIONs", JSON.stringify(actions))
+        actions.forEach(({ setter, setDict, field, value }) => {
+          if (setter) {
+            // Directly set the value using a setter function
+            setter(value);
+          } else if (setDict && field) {
+            // Use changeField logic for dictionaries or objects
+            setDict((prev) => ({
+              ...prev,
+              [field]: value,
+            }));
+          }
+        });
+      };
+    
+      const updatingDefaultValuesOnSave = ({actions}) => {
         actions.forEach(({ setter, setDict, field, value }) => {
           if (setter) {
             // Directly set the value using a setter function
@@ -28,8 +42,13 @@ export default function EditableInfoSection({EditableInfoWrapper,GeneralInfoDisp
 
     const [enableSaveInputChanges,setEnableInputChanges] =useState(false)
 
+    const firstLoad = useRef(0)
     useEffect(()=>{
+        setMustFixInputInfo(false)
+        if (firstLoad.current>1 && !enableSaveInputChanges){
         setEnableInputChanges(true)
+        }
+        firstLoad.current+=1
     },Object.values(allStatesJson))
 
     return(
@@ -38,10 +57,10 @@ export default function EditableInfoSection({EditableInfoWrapper,GeneralInfoDisp
         <div className="text-[18px] font-bold text-streamlineBlue">
             {headerText}
         </div>
-        <div className="mt-[1px] text-[13px] ml-[8px] bg-streamlineBlue text-white font-bold px-[10px] py-[6px] rounded-full cursor-pointer"
+        {!isEditingWrapperInfo&&<div className="mt-[1px] text-[13px] ml-[8px] bg-streamlineBlue text-white font-bold px-[10px] py-[6px] rounded-full cursor-pointer"
         onClick={()=>{setIsEditingWrapperInfo(!isEditingWrapperInfo)}}>
             Edit {editButtonText}
-        </div>
+        </div>}
         </div>
         
         {!isEditingWrapperInfo ?
@@ -59,6 +78,7 @@ export default function EditableInfoSection({EditableInfoWrapper,GeneralInfoDisp
                 onClick={()=>{
                     saveDefaultValuesOnCancel({actions:savingDefaultValuesOnCancel})
                     setMustFixInputInfo(false)
+                    setEnableInputChanges(false)
                     setIsEditingWrapperInfo(!isEditingWrapperInfo)
                 }}
                 >
@@ -74,6 +94,7 @@ export default function EditableInfoSection({EditableInfoWrapper,GeneralInfoDisp
                         validateFields({data:allStatesJson})
                         setIsEditingWrapperInfo(false)
                         await onEdit();
+                        updatingDefaultValuesOnSave({actions:toUpdateDefaultsOnSave})
                         }catch(error){
                             setMustFixInputInfo(true)
                         }

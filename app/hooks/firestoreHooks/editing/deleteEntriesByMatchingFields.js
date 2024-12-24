@@ -1,21 +1,20 @@
 import { getFirestore, collection, query, where, getDocs, writeBatch, doc } from "firebase/firestore";
 
 /**
- * Edits entries in a Firestore collection based on matching parameters, batching updates into a single request.
+ * Deletes entries in a Firestore collection based on matching parameters, batching deletions into a single request.
  * @param {string} collectionName - The Firestore collection name.
  * @param {Object} matchParams - An object with key-value pairs to match entries.
- * @param {Object} updateData - An object with key-value pairs to update the matched entries.
  */
-export const editingMatchingEntriesByAllFields = async ({collectionName, matchParams, updateData}) => {
+export const deleteMatchingEntriesByAllFields = async ({ collectionName, matchParams }) => {
   try {
     const db = getFirestore();
     const colRef = collection(db, collectionName);
 
-    // If we're querying by ID, handle it differently
+    // If we're deleting by ID, handle it differently
     if (matchParams.id) {
       const docRef = doc(db, collectionName, matchParams.id);
-      await writeBatch(db).update(docRef, updateData).commit();
-      console.log(`Document with ID ${matchParams.id} updated successfully.`);
+      await writeBatch(db).delete(docRef).commit();
+      console.log(`Document with ID ${matchParams.id} deleted successfully.`);
       return;
     }
 
@@ -36,16 +35,16 @@ export const editingMatchingEntriesByAllFields = async ({collectionName, matchPa
     // Initialize a write batch
     const batch = writeBatch(db);
 
-    // Add each matching document update to the batch
+    // Add each matching document deletion to the batch
     querySnapshot.forEach((docSnapshot) => {
       const docRef = doc(db, collectionName, docSnapshot.id);
-      batch.update(docRef, updateData);
+      batch.delete(docRef);
     });
 
     // Commit the batch
     await batch.commit();
-    console.log(`${querySnapshot.size} document(s) updated successfully.`);
+    console.log(`${querySnapshot.size} document(s) deleted successfully.`);
   } catch (error) {
-    console.error("Error updating Firestore entries:", error);
+    console.error("Error deleting Firestore entries:", error);
   }
 };
