@@ -13,7 +13,7 @@ const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages,prompt }
       const newImages = await Promise.all(
         Array.from(files).map(async (file) => {
             return {
-              id: `${Date.now()}-${file.name}`,
+              id: `${Date.now()}-${Math.round(Math.random() * 100)}-${file.name}`,
               file, // Store the actual file for later upload
               url: URL.createObjectURL(file), 
             };

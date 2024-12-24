@@ -11,6 +11,7 @@ import extractFieldFromJsonList from "@/app/hooks/extractFieldFromJSONList";
 import deleteS3Objects from "@/app/hooks/awsHooks/deleteFromS3";
 import { generateJsonList } from "@/app/hooks/firestoreHooks/adding/addInfoAsList";
 import { addListOfJsons } from "@/app/hooks/firestoreHooks/adding/addInfoAsList";
+import { deleteEntriesByFieldValues } from "@/app/hooks/firestoreHooks/editing/deleteEntriesByFieldValue";
 
 export default function ViewLocationInfo({locationsInfo, retrievedAmenities,setRetrievedAmenities}){
 
@@ -127,26 +128,36 @@ export default function ViewLocationInfo({locationsInfo, retrievedAmenities,setR
 
         if(defaultImages!=locationImgs){// REMOVE LOCATION IMAGES
             console.log("UFCKING AROUND WITH IMGEAS")
-        const allImages = await getEntriesByMatching({collectionName:"Images",
-        fields:{locationId:locationsInfo.id}})
-        const listOfUrls = extractFieldFromJsonList({jsonList:locationImgs,fieldName:"url"})
-        const setOfUrls = new Set(listOfUrls)
+            // const allImages = await getEntriesByMatching({collectionName:"Images",
+            // fields:{locationId:locationsInfo.id}})
+            console.log("def images",defaultImages)
+            console.log("new images",locationImgs)
+        const existingImages = extractFieldFromJsonList({jsonList:defaultImages,fieldName:"url"})
+        const newImages = extractFieldFromJsonList({jsonList:locationImgs,fieldName:"url"})
+        const setOfOldUrls = new Set(existingImages)
+        const setOfNewUrls = new Set(newImages)
         const imagesToDelete = []
-        console.log("SET OF URLSS", setOfUrls)
-        for(const image of allImages){
-            if(!setOfUrls.has(image.imageUrl)){
-                imagesToDelete.push(image)
-            }else{
-                console.log("the mf IS IN SET", image.imageUrl)
+        const imagesToAdd = []
+        console.log("SET OF OLD URLSS", setOfOldUrls)
+        console.log("SET OF new URLSS", setOfNewUrls)
+        console.log("ITER OVER ENWS IMGES")
+        for(const image of locationImgs){ 
+            if(!setOfOldUrls.has(image.url)){
+                imagesToAdd.push(image)
             }
         }
-        const urlsToDelete = extractFieldFromJsonList({jsonList:imagesToDelete,fieldName:"imageUrl"})
+        for(const image of existingImages){
+            if(!setOfNewUrls.has(image)){
+                imagesToDelete.push(image)
+            }
+        }
 
-        if(urlsToDelete.length>0){
-        const deletingS3ImagesResult = await deleteS3Objects({urls:urlsToDelete})
-        deleteMatchingEntriesByAllFields({collectionName:"Images",matchParams:{
-            imageUrl:locationsInfo.id
-        }})}
+        console.log("TO DELETE",imagesToDelete)
+        console.log("TO aDD",imagesToAdd)
+        if(imagesToDelete.length>0){
+        const deletingS3ImagesResult = await deleteS3Objects({urls:imagesToDelete})
+        deleteEntriesByFieldValues({collectionName:"Images",fieldName:"imageUrl",values:imagesToDelete})
+        }
     
         // ADD LOCATION IMAGES
         const locationImageList = await uploadImagesToS3({s3Uri:"s3://streamlineplatform/locationImages/",files:locationImgs})
