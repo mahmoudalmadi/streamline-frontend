@@ -170,69 +170,6 @@ export default function TeamProfilePage() {
                     <SwimClubDescription swimClubDescription={teamDescription}/>  
                     <div>
 
-                    <div className="font-bold text-[16px] pt-[8px]">Address</div>    
-                    <div className="flex-col">
-                    <div className="leading-[16px] mt-[4px]">Street Address</div>
-                    <div className="flex">
-                    <div>City</div><div>, State</div><div>, ZipCode</div><div>, Country</div>
-                        </div>
-                    </div>
-
-                    <div className="font-bold text-[16px] pt-[8px]">Location Images</div>    
-                    <div className="flex space-x-[20px] py-[4px] mb-[4px]">
-                    {images.map((image, index) => (
-                
-                    
-                  
-                    <div
-                        className="relative"
-                    >
-                      {/* Badge with Number */}
-
-                      
-                        <div
-                        style={{
-                          position: "absolute",
-                          top: "5px",
-                          left: "5px",
-                          backgroundColor: "rgba(0, 0, 0, 0.7)",
-                          color: "white",
-                          borderRadius: "50%",
-                          width: "20px",
-                          height: "20px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "12px",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {index + 1}
-                      </div>
-
-                      {/* Image Preview */}
-                      <img
-                        src={image.url}
-                        alt={`uploaded-${index}`}
-                        style={{
-                          width: "120px",
-                          height: "auto",
-                          objectFit: "contain",
-                          borderRadius: "5px",
-                        }}
-                      />
-
-                    </div>
-                  )
-                
-                     )}
-                    </div>
-
-                    <div className="font-bold text-[16px] pt-[8px]">Amenities</div>  
-                    <div>
-                    <AmenitiesSection amenities={[1,2,3]} withoutHeader={true}/>
-                    </div>
-
                     </div>
                 </div>:
                 <div className="space-y-[8px] mt-[8px]">

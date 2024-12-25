@@ -65,10 +65,13 @@ export default function TeamProfileLocationsSection({ locationsInfo }) {
 
     return (
       <>{isViewingLocationInfo?
+        <>
         <ViewLocationInfo
         locationsInfo={locationBeingView}
         retrievedAmenities={retrievedAmenities} setRetrievedAmenities={setRetrievedAmenities}
         />
+        <div className="w-full h-[1px] bg-gray-200 mt-[18px] mb-[18px]"/>
+        </>
         :
       <div className="w-full">
         <div className="flex justify-between items-center mb-[16px]">
