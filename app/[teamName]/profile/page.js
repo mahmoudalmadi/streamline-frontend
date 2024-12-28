@@ -137,7 +137,7 @@ export default function TeamProfilePage() {
     
     return(
 
-        // <div className="flex overflow-x-hidden justify-center items-center">
+        <div className="flex overflow-x-hidden justify-center items-center">
           <DynamicScreen className="">
             <div className="">
             <TeamDashHeader selectedPage={"profile"}/>
@@ -338,7 +338,7 @@ export default function TeamProfilePage() {
            
            </div>
             </DynamicScreen>
-        // </div>
+         </div>
 
 
     )

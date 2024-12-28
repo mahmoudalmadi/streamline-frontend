@@ -73,6 +73,7 @@ export default function TeamProfileLocationsSection({ locationsInfo }) {
         locationsInfo={locationBeingView}
         retrievedAmenities={retrievedAmenities} setRetrievedAmenities={setRetrievedAmenities}
         />
+        <>
         <div className="w-full h-[1px] bg-gray-200 mt-[18px] mb-[18px]"/>
         <div className="font-bold text-[16px] pt-[8px]">Class levels offered</div>    
         <ul className="list-disc pl-5">
@@ -113,6 +114,7 @@ export default function TeamProfileLocationsSection({ locationsInfo }) {
             </>
           ))}
         </ul>
+        </>
         </>
         :
       <div className="w-full">
