@@ -2,16 +2,16 @@ import CONFIG from "@/config";
 import SelectingCategories from "../SelectingCategories";
 import DaysHoursOperations from "../DaysHoursOperation";
 
-export default function ProgramOfferingsWrapper({programsOfferedDivRef,isMissingProgramsOffered,programLevels,setProgramLevels,programTypes,setProgramTypes,daysOfWeek,setDaysOfWeek,hourOfOpError}){
+export default function ProgramOfferingsWrapper({programsOfferedDivRef,isMissingProgramsOffered,programLevels,setProgramLevels,programTypes,setProgramTypes,daysOfWeek,setDaysOfWeek,hourOfOpError, noHeader}){
 
 
     return(
         <>
             <div className="font-bold text-streamlineBlue text-[18px]"
               ref={programsOfferedDivRef}>
-                  <div>
+                  {!noHeader && <div>
                   Programs Offered at this Location
-                  </div>
+                  </div>}
                   {isMissingProgramsOffered &&
                   <div className="text-red-500 text-[15px]">
                     Please ensure you have completed all the fields in this section
@@ -33,9 +33,9 @@ export default function ProgramOfferingsWrapper({programsOfferedDivRef,isMissing
 
               <div className="h-[6px]"/>
 
-              <div
+              {!noHeader && <div
                   className="relative w-full h-[1px] bg-gray-200 mt-[15px]"
-                />  
+                />  }
         </>
     )
 }
