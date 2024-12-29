@@ -1,29 +1,62 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import ProgramOfferingsWrapper from "../EditorWrappers/ProgramOfferingsWrapper"
 import { deleteMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/deleteEntriesByMatchingFields"
 import { generateJsonList } from "@/app/hooks/firestoreHooks/adding/addInfoAsList"
 import { addListOfJsons } from "@/app/hooks/firestoreHooks/adding/addInfoAsList"
+import EditableInfoSection from "../EditableInfoSection"
+import DisplayProgramsOffered from "../InfoDisplayWrappers/DisplayProgramsOffered"
+import formatHoursOfOperations from "@/app/hooks/retrieveHoursOfOps"
 
 export default function ViewProgramsInfo({programsInfo}){
 
-    const [programLevels,setProgramLevels]=useState() //PENDING CHECJIUBG PROGRAMS INFO
-    const [programTypes,setProgramTypes]=useState()
-    const [daysOfWeek,setDaysOfWeek]=useState()
-    const [hourOfOpError,setHourOfOpError]=useState()
+    const [programLevels,setProgramLevels]=useState(programsInfo.programLevels) //PENDING CHECJIUBG PROGRAMS INFO
+    const [programTypes,setProgramTypes]=useState(programsInfo.programTypes)
+    const [daysOfWeek,setDaysOfWeek]=useState(programsInfo.daysOfWeek)
+    const [hourOfOpError,setHourOfOpError]=useState("")
 
-    const [defaultProgramLevels,setDefaultProgramLevels]=useState() //PENDING CHECJIUBG PROGRAMS INFO
-    const [defaultProgramTypes,setDefaultProgramTypes]=useState()
-    const [defaultDaysOfWeek,setDefaultDaysOfWeek]=useState()
-    const [defaultHourOfOpError,setDefaultHourOfOpError]=useState()
+    const [defaultProgramLevels,setDefaultProgramLevels]=useState(programsInfo.programLevels) //PENDING CHECJIUBG PROGRAMS INFO
+    const [defaultProgramTypes,setDefaultProgramTypes]=useState(programsInfo.programTypes)
+    const [defaultDaysOfWeek,setDefaultDaysOfWeek]=useState(programsInfo.daysOfWeek)
+    const [locationId, setLocationId]=useState(programsInfo.locationId)
+    const [teamId, setTeamId]=useState(programsInfo.teamId)
 
-    const locationId = programsInfo.locationStuffs
+    const [stringifiedDaysOfWeek, setStringifiedDaysOfWeek] = useState(programsInfo.stringifiedDaysOfWeek)
+
+    useEffect(()=>{
+        let stringified = formatHoursOfOperations(daysOfWeek)
+        setStringifiedDaysOfWeek(stringified)
+    },[daysOfWeek])
+
+    useEffect(()=>{
+        setHourOfOpError("")
+    },[daysOfWeek])
+
+    console.log(locationId,teamId)
 
     return(
         <>
 
-<EditableInfoSection EditableInfoWrapper={ProgramOfferingsWrapper} GeneralInfoDisplayWrapper={DisplayLocationInfo} 
+    <EditableInfoSection daysOfWeekHook={()=>{
+                        
+                        let missingHoursCounter = 0
+                          for (const day of daysOfWeek){
+                              if (day.checked){
+                                if (day.hoursOfOps.length>0)
+                                {
+                                }
+                                else{
+                                missingHoursCounter+=1;
+                                setHourOfOpError(day.day + " is missing hours of operation")
+                                throw new Error("missing hops")
+                                }
+                              if (missingHoursCounter===0){
+                                setHourOfOpError("")
+                              }
+                  
+                              }
+                            }}}
+    EditableInfoWrapper={ProgramOfferingsWrapper} GeneralInfoDisplayWrapper={DisplayProgramsOffered} 
       fields={{
-        isMissingProgramsOffered:isMissingProgramsOffered,
         programLevels:programLevels,
         setProgramLevels:setProgramLevels,
         programTypes:programTypes,
@@ -35,7 +68,7 @@ export default function ViewProgramsInfo({programsInfo}){
         }
       }
       displayFields={{
-        daysOfWeek:daysOfWeek,
+        daysOfWeek:stringifiedDaysOfWeek,
         programTypes:programTypes,
         programLevels:programLevels
       }}
@@ -59,7 +92,7 @@ export default function ViewProgramsInfo({programsInfo}){
         [
         {value:daysOfWeek,setter:setDefaultDaysOfWeek},
         {value:programLevels,setter:setDefaultProgramLevels},
-        {value:programTypes,setter:setProgramTypes},
+        {value:programTypes,setter:setDefaultProgramTypes},
         ]
     }
     allStatesJson={
@@ -72,46 +105,21 @@ export default function ViewProgramsInfo({programsInfo}){
 
         try{
 
-        if(daysOfWeek!=defaultDaysOfWeek){
-            
-            for (const dayNum in daysOfWeek){
-                let day = daysOfWeek[dayNum]
-                if (day.checked){
-                  if (day.hoursOfOps.length>0)
-                  {console.log('great')
-                  }
-                  else{
-                  missingHoursCounter+=1;
-                  setHourOfOpError(day.day + " is missing hours of operation")
-                  throw new Error("missing hops")
-                  }
-                if (missingHoursCounter===0){
-                  setHourOfOpError("")
-                }
-    
-                }
-              }
 
-            await deleteMatchingEntriesByAllFields({collectionName:"OperationDayTime",matchParams:{locationId:locationId}})
+        if(programLevels != defaultProgramLevels){
+            await deleteMatchingEntriesByAllFields({collectionName:'skillLevel',matchParams:{locationId:locationId}})
 
-            let dayTimes = []
-            for (const day of programsOffered.opDays)
-            {
-              if (day.hoursOfOps.length>0){
-                const dayHours = generateJsonList(day.hoursOfOps,"hour",
-                {day:day.day},
-                {locationId:locationId},
-                {teamId:teamId})
-                dayTimes.push(...dayHours)
-              }
-            }
-            const dayTimeIds = await addListOfJsons({jsonList:dayTimes,collectionName:"OperationDayTime"})
+            const firestoreSkillLevels = generateJsonListGivenJsons(programLevels,{locationId:locationId,teamId:teamId})
+            const programLevelIds = await addListOfJsons({jsonList:firestoreSkillLevels,
+            collectionName:"SkillLevel"})
 
         }
 
-        if(programLevels != defaultProgramLevels){
-            deleteMatchingEntriesByAllFields({collectionName:'skillLevel',matchParams:{locationId:locationId}})
-
+        if(programTypes!=defaultProgramTypes){
+            await deleteMatchingEntriesByAllFields({collectionName:'lessonType',matchParams:{locationId:locationId}})
+            const firestoreProgramTypes = generateJsonListGivenJsons(programTypes,{locationId:locationId,teamId:teamId})
+            const programTypesIds = await addListOfJsons({jsonList:firestoreProgramTypes,
+            collectionName:"LessonType"})
 
         }
         

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import validateFields from "@/app/hooks/firestoreHooks/validateFields";
 import { useRef } from "react";
 
-export default function EditableInfoSection({EditableInfoWrapper,GeneralInfoDisplayWrapper,fields,displayFields,editButtonText,valueSettersJson,savingDefaultValuesOnCancel,toUpdateDefaultsOnSave, allStatesJson,onEdit,headerText}){
+export default function EditableInfoSection({EditableInfoWrapper,GeneralInfoDisplayWrapper,fields,displayFields,editButtonText,valueSettersJson,savingDefaultValuesOnCancel,toUpdateDefaultsOnSave, allStatesJson,onEdit,headerText,daysOfWeekHook}){
 
 
     const [isEditingWrapperInfo,setIsEditingWrapperInfo] =useState(false)
@@ -92,6 +92,9 @@ export default function EditableInfoSection({EditableInfoWrapper,GeneralInfoDisp
                         try
                         {
                         validateFields({data:allStatesJson})
+                        if("daysOfWeek" in allStatesJson){
+                          daysOfWeekHook()
+                        }
                         setIsEditingWrapperInfo(false)
                         await onEdit();
                         updatingDefaultValuesOnSave({actions:toUpdateDefaultsOnSave})

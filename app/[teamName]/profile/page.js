@@ -138,7 +138,7 @@ export default function TeamProfilePage() {
     return(
 
         <div className="flex overflow-x-hidden justify-center items-center">
-          <DynamicScreen className="">
+          <DynamicScreen className="h-screen">
             <div className="">
             <TeamDashHeader selectedPage={"profile"}/>
             {  isLoading?
@@ -331,7 +331,7 @@ export default function TeamProfilePage() {
                 <div className="w-full h-[1px] bg-gray-200 mt-[18px] mb-[18px]"/>
 
                 {/* LOCATION SECTION */}
-                <TeamProfileLocationsSection locationsInfo={locationInfo} parsedAddresses={allParsedAddresess}/>
+                <TeamProfileLocationsSection locationsInfo={locationInfo} parsedAddresses={allParsedAddresess} teamId={userInfo.teamInfo.id}/>
 
             </div>
             }
