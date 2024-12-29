@@ -1,11 +1,11 @@
 import ProfileEntryEditor from "../ProfileEntryEditor"
 import ImageUploader from "../ImageUploader"
 
-export default function HeadCoachWrapper({coachInfoDivRef,isMissingCoachInfo,headCoachBio,setHeadCoachBio,headCoachName,setHeadCoachName,coachImg,setCoachImg}){
+export default function HeadCoachWrapper({coachInfoDivRef,isMissingCoachInfo,headCoachBio,setHeadCoachBio,headCoachName,setHeadCoachName,coachImg,setCoachImg,noHeader}){
 
     return(
         <>
-            <div className="font-bold text-streamlineBlue text-[18px] pt-[4px]"
+            {!noHeader&&<div className="font-bold text-streamlineBlue text-[18px] pt-[4px]"
               ref={coachInfoDivRef}>
                   <div>
                   Head Coach Information
@@ -14,7 +14,7 @@ export default function HeadCoachWrapper({coachInfoDivRef,isMissingCoachInfo,hea
                   <div className="text-red-500 text-[15px]">
                     Please ensure you have completed all the fields in this section
                   </div>}
-              </div>
+              </div>}
               
               <ProfileEntryEditor
               prompt={"Head Coach Name"}

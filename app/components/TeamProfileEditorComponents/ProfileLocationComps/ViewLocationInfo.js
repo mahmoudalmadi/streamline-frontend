@@ -117,30 +117,24 @@ export default function ViewLocationInfo({locationsInfo, retrievedAmenities,setR
     onEdit={async()=>{
 
         try{
-        await editingMatchingEntriesByAllFields({collectionName:"Location",matchParams:{id:"rX2adjtpfute9WhWmHeA"},
+
+          await editingMatchingEntriesByAllFields({collectionName:"Location",matchParams:{id:locationsInfo.id},
         updateData:{address:address,
         city:city,
         state:province,
         country:country,
-        latitude:coords.lat,
-        longitude:coords.lng,
+        latitude:coords!=null?coords.lat:"na",
+        longitude:coords!=null?coords.lng:"na",
         editTimestamp:new Date()}})
 
         if(defaultImages!=locationImgs){// REMOVE LOCATION IMAGES
-            console.log("UFCKING AROUND WITH IMGEAS")
-            // const allImages = await getEntriesByMatching({collectionName:"Images",
-            // fields:{locationId:locationsInfo.id}})
-            console.log("def images",defaultImages)
-            console.log("new images",locationImgs)
         const existingImages = extractFieldFromJsonList({jsonList:defaultImages,fieldName:"url"})
         const newImages = extractFieldFromJsonList({jsonList:locationImgs,fieldName:"url"})
         const setOfOldUrls = new Set(existingImages)
         const setOfNewUrls = new Set(newImages)
         const imagesToDelete = []
         const imagesToAdd = []
-        console.log("SET OF OLD URLSS", setOfOldUrls)
-        console.log("SET OF new URLSS", setOfNewUrls)
-        console.log("ITER OVER ENWS IMGES")
+
         for(const image of locationImgs){ 
             if(!setOfOldUrls.has(image.url)){
                 imagesToAdd.push(image)
@@ -152,8 +146,6 @@ export default function ViewLocationInfo({locationsInfo, retrievedAmenities,setR
             }
         }
 
-        console.log("TO DELETE",imagesToDelete)
-        console.log("TO aDD",imagesToAdd)
         if(imagesToDelete.length>0){
         const deletingS3ImagesResult = await deleteS3Objects({urls:imagesToDelete})
         deleteEntriesByFieldValues({collectionName:"Images",fieldName:"imageUrl",values:imagesToDelete})

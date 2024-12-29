@@ -83,6 +83,20 @@ export default function TeamProfileEditor() {
     const [province, setProvince] = useState("")
     const [city, setCity] = useState("")
     const [country,setCountry] = useState("")
+
+    const [locationContactName,setLocationContactName]=useState("")
+    const [locationContactEmail,setLocationContactEmail]=useState("")
+    const [locationContactPhone,setLocationContactPhone]=useState({phoneNumber:"", isValid:true})
+    const [hasChosenLocationContact,setHasChosenLocationContact]=useState(null)
+    const [sameAsTeamContact,setSameAsTeamContact]=useState(false)
+
+    useEffect(()=>{
+      if(sameAsTeamContact){
+        setLocationContactEmail(emailAddress)
+        setLocationContactName(fullName)
+        changeField({setDict:setLocationContactPhone,field:"phoneNumber",value:phoneNumberObj.phoneNumber})
+      }
+    },[fullName, phoneNumberObj,emailAddress,sameAsTeamContact])
     
     const [headCoachName, setHeadCoachName] = useState("")
     const [headCoachBio, setHeadCoachBio] = useState("")
@@ -563,7 +577,7 @@ export default function TeamProfileEditor() {
               <div className="font-bold text-streamlineBlue text-[18px] mt-[16px]"
               ref={contactDivRef}>
                   <div>
-                  Contact Information
+                  Team Contact Info
                   </div>
                   {isMissingContact &&
                   <div className="text-red-500 text-[15px]">
@@ -609,6 +623,16 @@ export default function TeamProfileEditor() {
               setLocationImgs={setLocationImgs}
               selectedAmenities={selectedAmenities}
               setSelectedAmenities={setSelectedAmenities}
+              locationContactEmail={locationContactEmail}
+              locationContactName={locationContactName}
+              locationContactPhone={locationContactPhone}
+              setLocationContactEmail={setLocationContactEmail}
+              setLocationContactName={setLocationContactName}
+              setLocationContactPhone={setLocationContactPhone}
+              hasChosenLocationContact={false}
+              setHasChosenLocationContact={setHasChosenLocationContact}
+              sameAsTeamContact={sameAsTeamContact}
+              setSameAsTeamContact={setSameAsTeamContact}
               />
 
               <div

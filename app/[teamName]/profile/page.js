@@ -21,6 +21,8 @@ import { getEntriesByMatching } from "@/app/hooks/firestoreHooks/retrieving/getE
 import { parseAddress } from "@/app/hooks/addressExtraction";
 import AmenitiesSection from "@/app/components/TeamPageComps/AmenitiesSection";
 import {  transformImagesListToJsons } from "@/app/hooks/firestoreHooks/retrieving/adjustingRetrievedData";
+import deleteS3Objects from "@/app/hooks/awsHooks/deleteFromS3";
+import { uploadImagesToS3 } from "@/app/hooks/awsHooks/uploadToS3";
 
 export default function TeamProfilePage() {
 
@@ -119,6 +121,7 @@ export default function TeamProfilePage() {
             });
             
             const formattedLocationImages = transformImagesListToJsons({list:firestoreLocationImages})
+            
             location.images = formattedLocationImages
 
             const parsedAddress = parseAddress({address:location.address})
@@ -201,20 +204,42 @@ export default function TeamProfilePage() {
                                     logoPhotoURL:teamLogo[0].url
                                 }})
                                 setEditingTeamInfo(false)
-                                await editingMatchingEntriesByAllFields({
-                                    collectionName:"Team",
-                                    matchParams:{
-                                        firebaseId:user.uid
-                                    },
-                                    updateData:{
-                                        teamName:newTeamName,
-                                        logoPhotoURL:teamLogo[0].url,
-                                        teamDescription:teamDescription
+
+                                if(teamLogo[0].url!=userInfo.teamInfo.logoPhotoURL){
+                                    await deleteS3Objects({urls:[userInfo.teamInfo.logoPhotoURL]})
+                                    const desiredURLs = await uploadImagesToS3({files:teamLogo,s3Uri:"s3://streamlineplatform/logoImgs/"})
+                                    await editingMatchingEntriesByAllFields({
+                                        collectionName:"Team",
+                                        matchParams:{
+                                            firebaseId:user.uid
+                                        },
+                                        updateData:{
+                                            teamName:newTeamName,
+                                            logoPhotoURL:desiredURLs[0],
+                                            teamDescription:teamDescription
+                                        }
+                                    })
+                                    window.location.reload()
+                                }else{
+                                    await editingMatchingEntriesByAllFields({
+                                        collectionName:"Team",
+                                        matchParams:{
+                                            firebaseId:user.uid
+                                        },
+                                        updateData:{
+                                            teamName:newTeamName,
+                                            teamDescription:teamDescription
+                                        }
+                                    })
+                                    if(newTeamName!=userInfo.teamInfo.teamName){
+                                        window.location.reload()
                                     }
-                                })
-                                window.location.reload()
+                                }
+
+                                // window.location.reload()
                                 }catch(error){
                                     setMustFixTeamInfo(true)
+                                    console.log(error)
                                 }
                             }
                         }}>
@@ -233,7 +258,7 @@ export default function TeamProfilePage() {
                 <div>
                 <div className="flex items-center justify-between mb-[14px]">
                 <div className="text-[18px] font-bold text-streamlineBlue">
-                    Contact Info
+                    Team Contact Info
                 </div>
                 <div className="mt-[1px] text-[13px] ml-[8px] bg-streamlineBlue text-white font-bold px-[10px] py-[6px] rounded-full cursor-pointer"
                 onClick={()=>{setEditingContactInfo(!editingContactInfo)}}>

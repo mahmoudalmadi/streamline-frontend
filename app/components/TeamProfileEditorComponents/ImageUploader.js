@@ -141,6 +141,7 @@ const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages,prompt }
                       />
 
                       {/* Remove Button */}
+                      {allowMultiple &&
                       <button
                         onClick={() => handleRemoveImage(image.id)}
                         className="bg-streamlineBlue"
@@ -158,7 +159,7 @@ const ImageUploader = ({ allowMultiple, buttonMessage, images,setImages,prompt }
                         }}
                       >
                         X
-                      </button>
+                      </button>}
                     </div>
                   )}
                 </Draggable>

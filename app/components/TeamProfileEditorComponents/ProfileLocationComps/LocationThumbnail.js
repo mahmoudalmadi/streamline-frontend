@@ -6,13 +6,7 @@ import InfoDropdown from "../InfoDropdown";
 import GenericOptionsDropdown from "../../GenericOptionsDropdown";
 
 
-// <div className="relative text-center ml-[10px] w-[25px] h-[25px] border rounded-full border-streamlineBlue font-bold text-streamlineBlue border-[1.5px] pb-[1px] hover:bg-gray-100 cursor-pointer" onClick={toggleVisibility}>
-//                 <div className="mb-[8px]">i
-//                 </div>
-//                 <InfoDropdown isVisible={isVisible} onClose={handleCloseDropdown} categories={categoryDict}/>
-//                 </div>
-
-export default function LocationThumbnail({location, pullLocoInfo}){
+export default function LocationThumbnail({location, pullLocoInfo,setSelectedLocation,selectedLocation}){
 
     const [showThreeDotMenu,setShowThreeDotMenu]=useState(location.status=="Pending Verifications")
     const [isVisible, setIsVisible] = useState(false);
@@ -41,9 +35,11 @@ export default function LocationThumbnail({location, pullLocoInfo}){
 
     return(
             <div
-              className="shadow-[0_4px_3px_rgba(0,0,0,0.1)] hover:shadow-[0_2px_10px_rgba(0,0,0,0.1)] w-[80%] md:w-[50%] mx-auto md:mx-0 border border-gray-200 rounded-[20px] py-[15px] px-[12px] space-x-[10px] flex items-center cursor-pointer"
+              className={`shadow-[0_4px_3px_rgba(0,0,0,0.1)] hover:shadow-[0_2px_10px_rgba(0,0,0,0.1)] w-[80%] md:w-[50%] mx-auto md:mx-0 ${selectedLocation==location.id ? "border border-[2px] border-streamlineBlue " : "border border-gray-200" } rounded-[20px] py-[15px] px-[12px] space-x-[10px] flex items-center cursor-pointer`}
               
-              onClick={async()=>{await pullLocoInfo({locationId:location.id})}}
+              onClick={async()=>{
+                setSelectedLocation(location.id)
+                await pullLocoInfo({locationId:location.id})}}
               >
               {/* Image with 1:1 Aspect Ratio */}
               <div className="w-[37%] aspect-[1/1] rounded-[10px] overflow-hidden">
