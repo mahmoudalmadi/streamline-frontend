@@ -76,7 +76,6 @@ export default function TeamProfileEditor() {
     const [newTeamName,setNewTeamName] = useState(teamName)
     const [teamDescription, setTeamDescription] = useState("")
 
-
     const [address,setAddress] = useState("")
     const [coords, setCoords] = useState(null)
     const [streetAddress,setStreetAddress]=useState("")

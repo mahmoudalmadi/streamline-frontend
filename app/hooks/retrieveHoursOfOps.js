@@ -18,19 +18,19 @@ export default function formatHoursOfOperations(daysOfWeek) {
           end = hours[i];
         } else {
           // Close the current block
-          blocks.push(`${hourToString(start)} to ${hourToString(end + 1)}`);
+          blocks.push(`${hourToString(start)} - ${hourToString(end + 1)}`);
           start = hours[i];
           end = hours[i];
         }
       }
   
       // Add the final block
-      blocks.push(`${hourToString(start)} to ${hourToString(end + 1)}`);
+      blocks.push(`${hourToString(start)} - ${hourToString(end + 1)}`);
       return blocks;
     };
   
     return daysOfWeek.map((day) => ({
       ...day,
-      hoursStringified: parseHours(day.hoursOfOps),
+      hoursStringified: day.checked?parseHours(day.hoursOfOps):[],
     }));
   }
