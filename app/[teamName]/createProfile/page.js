@@ -40,6 +40,8 @@ export default function TeamProfileEditor() {
   const {user, setUser,userInfo} = useAuth()
   const isSigningUp = searchParams.get("isSigningUp");
   const params = new URLSearchParams(searchParams.toString());
+
+
   useEffect(() => {
     // Get current search params
   
@@ -86,9 +88,8 @@ export default function TeamProfileEditor() {
 
     const [locationContactName,setLocationContactName]=useState("")
     const [locationContactEmail,setLocationContactEmail]=useState("")
-    const [locationContactPhone,setLocationContactPhone]=useState({phoneNumber:"", isValid:true})
-    const [hasChosenLocationContact,setHasChosenLocationContact]=useState(null)
-    const [sameAsTeamContact,setSameAsTeamContact]=useState(false)
+    const [locationContactPhone,setLocationContactPhone]=useState({phoneNumber:"", isValid:false})
+    const [sameAsTeamContact,setSameAsTeamContact]=useState(null)
 
     useEffect(()=>{
       if(sameAsTeamContact){
@@ -134,7 +135,12 @@ export default function TeamProfileEditor() {
     "longitude": coords ? coords.lng : null,
     "latitude": coords ? coords.lat : null,
     "amenities": selectedAmenities,
-    "locationImgs": locationImgs})
+    "locationImgs": locationImgs,
+    "locationContactName":locationContactName,
+    "locationContactNumber":locationContactPhone,
+    "locationContactEmail":locationContactEmail
+  })
+  
     const [programsOffered,setProgramsOffered] = useState({
       "opDays": daysOfWeek,
       "opTimes": timesOfDay,
@@ -266,15 +272,19 @@ export default function TeamProfileEditor() {
         changeField({setDict:setLocationData,field:"latitude",value:coords ? coords.lat : null})
         changeField({setDict:setLocationData,field:"amenities",value:selectedAmenities})
         changeField({setDict:setLocationData,field:"locationImgs",value:locationImgs})
+        changeField({setDict:setLocationData,field:"locationContactName",value:locationContactName})
+        changeField({setDict:setLocationData,field:"locationContactEmail",value:locationContactEmail})
+        changeField({setDict:setLocationData,field:"locationContactNumber",value:locationContactPhone.isValid?locationContactPhone.phoneNumber:""})
         
         changeField({setDict:setProgramsOffered, field:"opDays",value:daysOfWeek})
         changeField({setDict:setProgramsOffered, field:"opTimes",value:timesOfDay})
         changeField({setDict:setProgramsOffered, field:"skillLevels",value:programLevels})
         changeField({setDict:setProgramsOffered, field:"programTypes",value:programTypes})
-
-        changeField({setDict:setCoachInfo,field:"fullName","value":headCoachName})
-        changeField({setDict:setCoachInfo,field:"description","value":headCoachBio})
-        changeField({setDict:setCoachInfo,field:"coachImg","value":coachImg})
+        
+        console.log(locationData,locationContactPhone)
+        // changeField({setDict:setCoachInfo,field:"fullName","value":headCoachName})
+        // changeField({setDict:setCoachInfo,field:"description","value":headCoachBio})
+        // changeField({setDict:setCoachInfo,field:"coachImg","value":coachImg})
       };
       
 
@@ -284,7 +294,7 @@ export default function TeamProfileEditor() {
       setIsMissingTeamInfo(false)
       setIsMissingLocationDivRef(false)
     },[teamName,teamDescription
-      ,logoImg,emailAddress,phoneNumberObj,fullName,address,city,province,coords,selectedAmenities,locationImgs,daysOfWeek,timesOfDay,programLevels,programTypes,headCoachName,headCoachBio,coachImg])
+      ,logoImg,emailAddress,phoneNumberObj,fullName,address,city,province,coords,selectedAmenities,locationImgs,daysOfWeek,timesOfDay,programLevels,programTypes,headCoachName,headCoachBio,coachImg,locationContactEmail,locationContactName,locationContactPhone])
 
     const [isMissingCoachInfo,setIsMissingCoachInfo]=useState(false)
     const coachInfoDivRef=useRef()
@@ -296,7 +306,7 @@ export default function TeamProfileEditor() {
     const contactDivRef=useRef()
     const [isMissingTeamInfo, setIsMissingTeamInfo]=useState(false)
     const teamInfoDivRef=useRef()
-
+      
     const scrollToDiv = ({toDiv}) => {
       toDiv.current?.scrollIntoView({ behavior: "smooth",block:'center' });
     };
@@ -434,6 +444,9 @@ export default function TeamProfileEditor() {
           state:locationData.province,
           teamId:teamId,
           status:"Pending Verification",
+          locationContactPhone:"",
+          locationContactName:locationContactName,
+          locationContactEmail:locationContactEmail,
           uploadTimestamp:new Date()
         },collectionName:"Location"})
 
@@ -630,7 +643,6 @@ export default function TeamProfileEditor() {
               setLocationContactName={setLocationContactName}
               setLocationContactNumber={setLocationContactPhone}
               hasChosenLocationContact={false}
-              setHasChosenLocationContact={setHasChosenLocationContact}
               sameAsTeamContact={sameAsTeamContact}
               setSameAsTeamContact={setSameAsTeamContact}
               />

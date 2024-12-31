@@ -75,9 +75,9 @@ export default function LocationInfoWrapper({
                         </div>
                     </div>
                 </div>
-                {sameAsTeamContact ?
+                {sameAsTeamContact==false ?
 
-                <div>
+                <div className="space-y-[10px] mt-[8px] ">
                     <ProfileEntryEditor
                     prompt={"Location contact person"}
                     placeholder={"Full name"}
@@ -95,18 +95,62 @@ export default function LocationInfoWrapper({
                     placeholder={"Contact #"}
                     fieldResponse={locationContactNumber}
                     setFieldResponse={setLocationContactNumber}
-                    field={'phoneNumber'}/>
+                    field={'phoneNumber'}
+                    customLength={"w-[190px]"}
+                    />
+
                 </div>
                 :
                 <>
-
+                {sameAsTeamContact==true&&
+                 <div className="space-y-[10px] mt-[12px] pt-[4px]">
+                    <ProfileEntryEditor
+                    prompt={"Location contact person"}
+                    placeholder={"Full name"}
+                    response={locationContactName}
+                    setResponse={setLocationContactName}
+                    />
+                    <ProfileEntryEditor
+                    prompt={"Location contact email"}
+                    placeholder={"Email address"}
+                    response={locationContactEmail}
+                    setResponse={setLocationContactEmail}
+                    />
+                    <MultiFieldPhoneEntry 
+                    prompt={"Location Contact Number"}
+                    placeholder={"Contact #"}
+                    fieldResponse={locationContactNumber}
+                    setFieldResponse={setLocationContactNumber}
+                    field={'phoneNumber'}
+                    customLength={"w-[190px]"}
+                    />
+                </div>}
                 </>
                 }
               </div>
               :
-              <div>
-                
-              </div>
+              <div className="space-y-[10px] mt-[12px] pt-[4px]">
+                    <ProfileEntryEditor
+                    prompt={"Location contact person"}
+                    placeholder={"Full name"}
+                    response={locationContactName}
+                    setResponse={setLocationContactName}
+                    />
+                    <ProfileEntryEditor
+                    prompt={"Location contact email"}
+                    placeholder={"Email address"}
+                    response={locationContactEmail}
+                    setResponse={setLocationContactEmail}
+                    />
+                    <MultiFieldPhoneEntry 
+                    prompt={"Location Contact Number"}
+                    placeholder={"Contact #"}
+                    fieldResponse={locationContactNumber}
+                    setFieldResponse={setLocationContactNumber}
+                    field={'phoneNumber'}
+                    customLength={"w-[190px]"}
+                    />
+                </div>
               }
 
               <ImageUploader allowMultiple={true} images={locationImgs} setImages={setLocationImgs} prompt={"Location Images (at least 5 images)"}

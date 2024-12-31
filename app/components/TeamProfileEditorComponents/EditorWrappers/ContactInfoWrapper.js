@@ -5,7 +5,7 @@ export default function ContactInfoWrapper({fullName,setFullName,emailAddress,se
 
     return(
         <>
-        <ProfileEntryEditor
+            <ProfileEntryEditor
               prompt={"Contact Name"}
               response={fullName}
               setResponse={setFullName}

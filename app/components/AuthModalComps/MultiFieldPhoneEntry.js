@@ -12,10 +12,7 @@ export default function MultiFieldPhoneEntry({prompt, placeholder, fieldResponse
         ...prevState,
         [field]: phoneNumber,
       }));
-    };
-
-    const handlePhoneNumberBlur = () => {
-      if (fieldResponse[field] && isValidPhoneNumber(fieldResponse[field])) {
+      if (isValidPhoneNumber(phoneNumber)) {
         setIsValid(true); // Valid number
         setFieldResponse(prevState => ({
           ...prevState,
@@ -47,7 +44,7 @@ export default function MultiFieldPhoneEntry({prompt, placeholder, fieldResponse
             defaultCountry="CA"
             international
             withCountryCallingCode
-            onBlur={handlePhoneNumberBlur} // Validate only on blur
+            // onBlur={handlePhoneNumberBlur} // Validate only on blur
             />
             {!isValid && (
               <p className="text-red-500 text-sm mt-1">Invalid phone number</p>
