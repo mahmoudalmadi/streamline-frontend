@@ -625,10 +625,10 @@ export default function TeamProfileEditor() {
               setSelectedAmenities={setSelectedAmenities}
               locationContactEmail={locationContactEmail}
               locationContactName={locationContactName}
-              locationContactPhone={locationContactPhone}
+              locationContactNumber={locationContactPhone}
               setLocationContactEmail={setLocationContactEmail}
               setLocationContactName={setLocationContactName}
-              setLocationContactPhone={setLocationContactPhone}
+              setLocationContactNumber={setLocationContactPhone}
               hasChosenLocationContact={false}
               setHasChosenLocationContact={setHasChosenLocationContact}
               sameAsTeamContact={sameAsTeamContact}
