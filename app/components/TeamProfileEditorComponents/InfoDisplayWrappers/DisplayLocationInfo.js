@@ -1,6 +1,7 @@
 import AmenitiesSection from "../../TeamPageComps/AmenitiesSection"
+import EmailIcon from '../../../../public/emailIcon.svg'
 
-export default function DisplayLocationInfo({parsedAddress,locationImages,amenitiesList}){
+export default function DisplayLocationInfo({parsedAddress,locationImages,amenitiesList,locationContactName,locationContactEmail,locationContactNumber}){
 
     return(
 
@@ -12,6 +13,34 @@ export default function DisplayLocationInfo({parsedAddress,locationImages,amenit
                     <div className="flex">
                     <div>{parsedAddress?.city || "Unknown City"}</div><div>, {parsedAddress?.state || "Unknown State"}</div><div>, {parsedAddress?.postalCode || "Unknown Postal Code"}</div><div>, {parsedAddress?.country || "Unknown Country"}</div>
                         </div>
+                    </div>
+
+                    <div className="font-bold text-[16px] pt-[8px]">Location Contact Info</div>    
+                    <div className="space-y-[4px] mt-[5px]">
+                    <div className="flex">
+                    <div className="flex text-[16px]">Contact person: 
+                    </div>
+                    <div className="ml-[4px]">
+                    {locationContactName}
+                    </div>
+                    </div>
+                    <div className="flex text-[16px] items-center space-x-[6px]"><EmailIcon/>
+                    <div className="mt-[1px] text-[16px]">
+                    {locationContactEmail} 
+                    </div>
+                    </div>
+                    <div className="flex text-[16px] items-center space-x-[6px]">
+                    <div>
+                        <img src="/PhoneIcon.png"
+                        className="w-[30px]"
+                        />
+                    </div>
+                    <div className="mt-[1px]">
+                    {locationContactNumber} 
+                    </div></div>
+                    <div>
+                    
+                    </div>
                     </div>
 
                     <div className="font-bold text-[16px] pt-[8px]">Location Images</div>    

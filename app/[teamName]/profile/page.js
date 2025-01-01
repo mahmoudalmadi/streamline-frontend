@@ -356,7 +356,7 @@ export default function TeamProfilePage() {
                 <div className="w-full h-[1px] bg-gray-200 mt-[18px] mb-[18px]"/>
 
                 {/* LOCATION SECTION */}
-                <TeamProfileLocationsSection locationsInfo={locationInfo} parsedAddresses={allParsedAddresess} teamId={userInfo.teamInfo.id}/>
+                <TeamProfileLocationsSection locationsInfo={locationInfo} parsedAddresses={allParsedAddresess} teamId={userInfo.teamInfo.id} teamName={userInfo.teamInfo.teamName}/>
 
             </div>
             }

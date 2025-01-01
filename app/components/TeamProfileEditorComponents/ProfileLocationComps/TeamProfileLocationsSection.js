@@ -13,9 +13,11 @@ import ViewProgramsInfo from "./ViewProgramsInfo";
 import formatHoursOfOperations from "@/app/hooks/retrieveHoursOfOps";
 import ViewCoachInfo from "./ViewCoachInfo";
 import CreateNewTeamLocation from "../CreateNewTeamLocation/CreateNewTeamLocation";
+import { useRouter } from "next/navigation";
 
-export default function TeamProfileLocationsSection({ locationsInfo,teamId }) {
+export default function TeamProfileLocationsSection({ locationsInfo,teamId,teamName }) {
 
+  const router = useRouter()  
   const [isAddingNewLocation,setIsAddingNewLocation]=useState(false)
 
   const [retrievedSkillLevel,setRetrievedSkillLevel] = useState()
@@ -82,13 +84,26 @@ export default function TeamProfileLocationsSection({ locationsInfo,teamId }) {
       return jsonList.find(item => item.id === targetId) || null;
     }
 
+    const handleNavigateToAddLocation = () => {
+
+      const isSigningUp = false
+  
+      // Construct the query string
+      const query = new URLSearchParams({
+        isSigningUp
+      }).toString();
+  
+      // Navigate to teamName/profile with query parameters
+      router.push(`/${teamName.toLowerCase().replace(" ","")}/createProfile?${query}`);
+    };
 
     return (
  
       <div className="w-full">
         <div className="flex justify-between items-center mb-[16px]">
         <div className="text-[18px] font-bold text-streamlineBlue w-full">Team Locations</div>
-        {!isAddingNewLocation&&<div className="flex text-[13px] font-bold text-white bg-green-500 px-[10px] py-[6px] rounded-full whitespace-nowrap space-x-[5px] items-center cursor-pointer" onClick={()=>{setIsAddingNewLocation(true)}}>
+        {!isAddingNewLocation&&<div className="flex text-[13px] font-bold text-white bg-green-500 px-[10px] py-[6px] rounded-full whitespace-nowrap space-x-[5px] items-center cursor-pointer" onClick={()=>{
+          handleNavigateToAddLocation()}}>
           <div className="text-[16px]">
           +
           </div>

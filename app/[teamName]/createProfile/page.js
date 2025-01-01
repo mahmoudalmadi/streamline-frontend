@@ -38,7 +38,7 @@ export default function TeamProfileEditor() {
   const [isLoading,setIsLoading] = useState(false)
   const [firstLoading,setFirstLoading]=useState(true)
   const {user, setUser,userInfo} = useAuth()
-  const isSigningUp = searchParams.get("isSigningUp");
+  const isSigningUp = searchParams.get("isSigningUp")==="true";
   const params = new URLSearchParams(searchParams.toString());
 
 
@@ -93,6 +93,9 @@ export default function TeamProfileEditor() {
 
     useEffect(()=>{
       if(sameAsTeamContact){
+        if(locationContactEmail=="" && locationContactName=="" && locationContactPhone.phoneNumber==""){
+          changeField({setDict:setLocationContactPhone,field:"isValid",value:true})  
+        }
         setLocationContactEmail(emailAddress)
         setLocationContactName(fullName)
         changeField({setDict:setLocationContactPhone,field:"phoneNumber",value:phoneNumberObj.phoneNumber})
@@ -187,67 +190,6 @@ export default function TeamProfileEditor() {
       return daysTemplate;
     };
 
-    const getFirestoreInfo = async()=>{
-        if(user ){
-
-          const firestoreTeamInfo=await getEntriesByMatching({collectionName:"Team",fields:{firebaseId:user.uid}})
-          setRetrievedTeamInfo(firestoreTeamInfo[0])
-          setNewTeamName(firestoreTeamInfo[0].teamName)
-          setTeamDescription(firestoreTeamInfo[0].teamDescription)
-          setLogoImg([{id:firestoreTeamInfo[0].logoPhotoURL,url:firestoreTeamInfo[0].logoPhotoURL}])
-          setFullName(firestoreTeamInfo[0].contactName)
-          setEmailAddress(firestoreTeamInfo[0].contactEmail)
-          changeField({setDict:setPhoneNumberObj,field:"phoneNumber",value:firestoreTeamInfo[0].phoneNumber})
-
-          const teamId = firestoreTeamInfo[0].id
-
-          const firestoreTeamLocations=await getEntriesByMatching({collectionName:"Location",
-          fields:{teamId:teamId}})
-          // setRetrievedLocationInfo(firestoreTeamLocations)
-          setAddress(firestoreTeamLocations[0].address)
-
-          for (const location of firestoreTeamLocations){
-            const locationId = location.id
-
-            const firestoreDaysOfOp = await getEntriesByMatching({collectionName:"OperationDayTime", fields:{teamId:teamId,locationId:locationId}})
-            const processedDaysHours = transformToDaysOfWeek(firestoreDaysOfOp)
-            setRetrievedDaysTimesOps(processedDaysHours)
-            setDaysOfWeek(processedDaysHours)
-
-            const firestoreLocationAmenities = await getEntriesByMatching({collectionName:"Amenities", fields:{teamId:teamId,locationId:locationId}})
-            const processedAmenities = extractAmenities(firestoreLocationAmenities)
-            setSelectedAmenities(processedAmenities)
-            setRetrievedAmenitiesInfo(processedAmenities)
-            
-            const firestoreLocationLessonTypes = await getEntriesByMatching({collectionName:"LessonType", fields:{teamId:teamId,locationId:locationId}})
-            setRetrievedLessonType(firestoreLocationLessonTypes)
-            setProgramTypes(firestoreLocationLessonTypes)
-
-            const firestoreLocationSkillLevel = await getEntriesByMatching({collectionName:"SkillLevel", fields:{teamId:teamId,locationId:locationId}})
-            setRetrievedSkillLevel(firestoreLocationSkillLevel)
-            setProgramLevels(firestoreLocationSkillLevel)
-
-            const firestoreLocationCoach = await getEntriesByMatching({collectionName:"Coach", fields:{teamId:teamId,locationId:locationId}})
-            setRetrievedCoachInfo(firestoreLocationCoach)
-            setHeadCoachName(firestoreLocationCoach[0].coachName)
-            setHeadCoachBio(firestoreLocationCoach[0].coachBio)
-            setCoachImg([{id:firestoreLocationCoach[0].photoUrl,url:firestoreLocationCoach[0].photoUrl}])
-
-            const firestoreLocationImages = await getEntriesByMatching({collectionName:"Images", fields:{teamId:teamId,locationId:locationId}})
-            const formattedLocationImages = transformImagesListToJsons({list:firestoreLocationImages})
-            setRetrievedLocationImages(formattedLocationImages)
-            setLocationImgs(formattedLocationImages)
-
-          }
-        }
-      }
-
-    // useEffect(()=>{
-    //   if(user && params.has('refreshed')){
-    //     getFirestoreInfo()
-    //     setFirstLoading(false)
-    //   }
-    // },[user])
 
     useEffect(()=>{
       if (isFirstRender.current){
@@ -255,7 +197,6 @@ export default function TeamProfileEditor() {
         isFirstRender.current=false;
 
       }else{
-        
         changeField({setDict:setTeamInfo,field:"teamDescription",value:teamDescription})
         changeField({setDict:setTeamInfo,field:"logoImg",value:logoImg})
         changeField({setDict:setTeamInfo,field:"teamName",value:teamName})
@@ -281,12 +222,10 @@ export default function TeamProfileEditor() {
         changeField({setDict:setProgramsOffered, field:"skillLevels",value:programLevels})
         changeField({setDict:setProgramsOffered, field:"programTypes",value:programTypes})
         
-        console.log(locationData,locationContactPhone)
-        // changeField({setDict:setCoachInfo,field:"fullName","value":headCoachName})
-        // changeField({setDict:setCoachInfo,field:"description","value":headCoachBio})
-        // changeField({setDict:setCoachInfo,field:"coachImg","value":coachImg})
+        changeField({setDict:setCoachInfo,field:"fullName","value":headCoachName})
+        changeField({setDict:setCoachInfo,field:"description","value":headCoachBio})
+        changeField({setDict:setCoachInfo,field:"coachImg","value":coachImg})
       };
-      
 
       setIsMissingPrograms(false)
       setIsMissingCoachInfo(false)
@@ -295,7 +234,7 @@ export default function TeamProfileEditor() {
       setIsMissingLocationDivRef(false)
     },[teamName,teamDescription
       ,logoImg,emailAddress,phoneNumberObj,fullName,address,city,province,coords,selectedAmenities,locationImgs,daysOfWeek,timesOfDay,programLevels,programTypes,headCoachName,headCoachBio,coachImg,locationContactEmail,locationContactName,locationContactPhone])
-
+      console.log("AMMA I AFFING??", isSigningUp)
     const [isMissingCoachInfo,setIsMissingCoachInfo]=useState(false)
     const coachInfoDivRef=useRef()
     const [isMissingProgramsOffered,setIsMissingPrograms]=useState(false)
@@ -406,33 +345,37 @@ export default function TeamProfileEditor() {
       setIsLoading(true)
       
       try{
+        let accountId;
+        let teamId;
         
-        const firebaseId = await emailSignUp({email:useDifferentEmailThanContact?alternativeSignUpEmail:contactInfo.emailAddress,password:password})
-
-        // FIRESTORE ACCOUNT INFO - DONE
-        const accountId = await addInfoAsJson({jsonInfo:{
-          accountType:"team",
-          dateJoined:new Date(),
-          emailAddress:contactInfo.emailAddress,
-          firebaseId:firebaseId.uid,
-          fullName:contactInfo.contactName,
-          phoneNumber:contactInfo.phoneNumber,
-          uploadTimestamp:new Date()
-        },collectionName:"Account"})
-
-        // FIRESTORE TEAM INFO - DONE
-        const logoUrlList = await uploadImagesToS3({s3Uri:"s3://streamlineplatform/logoImgs/",files:logoImg})
-        const teamId = await addInfoAsJson({jsonInfo:{
-          contactEmail:contactInfo.emailAddress,
-          contactName:contactInfo.contactName,
-          firebaseId:firebaseId.uid,
-          logoPhotoURL:logoUrlList[0],
-          phoneNumber: contactInfo.phoneNumber,
-          sport:"swimming",
-          teamDescription:teamInfo.teamDescription,
-          teamName:teamInfo.teamName,
-          uploadTimestamp:new Date(),
-        },collectionName:"Team"})
+        if (isSigningUp){
+          const firebaseId = await emailSignUp({email:useDifferentEmailThanContact?alternativeSignUpEmail:contactInfo.emailAddress,password:password})
+  
+          // FIRESTORE ACCOUNT INFO - DONE
+          accountId = await addInfoAsJson({jsonInfo:{
+            accountType:"team",
+            dateJoined:new Date(),
+            emailAddress:contactInfo.emailAddress,
+            firebaseId:firebaseId.uid,
+            fullName:contactInfo.contactName,
+            phoneNumber:contactInfo.phoneNumber,
+            uploadTimestamp:new Date()
+          },collectionName:"Account"})
+  
+          // FIRESTORE TEAM INFO - DONE
+          const logoUrlList = await uploadImagesToS3({s3Uri:"s3://streamlineplatform/logoImgs/",files:logoImg})
+          teamId = await addInfoAsJson({jsonInfo:{
+            contactEmail:contactInfo.emailAddress,
+            contactName:contactInfo.contactName,
+            firebaseId:firebaseId.uid,
+            logoPhotoURL:logoUrlList[0],
+            phoneNumber: contactInfo.phoneNumber,
+            sport:"swimming",
+            teamDescription:teamInfo.teamDescription,
+            teamName:teamInfo.teamName,
+            uploadTimestamp:new Date(),
+          },collectionName:"Team"})
+        }
 
         // FIRESTORE LOCATION INFO
         const locationId = await addInfoAsJson({jsonInfo:{
@@ -444,7 +387,7 @@ export default function TeamProfileEditor() {
           state:locationData.province,
           teamId:teamId,
           status:"Pending Verification",
-          locationContactPhone:"",
+          locationContactPhone:locationContactPhone.phoneNumber,
           locationContactName:locationContactName,
           locationContactEmail:locationContactEmail,
           uploadTimestamp:new Date()
@@ -514,16 +457,13 @@ export default function TeamProfileEditor() {
 
     }
     
-
-    const handleUpdate = () => {
-
-      // JUST UPDATE THE WHOLE DAMN THING OR AT LEAST BREAK IT DOWN TO COLLECTIONS THAT MATTER POTENTIALLY
-
-    }
-
     if (isLoading || firstLoading){
-      return<LoadingScreen loadingMessage={
-        firstLoading?`${isSigningUp?"Loading sign up page":"Loading team profile page"}`:"Creating your new team account"}/>
+      if(isSigningUp)
+      {return<LoadingScreen loadingMessage={
+        firstLoading?`${isSigningUp?"Loading sign up page":"Loading team profile page"}`:"Creating your new team account"}/>}
+      else{
+        <LoadingScreen loadingMessage={'Preparing your new location form'}/>
+      }
     }
 
     return(
@@ -551,8 +491,9 @@ export default function TeamProfileEditor() {
               </div>
 
               {isSigningUp && <div className="text-gray-500 leading-[14px] mb-[20px]">
-                Please complete the fields below and submit to complete signing up your team
+                {isSigningUp?"Please fill out the fields below and submit to complete signing up your team":"HELLo"}
               </div>}
+          
               <div
                   className="relative w-full h-[1px] bg-gray-200 mt-[5px]"
                 />  
@@ -572,7 +513,7 @@ export default function TeamProfileEditor() {
               </div>
               <TeamInfoWrapper
               newTeamName={newTeamName}
-              setNewTeamName={newTeamName}
+              setNewTeamName={setNewTeamName}
               teamDescription={teamDescription}
               setTeamDescription={setTeamDescription}
               logoImg={logoImg}

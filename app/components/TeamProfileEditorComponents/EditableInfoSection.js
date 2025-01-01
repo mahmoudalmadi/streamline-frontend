@@ -92,7 +92,7 @@ export default function EditableInfoSection({EditableInfoWrapper,GeneralInfoDisp
                         try
                         {
                         validateFields({data:allStatesJson})
-                        if("daysOfWeek" in allStatesJson){
+                        if(daysOfWeekHook){
                           daysOfWeekHook()
                         }
                         setIsEditingWrapperInfo(false)

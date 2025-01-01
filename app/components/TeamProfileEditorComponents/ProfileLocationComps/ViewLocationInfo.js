@@ -23,6 +23,9 @@ export default function ViewLocationInfo({locationsInfo, retrievedAmenities,setR
   const [country,setCountry]=useState(locationsInfo.parsedAddress.country ? locationsInfo.parsedAddress.country : "")
   const [province,setProvince]=useState(locationsInfo.parsedAddress.state ? locationsInfo.parsedAddress.state : "")
   const [locationImgs,setLocationImgs]=useState(locationsInfo.images)
+  const [locationContactName,setLocationContactName]=useState(locationsInfo.locationContactName)
+  const [locationContactPhone,setLocationContactPhone]=useState({"phoneNumber":locationsInfo.locationContactPhone,isValid:true})
+  const [locationContactEmail,setLocationContactEmail]=useState(locationsInfo.locationContactEmail)
 
     const [defaultAmenitiesList,setDefaultAmenititesList] = useState(retrievedAmenities)  
     const [defaultStreetAddress,setDefaultStreetAddress]=useState(locationsInfo.parsedAddress.streetAddress ? locationsInfo.parsedAddress.streetAddress : "")
@@ -32,12 +35,22 @@ export default function ViewLocationInfo({locationsInfo, retrievedAmenities,setR
     const [defaultCountry,setDefaultCountry]=useState(locationsInfo.parsedAddress.country ? locationsInfo.parsedAddress.country : "")
     const [defaultAddress,setDefaultAddress]=useState(locationsInfo.parsedAddress.state ? locationsInfo.parsedAddress.state : "")
     const [defaultImages,setDefaultImages]=useState(locationsInfo.images)
+    const [defaultLocationContactEmail,setDefaultLocationContactEmail]=useState(locationsInfo.locationContactEmail)
+    const [defaultLocationContactName,setDefaultLocationContactName]=useState(locationsInfo.locationContactName)
+    const [defaultLocationNumber,setDefaultLocationNumber]=useState({"phoneNumber":locationsInfo.locationContactPhone,isValid:true})
   
   return(
 
         <>
 
-<EditableInfoSection EditableInfoWrapper={LocationInfoWrapper} GeneralInfoDisplayWrapper={DisplayLocationInfo} 
+<EditableInfoSection daysOfWeekHook={()=>{
+  if (locationContactPhone.isValid==true){
+    console.log("great")
+  }else{
+    throw new Error("Phone Number isn't right")
+  }
+}}
+EditableInfoWrapper={LocationInfoWrapper} GeneralInfoDisplayWrapper={DisplayLocationInfo} 
       fields={{
         "address":address,
         "setAddress":setAddress,
@@ -57,6 +70,13 @@ export default function ViewLocationInfo({locationsInfo, retrievedAmenities,setR
         setLocationImgs:setLocationImgs,
         selectedAmenities:retrievedAmenities,
         setSelectedAmenities:setRetrievedAmenities,
+        setLocationContactEmail:setLocationContactEmail,
+        setLocationContactName:setLocationContactName,
+        setLocationContactNumber:setLocationContactPhone,
+        locationContactEmail:locationContactEmail,
+        locationContactName:locationContactName,
+        locationContactNumber:locationContactPhone,
+        hasChosenLocationContact:true,
         noHeader:true
         }
       }
@@ -69,13 +89,29 @@ export default function ViewLocationInfo({locationsInfo, retrievedAmenities,setR
           state:province,
         },
         locationImages:locationImgs,
-        amenitiesList:retrievedAmenities
+        amenitiesList:retrievedAmenities,
+        locationContactEmail:locationContactEmail,
+        locationContactName:locationContactName,
+        locationContactNumber:locationContactPhone.phoneNumber
       }}
       editButtonText={"location info/images"} 
       savingDefaultValuesOnCancel={
         [
           {value:defaultStreetAddress,
           setter:setStreetAddress
+          },
+          {
+            value:defaultLocationContactEmail,
+            setter:setLocationContactEmail
+          },
+          {
+            value:defaultLocationContactName,
+            setter:setLocationContactName
+          },
+          {
+            value:defaultLocationNumber,
+            setDict:setDefaultLocationNumber,
+            field:'phoneNumber'
           },
           {
             value:defaultCity,
@@ -105,13 +141,14 @@ export default function ViewLocationInfo({locationsInfo, retrievedAmenities,setR
         {value:province,setter:setDefaultState},
         {value:locationImgs,setter:setDefaultImages},
         {value:streetAddress,setter:setDefaultStreetAddress},
-        {value:retrievedAmenities,setter:setDefaultAmenititesList}
+        {value:retrievedAmenities,setter:setDefaultAmenititesList},
+        {value:locationContactPhone,setDict:setDefaultLocationNumber,field:'phoneNumber'}
         ]
     }
     allStatesJson={
         {streetAddress:streetAddress,
         city:city,province:province,country:country,postalCode:postalCode,locationImgs,
-        retrievedAmenities:retrievedAmenities
+        retrievedAmenities:retrievedAmenities,locationContactEmail:locationContactEmail,locationContactName:locationContactName,locationContactPhone:locationContactPhone
         }}
     headerText={"Location Info"}
     onEdit={async()=>{
@@ -125,6 +162,9 @@ export default function ViewLocationInfo({locationsInfo, retrievedAmenities,setR
         country:country,
         latitude:coords!=null?coords.lat:"na",
         longitude:coords!=null?coords.lng:"na",
+        locationContactEmail:locationContactEmail,
+        locationContactName:locationContactName,
+        locationContactPhone:locationContactPhone.phoneNumber,
         editTimestamp:new Date()}})
 
         if(defaultImages!=locationImgs){// REMOVE LOCATION IMAGES
