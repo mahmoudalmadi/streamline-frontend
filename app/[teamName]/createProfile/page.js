@@ -490,9 +490,11 @@ export default function TeamProfileEditor() {
                 {teamName} Profile
               </div>
 
-              {isSigningUp && <div className="text-gray-500 leading-[14px] mb-[20px]">
-                {isSigningUp?"Please fill out the fields below and submit to complete signing up your team":"HELLo"}
-              </div>}
+              {isSigningUp ? <div className="text-gray-500 leading-[14px] mb-[20px]">
+                {"Please fill out the fields below and submit to complete signing up your team"}
+              </div>: <div className="text-gray-500 leading-[14px] mb-[20px]">
+                {"Hello"}
+                </div>}
           
               <div
                   className="relative w-full h-[1px] bg-gray-200 mt-[5px]"
