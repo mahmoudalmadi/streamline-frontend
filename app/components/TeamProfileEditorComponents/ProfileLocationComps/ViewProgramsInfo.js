@@ -25,7 +25,6 @@ export default function ViewProgramsInfo({programsInfo}){
 
     useEffect(()=>{
         let stringified = formatHoursOfOperations(daysOfWeek)
-        console.log(daysOfWeek)
         setStringifiedDaysOfWeek(stringified)
     },[daysOfWeek])
 
@@ -127,6 +126,7 @@ export default function ViewProgramsInfo({programsInfo}){
         }
 
         if(daysOfWeek!=defaultDaysOfWeek){
+            console.log("locationId",locationId)
             await deleteMatchingEntriesByAllFields({collectionName:'OperationDayTime',matchParams:{locationId:locationId}})
             let dayTimes = []
             for (const day of daysOfWeek)

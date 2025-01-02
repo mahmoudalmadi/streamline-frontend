@@ -23,7 +23,7 @@ export const deleteMatchingEntriesByAllFields = async ({ collectionName, matchPa
     for (const [key, value] of Object.entries(matchParams)) {
       q = query(q, where(key, "==", value));
     }
-
+    
     // Execute the query to find matching documents
     const querySnapshot = await getDocs(q);
 

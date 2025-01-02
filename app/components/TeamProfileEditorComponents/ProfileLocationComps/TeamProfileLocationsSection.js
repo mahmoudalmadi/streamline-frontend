@@ -116,7 +116,7 @@ export default function TeamProfileLocationsSection({ locationsInfo,teamId,teamN
         {/* Parent Container */}
         {!isAddingNewLocation?
         <>
-        <div className="w-full flex flex-col md:grid md:grid-cols-2 md:gap-4 py-[10px]">
+        <div className="w-full flex flex-col space-y-[16px] md:grid md:grid-cols-2 sm:space-y-[0px] md:gap-4 py-[10px]">
           {locationsInfo.map((location, idx) => (
             <LocationThumbnail location={location} key={idx} pullLocoInfo={pullLocoInfo} setSelectedLocation={setSelectedLocation} selectedLocation={selectedLocation}/>
           ))}

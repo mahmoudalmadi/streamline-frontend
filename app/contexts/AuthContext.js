@@ -41,6 +41,7 @@ export const AuthProvider = ({ children }) => {
         
         if (userData.accountType=="team"){
           const teamInfo = await getEntriesByMatching({collectionName:"Team",fields:{firebaseId:currentUser.uid}})
+          console.log("TEAM INFo",teamInfo)
           setUserInfo((prevInfo) => ({
             ...prevInfo, // Retain existing keys in the state object
             teamInfo: teamInfo[0],

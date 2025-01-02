@@ -49,7 +49,7 @@ export default function TeamProfileEditor() {
       params.set('refreshed', 'true'); // Add 'refreshed' flag to URL
       router.replace(`?${params.toString()}`); // Update the URL without full reload
       // setTimeout(()=>{
-        window.location.reload(); // Trigger a full page reload
+        // window.location.reload(); // Trigger a full page reload
       // },400)
     } else {
       if(isSigningUp){
@@ -237,7 +237,7 @@ export default function TeamProfileEditor() {
       setIsMissingLocationDivRef(false)
     },[teamName,teamDescription
       ,logoImg,emailAddress,phoneNumberObj,fullName,address,city,province,coords,selectedAmenities,locationImgs,daysOfWeek,timesOfDay,programLevels,programTypes,headCoachName,headCoachBio,coachImg,locationContactEmail,locationContactName,locationContactPhone])
-      console.log("AMMA I AFFING??", isSigningUp)
+
     const [isMissingCoachInfo,setIsMissingCoachInfo]=useState(false)
     const coachInfoDivRef=useRef()
     const [isMissingProgramsOffered,setIsMissingPrograms]=useState(false)
@@ -360,7 +360,7 @@ export default function TeamProfileEditor() {
           const firebaseId = await emailSignUp({email:useDifferentEmailThanContact?alternativeSignUpEmail:contactInfo.emailAddress,password:password})
   
           // FIRESTORE ACCOUNT INFO - DONE
-          accountId = await addInfoAsJson({jsonInfo:{
+          const accountId = await addInfoAsJson({jsonInfo:{
             accountType:"team",
             dateJoined:new Date(),
             emailAddress:contactInfo.emailAddress,
@@ -383,6 +383,7 @@ export default function TeamProfileEditor() {
             teamName:teamInfo.teamName,
             uploadTimestamp:new Date(),
           },collectionName:"Team"})
+
         }else{
           teamId=userInfo.teamInfo.id
         }

@@ -17,7 +17,7 @@ export default function SelectingCategories({categoryTypes, programs, setProgram
     };
 
     const handleInputChange = (index, field, value) => {
-        console.log(programs)
+        
         const updatedLevels = [...programs];
         updatedLevels[index][field] = value; // Update the specific field (level or name)
         setPrograms(updatedLevels);
