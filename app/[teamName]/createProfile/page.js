@@ -54,6 +54,8 @@ export default function TeamProfileEditor() {
     } else {
       if(isSigningUp){
       setFirstLoading(false); // Proceed if already refreshed
+      }else{
+      setFirstLoading(false)
       }
     }
   }, [searchParams, router]);
@@ -231,6 +233,7 @@ export default function TeamProfileEditor() {
       setIsMissingCoachInfo(false)
       setIsMissingContact(false)
       setIsMissingTeamInfo(false)
+      setHourOfOpError(false)
       setIsMissingLocationDivRef(false)
     },[teamName,teamDescription
       ,logoImg,emailAddress,phoneNumberObj,fullName,address,city,province,coords,selectedAmenities,locationImgs,daysOfWeek,timesOfDay,programLevels,programTypes,headCoachName,headCoachBio,coachImg,locationContactEmail,locationContactName,locationContactPhone])
@@ -245,20 +248,29 @@ export default function TeamProfileEditor() {
     const contactDivRef=useRef()
     const [isMissingTeamInfo, setIsMissingTeamInfo]=useState(false)
     const teamInfoDivRef=useRef()
-      
+    
+    
     const scrollToDiv = ({toDiv}) => {
       toDiv.current?.scrollIntoView({ behavior: "smooth",block:'center' });
     };
 
     const verifyDataComplete = () => {
       // USE THIS FUNCTION ONLY IF SIGNING UP
-      // let metaData
-      let metaData = {
+      let metaData
+      if (isSigningUp){
+      metaData = {
         "teamInfo":teamInfo,
         "contactInfo":contactInfo,
         "locationInfo":locationData,
         "programsOffered":programsOffered,
         "coachInfo":coachInfo
+      }
+      }else{
+        metaData = {
+          "locationInfo":locationData,
+          "programsOffered":programsOffered,
+          "coachInfo":coachInfo
+        }
       }
       // CHECK TO ENSURE NO EMPTY FIELDS AND ENSURE TODS AND DOWS ARE GG
       if (metaData)
@@ -297,7 +309,9 @@ export default function TeamProfileEditor() {
           }
 
         }
+        if(isSigningUp){
         window.scrollTo(0, 0);
+        }
        
       }catch(error){
         //GO TO KEY PART OF PAGE
@@ -322,11 +336,6 @@ export default function TeamProfileEditor() {
         
       }
     }
-
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
   
       return true
       }
@@ -345,7 +354,6 @@ export default function TeamProfileEditor() {
       setIsLoading(true)
       
       try{
-        let accountId;
         let teamId;
         
         if (isSigningUp){
@@ -375,6 +383,8 @@ export default function TeamProfileEditor() {
             teamName:teamInfo.teamName,
             uploadTimestamp:new Date(),
           },collectionName:"Team"})
+        }else{
+          teamId=userInfo.teamInfo.id
         }
 
         // FIRESTORE LOCATION INFO
@@ -442,13 +452,20 @@ export default function TeamProfileEditor() {
           teamId:teamId
         },collectionName:"Coach"})
 
-
+        if(isSigningUp){
         router.push(`/${newTeamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
+        }else{
+        router.push(`/${userInfo.teamInfo.teamName.replace(/\s+/g, '').toLowerCase()}/profile`)
+        }
       }catch(error){
         if (error.message.includes("auth")){
           setIsLoading(false)
         }else{
-          router.push(`/${newTeamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
+          if(isSigningUp){
+            router.push(`/${newTeamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
+            }else{
+            router.push(`/${userInfo.teamInfo.teamName.replace(/\s+/g, '').toLowerCase()}/profile`)
+            }
         }
         throw error;
       }
@@ -462,12 +479,12 @@ export default function TeamProfileEditor() {
       {return<LoadingScreen loadingMessage={
         firstLoading?`${isSigningUp?"Loading sign up page":"Loading team profile page"}`:"Creating your new team account"}/>}
       else{
-        <LoadingScreen loadingMessage={'Preparing your new location form'}/>
+        return<LoadingScreen loadingMessage={firstLoading?'Preparing your new location form':'Creating new location'}/>
       }
     }
 
     return(
-      !firstLoading &&
+      // !firstLoading &&
       <div className="flex justify-center items-center h-full">
       <DynamicScreen className=" h-full">
 
@@ -485,24 +502,29 @@ export default function TeamProfileEditor() {
 
               {!isInfoVerified&&
               <>
-              <div className="text-[18px]
+              {isSigningUp?<div className="text-[18px]
               font-bold items-start mt-[20px] mb-[15px] leading-[18px]">
                 {teamName} Profile
+              </div>:
+              <div className="text-[18px]
+              font-bold items-start mt-[20px] mb-[15px] leading-[18px]">
+                Add another swim team location
               </div>
+              }
 
-              {isSigningUp ? <div className="text-gray-500 leading-[14px] mb-[20px]">
+              {isSigningUp ? <div className="text-gray-500 leading-[16px] mb-[20px]">
                 {"Please fill out the fields below and submit to complete signing up your team"}
-              </div>: <div className="text-gray-500 leading-[14px] mb-[20px]">
-                {"Hello"}
+              </div>: <div className="text-gray-500 leading-[16px] mb-[20px]">
+                {"Please fill out the fields below and submit to add another team location to your account"}
                 </div>}
           
               <div
                   className="relative w-full h-[1px] bg-gray-200 mt-[5px]"
                 />  
+              
+              <div className={`${!isSigningUp?"":"mt-[10px]"} space-y-[20px]`}>
 
-
-              <div className="mt-[10px] space-y-[20px]">
-
+              {isSigningUp&&<>
               <div className="font-bold text-streamlineBlue text-[18px] mt-[16px]"
               ref={teamInfoDivRef}>
                   <div>
@@ -523,8 +545,9 @@ export default function TeamProfileEditor() {
               />
 
               <div
-                  className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
+                  className="relative w-full h-[1px] bg-gray-200 mt-[5px]"
                 />  
+                
 
               <div
               className="h-[10px]"
@@ -552,6 +575,7 @@ export default function TeamProfileEditor() {
               <div
                   className="relative w-full h-[1px] bg-gray-200 mt-[10px]"
                 />  
+              </>}
               <div
               className="h-[1px]"
               />
@@ -585,7 +609,7 @@ export default function TeamProfileEditor() {
               setLocationContactEmail={setLocationContactEmail}
               setLocationContactName={setLocationContactName}
               setLocationContactNumber={setLocationContactPhone}
-              hasChosenLocationContact={false}
+              hasChosenLocationContact={!isSigningUp}
               sameAsTeamContact={sameAsTeamContact}
               setSameAsTeamContact={setSameAsTeamContact}
               />
@@ -627,7 +651,7 @@ export default function TeamProfileEditor() {
               {/* SIGN UP AND SUBMIT MENU */}
               <div>
                 
-              {isSigningUp &&
+              {isSigningUp ?
                 <>
               <div
                   className="relative w-full h-[1px] bg-gray-200 mt-[15px]"
@@ -695,6 +719,21 @@ export default function TeamProfileEditor() {
                   </div>
                 }
                 </div>
+              </>:
+              <>
+                    <div className="flex justify-center space-x-[15px]">
+                  
+                  <div className="bg-streamlineBlue text-white font-bold mt-[20px] text-[15px] px-[20px] py-[10px] rounded-full cursor-pointer" onClick={()=>{
+                    
+                    const isVerified = verifyDataComplete()
+                    if (isVerified){
+                      completeSignUp()
+                    }
+                    }}>
+                    Submit new location information
+                  </div>
+
+                  </div>
               </>
                 }
 

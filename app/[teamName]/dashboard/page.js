@@ -78,7 +78,7 @@ export default function TeamDashboard() {
             <TeamDashHeader selectedPage={"dashboard"}/>
             {  isLoading?
             <div className="items-center">
-                <LoadingSubScreen loadingMessage={"Loading team profile"}/>
+                <LoadingSubScreen loadingMessage={"Loading team dashboard"}/>
             </div>
             :
             <div className="h-screen flex-col">
