@@ -41,7 +41,7 @@ export default function TeamProfileEditor() {
   const isSigningUp = searchParams.get("isSigningUp")==="true";
   const params = new URLSearchParams(searchParams.toString());
 
-
+  
   useEffect(() => {
     // Get current search params
   
@@ -113,10 +113,11 @@ export default function TeamProfileEditor() {
     const [programTypes, setProgramTypes] = useState([
     { level: "", category: "" },
     ]);
-    const [daysOfWeek,setDaysOfWeek] = useState(CONFIG.daysOfWeek);
+    const [daysOfWeek,setDaysOfWeek] = useState([...CONFIG.daysOfWeek]);
     const [timesOfDay,setTimesOfDay] = useState(CONFIG.timesOfDay);
     const [isDaysSet,setIsDaysSet] = useState(false)
-
+    console.log("JUST STARTING OOFFF",daysOfWeek)
+    console.log("CONFIG JUST STARTING OOFFF",CONFIG.daysOfWeek)
     const [hourOfOpError,setHourOfOpError] = useState("")
     useEffect(()=>{
       for (const dayNum in daysOfWeek){

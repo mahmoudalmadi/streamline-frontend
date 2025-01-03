@@ -1,7 +1,11 @@
 import CONFIG from "@/config";
 
 export const transformToDaysOfWeek = (data) => {
-    const daysTemplate = CONFIG.daysOfWeek
+  const daysTemplate = CONFIG.daysOfWeek.map(day => ({
+    ...day,
+    checked:false,
+    hoursOfOps: [...day.hoursOfOps], // Deep copy nested arrays
+  }));
     // Group data by day and add hours to the corresponding day in the template
     data.forEach(({ day, hour }) => {
       const dayEntry = daysTemplate.find((d) => d.day.toLowerCase() === day.toLowerCase());

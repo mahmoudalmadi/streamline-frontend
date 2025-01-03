@@ -14,7 +14,6 @@ export default function DaysHoursOperations({daysOfWeek,setDaysOfWeek,hourOfOpEr
         ));
         setDaySelected(daysOfWeek[id-1].day)
         setSelectedDayId(id)
-        console.log(daysOfWeek[id-1],selectedDayId)
       };
 
     const handleTimingCheckboxChange = ({dayId, hour}) => {
@@ -30,7 +29,7 @@ export default function DaysHoursOperations({daysOfWeek,setDaysOfWeek,hourOfOpEr
                 : item
             )
           );
-        console.log(daysOfWeek[dayId-1])
+        console.log(daysOfWeek)
     };
 
     return(
