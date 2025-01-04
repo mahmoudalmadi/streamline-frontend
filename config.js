@@ -1,7 +1,7 @@
 
 
 
-const CONFIG = {
+const CONFIG = Object.freeze({
     amenitiesIcons:{
         1:{"name":"Swimming Pool", iconName:"PoolIcon.png"},
         2:{"name":"Changing Rooms", iconName:"ChangingRoomsIcon.png"},
@@ -65,6 +65,6 @@ const CONFIG = {
         {id:3, timeOfDay: '6 PM - 9 PM',checked:false}
     ],
     contactInfoDisclaimer:"* Your contact information will be used only to communicate where necessary once you have booked a lesson with a swim team"
-}
+})
 
 export default CONFIG;

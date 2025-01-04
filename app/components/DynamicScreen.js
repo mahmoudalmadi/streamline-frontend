@@ -2,16 +2,22 @@ import BottomTab from "./BottomTab";
 
 const DynamicScreen = ({ children, className = "" }) => {
     return (
-        <div className={`w-full md:w-[98%] lg:w-[98%] px-[15px] py-[8px] ${className}`}>
-            <div className="relative z-10">{/* Children container with higher z-index */}
+        <div
+            className={`flex flex-col w-full md:w-[98%] lg:w-[98%] px-[15px] py-[8px] ${className}`}
+        >
+            {/* Children container */}
+            <div className="flex flex-col flex-grow z-10">
                 {children}
             </div>
-            <div className="flex-col relative left-[-25px] mt-[30px] z-0 w-[130%]
-            "> {/* Set this as a relative parent */}
-                <div className="absolute top-[-1px] h-[1px] left-[1.8%] bg-gray-400 w-screen" />
-                <div className="absolute left-[2%] right-0 w-screen"> {/* BottomTab styles */}
-                    <BottomTab />
+
+
+            {/* BottomTab Section */}
+            <div className="mt-[10px]">
+                {/* Divider */}
+                <div className="mt-[30px]">
+                    <div className="h-[1px] bg-gray-400 w-full" />
                 </div>
+                <BottomTab />
             </div>
         </div>
     );

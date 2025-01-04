@@ -7,7 +7,8 @@ import { useAuth } from "@/app/contexts/AuthContext";
 import CONFIG from "@/config";
 import { useState, useEffect, useRef } from "react";
 import LoadingSubScreen from "@/app/components/loadingSubscreen";
-import ClubScheduler from "@/app/components/TeamDashboard/ScheduleComps/Schedule";
+import MyCalendar from "@/app/components/TeamDashboard/CalendarComps/Calendar";
+// import ClubScheduler from "@/app/components/TeamDashboard/ScheduleComps/Schedule";
 
 export default function TeamDashboard() {
 
@@ -69,10 +70,24 @@ export default function TeamDashboard() {
 
     },[userInfo])
 
+    const events = [
+        {
+          title: "Meeting with Team",
+          start: new Date(2023, 1, 2, 10, 0, 0), // February 2nd, 10:00 AM
+          end: new Date(2023, 1, 2, 11, 0, 0),   // February 2nd, 11:00 AM
+        },
+        {
+          title: "Lunch Break",
+          start: new Date(2023, 1, 2, 12, 30, 0), // February 2nd, 12:30 PM
+          end: new Date(2023, 1, 2, 13, 30, 0),   // February 2nd, 1:30 PM
+        },
+      ];
+      
+
     return(
 
-        <div className="flex overflow-x-hidden justify-center items-center">
-      <DynamicScreen className=" h-screen">
+        <div className="flex flex-col overflow-x-hidden justify-center items-center">
+      <DynamicScreen className="">
 
 
             <div className="h-screen">
@@ -82,7 +97,7 @@ export default function TeamDashboard() {
                 <LoadingSubScreen loadingMessage={"Loading team dashboard"}/>
             </div>
             :
-            <div className="h-screen flex-col">
+            <div className="flex flex-col flex-grow">
             <div className="flex justify-between items-center">
                 <div className="flex  space-x-[5px] border border-gray-200 rounded-full shadow-[0_5px_6px_rgba(0,0,0,0.1)] py-[8px] px-[16px] items-center">
                     <div className="font-bold">
@@ -102,10 +117,10 @@ export default function TeamDashboard() {
             </div>
 
          
-            <div className="text-red-500 bg-gray-200 w-full h-[400px] mt-[20px]">
+            <div className="w-full mt-[20px]">
                 {/* HEADERS */}
-                <div>
-                    <ClubScheduler/>
+                <div className="">
+                    <MyCalendar events={events} />
                 </div>
             </div>
 
@@ -127,7 +142,7 @@ export default function TeamDashboard() {
             </div>
             <div className="flex w-full h-[1px] bg-gray-200 mt-[5px] mb-[15px]"/>
             <div className="flex w-full mt-[10px] text-[15px]">
-                <div className="">
+                <div className="w-full">
                     {/* HEADERS */}
                     <div className="flex p-[3px]">
                         <div className="font-bold  w-[25%] p-[3px]">
@@ -194,9 +209,6 @@ export default function TeamDashboard() {
             </div>
             </div>
             }
-            </div>
-            <div className="h-[350px]">
-
             </div>
             </DynamicScreen>
             </div>
