@@ -7,6 +7,7 @@ import { useAuth } from "@/app/contexts/AuthContext";
 import CONFIG from "@/config";
 import { useState, useEffect, useRef } from "react";
 import LoadingSubScreen from "@/app/components/loadingSubscreen";
+import ClubScheduler from "@/app/components/TeamDashboard/ScheduleComps/Schedule";
 
 export default function TeamDashboard() {
 
@@ -104,8 +105,7 @@ export default function TeamDashboard() {
             <div className="text-red-500 bg-gray-200 w-full h-[400px] mt-[20px]">
                 {/* HEADERS */}
                 <div>
-                    <div className="font-bold">
-                    </div>
+                    <ClubScheduler/>
                 </div>
             </div>
 
