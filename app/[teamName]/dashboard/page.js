@@ -90,7 +90,7 @@ export default function TeamDashboard() {
       <DynamicScreen className="">
 
 
-            <div className="h-screen">
+            <div className="flex flex-col">
             <TeamDashHeader selectedPage={"dashboard"}/>
             {  isLoading?
             <div className="items-center">
@@ -118,7 +118,6 @@ export default function TeamDashboard() {
 
          
             <div className="w-full mt-[20px]">
-                {/* HEADERS */}
                 <div className="">
                     <MyCalendar events={events} />
                 </div>
@@ -135,15 +134,15 @@ export default function TeamDashboard() {
             </div>
             </div>
 
+
             {/* TRIAL LESSONS LIST */}
-            <div>
+            <div className="">
             <div className="flex font-bold text-streamlineBlue text-[15px] mt-[10px]">
                 Trial lessons this week
             </div>
             <div className="flex w-full h-[1px] bg-gray-200 mt-[5px] mb-[15px]"/>
             <div className="flex w-full mt-[10px] text-[15px]">
                 <div className="w-full">
-                    {/* HEADERS */}
                     <div className="flex p-[3px]">
                         <div className="font-bold  w-[25%] p-[3px]">
                             Name
