@@ -73,14 +73,24 @@ export default function TeamDashboard() {
     const events = [
         {
           title: "Meeting with Team",
-          start: new Date(2023, 1, 2, 10, 0, 0), // February 2nd, 10:00 AM
-          end: new Date(2023, 1, 2, 11, 0, 0),   // February 2nd, 11:00 AM
+          start: new Date(2025, 0, 7, 10, 0, 0), // February 2nd, 10:00 AM
+          end: new Date(2025, 0, 7, 11, 0, 0),   // February 2nd, 11:00 AM
         },
         {
           title: "Lunch Break",
-          start: new Date(2023, 1, 2, 12, 30, 0), // February 2nd, 12:30 PM
-          end: new Date(2023, 1, 2, 13, 30, 0),   // February 2nd, 1:30 PM
+          start: new Date(2025, 0, 9, 12, 30, 0), // February 2nd, 12:30 PM
+          end: new Date(2025, 0, 9, 13, 30, 0),   // February 2nd, 1:30 PM
         },
+        {
+            title: "Lunch Break",
+            start: new Date(2025, 0, 9, 12, 30, 0), // February 2nd, 12:30 PM
+            end: new Date(2025, 0, 9, 13, 30, 0),   // February 2nd, 1:30 PM
+          },
+          {
+            title: "Lunch Break",
+            start: new Date(2025, 0, 9, 12, 30, 0), // February 2nd, 12:30 PM
+            end: new Date(2025, 0, 9, 13, 30, 0),   // February 2nd, 1:30 PM
+          },
       ];
       
 
