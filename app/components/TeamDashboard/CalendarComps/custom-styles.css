@@ -1,0 +1,6 @@
+.rbc-current-time-indicator {
+    height: 4px; /* Thickness of the bar */
+    background-color: #007bff; /* Custom color */
+    border-radius: 2px; /* Optional: Rounded edges */
+  }
+  

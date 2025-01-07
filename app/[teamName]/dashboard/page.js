@@ -8,6 +8,15 @@ import CONFIG from "@/config";
 import { useState, useEffect, useRef } from "react";
 import LoadingSubScreen from "@/app/components/loadingSubscreen";
 import MyCalendar from "@/app/components/TeamDashboard/CalendarComps/Calendar";
+import ModalTemplate from "@/app/components/ModalTemplate";
+import EventModalContent from "@/app/components/TeamDashboard/CalendarComps/eventModalContent";
+import InfoIcon from "../../../public/InfoIcon.svg"
+import LocationIcon from "../../../public/LocationIcon.svg"
+import NotifIcon  from "../../../public/NotifIcon.svg"
+import PeopleIcon  from "../../../public/PeopleIcon.svg"
+import ClockIcon  from "../../../public/ClockIcon.svg"
+import PersonEntry from "@/app/components/TeamDashboard/CalendarComps/PersonEntry";
+
 // import ClubScheduler from "@/app/components/TeamDashboard/ScheduleComps/Schedule";
 
 export default function TeamDashboard() {
@@ -77,12 +86,12 @@ export default function TeamDashboard() {
           end: new Date(2025, 0, 7, 11, 0, 0),   // February 2nd, 11:00 AM
         },
         {
-          title: "Lunch Break",
+          title: "Lunch Breakss",
           start: new Date(2025, 0, 9, 12, 30, 0), // February 2nd, 12:30 PM
           end: new Date(2025, 0, 9, 13, 30, 0),   // February 2nd, 1:30 PM
         },
         {
-            title: "Lunch Break",
+            title: "Lunch Breaktt",
             start: new Date(2025, 0, 9, 12, 30, 0), // February 2nd, 12:30 PM
             end: new Date(2025, 0, 9, 13, 30, 0),   // February 2nd, 1:30 PM
           },
@@ -93,6 +102,41 @@ export default function TeamDashboard() {
           },
       ];
       
+    const [pickedEvent, setPickedEvent] = useState(null);
+    const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+
+    const openEventModal = () => {setIsEventModalOpen(true)};
+    const closeEventModal = () => setIsEventModalOpen(false);
+
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+    const openAddModal = () => {setIsAddModalOpen(true)};
+    const closeAddModal = () => setIsAddModalOpen(false);
+
+    function formatEventTime({startTime, endTime}) {
+        // Days of the week and months for formatting
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      
+        // Extracting components for the start time
+        const startDay = daysOfWeek[startTime.getDay()];
+        const startMonth = months[startTime.getMonth()];
+        const startDate = startTime.getDate();
+      
+        // Formatting hours and minutes for start and end time
+        const formatTime = (date) => {
+          const hours = date.getHours() % 12 || 12; // Convert to 12-hour format
+          const minutes = date.getMinutes().toString().padStart(2, "0");
+          const amPm = date.getHours() >= 12 ? "PM" : "AM";
+          return `${hours}${minutes !== "00" ? `:${minutes}` : ""} ${amPm}`;
+        };
+      
+        const startFormattedTime = formatTime(startTime);
+        const endFormattedTime = formatTime(endTime);
+      
+        // Return formatted string
+        return `${startDay}, ${startMonth} ${startDate} · ${startFormattedTime} –${endFormattedTime}`;
+    }
 
     return(
 
@@ -129,12 +173,155 @@ export default function TeamDashboard() {
          
             <div className="w-full mt-[20px]">
                 <div className="">
-                    <MyCalendar events={events} />
+                    <MyCalendar events={events} setPickedEvent={setPickedEvent} openEventModal={openEventModal}/>
                 </div>
             </div>
 
+            <ModalTemplate isOpen={isEventModalOpen} onClose={closeEventModal}>
+                <div className="p-[6px]">
+                    {pickedEvent && 
+                    // <EventModalContent pickedEvent={pickedEvent}/>
+                    <div>
+
+                    <div className="flex flex-col">
+                    <div className="flex items-center space-x-[10px]">
+
+                    <div className="flex w-[22px] justify-center items-center">
+                    <div className="flex w-[14px] h-[14px] rounded-[4px] bg-streamlineBlue "/>
+                    </div>
+                    
+                        <div className="flex font-bold   text-[18px]">
+                        {pickedEvent.title} 
+                        </div>
+                    </div>
+
+                    </div>
+                    <div className="ml-[32px] flex  text-[14px]">
+                    {formatEventTime({startTime:pickedEvent.start,endTime:pickedEvent.end})}
+                    </div>
+
+                    <div className="flex flex-col">
+                    <div className="flex items-center space-x-[10px]">
+
+                    <div className="flex w-[22px] py-[12px] mt-[4px] justify-center items-center">
+                    <InfoIcon/>
+                    </div>
+                        <div className="flex flex-col">
+                            <div className="flex  text-[14px]">
+                            {"Group lesson; advanced swimmer 2"} 
+                            </div>
+                            <div className="flex leading-[14px] text-[14px]">
+                            <div className="font-bold mr-[4px]">
+                            Status:
+                            </div>    
+                            <div>
+                            {"Confirmed"}
+                            </div>    
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div className="flex flex-col">
+                    <div className="flex items-center space-x-[10px]">
+
+                    <div className="flex w-[22px] py-[12px] justify-center items-center">
+                    <LocationIcon/>
+                    </div>
+                        <div className="flex flex-col">
+                            <div className="flex  text-[14px]">
+                            {"Banana St"} 
+                            </div>
+                            <div className="flex leading-[12px] text-[14px]">
+                            {"Lane 4"}
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+
+                    <div className="flex items-center py-[12px] space-x-[10px]">
+
+                    <div className="flex w-[22px] justify-center items-center">
+                    <NotifIcon/>
+                    </div>
+
+                    <div className="flex  text-[14px]">
+                    {"1 day before"} 
+                    </div>
+                    
+                    </div>
+
+                    <div className="flex items-center pt-[10px] space-x-[10px]">
+
+                    <div className="flex w-[22px] justify-center items-center">
+                    <PeopleIcon/>
+                    </div>
+
+                    <div className="flex font-bold text-[14px]">
+                    Coach
+                    </div>
+                    
+                    </div>
+
+                    <PersonEntry personInfo={
+                        {
+                            fullName:"Johny Apr",
+                            email:"johnyhasaLAMB@gmail.com",
+                            phoneNumber:"+1213421423"
+                            }}/>
+
+                    <div className="flex font-bold ml-[32px] text-[14px] mt-[6px] pt-[4px]">
+                    Swimmer
+                    </div>
+                    <PersonEntry personInfo={
+                        {
+                            fullName:"Johny Apr",
+                            email:"johnyhasaLAMB@gmail.com",
+                            phoneNumber:"+1213421423"
+                            }}/>
+
+                </div>
+                    }
+                </div>
+            </ModalTemplate>
+
+            {/* add Availability modal */}
+            <ModalTemplate onClose={closeAddModal} isOpen={isAddModalOpen}>
+                <div className="p-[6px]">
+                    
+                    <div className="mt-[4px] font-bold">
+                        Add trial lesson availability
+                    </div>
+
+                    <div className="flex space-x-[8px] items-center mt-[10px]">
+                    <ClockIcon/>
+                    <div className="text-[14px]">
+                        Lesson Time:
+                    </div>
+                    </div>
+                    <div>
+                    <div className="flex items-center space-x-[4px]">
+                    <div className="text-[14px]">
+                        Start:
+                    </div>
+                    <div className="border rounded-[12px] p-[2px] px-[6px]">
+                        hello
+                    </div>
+                    <div className="text-[14px] pl-[8px]">
+                        End:
+                    </div>
+                    </div>
+
+                    </div>
+                    
+
+                </div>
+            </ModalTemplate>
+
             <div className="flex">
-            <div className="flex space-x-[5px] rounded-full text-white font-bold items-center px-[14px] bg-green-500 py-[8px] mt-[10px] cursor-pointer">
+            <div className="flex space-x-[5px] rounded-full text-white font-bold items-center px-[14px] bg-green-500 py-[8px] mt-[10px] cursor-pointer"
+            onClick={()=>{openAddModal()}}>
                 <div className="text-[15px]">
                 +
                 </div>

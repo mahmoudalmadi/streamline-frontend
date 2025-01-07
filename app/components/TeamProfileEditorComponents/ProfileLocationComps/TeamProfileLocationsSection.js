@@ -12,7 +12,6 @@ import CONFIG from "@/config";
 import ViewProgramsInfo from "./ViewProgramsInfo";
 import formatHoursOfOperations from "@/app/hooks/retrieveHoursOfOps";
 import ViewCoachInfo from "./ViewCoachInfo";
-import CreateNewTeamLocation from "../CreateNewTeamLocation/CreateNewTeamLocation";
 import { useRouter } from "next/navigation";
 
 export default function TeamProfileLocationsSection({ locationsInfo,teamId,teamName }) {
@@ -162,7 +161,7 @@ export default function TeamProfileLocationsSection({ locationsInfo,teamId,teamN
         </div>
         </>:
         <>
-        <CreateNewTeamLocation/>
+        
         </>
         }
       </div>
