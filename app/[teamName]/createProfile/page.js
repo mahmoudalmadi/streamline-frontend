@@ -454,20 +454,20 @@ export default function TeamProfileEditor() {
           teamId:teamId
         },collectionName:"Coach"})
 
-        if(isSigningUp){
-        router.push(`/${newTeamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
-        }else{
-        router.push(`/${userInfo.teamInfo.teamName.replace(/\s+/g, '').toLowerCase()}/profile`)
-        }
+        // if(isSigningUp){
+        // router.push(`/${newTeamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
+        // }else{
+        // router.push(`/${userInfo.teamInfo.teamName.replace(/\s+/g, '').toLowerCase()}/profile`)
+        // }
       }catch(error){
         if (error.message.includes("auth")){
           setIsLoading(false)
         }else{
-          if(isSigningUp){
-            router.push(`/${newTeamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
-            }else{
-            router.push(`/${userInfo.teamInfo.teamName.replace(/\s+/g, '').toLowerCase()}/profile`)
-            }
+          // if(isSigningUp){
+          //   router.push(`/${newTeamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
+          //   }else{
+          //   router.push(`/${userInfo.teamInfo.teamName.replace(/\s+/g, '').toLowerCase()}/profile`)
+          //   }
         }
         throw error;
       }
