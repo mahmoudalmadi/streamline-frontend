@@ -9,7 +9,7 @@ import { useState, useEffect, useRef } from "react";
 import LoadingSubScreen from "@/app/components/loadingSubscreen";
 import MyCalendar from "@/app/components/TeamDashboard/CalendarComps/Calendar";
 import ModalTemplate from "@/app/components/ModalTemplate";
-import EventModalContent from "@/app/components/TeamDashboard/CalendarComps/eventModalContent";
+import EventModalContent from "@/app/components/TeamDashboard/CalendarComps/EventModalContent";
 import InfoIcon from "../../../public/InfoIcon.svg"
 import LocationIcon from "../../../public/LocationIcon.svg"
 import NotifIcon  from "../../../public/NotifIcon.svg"

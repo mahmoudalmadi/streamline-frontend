@@ -1,6 +1,4 @@
 
-
-
 export default function EventModalContent({pickedEvent}){
     
     if (!pickedEvent) {
