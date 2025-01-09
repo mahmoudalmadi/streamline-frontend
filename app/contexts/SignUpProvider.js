@@ -11,7 +11,7 @@ export const useSignUpContext = () => {
 };
 
 export const SignUpProvider = ({ children }) => {
-    const [guardianInfo, setGuardianInfo] = useState({ emailAddress: '', phoneNumber: '', fullName:'',isValidNum:null, dateOfBirth:null,isGuardian:null,password:"",signUpMethod:""});
+    const [guardianInfo, setGuardianInfo] = useState({ emailAddress: '', phoneNumber: '', fullName:'',isValid:null, dateOfBirth:null,isGuardian:null,password:"",signUpMethod:""});
     const [kids, setKids] = useState([{ id: 1, fullName: "", dateOfBirth: null, isMinor:null }]);
     const [hasNumber, setHasNumber] = useState(false)
     const [hasEmail, setHasEmail] = useState(false)
