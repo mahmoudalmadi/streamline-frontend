@@ -116,8 +116,7 @@ export default function TeamProfileEditor() {
     const [daysOfWeek,setDaysOfWeek] = useState([...CONFIG.daysOfWeek]);
     const [timesOfDay,setTimesOfDay] = useState(CONFIG.timesOfDay);
     const [isDaysSet,setIsDaysSet] = useState(false)
-    console.log("JUST STARTING OOFFF",daysOfWeek)
-    console.log("CONFIG JUST STARTING OOFFF",CONFIG.daysOfWeek)
+    
     const [hourOfOpError,setHourOfOpError] = useState("")
     useEffect(()=>{
       for (const dayNum in daysOfWeek){

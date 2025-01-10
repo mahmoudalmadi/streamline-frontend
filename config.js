@@ -11,7 +11,7 @@ const CONFIG = Object.freeze({
         6:{"name":"Free On-site Parking", iconName:"ParkingIcon.png"},
         7:{"name":"Paid On-site Parking", iconName:"PaidParking.jpg"},
     },
-    backendRoute:"http://localhost:8080/",
+    backendRoute:"http://3.133.122.1:8080/",
     lessonTypes:{
         "Private":"One on one with an instructor",
         "Semi-Private":"I don't remember",

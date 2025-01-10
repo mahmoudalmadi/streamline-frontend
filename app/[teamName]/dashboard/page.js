@@ -58,7 +58,6 @@ export default function TeamDashboard() {
     useEffect(()=>{
         triggerTimeRef.current = Date.now(); // Set trigger time
 
-        console.log("AKSDJSALKJDSALK")
         // Start an interval to check elapsed time
         intervalRef.current = setInterval(() => {
                 const elapsed = Date.now() - triggerTimeRef.current;
@@ -70,7 +69,7 @@ export default function TeamDashboard() {
                     clearInterval(intervalRef.current); // Break the interval
                 }
 
-                if (elapsed >= 5000) {
+                if (elapsed >= 3500) {
                     window.location.reload()
                 }
         }, 1000); // Check every second
