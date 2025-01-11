@@ -197,10 +197,8 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         </div>
         </>:
         <>
-        <div className="relative flex text-streamlineBlue w-full items-center justify-center">
-            <div className='font-bold'>
-              Create a New Account
-            </div>
+        <div className="flex text-streamlineBlue font-bold">
+          Create a New Account
         </div>
         
         {isModal&& <div

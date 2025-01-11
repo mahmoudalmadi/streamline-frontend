@@ -27,13 +27,13 @@ export default function PersonEntry({personInfo}){
                                 {getFirstOneOrTwoInitials({input:personInfo.fullName})}
                             </div>
                         </div>
-                        <div>
-                            <div className="font-bold tex">
+                        <div className="">
+                            <div className="font-bold">
                             {personInfo.fullName}
                             </div>
                             
                             {personInfo.email &&
-                            <div className="flex items-center mt-[2px] space-x-[3px] leading-[5px]">
+                            <div className="flex items-center mt-[1px] space-x-[3px] leading-[5px]">
                             <EmailIcon/>
                             <div>
                             {personInfo.email}

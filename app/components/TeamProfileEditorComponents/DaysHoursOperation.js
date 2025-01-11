@@ -29,7 +29,6 @@ export default function DaysHoursOperations({daysOfWeek,setDaysOfWeek,hourOfOpEr
                 : item
             )
           );
-        console.log(daysOfWeek)
     };
 
     return(
