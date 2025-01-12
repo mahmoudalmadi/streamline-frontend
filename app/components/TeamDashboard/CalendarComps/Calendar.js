@@ -5,6 +5,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import BlueMoveLeft from "../../../../public/BlueMoveLeft.svg"
 import BlueMoveRight from "../../../../public/BlueMoveRight.svg"
 import "./custom-styles.css"; // Include the custom CSS file
+import CONFIG from "@/config";
 
 
 // Configure the localizer with Moment.js
@@ -12,6 +13,27 @@ const localizer = momentLocalizer(moment);
 
 const MyCalendar = ({ events, setPickedEvent, openEventModal }) => {
 
+    const availableColor = CONFIG.calendar.blockColors.available
+    const pendingColor = CONFIG.calendar.blockColors.pending
+    const confirmedColor = CONFIG.calendar.blockColors.confirmed
+
+    const statuses = [{"Availability":availableColor},{"Pending Approval":pendingColor},{"Confirmed Lesson":confirmedColor}]
+
+    const eventStyleGetter = (event, start, end, isSelected) => {
+      
+      const backgroundColor = event.status.toLowerCase() === "available" ? availableColor : (event.status.toLowerCase() === "pending" ? pendingColor : (event.status.toLowerCase() === "confirmed" ? confirmedColor : "#ffffff"));
+    
+      return {
+        style: {
+          backgroundColor,
+          color: "#000",
+          padding: "4px",
+          borderWidth: "0px",
+          borderRadius: "5px", // Optional: Rounded corners
+        },
+      };
+    };
+  
 
   const [currentDate,setCurrentDate]=useState(new Date())
   
@@ -38,14 +60,14 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal }) => {
   const CustomToolbar = (props) => {
     return (
       <div className="custom-toolbar flex justify-between items-center py-[10px]">
-        < div className="flex items-center space-x-[6px] text-streamlineBlue font-bold px-[4px] py-[4px] rounded-full cursor-pointer " onClick={() => props.onNavigate("PREV")}>
+        < div className="flex items-center space-x-[6px] text-streamlineBlue font-bold px-[4px] py-[4px] rounded-full cursor-pointer select-none" onClick={() => props.onNavigate("PREV")}>
         <BlueMoveLeft/>  
         <button onClick={() => goToPreviousWeek()}>
         Previous</button>
         </div>
         <span className="font-bold">{props.label}</span>
 
-        < div className="flex items-center space-x-[6px] text-streamlineBlue font-bold px-[4px] py-[4px] rounded-full cursor-pointer" onClick={() => props.onNavigate("NEXT")}>
+        < div className="flex items-center space-x-[6px] select-none text-streamlineBlue font-bold px-[4px] py-[4px] rounded-full cursor-pointer" onClick={() => props.onNavigate("NEXT")}>
         <button onClick={() => goToNextWeek()}>Next</button>
         <BlueMoveRight/>  
         </div>
@@ -72,7 +94,31 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal }) => {
         date={currentDate}
         onSelectEvent={handleSelectEvent}
         onNavigate={(date, view) => console.log("Navigated to:", date, view)}
+        eventPropGetter={eventStyleGetter}
       />
+
+      <div className="flex w-full items-center justify-center">
+      {statuses.map((statusObj, index) => {
+        const [status, color] = Object.entries(statusObj)[0]; // Destructure key-value pair
+        return (
+          <div key={index} className="pl-[20px]"
+           style={{ display: "flex", alignItems: "center", margin: "10px 0" }}>
+            {/* Color box */}
+            <div
+              style={{
+                width: "16px",
+                height: "16px",
+                backgroundColor: color,
+                marginRight: "4px",
+                borderRadius:'6px'
+              }}
+            ></div>
+            {/* Status text */}
+            <span className="text-[14px]">{status}</span>
+          </div>
+        );
+      })}
+      </div>
     </div>
   );
 };

@@ -1,10 +1,11 @@
+import CONFIG from "@/config";
 import InfoIcon from "../../../../public/InfoIcon.svg"
 import LocationIcon from "../../../../public/LocationIcon.svg"
 import NotifIcon  from "../../../../public/NotifIcon.svg"
 import PeopleIcon  from "../../../../public/PeopleIcon.svg"
 import PersonEntry from "@/app/components/TeamDashboard/CalendarComps/PersonEntry";
 
-export default function EventModal ({pickedEvent}){
+export default function EventModal ({pickedEvent,streetAddress}){
 
     function formatEventTime({startTime, endTime}) {
         // Days of the week and months for formatting
@@ -30,6 +31,8 @@ export default function EventModal ({pickedEvent}){
         // Return formatted string
         return `${startDay}, ${startMonth} ${startDate} · ${startFormattedTime} –${endFormattedTime}`;
     }
+
+    console.log(pickedEvent)
 
     return(
         <>
@@ -62,15 +65,20 @@ export default function EventModal ({pickedEvent}){
                     <InfoIcon/>
                     </div>
                         <div className="flex flex-col">
-                            <div className="flex  text-[14px]">
-                            {"Group lesson; advanced swimmer 2"} 
+                            <div className="flex text-[14px]">
+                            <div className="font-bold mr-[4px]">
+                            Spots:
+                            </div>    
+                            <div>
+                            {pickedEvent.numberOfSpots}
+                            </div>    
                             </div>
                             <div className="flex leading-[14px] text-[14px]">
                             <div className="font-bold mr-[4px]">
                             Status:
                             </div>    
                             <div>
-                            {"Confirmed"}
+                            {pickedEvent.status}
                             </div>    
                             </div>
                         </div>
@@ -85,10 +93,7 @@ export default function EventModal ({pickedEvent}){
                     </div>
                         <div className="flex flex-col">
                             <div className="flex  text-[14px]">
-                            {"Banana St"} 
-                            </div>
-                            <div className="flex leading-[12px] text-[14px]">
-                            {"Lane 4"}
+                            {streetAddress}
                             </div>
                         </div>
                     </div>
@@ -102,43 +107,53 @@ export default function EventModal ({pickedEvent}){
                     </div>
 
                     <div className="flex  text-[14px]">
-                    {"1 day before"} 
+                    { `Reminder: ${pickedEvent.reminder.quantity} ${pickedEvent.reminder.metric} before`} 
                     </div>
                     
                     </div>
-
+                    {(pickedEvent.coachName || pickedEvent.athletes) &&
+                    <>
                     <div className="flex items-center pt-[10px] space-x-[16px]">
 
                     <div className="flex w-[22px] justify-center items-center">
                     <PeopleIcon/>
                     </div>
 
+                    
                     <div className="flex font-bold text-[14px]">
-                    Coach
+                    {pickedEvent.coachName?"Coach":CONFIG.athleteType}
                     </div>
                     
                     </div>
 
                     <div className="ml-[7px]">
 
-                    <PersonEntry personInfo={
+                    {pickedEvent.coachName&&<PersonEntry personInfo={
                         {
-                            fullName:"Johny Apr",
-                            email:"johnyhasaLAMB@gmail.com",
-                            phoneNumber:"+1213421423"
-                            }}/>
+                            fullName:pickedEvent.coachName,
+                            email:pickedEvent.coachEmail,
+                            phoneNumber:pickedEvent.coachPhone
+                            }}/>}
 
-                    <div className="flex font-bold ml-[32px] text-[14px] mt-[6px] pt-[4px]">
+                    {pickedEvent.athletes &&
+                    <>
+                    {pickedEvent.coachName&&<div className="flex font-bold ml-[32px] text-[14px] mt-[6px] pt-[4px]">
                     Swimmer
-                    </div>
+                    </div>}
+
                     <PersonEntry personInfo={
-                        {
+                          {
                             fullName:"Johny Apr",
                             email:"johnyhasaLAMB@gmail.com",
                             phoneNumber:"+1213421423"
                             }}/>
+                    </>}
 
                     </div>
+
+                    </>
+
+                    }
 
 
                 </div>

@@ -110,7 +110,6 @@ export default function ViewProgramsInfo({programsInfo}){
             await deleteMatchingEntriesByAllFields({collectionName:'SkillLevel',matchParams:{locationId:locationId}})
 
             const firestoreSkillLevels = generateJsonListGivenJsons(programLevels,{locationId:locationId,teamId:teamId})
-            console.log("THATS SKILLS IM AGGING", firestoreSkillLevels)
             const programLevelIds = await addListOfJsons({jsonList:firestoreSkillLevels,
             collectionName:"SkillLevel"})
 
@@ -119,14 +118,12 @@ export default function ViewProgramsInfo({programsInfo}){
         if(programTypes!=defaultProgramTypes){
             await deleteMatchingEntriesByAllFields({collectionName:'LessonType',matchParams:{locationId:locationId}})
             const firestoreProgramTypes = generateJsonListGivenJsons(programTypes,{locationId:locationId,teamId:teamId})
-            console.log("THATS TYPES IM AGGING", firestoreProgramTypes)
             const programTypesIds = await addListOfJsons({jsonList:firestoreProgramTypes,
             collectionName:"LessonType"})
 
         }
 
         if(daysOfWeek!=defaultDaysOfWeek){
-            console.log("locationId",locationId)
             await deleteMatchingEntriesByAllFields({collectionName:'OperationDayTime',matchParams:{locationId:locationId}})
             let dayTimes = []
             for (const day of daysOfWeek)
@@ -140,7 +137,6 @@ export default function ViewProgramsInfo({programsInfo}){
                     dayTimes.push(...dayHours)
                 }}
             }
-            console.log("DAY GTIME IM AGGINFFINF", dayTimes)
             const dayTimeIds = await addListOfJsons({jsonList:dayTimes,collectionName:"OperationDayTime"})
         }
         

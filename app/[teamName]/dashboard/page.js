@@ -19,6 +19,10 @@ import CalendarIcon  from "../../../public/CalendarIcon.svg"
 import PersonEntry from "@/app/components/TeamDashboard/CalendarComps/PersonEntry";
 import EventModal from "@/app/components/TeamDashboard/CalendarComps/EventModal";
 import AddAvailibilityModal from "@/app/components/TeamDashboard/CalendarComps/AddAvailabilityModal";
+import { getEntriesByMatching } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByMatching";
+import { transformImagesListToJsons } from "@/app/hooks/firestoreHooks/retrieving/adjustingRetrievedData";
+import { parseAddress } from "@/app/hooks/addressExtraction";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 
 // import ClubScheduler from "@/app/components/TeamDashboard/ScheduleComps/Schedule";
 
@@ -28,7 +32,17 @@ export default function TeamDashboard() {
     const [locations, setLocations] = useState([{
         address:"Banana St, Dallas, TX"
     }])
+    const [locationInfo,setLocationInfo]=useState([])
+    const [allParsedAddresess,setAllParsedAddresses]=useState([])
+    const [currentLocation,setCurrentLocation]=useState([])
     const [location, setLocation] = useState(locations[0]["address"]) 
+
+    const availableColor = CONFIG.calendar.blockColors.available
+    const pendingColor = CONFIG.calendar.blockColors.pending
+    const confirmedColor = CONFIG.calendar.blockColors.confirmed
+
+    const statuses = [{"Availability":availableColor},{"Pending Approval":pendingColor},{"Confirmed Lesson":confirmedColor}]
+
     const [weeklyTrialLessons, setWeeklyTrialLessons] = useState([
         {
             name:"Mahmoud Al-Madi",
@@ -57,18 +71,19 @@ export default function TeamDashboard() {
     const intervalRef = useRef(null);
     const timesOfDay = CONFIG.timesOfDay
     const [isLoading,setIsLoading]=useState(true)
+    const [retrievedCoaches,setRetrievedCoaches] = useState(null)
 
     useEffect(()=>{
         triggerTimeRef.current = Date.now(); // Set trigger time
 
         // Start an interval to check elapsed time
-        intervalRef.current = setInterval(() => {
+        intervalRef.current = setInterval(async() => {
                 const elapsed = Date.now() - triggerTimeRef.current;
 
                 console.log(`Elapsed time: ${elapsed}ms`);
                 if(userInfo.teamInfo){
         
-                    setIsLoading(false)
+                    await getLocationInfo()
                     clearInterval(intervalRef.current); // Break the interval
                 }
 
@@ -79,30 +94,68 @@ export default function TeamDashboard() {
         // Cleanup on unmount
         return () => clearInterval(intervalRef.current);
 
+        async function getLocationInfo() {
+      
+            const locationsInfo = await getEntriesByMatching({
+              collectionName: "Location",
+              fields: { teamId: userInfo.teamInfo.id },
+            });
+            
+            const firestoreCoaches = await getEntriesByMatching({
+                collectionName:'Coach',
+                fields:{teamId: userInfo.teamInfo.id}
+            })
+
+            setRetrievedCoaches(firestoreCoaches)
+
+            const parsedAddresses = []
+            for (const location of locationsInfo) {
+              const firestoreLocationImages = await getEntriesByMatching({
+                collectionName: "Images",
+                fields: {
+                  teamId: userInfo.teamInfo.id,
+                  locationId: location.id,
+                  photoType: "location",
+                },
+              });
+              
+              const formattedLocationImages = transformImagesListToJsons({list:firestoreLocationImages})
+              
+              location.images = formattedLocationImages
+  
+              const parsedAddress = parseAddress({address:location.address})
+              parsedAddresses.push(parsedAddress)
+              location.parsedAddress = parsedAddress
+            }
+            console.log(locationsInfo[0])
+            setCurrentLocation(locationsInfo[0])
+            setLocationInfo(locationsInfo)
+            setAllParsedAddresses(parsedAddresses)
+            setIsLoading(false);
+          }
+
     },[userInfo])
 
-    const events = [
+    const [events,setEvents] = useState([
         {
           title: "Meeting with Team",
           start: new Date(2025, 0, 7, 10, 0, 0), // February 2nd, 10:00 AM
           end: new Date(2025, 0, 7, 11, 0, 0),   // February 2nd, 11:00 AM
+          status:'available',
         },
         {
           title: "Lunch Breakss",
           start: new Date(2025, 0, 9, 12, 30, 0), // February 2nd, 12:30 PM
           end: new Date(2025, 0, 9, 13, 30, 0),   // February 2nd, 1:30 PM
+          status:'pending',
         },
         {
             title: "Lunch Breaktt",
             start: new Date(2025, 0, 9, 12, 30, 0), // February 2nd, 12:30 PM
             end: new Date(2025, 0, 9, 13, 30, 0),   // February 2nd, 1:30 PM
-          },
-          {
-            title: "Lunch Break",
-            start: new Date(2025, 0, 9, 12, 30, 0), // February 2nd, 12:30 PM
-            end: new Date(2025, 0, 9, 13, 30, 0),   // February 2nd, 1:30 PM
-          },
-      ];
+            status:'confirmed',
+          }
+      ]);
       
     const [pickedEvent, setPickedEvent] = useState(null);
     const [isEventModalOpen, setIsEventModalOpen] = useState(false);
@@ -117,12 +170,12 @@ export default function TeamDashboard() {
 
     return(
 
-        <div className="flex flex-col overflow-x-hidden justify-center items-center"
+        <div className="flex flex-col no-scroll overflow-x-hidden justify-center items-center"
         style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
-      <DynamicScreen className="" style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
+      <DynamicScreen className={`${isEventModalOpen||isAddModalOpen?"no-scroll":"no-scroll"}`} style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
 
 
-            <div className="flex flex-col" style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
+            <div className="flex flex-col no-scroll" style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
             <TeamDashHeader selectedPage={"dashboard"}/>
             {  isLoading?
             <div className="items-center">
@@ -136,10 +189,10 @@ export default function TeamDashboard() {
                         Location:
                     </div>
                     <div>
-                        {location.split(",")[0]}
+                        {currentLocation.parsedAddress.streetAddress}
                     </div>
                     {
-                        locations.length>0 &&
+                        locationInfo.length>1 &&
                         <div className="text-streamlineBlue font-bold pl-[7px] text-[12px] cursor-pointer">
                             Change
                         </div>
@@ -156,16 +209,17 @@ export default function TeamDashboard() {
             </div>
 
             <ModalTemplate isOpen={isEventModalOpen} onClose={closeEventModal}>
-                <EventModal pickedEvent={pickedEvent}/>
+                <EventModal pickedEvent={pickedEvent} streetAddress={currentLocation.parsedAddress.streetAddress}/>
             </ModalTemplate>
 
             {/* add Availability modal */}
             <ModalTemplate onClose={closeAddModal} isOpen={isAddModalOpen}>
-                <AddAvailibilityModal/>
+                <AddAvailibilityModal onClose={closeAddModal} teamId={userInfo.teamInfo.id} 
+                retrievedCoaches={retrievedCoaches} locationId={currentLocation.id} events={events} setEvents={setEvents}/>
             </ModalTemplate>
 
-            <div className="flex">
-            <div className="flex space-x-[5px] rounded-full text-white font-bold items-center px-[14px] bg-green-500 py-[8px] mt-[10px] cursor-pointer"
+            <div className="flex mt-[36px] w-full justify-end">
+            <div className="flex space-x-[5px] rounded-full text-white font-bold items-center px-[14px] bg-green-500 py-[8px] mt-[10px] cursor-pointer "
             onClick={()=>{openAddModal()}}>
                 <div className="text-[15px]">
                 +
@@ -187,13 +241,13 @@ export default function TeamDashboard() {
                 <div className="w-full">
                     <div className="flex p-[3px]">
                         <div className="font-bold  w-[25%] p-[3px]">
-                            Name
+                            {CONFIG.athleteType}
                         </div>
                         <div className="font-bold  w-[15%] p-[3px]">
                             Age
                         </div>
                         <div className="font-bold  w-[20%] p-[3px]">
-                            Lesson
+                            Coach
                         </div>
                         <div className="font-bold  w-[20%] p-[3px]">
                             Time

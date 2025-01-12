@@ -47,3 +47,4 @@ export function generateJsonListGivenJsons (iterableList, ...manualFields) {
     ...item
   }));
 }
+

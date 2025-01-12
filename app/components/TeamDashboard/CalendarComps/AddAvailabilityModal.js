@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ClockIcon  from "../../../../public/ClockIcon.svg"
 import CalendarIcon  from "../../../../public/CalendarIcon.svg"
 import NotifIcon  from "../../../../public/NotifIcon.svg"
@@ -16,9 +16,13 @@ import PeopleIcon  from "../../../../public/PeopleIcon.svg"
 import PersonEntry from "./PersonEntry";
 import ProfileEntryEditor from "../../TeamProfileEditorComponents/ProfileEntryEditor";
 import MultiFieldPhoneEntry from "../../AuthModalComps/MultiFieldPhoneEntry";
+import { addListOfJsons, generateJsonList, generateJsonListGivenJsons } from "@/app/hooks/firestoreHooks/adding/addInfoAsList";
+import { addInfoAsJson } from "@/app/hooks/firestoreHooks/adding/addInfoAsJson";
+import getRelevantDates from "@/app/hooks/getRelevantDates";
 
-export default function AddAvailibilityModal(){
+export default function AddAvailibilityModal({onClose,teamId,locationId,events,setEvents,retrievedCoaches}){
 
+    const timePickerRef = useRef(null);
         
     // Create availibility stuffs
     const [startTime, setStartTime] = useState({ hrs: null, mins: null, xm: null });
@@ -77,6 +81,8 @@ export default function AddAvailibilityModal(){
 
     const [isDaySelected,setIsDaySelected]=useState(false)
 
+    
+
     useEffect(()=>{
         const isSelected = daysPicked.some((day) => day.isPicked === true);
         setIsDaySelected(isSelected);
@@ -90,10 +96,43 @@ export default function AddAvailibilityModal(){
     const [newCoachNumber,setNewCoachNumber]=useState({phoneNumber:"",isValid:false})
 
 
-    const [coaches,setCoaches]=useState([
-        {fullName:"J Z asdsadss",email:"asdas",phoneNumber:"1231232"},{fullName:"J Z asdsadss",email:"asdas",phoneNumber:"1231232"}
-    ])
+    const [coaches,setCoaches]=useState([...retrievedCoaches])
     const [selectedCoachId,setSelectedCoachId] = useState(null)
+
+
+    useEffect(()=>{
+        console.log(endTime)
+        console.log(selectedCoachId)
+        console.log(coaches[selectedCoachId])
+    },[selectedCoachId,endTime])
+
+    const [reminderQuant,setReminderQuant]=useState(1)
+    const [reminderMetric,setReminderMetric]=useState('days')
+
+    function getPickedDays(daysPicked) {
+        return daysPicked
+            .filter((day) => day.isPicked) // Filter only picked days
+            .map((day) => day.day);       // Return the 'day' value
+    }
+
+
+    const handleSubmit = async() => {
+
+        if(isWeeklyOccurrence){
+
+            const listODays = getPickedDays(daysPicked)
+            const seriesId = await addInfoAsJson({jsonInfo:{startTime:startTime, endTime:endTime,days:listODays, startDate:startDate,endDate:endDate},collectionName:'TimeBlockSeries',locationId:locationId,createdOn:new Date()})
+
+            const relevantDates = getRelevantDates({startDate:startDate,endDate:endDate,daysPicked:daysPicked,timeObjStart:startTime,timeObjEnd:endTime,coach:selectedCoachId!=null?coaches[selectedCoachId]:null,numberOfSpots:numberOfSpots,reminder:{quantity:reminderQuant,metric:reminderMetric}})
+
+            setEvents([...events,...relevantDates])
+
+            const allTimeBlocks = generateJsonListGivenJsons(relevantDates,{teamId:teamId,locationId:locationId,seriesId:seriesId,createdOn:new Date()})
+
+            // const timeBlockId = await addListOfJsons({jsonList:allTimeBlocks,collectionName:'TimeBlock'})
+        }
+
+    }
 
     return(
         <div className="flex flex-col p-[6px] items-center justify-center " style={{overflow:'hidden'}}>
@@ -106,8 +145,10 @@ export default function AddAvailibilityModal(){
 
                     <div className="flex flex-col overflow-y-auto justify-center items-center">
 
-                    <div className="flex space-x-[8px] items-center mt-[12px] mb-[8px]">
-                    <ClockIcon/>
+                    <div className="flex space-x-[8px] w-full items-center mt-[12px] mb-[8px]">
+                        <div className="ml-[1px]">
+                        <ClockIcon/>
+                        </div>
                     <div className="text-[14px] font-bold">
                         Lesson Time
                     </div>
@@ -117,10 +158,10 @@ export default function AddAvailibilityModal(){
                     <div className="text-[14px] mr-[4px]">
                         Start
                     </div>
-                    <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${isPickingTime&&isPickingStart?"border-streamlineBlue border-[2px]":""}`} onClick={()=>{setIsPickingStart(true);setIsPickingTime(true);setTime(null)}}>
+                    <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${isPickingTime&&isPickingStart?"border-streamlineBlue border-[2px]":""}`} onClick={()=>{setIsPickingStart(true);setIsPickingTime(true);}}>
                         {(startTime.hrs || startTime.hrs==0) && (startTime.mins || startTime.mins==0) && startTime.xm ? 
                         <div>
-                            {startTime.hrs}:{startTime.mins<10?'0'+startTime.mins:startTime.mins} {startTime.xm}
+                            {startTime.hrs>12?startTime.hrs-12:startTime.hrs}:{startTime.mins<10?'0'+startTime.mins:startTime.mins} {startTime.xm}
                         </div> : 
                         <div className="text-gray-500">
                             Select time
@@ -131,10 +172,10 @@ export default function AddAvailibilityModal(){
                         End
                     </div>
 
-                    <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${isPickingTime&&!isPickingStart?"border-streamlineBlue border-[2px]":""}`}onClick={()=>{setIsPickingStart(false);setIsPickingTime(true);setTime(null)}}>
-                        {endTime.hrs && endTime.mins && endTime.xm ? 
+                    <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${isPickingTime&&!isPickingStart?"border-streamlineBlue border-[2px]":""}`}onClick={()=>{setIsPickingStart(false);setIsPickingTime(true);}}>
+                        {(endTime.hrs || endTime.hrs==0) && (endTime.mins || endTime.mins==0) && endTime.xm ? 
                         <div>
-                            {endTime.hrs}:{endTime.mins<10?'0'+endTime.mins:endTime.mins} {endTime.xm}
+                            {endTime.hrs>12?endTime.hrs-12:endTime.hrs}:{endTime.mins<10?'0'+endTime.mins:endTime.mins} {endTime.xm}
                         </div> : 
                         <div className="text-gray-500">
                             Select time
@@ -148,15 +189,15 @@ export default function AddAvailibilityModal(){
                       onChange={handleTimeChange} 
                       onAccept={()=>{setIsPickingTime(false)}}
                       slots={{ actionBar: CustomActionBar }} // Use the custom action bar
-                      value={time}
+                      ref={timePickerRef}
                       />
                     </LocalizationProvider>}
                     </div>
 
 
                     {/* COACHES AND SPOTS */}
-                    <div className="flex flex-col mt-[12px] w-full items-center">
-                        <div className="flex space-x-[10px] items-center">
+                    <div className="flex flex-col mt-[16px] w-full items-center">
+                        <div className="flex w-full space-x-[10px] items-center">
                         <PeopleIcon/>
                         <div className="font-bold text-[14px]">
                             Coach & Spots
@@ -169,11 +210,23 @@ export default function AddAvailibilityModal(){
                             </div>
 
                             <div className="flex space-x-[14px] ml-[20px] items-center select-none">
-                            <div className={`font-bold select-none text-gray-500 mb-[2px] text-[24px] p-[5px] ${numberOfSpots==1 ? "opacity-50":"cursor-pointer"}`} onClick={()=>{if(numberOfSpots>1){setNumberOfSpots(numberOfSpots-1)}}}>-</div>
+                            <div className={`font-bold select-none text-gray-500 mb-[2px] text-[24px] p-[5px] ${numberOfSpots==1 ? "opacity-50":"cursor-pointer"}`} 
+                            style={{
+                                userSelect: "none", // Prevent text selection
+                                WebkitUserSelect: "none", // Safari
+                                MozUserSelect: "none", // Firefox
+                                msUserSelect: "none",}} 
+                            onClick={()=>{if(numberOfSpots>1){setNumberOfSpots(numberOfSpots-1)}}}>-</div>
                             <div className="flex border rounded-[12px] p-[6px] text-center">
                             {numberOfSpots}
                             </div>
-                            <div className={`font-bold select-none text-[24px] text-gray-500 p-[5px] cursor-pointer`} onClick={()=>{setNumberOfSpots(numberOfSpots+1)}}>+</div>
+                            <div className={`font-bold select-none text-[24px] text-gray-500 p-[5px] cursor-pointer`} 
+                            style={{
+                                userSelect: "none", // Prevent text selection
+                                WebkitUserSelect: "none", // Safari
+                                MozUserSelect: "none", // Firefox
+                                msUserSelect: "none",}} 
+                            onClick={()=>{setNumberOfSpots(numberOfSpots+1)}}>+</div>
                             </div>
 
 
@@ -196,7 +249,7 @@ export default function AddAvailibilityModal(){
                                 <div className=" ">
                                 {coaches.map((item,index)=>(
                                     <div key={index} className={`py-[3px] cursor-pointer hover:opacity-100 ${selectedCoachId==index ? "": "opacity-50"}`} onClick={()=>{setSelectedCoachId(index)}}>
-                                        <PersonEntry personInfo={{fullName:item.fullName,email:item.email,phoneNumber:item.phoneNumber}}/>
+                                        <PersonEntry personInfo={{fullName:item.coachName,email:item.coachEmail,phoneNumber:item.coachPhone}}/>
                                     </div>
                                 )
                                 )}
@@ -225,13 +278,21 @@ export default function AddAvailibilityModal(){
                                 fieldResponse={newCoachNumber}
                                 field={'phoneNumber'} customLength={"w-[180px]"}/>
                         </div>
-                        <div className={`font-bold bg-streamlineBlue text-white px-[12px] py-[6px] rounded-full mt-[12px] text-[14px] ${newCoachName.length>0 && newCoachNumber.isValid ? "cursor-pointer" : "opacity-50"}`} onClick={()=>{
+
+                        <div className="flex w-full justify-center mt-[12px] space-x-[16px]  items-center">
+
+                        <div className="text-streamlineBlue py-[6px] font-bold cursor-pointer" onClick={()=>{setAddAnotherCoach(false)}}>
+                            Cancel
+                        </div>
+
+                        <div className={`font-bold bg-streamlineBlue text-white px-[12px] py-[6px] rounded-full text-[14px] ${newCoachName.length>0 && newCoachNumber.isValid ? "cursor-pointer" : "opacity-50"}`} onClick={async()=>{
                             if(newCoachName.length>0 && newCoachNumber.isValid)
                             {
                             setAddAnotherCoach(false); 
                             setCoaches([...coaches,
-                                {fullName:newCoachName,email:newCoachEmail,phoneNumber:newCoachNumber.phoneNumber}
+                                {coachName:newCoachName,coachName:newCoachEmail,coachPhone:newCoachNumber.phoneNumber}
                             ])
+                            await addInfoAsJson({jsonInfo:{coachName:newCoachName,coachPhone:newCoachNumber.isValid?newCoachNumber.phoneNumber:null,coachEmail:newCoachEmail.length>0?newCoachEmail:null,locationId:locationId,teamId:teamId},collectionName:'Coach'})
                             }else{
 
                                 }
@@ -239,27 +300,83 @@ export default function AddAvailibilityModal(){
                             }}>
                             Add coach
                         </div>
+                        </div>
                         </>
                         }
                     </div>
 
 
                     {/* REMINDER BEFORE LESSON */}
-                    <div className="flex flex-col w-full items-center">
-                        <div className="flex items-center mt-[6px]">
+                    <div className="flex flex-col w-full ">
+                        <div className="flex flex-col">
+                        <div className="flex w-full items-center mt-[6px]">
                         <NotifIcon/>
                         <div className="ml-[8px] font-bold text-[14px]">
                             Reminder
                         </div>
-                        </div>
+                            </div>
                         <div className="text-gray-500 text-[12px]">
                             Sent to both coach and swimmer(s)
                         </div>    
+                        </div>
+
+                        <div className="flex justify-center">
+                        <div className="flex items-center mt-[8px]">
+                        <div className="text-[14px]">
+                            Before
+                        </div>
+                        <div>
+                        <div className="flex space-x-[14px] ml-[10px] items-center select-none">
+                            <div className={`font-bold select-none text-gray-500 mb-[2px] text-[24px] p-[5px] ${reminderQuant==1 ? "opacity-50":"cursor-pointer"}`} style={{
+                                    userSelect: "none", // Prevent text selection
+                                    WebkitUserSelect: "none", // Safari
+                                    MozUserSelect: "none", // Firefox
+                                    msUserSelect: "none",}}  onClick={()=>{if(reminderQuant>1){setReminderQuant(reminderQuant-1)}}}>-</div>
+                            <input className="flex text-center w-[30px] border rounded-[30px] py-[7px]" value={reminderQuant} onChange={(e) => setReminderQuant(e.target.value)} />
+                            <div       style={{
+                                    userSelect: "none", // Prevent text selection
+                                    WebkitUserSelect: "none", // Safari
+                                    MozUserSelect: "none", // Firefox
+                                    msUserSelect: "none",}}  className={`font-bold select-none text-[24px] text-gray-500 p-[5px] cursor-pointer`} onClick={()=>{setReminderQuant(reminderQuant+1)}}>+</div>
+                            </div>
+                        </div>
+                        <div className="flex ml-[20px]">
+                        <div className="flex space-x-[12px]">
+                            <label className="inline-flex items-center">
+                                <input
+                                type="radio"
+                                className="form-radio "
+                                name="radioOption"
+                                value="hours"
+                                checked={reminderMetric === 'hours'}
+                                onChange={()=>{setReminderMetric('hours')}}
+                                />
+                                <span className="ml-2 text-[14px]">hours</span>
+                            </label>
+                            <label className="inline-flex items-center">
+                                <input
+                                type="radio"
+                                className="form-radio"
+                                name="radioOption"
+                                value="option2"
+                                checked={reminderMetric === 'days'}
+                                onChange={()=>{setReminderMetric('days')}}
+                                />
+                                <span className="ml-2 text-[14px]">days</span>
+                            </label>
+                            </div>
+                        </div>
+                        </div>
+                        </div>
+
                     </div>
 
                     {/* AVAILABLE DAYS */}
-                    <div className="flex space-x-[8px] justify-center mt-[16px] mb-[8px] items-center">
+                    <div className="flex space-x-[8px] w-full mt-[16px] mb-[8px] items-center">
+                    <div className="pl-[1px]">
                     <CalendarIcon/>
+
+                    </div>
                     <div className="text-[14px] font-bold">
                         Available days
                     </div>
@@ -342,6 +459,7 @@ export default function AddAvailibilityModal(){
                                  onSelect={(day) => {
                                     if (selectingStartDate) {
                                       setStartDate(day);
+                                      setSelectStartDate(false)
                                     } else {
                                       setEndDate(day);
                                     }
@@ -354,7 +472,7 @@ export default function AddAvailibilityModal(){
                             </>                            
                             :
                             <>
-                            <div className="border p-[16px] rounded-[20px] border-[1px] border-streamlineBlue">
+                            <div className="border p-[16px] rounded-[20px]  shadow-[0_0_11px_rgba(0,0,0,0.1)]">
                                 <DayPicker
                                 mode="multiple"
                                 selected={selectedDates}
@@ -369,13 +487,22 @@ export default function AddAvailibilityModal(){
                     }
                     </div>
 
+                    <div className="items-center flex space-x-[30px]">
+
+                    <div className="mt-[15px] text-streamlineBlue font-bold cursor-pointer" onClick={()=>{onClose()}}>
+                        Cancel
+                    </div>
+
                     <div className={`mt-[12px] bg-streamlineBlue text-white px-[16px] py-[8px] rounded-full font-bold ${startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected || startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&(daysPicked.length>0) ? "cursor-pointer" :"opacity-50" }`} onClick={()=>{
                         if(startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected || startTime.xm&&startTime.hrs&&startTime.hrs&&endTime.hrs&&endTime.xm&&(daysPicked.length>0)){
                             console.log("HIIII")
+                            handleSubmit()
                         }
                     }}>
                         Add availability
                     </div>
+                    </div>
+
 
                 </div>
     )
