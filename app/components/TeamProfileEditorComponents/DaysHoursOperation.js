@@ -32,7 +32,11 @@ export default function DaysHoursOperations({daysOfWeek,setDaysOfWeek,hourOfOpEr
     };
 
     return(
-        <div>
+        <div style={{
+            userSelect: "none", // Prevent text selection
+            WebkitUserSelect: "none", // Safari
+            MozUserSelect: "none", // Firefox
+            msUserSelect: "none",}} >
             <div className="text-[15px]  font-bold">
             Days and Hours of Operation
             </div>
@@ -86,12 +90,17 @@ export default function DaysHoursOperations({daysOfWeek,setDaysOfWeek,hourOfOpEr
                         hours of operation
                         </div>
                         </div>
-                        <div className="flex space-x-[25px]">
+                        <div className="flex space-x-[25px] select-none"
+                        style={{
+                            userSelect: "none", // Prevent text selection
+                            WebkitUserSelect: "none", // Safari
+                            MozUserSelect: "none", // Firefox
+                            msUserSelect: "none",}} >
                         <div>
                         {CONFIG.hoursOfOps.slice(0,12).map((item, index) => (
                             <div
                             key={index}
-                            className={`flex pl-3 pr-3 w-full py-[3px] mb-[8px] rounded-xl whitespace-nowrap items-center 
+                            className={`flex pl-3 select-none pr-3 w-full py-[3px] mb-[8px] rounded-xl whitespace-nowrap items-center 
                             ${
                                 daysOfWeek[selectedDayId-1].hoursOfOps.includes(item.id)
                                 ? "border-[1.5px] border-streamlineBlue text-streamlineBlue font-bold"
@@ -101,7 +110,7 @@ export default function DaysHoursOperations({daysOfWeek,setDaysOfWeek,hourOfOpEr
                                 handleTimingCheckboxChange({dayId:selectedDayId,hour:item.id});
                             }}
                             >
-                            <div className="text-[10px]">{CONFIG.hoursOfOps[index].hours}</div>
+                            <div className="select-none text-[10px]">{CONFIG.hoursOfOps[index].hours}</div>
                             </div>
                         ))}
                         </div>
@@ -109,7 +118,7 @@ export default function DaysHoursOperations({daysOfWeek,setDaysOfWeek,hourOfOpEr
                         {CONFIG.hoursOfOps.slice(12,24).map((item, index) => (
                             <div
                             key={index}
-                            className={`flex pl-3 pr-3 w-full py-[3px] mb-[8px] rounded-xl whitespace-nowrap items-center
+                            className={`flex pl-3 pr-3 select-none w-full py-[3px] mb-[8px] rounded-xl whitespace-nowrap items-center
                             ${
                                 daysOfWeek[selectedDayId-1].hoursOfOps.includes(item.id)
                                 ? "border-[1.5px] border-streamlineBlue text-streamlineBlue font-bold"
@@ -119,7 +128,7 @@ export default function DaysHoursOperations({daysOfWeek,setDaysOfWeek,hourOfOpEr
                                 handleTimingCheckboxChange({dayId:selectedDayId,hour:item.id});
                             }}
                             >
-                            <div className="text-[10px]">{CONFIG.hoursOfOps[item.id].hours}</div>
+                            <div className="select-none text-[10px]">{CONFIG.hoursOfOps[item.id].hours}</div>
                             </div>
                         ))}
                         </div>

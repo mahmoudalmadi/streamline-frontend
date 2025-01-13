@@ -13,7 +13,11 @@ export default function  AmenitiesSelection(
       };
     
       return (
-        <div>
+        <div style={{
+          userSelect: "none", // Prevent text selection
+          WebkitUserSelect: "none", // Safari
+          MozUserSelect: "none", // Firefox
+          msUserSelect: "none",}} >
         <div className="text-[15px] mb-[8px] font-bold">
             Please select all the applicable amenities for this location
           </div>

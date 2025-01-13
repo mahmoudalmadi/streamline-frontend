@@ -152,10 +152,14 @@ export default function TeamProfileEditor() {
       "skillLevels": programLevels,
       "programTypes": programTypes,
     })
+    
+    const [coachNumber,setCoachNumber] = useState({phoneNumber:"",isValid:false})
+    const [coachEmail,setCoachEmail]=useState("")
     const [coachInfo, setCoachInfo] = useState({
-      "fullName": headCoachName,
+      "coachName": headCoachName,
       "description": headCoachBio,
       "coachImg": coachImg,
+      "coachNumber":coachNumber,
       "coachType": "Head Coach"
     })
 
@@ -224,9 +228,10 @@ export default function TeamProfileEditor() {
         changeField({setDict:setProgramsOffered, field:"skillLevels",value:programLevels})
         changeField({setDict:setProgramsOffered, field:"programTypes",value:programTypes})
         
-        changeField({setDict:setCoachInfo,field:"fullName","value":headCoachName})
+        changeField({setDict:setCoachInfo,field:"coachName","value":headCoachName})
         changeField({setDict:setCoachInfo,field:"description","value":headCoachBio})
         changeField({setDict:setCoachInfo,field:"coachImg","value":coachImg})
+        changeField({setDict:setCoachInfo,field:"coachNumber","value":coachNumber.isValid?coachNumber.phoneNumber:""})
       };
 
       setIsMissingPrograms(false)
@@ -283,6 +288,11 @@ export default function TeamProfileEditor() {
 
           }else{
             throw new Error("invalid phone number")
+          }
+        }
+        if (key=="coachInfo"){
+          if (!coachNumber.isValid){
+            new Error("invalid phone number")
           }
         }
         if (key==="programsOffered"){
@@ -447,6 +457,8 @@ export default function TeamProfileEditor() {
         const coachEntryId = await addInfoAsJson({jsonInfo:{
           coachBio:coachInfo.description,
           coachName:coachInfo.fullName,
+          coachPhone:coachInfo.coachNumber,
+          coachEmail:coachEmail.length>0?coachEmail:null,
           coachType:coachInfo.coachType,
           locationId:locationId,
           photoUrl:coachPhotoUrl[0],
@@ -640,8 +652,12 @@ export default function TeamProfileEditor() {
               headCoachName={headCoachName}
               setHeadCoachBio={setHeadCoachBio}
               setHeadCoachName={setHeadCoachName}
+              coachNumber={coachNumber}
+              setCoachNumber={setCoachNumber}
               coachImg={coachImg}
               setCoachImg={setCoachImg}
+              coachEmail={coachEmail}
+              setCoachEmail={setCoachEmail}
               />
 
               </div>
@@ -702,11 +718,8 @@ export default function TeamProfileEditor() {
                       errorMessage={emailWidgetError}
                       setErrorMessage={setEmailWidgetError}
                       />
-                    </div>
-                  }
 
-                  {isInfoVerified &&
-                  <div className="flex w-full h-full items-start justify-center mt-[15px] ">
+                    <div className="flex w-full h-full items-start justify-center mt-[25px]">
                     <div className="flex  border border-black rounded-full space-x-[8px] px-[18px] py-[10px] items-center cursor-pointer" onClick={()=>{
                       setIsInfoVerified(!isInfoVerified)
                     }}>
@@ -718,7 +731,11 @@ export default function TeamProfileEditor() {
                     </div>
                     </div>
                   </div>
-                }
+                    </div>
+
+                    
+                  }
+
                 </div>
               </>:
               <>

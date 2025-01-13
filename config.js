@@ -22,6 +22,14 @@ const CONFIG = Object.freeze({
         "Intermediate":"Has some swimming exprience",
         "Advanced":"Already a proficient swimmer"
     },
+    athleteType:"Swimmer",
+    calendar:{
+        blockColors:{
+            available:"#0790E1",
+            pending:"#F5B722",
+            confirmed:"#2DAD6E",
+        }
+    },  
     daysOfWeek:[
         {id:1, day: 'Monday', checked:false, hoursOfOps:[] },
         {id:2, day: 'Tuesday', checked:false, hoursOfOps:[] },
