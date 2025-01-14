@@ -456,7 +456,7 @@ export default function TeamProfileEditor() {
         const coachPhotoUrl = await uploadImagesToS3({s3Uri:"s3://streamlineplatform/coachPhotos/",files:coachImg})
         const coachEntryId = await addInfoAsJson({jsonInfo:{
           coachBio:coachInfo.description,
-          coachName:coachInfo.fullName,
+          coachName:coachInfo.coachName,
           coachPhone:coachInfo.coachNumber,
           coachEmail:coachEmail.length>0?coachEmail:null,
           coachType:coachInfo.coachType,

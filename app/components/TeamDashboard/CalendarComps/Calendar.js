@@ -6,6 +6,7 @@ import BlueMoveLeft from "../../../../public/BlueMoveLeft.svg"
 import BlueMoveRight from "../../../../public/BlueMoveRight.svg"
 import "./custom-styles.css"; // Include the custom CSS file
 import CONFIG from "@/config";
+import LoadingSubScreen from "../../loadingSubscreen";
 
 
 // Configure the localizer with Moment.js
@@ -75,27 +76,53 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal }) => {
     );
   };
 
+  const CustomEvent = ({ event }) => 
+   { 
+    console.log("custom events",event)
+    return(
+      <div  >
+      <div style={{ fontWeight: "bold",fontSize:'8px' }}>{event.title}</div>
+      <div style={{ fontSize:'8px',marginTop:'2px' }}>
+      {moment(event.start).format("h:mm A")} - {moment(event.end).format("h:mm A")}
+        </div>
+    </div>
+    )
+  };
+
   return (
-    <div className="items-center justify-center" 
-    style={{ height: "800px", width: "100%" }}>
-      <Calendar
-        localizer={localizer}
-        events={events}
-        defaultView="week"
-        views={["week"]}
-        step={30} // 30-minute intervals
-        timeslots={2} // One timeslot per step
-        min={new Date(2023, 1, 1, 6, 0, 0)} // 6:00 AM
-        max={new Date(2023, 1, 1, 22, 0, 0)} // 10:00 PM
-        style={{ height: "100%" }}
-        components={{
-          toolbar: CustomToolbar,
-        }}
-        date={currentDate}
-        onSelectEvent={handleSelectEvent}
-        onNavigate={(date, view) => console.log("Navigated to:", date, view)}
-        eventPropGetter={eventStyleGetter}
-      />
+    <div>
+
+      <div className="items-center justify-center" 
+      style={{ height: "800px", width: "100%" }}>
+
+        <div className="absolute w-[100%] h-[100%] z-10">
+          <LoadingSubScreen loadingMessage={""}/>
+        </div>
+
+        <div className="w-full h-full opacity-50 unclickable-div">
+        <Calendar
+          localizer={localizer}
+          events={events}
+          defaultView="week"
+          views={["week"]}
+          showMultiDayTimes={false}
+          step={30} // 30-minute intervals
+          timeslots={2} // One timeslot per step
+          min={new Date(2023, 1, 1, 6, 0, 0)} // 6:00 AM
+          max={new Date(2023, 1, 1, 22, 0, 0)} // 10:00 PM
+          style={{ height: "100%" }}
+          components={{
+            toolbar: CustomToolbar,
+            event: CustomEvent,
+            timeGutterHeader: () => null, // Hide the time gutter header
+          }}
+          date={currentDate}
+          onSelectEvent={handleSelectEvent}
+          onNavigate={(date, view) => console.log("Navigated to:", date, view)}
+          eventPropGetter={eventStyleGetter}
+        />
+        </div>
+      </div>
 
       <div className="flex w-full items-center justify-center">
       {statuses.map((statusObj, index) => {

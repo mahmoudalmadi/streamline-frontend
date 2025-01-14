@@ -28,9 +28,9 @@ export default function getRelevantDates({startDate, endDate, daysPicked,timeObj
                 start: consolidateDate({now:new Date(currentDate),timeObj:timeObjStart}), // Date object
                 end: consolidateDate({now:new Date(currentDate),timeObj:timeObjEnd}),
                 status:'Available',
-                title : coach ? `Coach ${coach.fullName.split(" ")[0]} - Trial lesson` : 'Trial lesson',
+                title : coach ? `Coach ${coach.coachName.split(" ")[0]} - Trial lesson` : 'Trial lesson',
                 reminder:reminder,
-                coachName:coach?coach.fullName:null,
+                coachName:coach?coach.coachName:null,
                 coachEmail:coach?coach.email:null,
                 coachPhone:coach?coach.phoneNumber:null,    
                 numberOfSpots:numberOfSpots
@@ -50,7 +50,7 @@ export function consolidateDate({timeObj,now}) {
     }
 
     let hours = parseInt(hrs, 10); // Convert hours to number
-    const minutes = parseInt(mins, 10); // Convert minutes to number
+    let minutes = parseInt(mins, 10); // Convert minutes to number
 
     if (xm.toLowerCase() === "pm" && hours < 12) {
         hours += 12; // Convert PM to 24-hour format

@@ -42,7 +42,7 @@ export default function HeadCoachWrapper({coachInfoDivRef,isMissingCoachInfo,hea
               customLength={"w-[180px]"}/>
 
               <ProfileEntryEditor
-              prompt={"Head coach Email (optional)"}
+              prompt={"Head coach email (optional)"}
               response={coachEmail}
               setResponse={setCoachEmail}
               placeholder={"Email address"}

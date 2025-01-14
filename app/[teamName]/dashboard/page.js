@@ -23,6 +23,7 @@ import { getEntriesByMatching } from "@/app/hooks/firestoreHooks/retrieving/getE
 import { transformImagesListToJsons } from "@/app/hooks/firestoreHooks/retrieving/adjustingRetrievedData";
 import { parseAddress } from "@/app/hooks/addressExtraction";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import getXWeeksData from "@/app/hooks/calendarHooks/getWeeksData";
 
 // import ClubScheduler from "@/app/components/TeamDashboard/ScheduleComps/Schedule";
 
@@ -73,6 +74,7 @@ export default function TeamDashboard() {
     const [isLoading,setIsLoading]=useState(true)
     const [retrievedCoaches,setRetrievedCoaches] = useState(null)
 
+    const [xWeek,setXWeeks]=useState(3)
     useEffect(()=>{
         triggerTimeRef.current = Date.now(); // Set trigger time
 
@@ -127,6 +129,8 @@ export default function TeamDashboard() {
               parsedAddresses.push(parsedAddress)
               location.parsedAddress = parsedAddress
             }
+
+            // const weekEvents = await getXWeeksData({locationId:locationsInfo[0].id,x:xWeeks})
             console.log(locationsInfo[0])
             setCurrentLocation(locationsInfo[0])
             setLocationInfo(locationsInfo)
@@ -136,26 +140,8 @@ export default function TeamDashboard() {
 
     },[userInfo])
 
-    const [events,setEvents] = useState([
-        {
-          title: "Meeting with Team",
-          start: new Date(2025, 0, 7, 10, 0, 0), // February 2nd, 10:00 AM
-          end: new Date(2025, 0, 7, 11, 0, 0),   // February 2nd, 11:00 AM
-          status:'available',
-        },
-        {
-          title: "Lunch Breakss",
-          start: new Date(2025, 0, 9, 12, 30, 0), // February 2nd, 12:30 PM
-          end: new Date(2025, 0, 9, 13, 30, 0),   // February 2nd, 1:30 PM
-          status:'pending',
-        },
-        {
-            title: "Lunch Breaktt",
-            start: new Date(2025, 0, 9, 12, 30, 0), // February 2nd, 12:30 PM
-            end: new Date(2025, 0, 9, 13, 30, 0),   // February 2nd, 1:30 PM
-            status:'confirmed',
-          }
-      ]);
+    const [loadingEvents,setLoadingEvents] = useState(true)
+    const [events,setEvents] = useState([]);
       
     const [pickedEvent, setPickedEvent] = useState(null);
     const [isEventModalOpen, setIsEventModalOpen] = useState(false);
@@ -164,9 +150,11 @@ export default function TeamDashboard() {
     const closeEventModal = () => setIsEventModalOpen(false);
 
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
+    
+    const [addAvailibilityModalKey,setAddAvailibilityModalKey]=useState(0)
     const openAddModal = () => {setIsAddModalOpen(true)};
-    const closeAddModal = () => setIsAddModalOpen(false);
+    const closeAddModal = () => {setIsAddModalOpen(false),setAddAvailibilityModalKey(1+addAvailibilityModalKey)};
+
 
     return(
 
@@ -204,7 +192,7 @@ export default function TeamDashboard() {
          
             <div className="w-full mt-[20px]">
                 <div className="">
-                    <MyCalendar events={events} setPickedEvent={setPickedEvent} openEventModal={openEventModal}/>
+                    <MyCalendar loading events={events} setPickedEvent={setPickedEvent} openEventModal={openEventModal}/>
                 </div>
             </div>
 
@@ -214,11 +202,11 @@ export default function TeamDashboard() {
 
             {/* add Availability modal */}
             <ModalTemplate onClose={closeAddModal} isOpen={isAddModalOpen}>
-                <AddAvailibilityModal onClose={closeAddModal} teamId={userInfo.teamInfo.id} 
+                <AddAvailibilityModal key={addAvailibilityModalKey} addAvailibilityModalKey={addAvailibilityModalKey} setAddAvailibilityModalKey={setAddAvailibilityModalKey} onClose={closeAddModal} teamId={userInfo.teamInfo.id} 
                 retrievedCoaches={retrievedCoaches} locationId={currentLocation.id} events={events} setEvents={setEvents}/>
             </ModalTemplate>
 
-            <div className="flex mt-[36px] w-full justify-end">
+            <div className="flex w-full justify-end">
             <div className="flex space-x-[5px] rounded-full text-white font-bold items-center px-[14px] bg-green-500 py-[8px] mt-[10px] cursor-pointer "
             onClick={()=>{openAddModal()}}>
                 <div className="text-[15px]">

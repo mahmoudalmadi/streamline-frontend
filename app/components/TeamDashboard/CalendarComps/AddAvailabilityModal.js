@@ -18,21 +18,28 @@ import ProfileEntryEditor from "../../TeamProfileEditorComponents/ProfileEntryEd
 import MultiFieldPhoneEntry from "../../AuthModalComps/MultiFieldPhoneEntry";
 import { addListOfJsons, generateJsonList, generateJsonListGivenJsons } from "@/app/hooks/firestoreHooks/adding/addInfoAsList";
 import { addInfoAsJson } from "@/app/hooks/firestoreHooks/adding/addInfoAsJson";
-import getRelevantDates from "@/app/hooks/getRelevantDates";
+import getRelevantDates, { consolidateDate } from "@/app/hooks/getRelevantDates";
 
-export default function AddAvailibilityModal({onClose,teamId,locationId,events,setEvents,retrievedCoaches}){
+export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey,addAvailibilityModalKey,locationId,events,setEvents,retrievedCoaches}){
 
     const timePickerRef = useRef(null);
         
     // Create availibility stuffs
     const [startTime, setStartTime] = useState({ hrs: null, mins: null, xm: null });
+    const [pickerStartTime,setPickerStartTime]=useState(dayjs().set('hour',0).set('minute',0));
+    const [pickerEndTime,setPickerEndTime]=useState(dayjs().set('hour',0).set('minute',0));
     const [endTime, setEndTime] = useState({ hrs: null, mins: null, xm: null });
     const [isPickingTime,setIsPickingTime]=useState(false)
     const [isPickingStart,setIsPickingStart]=useState(null)
+    const [openView, setOpenView] = useState('hours');
+
 
     // Handler for time change
     const handleTimeChange = (newValue) => {
+
+        
         if(isPickingStart){
+        setPickerStartTime(newValue)
         if (newValue) {
         let hr = newValue.hour()==0 ? 12:newValue.hour()
         setStartTime({
@@ -42,6 +49,7 @@ export default function AddAvailibilityModal({onClose,teamId,locationId,events,s
         });
         }
         }else{
+        setPickerEndTime(newValue)
         let hr = newValue.hour()==0 ? 12:newValue.hour()
         setEndTime({
             hrs: hr, // Extract hours from the Day.js object
@@ -60,7 +68,6 @@ export default function AddAvailibilityModal({onClose,teamId,locationId,events,s
           />
         );
       };
-    const [time,setTime]=useState(null)
 
     const daysOWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -99,13 +106,6 @@ export default function AddAvailibilityModal({onClose,teamId,locationId,events,s
     const [coaches,setCoaches]=useState([...retrievedCoaches])
     const [selectedCoachId,setSelectedCoachId] = useState(null)
 
-
-    useEffect(()=>{
-        console.log(endTime)
-        console.log(selectedCoachId)
-        console.log(coaches[selectedCoachId])
-    },[selectedCoachId,endTime])
-
     const [reminderQuant,setReminderQuant]=useState(1)
     const [reminderMetric,setReminderMetric]=useState('days')
 
@@ -128,8 +128,38 @@ export default function AddAvailibilityModal({onClose,teamId,locationId,events,s
             setEvents([...events,...relevantDates])
 
             const allTimeBlocks = generateJsonListGivenJsons(relevantDates,{teamId:teamId,locationId:locationId,seriesId:seriesId,createdOn:new Date()})
-
+            setAddAvailibilityModalKey(addAvailibilityModalKey+1)
             // const timeBlockId = await addListOfJsons({jsonList:allTimeBlocks,collectionName:'TimeBlock'})
+        }else{
+
+            const daysOWeekFull = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            let currEvents = []
+            const coach = selectedCoachId ? coaches[selectedCoachId]:null
+            for (const date of selectedDates){
+                const startDateTime = consolidateDate({timeObj:startTime,now:date})
+                const newDate = new Date(date)
+                const endDateTime = consolidateDate({timeObj:endTime,now:newDate})
+                
+                currEvents = [...currEvents, 
+                    {start:startDateTime,
+                    end:endDateTime,
+                    day:daysOWeekFull[date.getDay()],
+                    status:'Available',
+                    title : coach ? `Coach ${coach.coachName.split(" ")[0]} - Trial lesson` : 'Trial lesson',
+                    reminder:{quantity:reminderQuant,metric:reminderMetric},
+                    coachName:coach?coach.coachName:null,
+                    coachEmail:coach?coach.email:null,
+                    coachPhone:coach?coach.phoneNumber:null,    
+                    numberOfSpots:numberOfSpots
+                    }]
+            }
+
+            setEvents([...events,...currEvents])
+
+            const allTimeBlocks = generateJsonListGivenJsons(currentEvents,{teamId:teamId,locationId:locationId,seriesId:seriesId,createdOn:new Date()})
+            setAddAvailibilityModalKey(addAvailibilityModalKey+1)
+
+            
         }
 
     }
@@ -155,10 +185,13 @@ export default function AddAvailibilityModal({onClose,teamId,locationId,events,s
                     </div>
                     <div>
                     <div className="flex items-center justify-center space-x-[4px]">
+                    
+                    {/* {((isPickingStart&&isPickingTime) || !isPickingTime)&& */}
+                    <>
                     <div className="text-[14px] mr-[4px]">
                         Start
                     </div>
-                    <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${isPickingTime&&isPickingStart?"border-streamlineBlue border-[2px]":""}`} onClick={()=>{setIsPickingStart(true);setIsPickingTime(true);}}>
+                    <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${isPickingTime&&isPickingStart?"border-streamlineBlue border-[2px]":""}`} onClick={()=>{setIsPickingStart(true);setIsPickingTime(true);setOpenView('hour')}}>
                         {(startTime.hrs || startTime.hrs==0) && (startTime.mins || startTime.mins==0) && startTime.xm ? 
                         <div>
                             {startTime.hrs>12?startTime.hrs-12:startTime.hrs}:{startTime.mins<10?'0'+startTime.mins:startTime.mins} {startTime.xm}
@@ -168,11 +201,16 @@ export default function AddAvailibilityModal({onClose,teamId,locationId,events,s
                         </div>
                         }
                     </div>
+                    </>
+                    {/* } */}
+
+                    {/* {((!isPickingStart&&isPickingTime) || !isPickingTime)&& */}
+                    <>
                     <div className="text-[14px] pl-[8px] pr-[3px]">
                         End
                     </div>
 
-                    <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${isPickingTime&&!isPickingStart?"border-streamlineBlue border-[2px]":""}`}onClick={()=>{setIsPickingStart(false);setIsPickingTime(true);}}>
+                    <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${isPickingTime&&!isPickingStart?"border-streamlineBlue border-[2px]":""}`}onClick={()=>{setIsPickingStart(false);setIsPickingTime(true);setOpenView('hour')}}>
                         {(endTime.hrs || endTime.hrs==0) && (endTime.mins || endTime.mins==0) && endTime.xm ? 
                         <div>
                             {endTime.hrs>12?endTime.hrs-12:endTime.hrs}:{endTime.mins<10?'0'+endTime.mins:endTime.mins} {endTime.xm}
@@ -182,13 +220,24 @@ export default function AddAvailibilityModal({onClose,teamId,locationId,events,s
                         </div>
                         }
                     </div>
+                    </>
+                    {/* } */}
+
                     </div>
                     {isPickingTime &&
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <StaticTimePicker orientation="portrait"
+                      defaultValue={isPickingStart? (pickerStartTime?pickerStartTime:null):(pickerEndTime?pickerEndTime:null)}
+                      openTo={openView}
+                      onViewChange={(view)=>{
+                        setOpenView(view)}}
                       onChange={handleTimeChange} 
-                      onAccept={()=>{setIsPickingTime(false)}}
+                      
+                      onAccept={()=>{
+                        setOpenView('minutes');
+                        setIsPickingTime(false)}}
                       slots={{ actionBar: CustomActionBar }} // Use the custom action bar
+                      value={isPickingStart?pickerStartTime:pickerEndTime}
                       ref={timePickerRef}
                       />
                     </LocalizationProvider>}
@@ -246,7 +295,11 @@ export default function AddAvailibilityModal({onClose,teamId,locationId,events,s
                             </div>
 
                             <div>
-                                <div className=" ">
+                                <div style={{
+                                    userSelect: "none", // Prevent text selection
+                                    WebkitUserSelect: "none", // Safari
+                                    MozUserSelect: "none", // Firefox
+                                    msUserSelect: "none",}}>
                                 {coaches.map((item,index)=>(
                                     <div key={index} className={`py-[3px] cursor-pointer hover:opacity-100 ${selectedCoachId==index ? "": "opacity-50"}`} onClick={()=>{setSelectedCoachId(index)}}>
                                         <PersonEntry personInfo={{fullName:item.coachName,email:item.coachEmail,phoneNumber:item.coachPhone}}/>
@@ -281,7 +334,9 @@ export default function AddAvailibilityModal({onClose,teamId,locationId,events,s
 
                         <div className="flex w-full justify-center mt-[12px] space-x-[16px]  items-center">
 
-                        <div className="text-streamlineBlue py-[6px] font-bold cursor-pointer" onClick={()=>{setAddAnotherCoach(false)}}>
+                        <div className="text-streamlineBlue py-[6px] font-bold cursor-pointer" onClick={()=>{setAddAnotherCoach(false);
+                        setAddAvailibilityModalKey(addAvailibilityModalKey+1);setNewCoachEmail("");setNewCoachName("");setNewCoachNumber({phoneNumber:"",isValid:false})
+                        }}>
                             Cancel
                         </div>
 
@@ -290,9 +345,10 @@ export default function AddAvailibilityModal({onClose,teamId,locationId,events,s
                             {
                             setAddAnotherCoach(false); 
                             setCoaches([...coaches,
-                                {coachName:newCoachName,coachName:newCoachEmail,coachPhone:newCoachNumber.phoneNumber}
+                                {coachName:newCoachName,coachEmail:newCoachEmail,coachPhone:newCoachNumber.phoneNumber}
                             ])
                             await addInfoAsJson({jsonInfo:{coachName:newCoachName,coachPhone:newCoachNumber.isValid?newCoachNumber.phoneNumber:null,coachEmail:newCoachEmail.length>0?newCoachEmail:null,locationId:locationId,teamId:teamId},collectionName:'Coach'})
+                            setNewCoachEmail("");setNewCoachName("");setNewCoachNumber({phoneNumber:"",isValid:false})
                             }else{
 
                                 }
@@ -307,7 +363,7 @@ export default function AddAvailibilityModal({onClose,teamId,locationId,events,s
 
 
                     {/* REMINDER BEFORE LESSON */}
-                    <div className="flex flex-col w-full ">
+                    <div className="flex flex-col w-full mt-[8px]">
                         <div className="flex flex-col">
                         <div className="flex w-full items-center mt-[6px]">
                         <NotifIcon/>
@@ -426,7 +482,7 @@ export default function AddAvailibilityModal({onClose,teamId,locationId,events,s
                                 <div className="text-[14px]">
                                     Starts on
                                 </div>
-                                <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${selectingStartEndDates&&selectingStartDate?"border-streamlineBlue border-[2px]":""}`} onClick={()=>{setSelectStartDate(true);setSelectingStartEndDates(true);setTime(null)}}>
+                                <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${selectingStartEndDates&&selectingStartDate?"border-streamlineBlue border-[2px]":""}`} onClick={()=>{setSelectStartDate(true);setSelectingStartEndDates(true);}}>
                                     {startDate ? 
                                     <div className="text-[14px]">
                                         {startDate.toDateString().slice(0,startDate.toDateString().length-5)}
@@ -439,7 +495,7 @@ export default function AddAvailibilityModal({onClose,teamId,locationId,events,s
                                 <div className="text-[14px] pl-[8px]">
                                     Ends on
                                 </div>
-                                <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${selectingStartEndDates&&!selectingStartDate?"border-streamlineBlue border-[2px]":""}`}onClick={()=>{setSelectStartDate(false);setSelectingStartEndDates(true);setTime(null)}}>
+                                <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${selectingStartEndDates&&!selectingStartDate?"border-streamlineBlue border-[2px]":""}`}onClick={()=>{setSelectStartDate(false);setSelectingStartEndDates(true);}}>
                                     {endDate ? 
                                     <div className="text-[14px]">
                                         {endDate.toDateString().slice(0,endDate.toDateString().length-5)}
@@ -493,9 +549,8 @@ export default function AddAvailibilityModal({onClose,teamId,locationId,events,s
                         Cancel
                     </div>
 
-                    <div className={`mt-[12px] bg-streamlineBlue text-white px-[16px] py-[8px] rounded-full font-bold ${startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected || startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&(daysPicked.length>0) ? "cursor-pointer" :"opacity-50" }`} onClick={()=>{
-                        if(startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected || startTime.xm&&startTime.hrs&&startTime.hrs&&endTime.hrs&&endTime.xm&&(daysPicked.length>0)){
-                            console.log("HIIII")
+                    <div className={`mt-[12px] bg-streamlineBlue text-white px-[16px] py-[8px] rounded-full font-bold ${startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected || startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&(selectedDates.length>0) ? "cursor-pointer" :"opacity-50" }`} onClick={()=>{
+                        if(startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected || startTime.xm&&startTime.hrs&&startTime.hrs&&endTime.hrs&&endTime.xm&&(selectedDates.length>0)){
                             handleSubmit()
                         }
                     }}>
