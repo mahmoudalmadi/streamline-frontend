@@ -20,10 +20,9 @@ import { addListOfJsons, generateJsonList, generateJsonListGivenJsons } from "@/
 import { addInfoAsJson } from "@/app/hooks/firestoreHooks/adding/addInfoAsJson";
 import getRelevantDates, { consolidateDate } from "@/app/hooks/getRelevantDates";
 
-export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey,addAvailibilityModalKey,locationId,events,setEvents,retrievedCoaches}){
+export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey,teamId, addAvailibilityModalKey,locationId,events,setEvents,retrievedCoaches}){
 
     const timePickerRef = useRef(null);
-        
     // Create availibility stuffs
     const [startTime, setStartTime] = useState({ hrs: null, mins: null, xm: null });
     const [pickerStartTime,setPickerStartTime]=useState(dayjs().set('hour',0).set('minute',0));
@@ -105,7 +104,6 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
 
     const [coaches,setCoaches]=useState([...retrievedCoaches])
     const [selectedCoachId,setSelectedCoachId] = useState(null)
-
     const [reminderQuant,setReminderQuant]=useState(1)
     const [reminderMetric,setReminderMetric]=useState('days')
 
@@ -115,7 +113,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
             .map((day) => day.day);       // Return the 'day' value
     }
 
-
+    console.log(events[0].start)
     const handleSubmit = async() => {
 
         if(isWeeklyOccurrence){
@@ -129,7 +127,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
 
             const allTimeBlocks = generateJsonListGivenJsons(relevantDates,{teamId:teamId,locationId:locationId,seriesId:seriesId,createdOn:new Date()})
             setAddAvailibilityModalKey(addAvailibilityModalKey+1)
-            // const timeBlockId = await addListOfJsons({jsonList:allTimeBlocks,collectionName:'TimeBlock'})
+            const timeBlockId = await addListOfJsons({jsonList:allTimeBlocks,collectionName:'TimeBlock'})
         }else{
 
             const daysOWeekFull = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -148,17 +146,20 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                     title : coach ? `Coach ${coach.coachName.split(" ")[0]} - Trial lesson` : 'Trial lesson',
                     reminder:{quantity:reminderQuant,metric:reminderMetric},
                     coachName:coach?coach.coachName:null,
-                    coachEmail:coach?coach.email:null,
-                    coachPhone:coach?coach.phoneNumber:null,    
+                    coachEmail:coach?coach.coachEmail:null,
+                    coachPhone:coach?coach.coachPhone:null,    
                     numberOfSpots:numberOfSpots
                     }]
             }
 
             setEvents([...events,...currEvents])
 
-            const allTimeBlocks = generateJsonListGivenJsons(currentEvents,{teamId:teamId,locationId:locationId,seriesId:seriesId,createdOn:new Date()})
+            const allTimeBlocks = generateJsonListGivenJsons(currEvents,{teamId:teamId,locationId:locationId,createdOn:new Date()})
             setAddAvailibilityModalKey(addAvailibilityModalKey+1)
 
+
+            const timeBlockId = await addListOfJsons({jsonList:allTimeBlocks,collectionName:'TimeBlock'})
+            console.log(timeBlockId)
             
         }
 

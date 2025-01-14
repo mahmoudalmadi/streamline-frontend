@@ -31,8 +31,8 @@ export default function getRelevantDates({startDate, endDate, daysPicked,timeObj
                 title : coach ? `Coach ${coach.coachName.split(" ")[0]} - Trial lesson` : 'Trial lesson',
                 reminder:reminder,
                 coachName:coach?coach.coachName:null,
-                coachEmail:coach?coach.email:null,
-                coachPhone:coach?coach.phoneNumber:null,    
+                coachEmail:coach?coach.coachEmail:null,
+                coachPhone:coach?coach.coachPhone:null,    
                 numberOfSpots:numberOfSpots
             });
         }

@@ -55,7 +55,6 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal }) => {
   const handleSelectEvent = (event) => {
     setPickedEvent(event); // Set the picked event
     openEventModal()
-    console.log("Selected Event:", event);
   };
 
   const CustomToolbar = (props) => {
@@ -78,7 +77,7 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal }) => {
 
   const CustomEvent = ({ event }) => 
    { 
-    console.log("custom events",event)
+    
     return(
       <div  >
       <div style={{ fontWeight: "bold",fontSize:'8px' }}>{event.title}</div>
@@ -95,9 +94,9 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal }) => {
       <div className="items-center justify-center" 
       style={{ height: "800px", width: "100%" }}>
 
-        <div className="absolute w-[100%] h-[100%] z-10">
+        {/* <div className="absolute w-[100%] h-[100%] z-10">
           <LoadingSubScreen loadingMessage={""}/>
-        </div>
+        </div> */}
 
         <div className="w-full h-full opacity-50 unclickable-div">
         <Calendar

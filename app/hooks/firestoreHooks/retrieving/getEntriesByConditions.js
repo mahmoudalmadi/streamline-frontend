@@ -27,10 +27,21 @@ export const getEntriesByConditions = async ({
     const querySnapshot = await getDocs(q);
 
     // Map results into an array of data objects
-    const results = querySnapshot.docs.map((doc) => ({
-      id: doc.id, // Include the document ID
-      ...doc.data(), // Include the document data
-    }));
+    const results = querySnapshot.docs.map((doc) => {
+        const data = doc.data(); // Get document data
+      
+        // Check and convert specific fields to Date if they are Timestamps
+        ["start", "end", "createdOn"].forEach((field) => {
+          if (data[field] && typeof data[field].toDate === "function") {
+            data[field] = data[field].toDate(); // Convert to Date object
+          }
+        });
+      
+        return {
+          id: doc.id, // Include the document ID
+          ...data, // Include the updated document data
+        };
+      });
 
     return results; // Return the array of matching entries
   } catch (error) {

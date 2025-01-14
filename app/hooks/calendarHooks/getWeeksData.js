@@ -17,7 +17,10 @@ const getXWeeksData = async ({locationId,x}) => {
       today.getDate() - today.getDay() - 7 * x // Move to Sunday and subtract x weeks
     );
     sundayOfWeekMinusX.setHours(0, 0, 0, 0); // Set to start of the day
-
+    
+    console.log("SAT", saturdayOfWeekX)
+    console.log("SUNDA",sundayOfWeekMinusX)
+    console.log("loc id",locationId)
     // Define conditions
     const conditions = [
       { field: "locationId", operator: "==", value: locationId },

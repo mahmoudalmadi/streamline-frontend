@@ -74,7 +74,7 @@ export default function TeamDashboard() {
     const [isLoading,setIsLoading]=useState(true)
     const [retrievedCoaches,setRetrievedCoaches] = useState(null)
 
-    const [xWeek,setXWeeks]=useState(3)
+    const [xWeeks,setXWeeks]=useState(3)
     useEffect(()=>{
         triggerTimeRef.current = Date.now(); // Set trigger time
 
@@ -130,7 +130,9 @@ export default function TeamDashboard() {
               location.parsedAddress = parsedAddress
             }
 
-            // const weekEvents = await getXWeeksData({locationId:locationsInfo[0].id,x:xWeeks})
+            const weekEvents = await getXWeeksData({locationId:locationsInfo[0].id,x:xWeeks})
+            console.log("WWEKE EVENTS", weekEvents)
+            setEvents(weekEvents)
             console.log(locationsInfo[0])
             setCurrentLocation(locationsInfo[0])
             setLocationInfo(locationsInfo)
