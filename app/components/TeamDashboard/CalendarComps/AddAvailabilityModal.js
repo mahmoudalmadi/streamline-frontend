@@ -7,8 +7,9 @@ import NotifIcon  from "../../../../public/NotifIcon.svg"
 //Create availability modal imoprts
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { StaticTimePicker } from '@mui/x-date-pickers/StaticTimePicker';
-import { PickersActionBar } from '@mui/x-date-pickers/PickersActionBar';
+// import { StaticTimePicker } from '@mui/x-date-pickers/StaticTimePicker';
+// import { PickersActionBar } from '@mui/x-date-pickers/PickersActionBar';
+import { StaticTimePicker,PickersActionBar } from "@mui/x-date-pickers";
 import dayjs from 'dayjs';
 import WeekdayPicker from "@/app/components/TeamDashboard/CalendarComps/DayPicker";
 import { DayPicker } from "react-day-picker";
@@ -19,6 +20,7 @@ import MultiFieldPhoneEntry from "../../AuthModalComps/MultiFieldPhoneEntry";
 import { addListOfJsons, generateJsonList, generateJsonListGivenJsons } from "@/app/hooks/firestoreHooks/adding/addInfoAsList";
 import { addInfoAsJson } from "@/app/hooks/firestoreHooks/adding/addInfoAsJson";
 import getRelevantDates, { consolidateDate } from "@/app/hooks/getRelevantDates";
+
 
 export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey,teamId, addAvailibilityModalKey,locationId,events,setEvents,retrievedCoaches}){
 

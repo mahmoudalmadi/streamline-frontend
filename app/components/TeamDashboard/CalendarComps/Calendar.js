@@ -98,7 +98,7 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal }) => {
           <LoadingSubScreen loadingMessage={""}/>
         </div> */}
 
-        <div className="w-full h-full opacity-50 unclickable-div">
+        <div className="w-full h-full ">
         <Calendar
           localizer={localizer}
           events={events}

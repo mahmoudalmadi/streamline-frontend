@@ -11,6 +11,7 @@ export default function ViewCoachInfo({coachInfo}){
     const [coachEntryId,setCoachEntryId]=useState(coachInfo.id)
     const [defaultCoachPhoto,setDefaultCoachPhoto]=useState(coachInfo.coachPhoto) //PENDING CHECJIUBG PROGRAMS INFO
     const [defaultCoachName,setDefaultCoachName]=useState(coachInfo.coachName)
+    const [defaultCoachEmail,setDefaultCoachEmail]=useState(coachInfo.coachEmail)
     const [defaultCoachDescription,setDefaultCoachDescription]=useState(coachInfo.coachDescription)
 
 
