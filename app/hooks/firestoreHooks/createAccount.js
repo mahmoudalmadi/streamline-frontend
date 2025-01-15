@@ -4,9 +4,7 @@ import { db } from "../../components/firebaseClient"; // Adjust the import path 
 const addAccountDetails = async ({accountData}) => {
     try {
       // Validate fields in accountData
-      console.log("RIGHT BEFORE FIRST DB",accountData)
       const accountCollection = collection(db, "Account"); // Change 'accounts' to your desired collection name
-      console.log("right after first db",accountCollection)
       const newDocRef = doc(accountCollection); // Auto-generate a document ID
       
       
@@ -19,9 +17,7 @@ const addAccountDetails = async ({accountData}) => {
         phoneNumber: accountData.phoneNumber,
       });
   
-      console.log("Account added successfully with ID:", newDocRef.id);
     } catch (error) {
-      console.log("ERROR",error)
       console.error("Error adding account: ", error);
     }
   };
