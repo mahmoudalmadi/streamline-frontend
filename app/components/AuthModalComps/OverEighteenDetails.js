@@ -29,13 +29,11 @@ export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
         let userId; 
 
         if (guardianInfo.signUpMethod==="email"){
-            console.log(JSON.stringify(guardianInfo))
-        try
-        {userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password})}
-        catch(error){
-            console.log("fuckin error",error)
-        }
+            
         
+            userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password})
+        
+            console.log("JUST COMPLETED SIGNUP",userId)
     }
     const accountDetails={
         accountType:"individual",
@@ -45,10 +43,13 @@ export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
         fullName: guardianInfo.fullName,
         phoneNumber: guardianInfo.phoneNumber,
     }
+    console.log("ABOUT TO ADD ACC details",accountDetails)
     addAccountDetails({accountData:accountDetails})
+    console.log("just aDDED ACC details")
     if (wannaAddSwimmers){
     addAccountDependants({dependantsList: kids, firebaseId:userId.uid})
     }
+    console.log("ABOUT TO CLOSE!!")
     onClose();
     }catch(error){
             console.log(error)
