@@ -33,9 +33,7 @@ export default function CompleteSignUpDetails(
             </div>
             </div>
 
-            <div
-            className={'absolute w-full h-[1px] bg-gray-300 top-[55px]'}
-            />
+            
             <div className="max-h-[800px] overflow-y-auto">
             <div className="px-[13px]">
             <div className="mt-[15px] leading-[18px]">

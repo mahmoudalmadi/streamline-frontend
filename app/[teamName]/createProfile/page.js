@@ -379,7 +379,7 @@ export default function TeamProfileEditor() {
             phoneNumber:contactInfo.phoneNumber,
             uploadTimestamp:new Date()
           },collectionName:"Account"})
-  
+          console.log("just registered")
           // FIRESTORE TEAM INFO - DONE
           const logoUrlList = await uploadImagesToS3({s3Uri:"s3://streamlineplatform/logoImgs/",files:logoImg})
           teamId = await addInfoAsJson({jsonInfo:{
@@ -393,6 +393,7 @@ export default function TeamProfileEditor() {
             teamName:teamInfo.teamName,
             uploadTimestamp:new Date(),
           },collectionName:"Team"})
+          console.log("just uploaded team info")
 
         }else{
           teamId=userInfo.teamInfo.id
@@ -414,6 +415,8 @@ export default function TeamProfileEditor() {
           uploadTimestamp:new Date()
         },collectionName:"Location"})
 
+        console.log("just uploaded location info")
+
         // FIRESTORE + AWS LOCATION IMGS
         const locationImageList = await uploadImagesToS3({s3Uri:"s3://streamlineplatform/locationImages/",files:locationImgs})
         const imagesFirestoreJsons = generateJsonList(locationImageList,"imageUrl",
@@ -422,6 +425,8 @@ export default function TeamProfileEditor() {
         {teamId:teamId},
         {uploadTimestamp:new Date()})
         const imageFirestoreIds = await addListOfJsons({jsonList:imagesFirestoreJsons,collectionName:"Images"})
+
+        console.log("just uploaded location images")
 
         // FIRESTORE OPERATION DAYS/TIMES
         let dayTimes = []

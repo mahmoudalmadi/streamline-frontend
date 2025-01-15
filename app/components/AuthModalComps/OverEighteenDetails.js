@@ -30,8 +30,12 @@ export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
 
         if (guardianInfo.signUpMethod==="email"){
             console.log(JSON.stringify(guardianInfo))
-        userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password})
-
+        try
+        {userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password})}
+        catch(error){
+            console.log("fuckin error",error)
+        }
+        
     }
     const accountDetails={
         accountType:"individual",
