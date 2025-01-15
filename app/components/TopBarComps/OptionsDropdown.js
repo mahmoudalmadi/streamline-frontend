@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
 
     const divRef = useRef(null);
-    const {user, userInfo} = useAuth();
+    const {user, userInfo,setLoadingNewPage} = useAuth();
     const router = useRouter();
 
     const [teamName, setTeamName] =useState("");
@@ -59,9 +59,11 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                         py-[7px]' 
                         onClick={()=>{
                             if(userInfo.userData.accountType==="team"){
+                            setLoadingNewPage(true)
                             router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/profile`)
                             }
                             else{
+                            setLoadingNewPage(true)
                             router.push(`/user/${userInfo.userData.firebaseId}`)
                             }
                             onClose()
@@ -74,8 +76,10 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                         onClick={()=>{
                             if(userInfo.userData.accountType==="team")
                             {
+                                setLoadingNewPage(true)
                                 router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
                             }else{
+                                setLoadingNewPage(true)
                                 router.push(`/user/${userInfo.userData.firebaseId}/dashboard`)
                             }
                             }}>
@@ -118,12 +122,14 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                         </div>
                         <div className='px-[10px] text-[14px] text-gray-700 w-full hover:bg-gray-100 
                         py-[10px]' onClick={()=>{
+                            setLoadingNewPage(true)
                             router.push(`/teams?${teamsLoginQuery}`)
                         }}>
                             Log in
                         </div>
                         <div className='py-[10px] px-[10px] text-[14px] text-gray-700 w-full hover:bg-gray-100'
                          onClick={()=>{
+                            setLoadingNewPage(true)
                             router.push(`/teams?${teamsSignupQuery}`)
                         }}>
                             Sign up

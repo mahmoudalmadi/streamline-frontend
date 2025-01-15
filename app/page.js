@@ -1,19 +1,38 @@
-import Image from "next/image";
+"use client";
+
 import DynamicScreen from "./components/DynamicScreen";
 import TopBar from "./components/TopBarComps/TopBar";
 import SearchBar from "./components/searchBarComps/SearchBar";
 import SwimTeamsMenu from "./components/SwimTeamsMenu";
+import { useAuth } from "./contexts/AuthContext";
+import LoadingSubScreen from "./components/loadingSubscreen";
+import { useEffect } from "react";
 
 export default function Home() {
   
+  const {isFetchingUserInfo,loadingNewPage,loadingNewPageMessage,setLoadingNewPage}  = useAuth();
+
+  useEffect(()=>{
+    if(!isFetchingUserInfo){
+      setLoadingNewPage(false)
+    }
+  },[isFetchingUserInfo])
+
+  console.log(isFetchingUserInfo)
+
   return (
     <div className="flex  justify-center items-center">
       <DynamicScreen className=" h-screen">
 
         <TopBar/>
 
-
-
+        
+        {isFetchingUserInfo || loadingNewPage ?
+        <div className="h-screen">
+          <LoadingSubScreen loadingMessage={loadingNewPage?loadingNewPageMessage:null}/>
+        </div>
+        :
+          <>
         <div
         className="relative flex flex-col items-center justify-center w-full"
         >
@@ -47,6 +66,7 @@ export default function Home() {
         </div>
 
         <SwimTeamsMenu/>
+        </>}
         
 
 

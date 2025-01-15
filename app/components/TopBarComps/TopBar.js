@@ -11,7 +11,7 @@ import { SignUpProvider } from '../../contexts/SignUpProvider';
 
 const TopBar = () => {
 
-    const {userInfo} = useAuth();
+    const {isFetchingUserInfo, setLoadingNewPage} = useAuth();
 
     const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -23,6 +23,7 @@ const TopBar = () => {
     const switchModalType = () => setIsLogin(!isLogin)
 
     const redirectHome = () => {
+        setLoadingNewPage(true)
         if(!useOtherLogo){
         router.push('/')
         }
@@ -51,7 +52,7 @@ const TopBar = () => {
             }
             </button>
 
-            <AccountSection openLogInModal={openModal} setIsLogin={setIsLogin}/>
+            {!isFetchingUserInfo&&<AccountSection openLogInModal={openModal} setIsLogin={setIsLogin}/>}
 
             <AuthModal isOpen={isModalOpen} onClose={closeModal} isLogin={isLogin}
             switchModalType={switchModalType} isModal={true}/>

@@ -7,11 +7,14 @@ import { useRouter } from "next/navigation";
 import { emailLogin } from "@/app/hooks/authHooks/firebaseAuth";
 import MultiFieldEntryEditor from "../AuthModalComps/MultiFieldEntryEditor";
 import MultiFieldPhoneEntry from "../AuthModalComps/MultiFieldPhoneEntry";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function TeamSignUp({switchModalType}){
 
     const router=useRouter();
     const isModal=false;
+
+    const {setLoadingNewPage} = useAuth();
 
     const {handleTeamRegistrantInfo, teamRegistrantInfo,errorMessage,setErrorMessage,setTeamRegistrantInfo} = useTeamSignUpContext();
     const [showPassword,setShowPassword] = useState(false);
@@ -23,6 +26,7 @@ export default function TeamSignUp({switchModalType}){
         const teamName = teamRegistrantInfo.teamName;
         const isSigningUp = true
     
+        setLoadingNewPage(true)
         // Construct the query string
         const query = new URLSearchParams({
           fullName,

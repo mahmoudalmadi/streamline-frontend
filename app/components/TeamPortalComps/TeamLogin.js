@@ -109,7 +109,7 @@ export default function TeamLogin({switchModalType}){
             }
             await emailLogin({email:teamRegistrantInfo.emailAddress,password:teamRegistrantInfo.password});
             
-            router.push(`/${teamName}/profile`)
+            router.push(`/${teamName}/dashboard`)
             if(isModal){onClose()}
             }
             catch(error){

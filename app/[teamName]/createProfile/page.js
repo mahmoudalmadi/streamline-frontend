@@ -390,6 +390,7 @@ export default function TeamProfileEditor() {
             phoneNumber: contactInfo.phoneNumber,
             sport:"swimming",
             teamDescription:teamInfo.teamDescription,
+            flattenedTeamName:teamInfo.teamName.toLowerCase().replace(/\s+/g, ''),
             teamName:teamInfo.teamName,
             uploadTimestamp:new Date(),
           },collectionName:"Team"})

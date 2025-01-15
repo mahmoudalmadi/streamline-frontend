@@ -6,6 +6,8 @@ import { TeamSignUpProvider } from "../contexts/TeamSignUpProvider";
 import LoadingScreen from "../components/loadingScreen";
 
 export default function TeamsLandingPage() {
+
+
   return (
     <TeamSignUpProvider>
     <Suspense fallback={<LoadingScreen loadingMessage={"Loading Team Portal"}/>}>

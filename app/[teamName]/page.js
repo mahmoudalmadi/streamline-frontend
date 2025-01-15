@@ -12,9 +12,16 @@ import AmenitiesSection from "../components/TeamPageComps/AmenitiesSection";
 import HeadCoachSection from "../components/TeamPageComps/HeadCoachSection";
 import { useRouter, useSearchParams,usePathname } from "next/navigation";
 import { useAuth } from "../contexts/AuthContext";
+import LoadingSubScreen from "../components/loadingSubscreen";
 
 
 export default function TeamPage()  {
+
+    const {loadingNewPage,loadingNewPageMessage,setLoadingNewPage}=useAuth()
+
+    useEffect(()=>{
+      setLoadingNewPage(false)
+    },[])
 
     const swimTeamName = "Neptunes Swimming Academy"
     const swimClubDescription="Neptunes Swimming Academy is a vibrant and inclusive swim club dedicated to nurturing swimmers of all ages and skill levels. Located in a picturesque setting, the academy offers comprehensive training programs that cater to children, teens, and adults alike. With a focus on developing essential swimming techniques, the academy emphasizes safety, fitness, and fun in the water. Experienced instructors provide personalized coaching, ensuring that each swimmer maximizes their potential while fostering a love for the sport. Whether you are a beginner looking to learn the basics or an advanced swimmer aiming to refine your skills, Neptunes Swimming Academy is the perfect place to dive in and make a splash."
@@ -154,6 +161,12 @@ export default function TeamPage()  {
 
         <TopBar/>
 
+        {loadingNewPage ? 
+          <div className="h-screen">
+            <LoadingSubScreen loadingMessage={loadingNewPageMessage.length>0 ? loadingNewPageMessage:null}/>
+          </div>
+          :
+          <>
         <div
         className="relative flex flex-col items-center justify-center w-full"
         >
@@ -406,6 +419,7 @@ export default function TeamPage()  {
             </button>
         )}
 
+        </>}
       </DynamicScreen>
     </div>
   );

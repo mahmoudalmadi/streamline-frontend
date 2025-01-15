@@ -1,15 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import DynamicScreen from "../DynamicScreen";
 import StreamlineLogo from "../../../public/streamlineLogo.svg";
 import LoginSignUp from "./LoginSignUp";
+import { useAuth } from "@/app/contexts/AuthContext";
+import LoadingSubScreen from "../loadingSubscreen";
 
 export default function ClientTeamsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const stateValue = searchParams.get("state");
+
+  const {isLoadingNewPage,setLoadingNewPage} = useAuth()
+
+  useEffect(()=>{
+    setLoadingNewPage(false)
+  },[isLoadingNewPage])
+
 
   const [isLogin, setIsLogin]  = useState(stateValue=="login");
   const [isSignUp, setIsSignUp] = useState(stateValue=="signup");
@@ -40,6 +49,11 @@ export default function ClientTeamsPage() {
           </button>
         </div>
 
+        {isLoadingNewPage ? 
+        <div className="h-screen">
+          <LoadingSubScreen />
+        </div>
+        :
         <div className="flex flex-col w-screen h-screen items-center justify-center">
           <div className="font-bold text-white text-[24px] px-[90px] text-center">
             Welcome to the Experience Streamline Teams Portal
@@ -62,7 +76,7 @@ export default function ClientTeamsPage() {
               </div>
             </div>
           )}
-        </div>
+        </div>}
       </DynamicScreen>
       </div>
   );

@@ -16,8 +16,10 @@ export const useAuth = () => {
 // AuthProvider component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isFetchingUserInfo,setIsFetchingUserInfo]=useState(true)
   const [userInfo, setUserInfo] = useState({"userData":null, "otherSwimmers":null});
- 
+  const [loadingNewPage,setLoadingNewPage]=useState(false)
+  const [loadingNewPageMessage,setLoadingNewPageMessage]=useState("")
   useEffect(() => {
     const unsubscribe = monitorAuthState(async(currentUser) => {
       setUser(currentUser || null);
@@ -47,7 +49,10 @@ export const AuthProvider = ({ children }) => {
             teamInfo: teamInfo[0],
             }))
         }
-    }
+        setIsFetchingUserInfo(false)
+      }else{
+        setIsFetchingUserInfo(false)
+      }
       
     });
 
@@ -60,7 +65,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, userInfo, setUserInfo }}>
+    <AuthContext.Provider value={{ user, setUser, userInfo, setUserInfo ,isFetchingUserInfo,loadingNewPage,setLoadingNewPage,loadingNewPageMessage,setLoadingNewPageMessage}}>
       {children}
     </AuthContext.Provider>
   );

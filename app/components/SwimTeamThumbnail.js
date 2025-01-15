@@ -5,10 +5,11 @@ import { useState } from "react";
 import MoveLeft from "../../public/MoveLeft.svg"
 import MoveRight from "../../public/MoveRight.svg"
 import { useRouter } from "next/navigation";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function SwimTeamThumbnail(){
 
-
+    const {setLoadingNewPageMessage,setLoadingNewPage}=useAuth()
     const [currentIndex, setCurrentIndex] = useState(0);
     const router = useRouter();
   
@@ -38,6 +39,7 @@ export default function SwimTeamThumbnail(){
     };
   
     const handleRedirect = () => {
+        setLoadingNewPage(true)
         router.push(`/${teamPathName}`)
     }
 
