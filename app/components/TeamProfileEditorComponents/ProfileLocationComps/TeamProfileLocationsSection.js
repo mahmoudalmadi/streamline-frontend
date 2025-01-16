@@ -13,6 +13,7 @@ import ViewProgramsInfo from "./ViewProgramsInfo";
 import formatHoursOfOperations from "@/app/hooks/retrieveHoursOfOps";
 import ViewCoachInfo from "./ViewCoachInfo";
 import { useRouter } from "next/navigation";
+import { changeField } from "@/app/hooks/changeField";
 
 export default function TeamProfileLocationsSection({ locationsInfo,teamId,teamName }) {
 
@@ -33,6 +34,8 @@ export default function TeamProfileLocationsSection({ locationsInfo,teamId,teamN
   const [coachName,setCoachName]=useState("")
   const [coachDescription,setCoachDescription]=useState("")
   const [coachPhoto,setCoachPhoto]=useState("")
+  const [coachPhone,setCoachPhone]=useState({"phoneNumber":"",isValid:null})
+  const [coachEmail,setCoachEmail]=useState("")
   const [coachId,setCoachId]=useState("")
 
   const [selectedLocation,setSelectedLocation]=useState("")
@@ -63,12 +66,14 @@ export default function TeamProfileLocationsSection({ locationsInfo,teamId,teamN
       const stringifiedHours = formatHoursOfOperations(processedDaysHours)
       setStringifiedDaysOfWeek(stringifiedHours)
 
-      const firestoreLocationCoach = await getEntriesByMatching({collectionName:"Coach", fields:{locationId:locationId}})
+      const firestoreLocationCoach = await getEntriesByMatching({collectionName:"Coach", fields:{locationId:locationId,coachType:"Head Coach"}})
       setCoachName(firestoreLocationCoach[0].coachName)
       setCoachDescription(firestoreLocationCoach[0].coachBio)
       const formattedCoachImages = transformImagesListToJsons({list:[{imageUrl:firestoreLocationCoach[0].photoUrl}]})
       setCoachPhoto(formattedCoachImages)
       setCoachId(firestoreLocationCoach[0].id)
+      setCoachEmail(firestoreLocationCoach[0].coachEmail)
+      changeField({setDict:setCoachPhone,field:"phoneNumber",value:firestoreLocationCoach[0].coachPhone})
 
 
       const chosenLocation = findJsonById(locationsInfo,locationId)
@@ -141,7 +146,9 @@ export default function TeamProfileLocationsSection({ locationsInfo,teamId,teamN
             coachPhoto:coachPhoto,
             coachName:coachName,
             coachDescription:coachDescription,
-            coachId:coachId
+            coachId:coachId,
+            coachPhone:coachPhone.phoneNumber,
+            coachEmail:coachEmail
           }
         }/>
         </>}

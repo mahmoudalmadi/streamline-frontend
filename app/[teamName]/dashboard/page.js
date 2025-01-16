@@ -79,6 +79,23 @@ export default function TeamDashboard() {
 
     const [currWeekEvents,setCurrWeekEvents] = useState(null)
 
+    function getMinMaxHours(data) {
+        if (!data || data.length === 0) {
+          throw new Error("The input list is empty or invalid.");
+        }
+      
+        const hours = data.map(item => item.hour);
+      
+        const minHour = Math.min(...hours);
+        const maxHour = Math.max(...hours);
+      
+        return {
+          minHour,
+          maxHour
+        };
+      }
+      
+
     function filterItemsByWeekAndStatus(items) {
         const now = new Date();
         
@@ -170,14 +187,24 @@ export default function TeamDashboard() {
                   photoType: "location",
                 },
               });
+              const firestoreLocationHours = await getEntriesByMatching({
+                collectionName: "OperationDayTime",
+                fields: {
+                  locationId: location.id,
+                },
+              });
               
               const formattedLocationImages = transformImagesListToJsons({list:firestoreLocationImages})
               
               location.images = formattedLocationImages
               
+              const {minHour,maxHour} = getMinMaxHours(firestoreLocationHours)
+              console.log("PAGE", minHour,maxHour)
               const parsedAddress = parseAddress({address:location.address})
               parsedAddresses.push(parsedAddress)
               location.parsedAddress = parsedAddress
+              location.maxHour = maxHour
+              location.minHour = minHour
 
               retrievedLocations[parsedAddress.streetAddress]=location
             }
@@ -245,7 +272,7 @@ export default function TeamDashboard() {
          
             <div className="w-full mt-[20px]">
                 <div className="">
-                    <MyCalendar loading events={events} setPickedEvent={setPickedEvent} openEventModal={openEventModal} setCurrWeekNum={setCurrWeekNum} isCalendarLoading={isCalendarLoading} setIsCalendarLoading={setIsCalendarLoading} currWeekNum={currWeekNum}/>
+                    <MyCalendar loading events={events} setPickedEvent={setPickedEvent} openEventModal={openEventModal} setCurrWeekNum={setCurrWeekNum} isCalendarLoading={isCalendarLoading} setIsCalendarLoading={setIsCalendarLoading} currWeekNum={currWeekNum} minHour={currentLocation.minHour} maxHour={currentLocation.maxHour}/>
                 </div>
             </div>
 

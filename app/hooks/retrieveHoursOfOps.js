@@ -1,6 +1,5 @@
 export default function formatHoursOfOperations(daysOfWeek) {
 
-    console.log("RETARTED BEDSALS", daysOfWeek)
     const hourToString = (hour) => {
       const period = hour >= 12 ? "PM" : "AM";
       const hour12 = hour % 12 === 0 ? 12 : hour % 12; // Convert to 12-hour format

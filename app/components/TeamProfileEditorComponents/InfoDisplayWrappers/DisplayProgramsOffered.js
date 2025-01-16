@@ -18,6 +18,14 @@ export default function DisplayProgramsOffered({daysOfWeek,programTypes,programL
           {programTypes.map((item, index) => (
             <li key={index} className="mb-2">
               {item.level} ({item.category})
+              <ul className="list-disc ">
+                  <li className="flex items-center">
+                     <div className="text-[10px] mr-[6px]">
+                      ▶ 
+                      </div>
+                      ${item.price} per lesson
+                  </li>
+              </ul>
             </li>
           ))}
         </ul>
@@ -26,21 +34,22 @@ export default function DisplayProgramsOffered({daysOfWeek,programTypes,programL
           {daysOfWeek.map((item, index) => (
             item.hoursStringified.length>0 &&
             <>
-            {<li key={index} className="mb-2 ">
-              <div>
-              {item.day}
+            {<li key={index} className="mb-2 flex items-start justify-between w-[250px]">
+              {/* Wrapper for the bullet and item.day */}
+              <div className="list-item list-disc flex-none">
+                {item.day}
               </div>
-              <ul className="list-disc ">
+              {/* Nested list positioned beside item.day */}
+              <ul className="list-disc ml-4">
                 {item.hoursStringified.map((item, index) => (
-                  <li key={index} className="flex items-center">
-                     <div className="text-[10px] mr-[6px]">
-                      ▶ 
-                      </div>
-                      {item}
+                  <li key={index} className="flex items-end justify-end">
+                    <div className={`text-[10px] mr-[6px] ${index!=0?"":""}`}>{index==0?"":""}</div>
+                    {item}
                   </li>
                 ))}
               </ul>
-            </li>}
+            </li>
+            }
             </>
           ))}
         </ul>

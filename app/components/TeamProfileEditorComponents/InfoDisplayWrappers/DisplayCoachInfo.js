@@ -2,8 +2,9 @@
 
 import { useState,useRef,useEffect } from "react"
 import MoveRight from "../../../../public/MoveRight.svg";
+import EmailIcon from "../../../../public/emailIcon.svg";
 
-export default function DisplayCoachInfo({coachPhoto,coachName,coachBio}){
+export default function DisplayCoachInfo({coachPhoto,coachName,coachBio,coachEmail,coachPhone}){
 
     const [showFullText,setShowFullText]=useState(false)
     const [isTruncated, setIsTruncated] = useState(false);
@@ -22,7 +23,7 @@ export default function DisplayCoachInfo({coachPhoto,coachName,coachBio}){
     return(
     <div className="flex flex-col mt-[18px] items-center">
 
-            <div className="flex flex-col w-full space-y-[10px] align-center items-center">
+            <div className="flex w-full justify-center space-x-[14px] space-y-[10px] align-center items-center">
 
                 <div className="w-[150px] aspect-square overflow-hidden">
                 <img 
@@ -30,18 +31,40 @@ export default function DisplayCoachInfo({coachPhoto,coachName,coachBio}){
                     className="w-full h-full object-cover rounded-[15px]"
                 />
                 </div>
-                <div className="flex align-center items-center font-bold text-center">
-                    Coach {coachName}
+                <div className="flex-col space-y-[2px] mt-[2px]">
+                        <div className="flex align-center items-center font-bold text-center">
+                            Coach {coachName}
+                        </div>
+                        <div className="flex text-[16px] items-center space-x-[6px]">
+                            <EmailIcon/>
+                            <div className="mt-[1px] text-[16px]">
+                            {coachEmail} 
+                            </div>
+                        </div>
+                        <div className="flex text-[16px] items-center space-x-[6px]">
+                            <div>
+                                <img src="/PhoneIcon.png"
+                                className="w-[30px]"
+                                />
+                            </div>
+                            <div className="mt-[1px]">
+                            {coachPhone} 
+                            </div>
+                        </div>
                 </div>
             </div>
             
+
             <div className="flex flex-col mt-[10px]">
+
             <div
                 ref={contentRef}
                 className={`${showFullText ? "" : "line-clamp-5"}`}
             >
                 {coachBio}
             </div>
+
+
             {isTruncated && (
                 <button
                     onClick={() => setShowFullText(!showFullText)}

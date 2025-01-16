@@ -107,7 +107,10 @@ export default function SelectingCategories({categoryTypes, programs, setProgram
                     </div>
                             
                     <div className="flex mt-[2px] items-center">   
-                        <input className="w-[35px] border mr-[4px] rounded-[12px] px-[6px] py-[4px] text-center" onChange={(e)=>{
+                        <input 
+                        type="text"
+                        value={program.price}
+                        className="w-[35px] border mr-[4px] rounded-[12px] px-[6px] py-[4px] text-center" onChange={(e)=>{
                             handleInputChange(index,'price',e.target.value)
                         }}/>
                         $CAD

@@ -12,7 +12,7 @@ import LoadingSubScreen from "../../loadingSubscreen";
 // Configure the localizer with Moment.js
 const localizer = momentLocalizer(moment);
 
-const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,currWeekNum, isCalendarLoading, setIsCalendarLoading }) => {
+const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,currWeekNum, isCalendarLoading, setIsCalendarLoading, minHour,maxHour }) => {
 
     const availableColor = CONFIG.calendar.blockColors.available
     const pendingColor = CONFIG.calendar.blockColors.pending
@@ -35,7 +35,7 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
       };
     };
   
-
+    console.log("MIN MAX HOUS",minHour,maxHour)
   const [currentDate,setCurrentDate]=useState(new Date())
   
       // Function to go to the next week
@@ -111,8 +111,8 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
           showMultiDayTimes={false}
           step={30} // 30-minute intervals
           timeslots={2} // One timeslot per step
-          min={new Date(2023, 1, 1, 6, 0, 0)} // 6:00 AM
-          max={new Date(2023, 1, 1, 22, 0, 0)} // 10:00 PM
+          min={(minHour==0 || maxHour==0) ? new Date(2023, 1, 1, 0, 0, 0) : new Date(2023, 1, 1, minHour, 0, 0)} // 6:00 AM
+          max={(minHour==0 || maxHour==0) ? new Date(2023, 1, 1, 23, 59, 0) : new Date(2023, 1, 1, maxHour+1, 0, 0)} // 10:00 PM
           style={{ height: "100%" }}
           components={{
             toolbar: CustomToolbar,

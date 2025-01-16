@@ -2,7 +2,7 @@ import ProfileEntryEditor from "../ProfileEntryEditor"
 import ImageUploader from "../ImageUploader"
 import MultiFieldPhoneEntry from "../../AuthModalComps/MultiFieldPhoneEntry"
 
-export default function HeadCoachWrapper({coachInfoDivRef,isMissingCoachInfo,headCoachBio,setHeadCoachBio,headCoachName,setHeadCoachName,coachImg,setCoachImg,noHeader,coachEmail,setCoachEmail,coachNumber,setCoachNumber}){
+export default function HeadCoachWrapper({coachInfoDivRef,isMissingCoachInfo,headCoachBio,setHeadCoachBio,headCoachName,setHeadCoachName,coachImg,setCoachImg,noHeader,coachEmail,setCoachEmail,coachPhone,setCoachPhone}){
 
     return(
         <>
@@ -36,8 +36,8 @@ export default function HeadCoachWrapper({coachInfoDivRef,isMissingCoachInfo,hea
               <MultiFieldPhoneEntry
               prompt={"Head coach phone #"}
               placeholder={'Phone #'}
-              fieldResponse={coachNumber}
-              setFieldResponse={setCoachNumber}
+              fieldResponse={coachPhone}
+              setFieldResponse={setCoachPhone}
               field={'phoneNumber'}
               customLength={"w-[180px]"}/>
 

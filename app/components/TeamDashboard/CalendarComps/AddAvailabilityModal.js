@@ -193,7 +193,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                     <div className="text-[14px] mr-[4px]">
                         Start
                     </div>
-                    <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${isPickingTime&&isPickingStart?"border-streamlineBlue border-[2px]":""}`} onClick={()=>{setIsPickingStart(true);setIsPickingTime(true);setOpenView('hour')}}>
+                    <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${isPickingTime&&isPickingStart?"border-streamlineBlue border-[2px]":""}`} onClick={()=>{setIsPickingStart(true);setIsPickingTime(true);setOpenView('hours')}}>
                         {(startTime.hrs || startTime.hrs==0) && (startTime.mins || startTime.mins==0) && startTime.xm ? 
                         <div>
                             {startTime.hrs>12?startTime.hrs-12:startTime.hrs}:{startTime.mins<10?'0'+startTime.mins:startTime.mins} {startTime.xm}
@@ -212,7 +212,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                         End
                     </div>
 
-                    <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${isPickingTime&&!isPickingStart?"border-streamlineBlue border-[2px]":""}`}onClick={()=>{setIsPickingStart(false);setIsPickingTime(true);setOpenView('hour')}}>
+                    <div className={`border rounded-[12px] p-[2px] px-[6px] cursor-pointer ${isPickingTime&&!isPickingStart?"border-streamlineBlue border-[2px]":""}`}onClick={()=>{setIsPickingStart(false);setIsPickingTime(true);setOpenView('hours')}}>
                         {(endTime.hrs || endTime.hrs==0) && (endTime.mins || endTime.mins==0) && endTime.xm ? 
                         <div>
                             {endTime.hrs>12?endTime.hrs-12:endTime.hrs}:{endTime.mins<10?'0'+endTime.mins:endTime.mins} {endTime.xm}

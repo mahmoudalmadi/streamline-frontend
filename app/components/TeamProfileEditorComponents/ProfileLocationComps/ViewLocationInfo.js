@@ -110,7 +110,7 @@ EditableInfoWrapper={LocationInfoWrapper} GeneralInfoDisplayWrapper={DisplayLoca
           },
           {
             value:defaultLocationNumber,
-            setDict:setDefaultLocationNumber,
+            setDict:setLocationContactPhone,
             field:'phoneNumber'
           },
           {

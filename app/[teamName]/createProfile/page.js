@@ -658,8 +658,8 @@ export default function TeamProfileEditor() {
               headCoachName={headCoachName}
               setHeadCoachBio={setHeadCoachBio}
               setHeadCoachName={setHeadCoachName}
-              coachNumber={coachNumber}
-              setCoachNumber={setCoachNumber}
+              coachPhone={coachNumber}
+              setCoachPhone={setCoachNumber}
               coachImg={coachImg}
               setCoachImg={setCoachImg}
               coachEmail={coachEmail}
