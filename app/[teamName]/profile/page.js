@@ -143,7 +143,7 @@ export default function TeamProfilePage() {
         <div className="flex overflow-x-hidden justify-center items-center">
           <DynamicScreen className="h-screen">
             <div className="">
-            <TeamDashHeader selectedPage={"profile"}/>
+            <TeamDashHeader selectedPage={"profile"} setIsLoading={setIsLoading}/>
             {  isLoading?
             <div className="items-center">
                 <LoadingSubScreen loadingMessage={"Loading team profile"}/>

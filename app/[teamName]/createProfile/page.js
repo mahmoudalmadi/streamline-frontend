@@ -111,7 +111,7 @@ export default function TeamProfileEditor() {
         { level: "", category: "" },
       ]);
     const [programTypes, setProgramTypes] = useState([
-    { level: "", category: "" },
+    { level: "", category: "", price: "" },
     ]);
     const [daysOfWeek,setDaysOfWeek] = useState([...CONFIG.daysOfWeek]);
     const [timesOfDay,setTimesOfDay] = useState(CONFIG.timesOfDay);

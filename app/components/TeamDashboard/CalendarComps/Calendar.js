@@ -12,7 +12,7 @@ import LoadingSubScreen from "../../loadingSubscreen";
 // Configure the localizer with Moment.js
 const localizer = momentLocalizer(moment);
 
-const MyCalendar = ({ events, setPickedEvent, openEventModal }) => {
+const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,currWeekNum, isCalendarLoading, setIsCalendarLoading }) => {
 
     const availableColor = CONFIG.calendar.blockColors.available
     const pendingColor = CONFIG.calendar.blockColors.pending
@@ -41,13 +41,17 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal }) => {
       // Function to go to the next week
       const goToNextWeek = () => {
         const nextWeek = new Date(currentDate);
+        setCurrWeekNum(currWeekNum+1)
         nextWeek.setDate(currentDate.getDate() + 7);
         setCurrentDate(nextWeek);
+        console.log(currWeekNum)
       };
-  
+      
       // Function to go to the previous week
       const goToPreviousWeek = () => {
+        console.log(currWeekNum)
         const prevWeek = new Date(currentDate);
+        setCurrWeekNum(currWeekNum-1)
         prevWeek.setDate(currentDate.getDate() - 7);
         setCurrentDate(prevWeek);
       };
@@ -94,9 +98,9 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal }) => {
       <div className="items-center justify-center" 
       style={{ height: "800px", width: "100%" }}>
 
-        {/* <div className="absolute w-[100%] h-[100%] z-10">
+        {isCalendarLoading&&<div className="absolute w-[100%] h-[100%] z-10">
           <LoadingSubScreen loadingMessage={""}/>
-        </div> */}
+        </div>}
 
         <div className="w-full h-full ">
         <Calendar
@@ -117,7 +121,7 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal }) => {
           }}
           date={currentDate}
           onSelectEvent={handleSelectEvent}
-          onNavigate={(date, view) => console.log("Navigated to:", date, view)}
+          // onNavigate={(date, view) => console.log("Navigated to:", date, view)}
           eventPropGetter={eventStyleGetter}
         />
         </div>

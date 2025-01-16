@@ -14,13 +14,16 @@ const CONFIG = Object.freeze({
     backendRoute:"https://api.experiencestreamline.com/",
     lessonTypes:{
         "Private":"One on one with an instructor",
-        "Semi-Private":"I don't remember",
+        "Semi-Private":"Less than five other swimmers",
         "Group":"Group lesson with other swimmers"
     },
     skillLevels:{
-        "Beginner":"Learning swimming for the first time",
-        "Intermediate":"Has some swimming exprience",
-        "Advanced":"Already a proficient swimmer"
+        "1 - Beginner":"Introduction to basic swimming skills and water safety",
+        "2 - Beginner":"Development of foundational swimming strokes and techniques",
+        "3 - Intermediate":"Enhancement of swimming proficiency with increased distance",
+        "4 - Intermediate":"Refinement of strokes and introduction to advanced skills",
+        "5 - Advanced":"Mastery of complex swimming techniques and endurance",
+        "6 - Advanced":"Preparation for advanced aquatic skills and lifesaving readiness.",
     },
     athleteType:"Swimmer",
     calendar:{

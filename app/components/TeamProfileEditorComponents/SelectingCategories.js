@@ -41,55 +41,82 @@ export default function SelectingCategories({categoryTypes, programs, setProgram
         <div className="">
             <div className="flex text-[15px] mb-[10px] font-bold items-center ">
                 Available {categoryTypes} 
-                <div className="relative text-center ml-[10px] w-[25px] h-[25px] border rounded-full border-streamlineBlue font-bold text-streamlineBlue border-[1.5px] pb-[1px] hover:bg-gray-100 cursor-pointer" onClick={toggleVisibility}>
+                <div 
+                style={{
+                    userSelect: "none", // Prevent text selection
+                    WebkitUserSelect: "none", // Safari
+                    MozUserSelect: "none", // Firefox
+                    msUserSelect: "none",}} 
+                className="relative text-center ml-[10px] w-[25px] h-[25px] border rounded-full border-streamlineBlue font-bold text-streamlineBlue border-[1.5px] pb-[1px] hover:bg-gray-100 cursor-pointer" onClick={toggleVisibility}>
                     <div className="mb-[8px]">i
                     </div>
                     <InfoDropdown isVisible={isVisible} onClose={handleCloseDropdown} categories={categoryDict}/>
                 </div>
             </div>
+            
+            
             <div className="flex w-full flex-col justify-center">
 
-
             {programs.map((program, index) => (
-            <div key={index} style={{ marginBottom: "15px" }}
-            className="flex">
-            <input
-                type="text"
-                value={program.level}
-                onChange={(e) =>
-                handleInputChange(index, "level", e.target.value)
-                }
-                placeholder={`${categoryTypes.slice(0,categoryTypes.length-1)} ${index + 1}`}
-                className="text-gray-700 w-[60%] mr-[8px] border border-gray-300 rounded-[12px]    
-          resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
-          focus:outline-none focus:border-blue-500" 
-          />
-            <select
-                value={program.category || ""}
-                onChange={(e) => handleInputChange(index, "category", e.target.value)}
-                style={{ marginRight: "10px" }}
-                className="flex w-[40%] cursor-pointer"
-            >
-                <option value={""} disabled>
-                Select category
-                </option>
-                {categories.map((option, i) => (
-                <option key={i} value={option}>
-                    {option}
-                </option>
-                ))}
-            </select>
-            {programs.length > 1 && (
-                
-                <button onClick={() => handleRemoveLevel(index)}
-                className="flex items-center justify-center border  border-red-600 px-[10px] rounded-[10px] bg-red-100 hover:bg-gray-100 border-[1px] cursor-pointer">
-                    <div className="mr-[5px] text-red-600 
-                    font-bold text-[12px] mt-[1px]">X</div>
-                    <div className="text-[12px]">Remove</div>
-                </button>
-            )}
+            <div key={index} style={{ marginBottom: "12px" }}
+            className="flex-col ">
+                <div className="flex">
+                    <input
+                        type="text"
+                        value={program.level}
+                        onChange={(e) =>
+                        handleInputChange(index, "level", e.target.value)
+                        }
+                        placeholder={`${categoryTypes.slice(0,categoryTypes.length-1)} Name ${index + 1}`}
+                        className="text-gray-700 w-[60%] mr-[8px] border border-gray-300 rounded-[12px]    
+                resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
+                focus:outline-none focus:border-blue-500" 
+                />
+                    
+
+                    <select
+                        value={program.category || ""}
+                        onChange={(e) => handleInputChange(index, "category", e.target.value)}
+                        style={{ marginRight: "10px" }}
+                        className="flex w-[40%] cursor-pointer"
+                    >
+                        <option value={""} disabled>
+                        Select category
+                        </option>
+                        {categories.map((option, i) => (
+                        <option key={i} value={option}>
+                            {option}
+                        </option>
+                        ))}
+                    </select>
+                    {programs.length > 1 && (
+                        
+                        <button onClick={() => handleRemoveLevel(index)}
+                        className="flex items-center justify-center border  border-red-600 px-[10px] rounded-[10px] bg-red-100 hover:bg-gray-100 border-[1px] cursor-pointer">
+                            <div className="mr-[5px] text-red-600 
+                            font-bold text-[12px] mt-[1px]">X</div>
+                            <div className="text-[12px]">Remove</div>
+                        </button>
+                    )}
+                </div>
+
+                {"Program Class Sizes"==categoryTypes &&
+                <div className="flex h-full pt-[2px] items-center mt-[4px] items-center space-x-[6px] justify-center pr-[10px]"> 
+                    <div className="text-[14px]">
+                    Approx. price per lesson: 
+                    </div>
+                            
+                    <div className="flex mt-[2px] items-center">   
+                        <input className="w-[35px] border mr-[4px] rounded-[12px] px-[6px] py-[4px] text-center" onChange={(e)=>{
+                            handleInputChange(index,'price',e.target.value)
+                        }}/>
+                        $CAD
+                    </div>
+                </div>
+            }
             </div>
         ))}
+
             </div>
 
         <div className="flex items-center">

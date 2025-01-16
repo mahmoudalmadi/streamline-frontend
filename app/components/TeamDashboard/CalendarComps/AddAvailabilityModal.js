@@ -115,7 +115,6 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
             .map((day) => day.day);       // Return the 'day' value
     }
 
-    console.log(events[0].start)
     const handleSubmit = async() => {
 
         if(isWeeklyOccurrence){

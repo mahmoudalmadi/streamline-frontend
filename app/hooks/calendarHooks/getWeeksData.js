@@ -27,13 +27,13 @@ const getXWeeksData = async ({locationId,x}) => {
       { field: "start", operator: "<", value: saturdayOfWeekX },
       { field: "start", operator: ">", value: sundayOfWeekMinusX },
     ];
-
+    console.log("ABOUTTA GO GET THEI MSS")
     // Fetch entries using the getEntriesByConditions function
     const entries = await getEntriesByConditions({
       collectionName: "TimeBlock",
       conditions,
     });
-
+    console.log("GOTTEMMS",entries)
     return entries; // Return the filtered entries
   } catch (error) {
     console.error("Error fetching entries for time range:", error);

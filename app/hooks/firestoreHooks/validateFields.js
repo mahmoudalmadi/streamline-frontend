@@ -1,7 +1,16 @@
 const validateFields = ({data, isGuardian}) => {
 
+  function isExclusivelyNumber(input) {
+    return /^\d+$/.test(input) && !isNaN(Number(input)) && isFinite(Number(input));
+  }  
+
   for (const [key, value] of Object.entries(data)) {
     
+     if(key=="price"){
+      if (!isExclusivelyNumber(value)){
+        throw new Error(`Hi ,Invalid value for field "${key}" with value "${JSON.stringify(value)}": Gotta be a numba!`)  
+      }
+     }else
     if((key==="programTypes") || (key==="skillLevels")){
       try{
       for (const level in value)

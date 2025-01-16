@@ -5,7 +5,7 @@ import { useAuth } from "@/app/contexts/AuthContext"
 import TopBar from "../TopBarComps/TopBar"
 import { useRouter } from "next/navigation";
 
-export default function TeamDashHeader({selectedPage}){
+export default function TeamDashHeader({selectedPage,setIsLoading}){
 
     const {userInfo} = useAuth()
     const router = useRouter();
@@ -49,6 +49,7 @@ export default function TeamDashHeader({selectedPage}){
             onClick={()=>{
                 if(userInfo.userData.accountType==="team")
                 {
+                    setIsLoading(true)
                     router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
                 }else{
                     router.push(`/user/${userInfo.userData.firebaseId}/dashboard`)
@@ -62,6 +63,7 @@ export default function TeamDashHeader({selectedPage}){
             onClick={()=>{
                 if(userInfo.userData.accountType==="team")
                 {
+                    setIsLoading(true)
                     router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/profile`)
                 }else{
                     router.push(`/user/${userInfo.userData.firebaseId}/profile`)

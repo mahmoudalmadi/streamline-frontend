@@ -75,6 +75,55 @@ export default function TeamDashboard() {
     const [retrievedCoaches,setRetrievedCoaches] = useState(null)
 
     const [xWeeks,setXWeeks]=useState(3)
+    const [currWeekNum,setCurrWeekNum]=useState(null)
+
+    const [currWeekEvents,setCurrWeekEvents] = useState(null)
+
+    function filterItemsByWeekAndStatus(items) {
+        const now = new Date();
+        
+        // Calculate the start of the current week (Sunday at 12:00 AM)
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay()); // Adjust to the most recent Sunday
+        startOfWeek.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+      
+        // Calculate the end of the current week (Saturday at 11:59:59 PM)
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6); // Move to Saturday
+        endOfWeek.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+      
+        // Filter the list
+        return items.filter(item => {
+          const startDate = new Date(item.start); // Parse the `start` date
+          return (
+            startDate >= startOfWeek &&
+            startDate <= endOfWeek &&
+            item.status !== "available"
+          );
+        });
+      }    
+
+    const [events,setEvents] = useState(null);
+    const [isCalendarLoading,setIsCalendarLoading]=useState(true)
+    useEffect(()=>{
+
+        const updateCal = async() => {
+            const weekEvents = await getXWeeksData({locationId:currentLocation.id,x:xWeeks})
+            setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents))
+            setEvents(weekEvents)
+            setCurrWeekNum(0)
+        }
+
+        if (Math.abs(currWeekNum)>xWeeks){
+            setIsCalendarLoading(true)
+            updateCal()
+            setIsCalendarLoading(false)
+        }else
+        if (events) {
+            setCurrWeekEvents(filterItemsByWeekAndStatus(events))
+        }
+    },[currWeekNum])
+
     useEffect(()=>{
         triggerTimeRef.current = Date.now(); // Set trigger time
 
@@ -111,6 +160,7 @@ export default function TeamDashboard() {
             setRetrievedCoaches(firestoreCoaches)
 
             const parsedAddresses = []
+            const retrievedLocations = {}
             for (const location of locationsInfo) {
               const firestoreLocationImages = await getEntriesByMatching({
                 collectionName: "Images",
@@ -124,27 +174,28 @@ export default function TeamDashboard() {
               const formattedLocationImages = transformImagesListToJsons({list:firestoreLocationImages})
               
               location.images = formattedLocationImages
-  
+              
               const parsedAddress = parseAddress({address:location.address})
               parsedAddresses.push(parsedAddress)
               location.parsedAddress = parsedAddress
+
+              retrievedLocations[parsedAddress.streetAddress]=location
             }
 
+            
             const weekEvents = await getXWeeksData({locationId:locationsInfo[0].id,x:xWeeks})
-            console.log("WWEKE EVENTS", weekEvents)
+
+            setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents))
             setEvents(weekEvents)
-            console.log(locationsInfo[0])
             setCurrentLocation(locationsInfo[0])
-            setLocationInfo(locationsInfo)
+            setLocationInfo(retrievedLocations)
             setAllParsedAddresses(parsedAddresses)
+            setIsCalendarLoading(false)
             setIsLoading(false);
           }
 
     },[userInfo])
 
-    const [loadingEvents,setLoadingEvents] = useState(true)
-    const [events,setEvents] = useState([]);
-      
     const [pickedEvent, setPickedEvent] = useState(null);
     const [isEventModalOpen, setIsEventModalOpen] = useState(false);
 
@@ -166,7 +217,7 @@ export default function TeamDashboard() {
 
 
             <div className="flex flex-col no-scroll" style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
-            <TeamDashHeader selectedPage={"dashboard"}/>
+            <TeamDashHeader selectedPage={"dashboard"} setIsLoading={setIsLoading}/>
             {  isLoading?
             <div className="items-center">
                 <LoadingSubScreen loadingMessage={"Loading team dashboard"}/>
@@ -182,7 +233,7 @@ export default function TeamDashboard() {
                         {currentLocation.parsedAddress.streetAddress}
                     </div>
                     {
-                        locationInfo.length>1 &&
+                        Object.keys(locationInfo).length>1 &&
                         <div className="text-streamlineBlue font-bold pl-[7px] text-[12px] cursor-pointer">
                             Change
                         </div>
@@ -194,7 +245,7 @@ export default function TeamDashboard() {
          
             <div className="w-full mt-[20px]">
                 <div className="">
-                    <MyCalendar loading events={events} setPickedEvent={setPickedEvent} openEventModal={openEventModal}/>
+                    <MyCalendar loading events={events} setPickedEvent={setPickedEvent} openEventModal={openEventModal} setCurrWeekNum={setCurrWeekNum} isCalendarLoading={isCalendarLoading} setIsCalendarLoading={setIsCalendarLoading} currWeekNum={currWeekNum}/>
                 </div>
             </div>
 
@@ -223,7 +274,7 @@ export default function TeamDashboard() {
 
             {/* TRIAL LESSONS LIST */}
             <div className="">
-            <div className="flex font-bold text-streamlineBlue text-[15px] mt-[10px]">
+            <div className="flex font-bold text-streamlineBlue text-[17px] mt-[10px]">
                 Trial lessons this week
             </div>
             <div className="flex w-full h-[1px] bg-gray-200 mt-[5px] mb-[15px]"/>
@@ -248,8 +299,8 @@ export default function TeamDashboard() {
                     </div>
                     <div className="w-full h-[0.5px] bg-streamlineBlue mt-[3px] mb-[8px]"/>
                     <div className="flex-col">
-                        {weeklyTrialLessons.length===0 ?
-                        <div className="w-full p-[20px] flex justify-center font-bold text-gray-400">
+                        {currWeekEvents.length===0 ?
+                        <div className="w-full p-[20px] items-center h-[150px] flex justify-center font-bold text-gray-400 text-center mt-[30px] text-[16px]">
                             There are no trial lessons requested or scheduled this week
                         </div>
                         :
