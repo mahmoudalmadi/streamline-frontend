@@ -14,15 +14,18 @@ import dayjs from 'dayjs';
 import WeekdayPicker from "@/app/components/TeamDashboard/CalendarComps/DayPicker";
 import { DayPicker } from "react-day-picker";
 import PeopleIcon  from "../../../../public/PeopleIcon.svg"
+import InfoIcon  from "../../../../public/InfoIcon.svg"
 import PersonEntry from "./PersonEntry";
 import ProfileEntryEditor from "../../TeamProfileEditorComponents/ProfileEntryEditor";
 import MultiFieldPhoneEntry from "../../AuthModalComps/MultiFieldPhoneEntry";
 import { addListOfJsons, generateJsonList, generateJsonListGivenJsons } from "@/app/hooks/firestoreHooks/adding/addInfoAsList";
 import { addInfoAsJson } from "@/app/hooks/firestoreHooks/adding/addInfoAsJson";
 import getRelevantDates, { consolidateDate } from "@/app/hooks/getRelevantDates";
+import CheckboxDropdown from "./SelectLessonCategories";
+import CONFIG from "@/config";
 
 
-export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey,teamId, addAvailibilityModalKey,locationId,events,setEvents,retrievedCoaches}){
+export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey,teamId, addAvailibilityModalKey,locationId,events,setEvents,retrievedCoaches,lessonSkills,lessonTypes,parentDivRef}){
 
     const timePickerRef = useRef(null);
     // Create availibility stuffs
@@ -34,6 +37,8 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
     const [isPickingStart,setIsPickingStart]=useState(null)
     const [openView, setOpenView] = useState('hours');
 
+    const [selectedLocationLessonSkills,setSelectedLocationLessonSkills]=useState([])
+    const [selectedLocationLessonTypes,setSelectedLocationLessonTypes]=useState([])
 
     // Handler for time change
     const handleTimeChange = (newValue) => {
@@ -115,6 +120,8 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
             .map((day) => day.day);       // Return the 'day' value
     }
 
+    // const parentDivRef = useRef(null)
+
     const handleSubmit = async() => {
 
         if(isWeeklyOccurrence){
@@ -166,8 +173,24 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
 
     }
 
+    const scrollToBottom = () => {
+        console.log("SCROLLING TO BOTTOM",parentDivRef.current,parentDivRef.current.scrollHeight,parentDivRef.current.scrollTop)
+        if (parentDivRef.current) {
+          parentDivRef.current.scrollTo({
+            top: parentDivRef.current.scrollHeight,
+            behavior: 'smooth',
+          });
+        }
+        console.log("SCROLLING TO BOTTOM AFTER",parentDivRef.current,parentDivRef.current.scrollHeight,parentDivRef.current.scrollTop)
+      };
+    
+
     return(
-        <div className="flex flex-col p-[6px] items-center justify-center " style={{overflow:'hidden'}}>
+        <div className="flex flex-col p-[6px] items-center justify-center " style={{
+            userSelect: "none", // Prevent text selection
+            WebkitUserSelect: "none", // Safari
+            MozUserSelect: "none", // Firefox
+            msUserSelect: "none",}} ref={parentDivRef}>
 
                     <div className="mt-[4px] font-bold text-center">
                         Add trial lesson availability
@@ -178,9 +201,9 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                     <div className="flex flex-col overflow-y-auto justify-center items-center">
 
                     <div className="flex space-x-[8px] w-full items-center mt-[12px] mb-[8px]">
-                        <div className="ml-[1px]">
+                        <div className="flex w-[25px] justify-center">
                         <ClockIcon/>
-                        </div>
+                            </div>
                     <div className="text-[14px] font-bold">
                         Lesson Time
                     </div>
@@ -249,13 +272,17 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                     {/* COACHES AND SPOTS */}
                     <div className="flex flex-col mt-[16px] w-full items-center">
                         <div className="flex w-full space-x-[10px] items-center">
+
+                        <div className="flex w-[25px] justify-center">
                         <PeopleIcon/>
+                        </div>
                         <div className="font-bold text-[14px]">
                             Coach & Spots
                         </div>
                         </div>
 
-                        <div className="flex mt-[4px] items-center">
+                        <div className="pl-[40px] w-full justify-center">
+                        <div className="flex w-full mt-[4px] justify-center items-center">
                             <div className="text-[14px]">
                                 Number of spots
                             </div>
@@ -291,7 +318,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                             <div className="leading-[14px] mt-[6px] text-gray-500 text-center">
                                 Select coach or 
                             </div>
-                            <div className="bg-streamlineBlue px-[8px] py-[4px] rounded-[16px] font-bold mt-[6px] text-white cursor-pointer" onClick={()=>{setAddAnotherCoach(true)}}>
+                            <div className="bg-streamlineBlue px-[8px] py-[4px] rounded-[16px] font-bold mt-[6px] text-[12px] text-center text-white cursor-pointer" onClick={()=>{setAddAnotherCoach(true)}}>
                                 Add another coach
                             </div>
                             </div>
@@ -361,19 +388,57 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                         </div>
                         </>
                         }
+                        </div>
                     </div>
 
+                    <div className="flex flex-col w-full items-center my-[16px] ">
+
+                        <div className="w-full flex">
+                            <div className="flex w-[25px] justify-center">
+                            <InfoIcon/>
+                            </div>
+
+                            <div className="font-bold text-[14px] ml-[8px]">  
+                            Applicable lesson types
+                            </div>
+
+                            {/* <div className="text-gray-500 text-[12px] ml-[8px]">
+                            Proscpective {CONFIG.athleteType} looking for 
+                            </div>     */}
+                        </div>
+
+                        <div className="flex w-full justify-center space-x-4 mt-[14px]">
+                            <CheckboxDropdown
+                            fieldType={"Skill levels"}
+                            options={lessonSkills}
+                            placeholder="Select lesson skills"
+                            selectedOptions={selectedLocationLessonSkills}
+                            setSelectedOptions={setSelectedLocationLessonSkills}
+                            />
+                            <CheckboxDropdown
+                            fieldType={"Lesson types"}
+                            options={lessonTypes}
+                            placeholder="Select lesson types"
+                            selectedOptions={selectedLocationLessonTypes}
+                            setSelectedOptions={setSelectedLocationLessonTypes}
+                            />
+                        </div>
+
+                    </div>
 
                     {/* REMINDER BEFORE LESSON */}
                     <div className="flex flex-col w-full mt-[8px]">
                         <div className="flex flex-col">
                         <div className="flex w-full items-center mt-[6px]">
+
+                        <div className="flex w-[25px] justify-center">
                         <NotifIcon/>
+                        </div>
                         <div className="ml-[8px] font-bold text-[14px]">
                             Reminder
                         </div>
                             </div>
-                        <div className="text-gray-500 text-[12px]">
+                        <div className="text-gray-500 text-[12px] ml-[34px]">
                             Sent to both coach and swimmer(s)
                         </div>    
                         </div>
@@ -432,7 +497,10 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                     {/* AVAILABLE DAYS */}
                     <div className="flex space-x-[8px] w-full mt-[16px] mb-[8px] items-center">
                     <div className="pl-[1px]">
+
+                    <div className="flex w-[25px] justify-center">
                     <CalendarIcon/>
+                    </div>
 
                     </div>
                     <div className="text-[14px] font-bold">
@@ -443,7 +511,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                     {/* //picking between two options */}
                     <div className="flex justify-center mt-[7px] mb-[10px]">
                     <div className="flex space-x-[6px] items-center px-[30px] cursor-pointer"
-                    onClick={()=>{setWeeklyOccurrence(false);setPickingDays(true)}}>
+                    onClick={()=>{setWeeklyOccurrence(false);setPickingDays(true);scrollToBottom()}}>
                         <div className={
                             isPickingDays&& !isWeeklyOccurrence?
                             `bg-streamlineBlue w-[15px] h-[15px] `
@@ -452,7 +520,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                             style={{
                                 borderRadius:"5px"
                             }}/>
-                        <div className={isPickingDays&& !isWeeklyOccurrence?'font-bold text-[14px]':'text-[14px]'}>
+                        <div className={isPickingDays&& !isWeeklyOccurrence?'font-bold text-[14px]':'text-[14px]'} >
                             Pick specific dates
                         </div>
                     </div>
@@ -551,15 +619,14 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                         Cancel
                     </div>
 
-                    <div className={`mt-[12px] bg-streamlineBlue text-white px-[16px] py-[8px] rounded-full font-bold ${startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected || startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&(selectedDates.length>0) ? "cursor-pointer" :"opacity-50" }`} onClick={()=>{
-                        if(startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected || startTime.xm&&startTime.hrs&&startTime.hrs&&endTime.hrs&&endTime.xm&&(selectedDates.length>0)){
+                    <div className={`mt-[24px] mb-[12px] bg-streamlineBlue text-white px-[16px] py-[8px] rounded-full font-bold ${startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0 || startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&(selectedDates.length>0)&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0 ? "cursor-pointer" :"opacity-50" }`} onClick={()=>{
+                        if(startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0 || startTime.xm&&startTime.hrs&&startTime.hrs&&endTime.hrs&&endTime.xm&&(selectedDates.length>0)&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0){
                             handleSubmit()
                         }
                     }}>
                         Add availability
                     </div>
                     </div>
-
 
                 </div>
     )

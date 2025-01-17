@@ -33,7 +33,7 @@ export default function PersonEntry({personInfo}){
                             </div>
                             
                             {personInfo.email &&
-                            <div className="flex items-center mt-[1px] space-x-[3px] leading-[5px]">
+                            <div className="flex items-center mt-[1px] space-x-[3px] leading-[14px]">
                             <EmailIcon/>
                             <div>
                             {personInfo.email}
