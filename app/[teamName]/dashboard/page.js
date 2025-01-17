@@ -121,20 +121,25 @@ export default function TeamDashboard() {
       }    
 
     const [events,setEvents] = useState(null);
+    const [currDay,setCurrDay]=useState(new Date())
     const [isCalendarLoading,setIsCalendarLoading]=useState(true)
     useEffect(()=>{
 
         const updateCal = async() => {
-            const weekEvents = await getXWeeksData({locationId:currentLocation.id,x:xWeeks})
+            setIsCalendarLoading(true)
+            const newDate = new Date(currDay)
+            newDate.setDate(currDay.getDate()+currWeekNum*7)
+            const weekEvents = await getXWeeksData({locationId:currentLocation.id,x:xWeeks,currDay:newDate})
             setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents))
             setEvents(weekEvents)
             setCurrWeekNum(0)
-        }
-
-        if (Math.abs(currWeekNum)>xWeeks){
-            setIsCalendarLoading(true)
-            updateCal()
+            setCurrDay(newDate)
             setIsCalendarLoading(false)
+        }
+        console.log("currWeekNum",currWeekNum,isCalendarLoading, xWeeks)
+        if (Math.abs(currWeekNum)>xWeeks){
+            
+            updateCal()
         }else
         if (events) {
             setCurrWeekEvents(filterItemsByWeekAndStatus(events))
@@ -236,7 +241,7 @@ export default function TeamDashboard() {
             }
 
             
-            const weekEvents = await getXWeeksData({locationId:locationsInfo[0].id,x:xWeeks})
+            const weekEvents = await getXWeeksData({locationId:locationsInfo[0].id,x:xWeeks,currDay:currDay})
 
             setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents))
             setEvents(weekEvents)

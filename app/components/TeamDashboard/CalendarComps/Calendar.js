@@ -93,7 +93,11 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
   };
 
   return (
-    <div>
+    <div style={{
+      userSelect: "none", // Prevent text selection
+      WebkitUserSelect: "none", // Safari
+      MozUserSelect: "none", // Firefox
+      msUserSelect: "none",}} >
 
       <div className="items-center justify-center" 
       style={{ height: "800px", width: "100%" }}>
@@ -102,7 +106,7 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
           <LoadingSubScreen loadingMessage={""}/>
         </div>}
 
-        <div className="w-full h-full ">
+        <div className={`w-full h-full ${isCalendarLoading?"opacity-50":""}`} >
         <Calendar
           localizer={localizer}
           events={events}

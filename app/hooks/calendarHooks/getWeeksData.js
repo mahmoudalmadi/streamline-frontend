@@ -1,8 +1,8 @@
 const { getEntriesByConditions } = require("../firestoreHooks/retrieving/getEntriesByConditions");
 
-const getXWeeksData = async ({locationId,x}) => {
+const getXWeeksData = async ({locationId,x,currDay}) => {
   try {
-    const today = new Date();
+    const today = new Date(currDay);
 
     // Calculate the Saturday of Week X
     const saturdayOfWeekX = new Date(today);
