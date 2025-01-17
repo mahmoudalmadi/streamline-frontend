@@ -8,6 +8,7 @@ import { monitorAuthState, logout } from "../../hooks/authHooks/firebaseAuth";
 import { useAuth } from '../../contexts/AuthContext';
 import AccountSection from './AccountSection';
 import { SignUpProvider } from '../../contexts/SignUpProvider';
+import { usePathname } from "next/navigation";
 
 const TopBar = () => {
 
@@ -17,6 +18,8 @@ const TopBar = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isLogin, setIsLogin] = useState(false)
 
+    const pathName = usePathname();
+
     function openModal() { 
         setIsModalOpen(true)}
     const closeModal = () => setIsModalOpen(false)
@@ -24,13 +27,13 @@ const TopBar = () => {
 
     const redirectHome = () => {
         setLoadingNewPage(true)
-        if(!useOtherLogo){
-        router.push('/')
+        if(pathName=="/"){
+            window.location.reload()
+        }else{
+            router.push('/')
         }
     }
 
-    const [useOtherLogo, setUseOtherLogo]=useState(false)
-    const [teamLogo, setTeamLogo] = useState(false)
     // useEffect(()=>{
     //     if (userInfo.teamInfo){
     //         setTeamLogo(userInfo.teamInfo.logoPhotoURL)
@@ -43,12 +46,8 @@ const TopBar = () => {
         <div className='flex justify-between items-center'>
             <button onClick={redirectHome}>
             {
-                !useOtherLogo?
-                <StreamlineLogo className="w-[130px] h-[50px]"/>:
-                <img
-                src={teamLogo}
-                className='w-[80px]'
-                />
+                
+                <StreamlineLogo className="w-[130px] h-[50px]"/>
             }
             </button>
 

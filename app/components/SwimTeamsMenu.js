@@ -1,7 +1,7 @@
 import SwimTeamThumbnail from "./SwimTeamThumbnail";
 
 
-export default function SwimTeamsMenu() {
+export default function SwimTeamsMenu({teamLocations}) {
 
     return(
 

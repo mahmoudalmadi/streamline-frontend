@@ -46,7 +46,7 @@ export default function SwimTeamThumbnail(){
     return(
 
         <div className="flex-1 cursor-pointer"
-        onClick={handleRedirect}>
+        >
 
                 {/* Image Div */}
             <div className="relative w-full aspect-[5/4] rounded-2xl overflow-hidden">
@@ -68,7 +68,7 @@ export default function SwimTeamThumbnail(){
                 ))} 
 
                 {currentIndex+1>1 &&
-                <button onClick={handlePrev}>
+                <button onClick={()=>{handlePrev()}}>
                 <div
                 className="absolute top-1/2 left-2 transform -translate-y-1/2 
                  bg-gray-700 bg-opacity-50 hover:bg-opacity-75 text-white p-2 
@@ -79,7 +79,7 @@ export default function SwimTeamThumbnail(){
                 </button>}
 
                 {currentIndex+1<images.length &&
-                <button onClick={handleNext}>
+                <button onClick={()=>{handleNext()}}>
                 <div
                 className="absolute top-1/2 right-2 transform -translate-y-1/2 
                  bg-gray-700 bg-opacity-50 hover:bg-opacity-75 text-white p-2 
