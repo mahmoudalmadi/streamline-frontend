@@ -13,58 +13,135 @@ import HeadCoachSection from "../components/TeamPageComps/HeadCoachSection";
 import { useRouter, useSearchParams,usePathname } from "next/navigation";
 import { useAuth } from "../contexts/AuthContext";
 import LoadingSubScreen from "../components/loadingSubscreen";
+import { getEntriesByConditions } from "../hooks/firestoreHooks/retrieving/getEntriesByConditions";
+import { batchedGetEntriesByConditions } from "../hooks/firestoreHooks/retrieving/batchedGetEntriesByConditions";
+import CONFIG from "@/config";
 
 
 export default function TeamPage()  {
 
     const {loadingNewPage,loadingNewPageMessage,setLoadingNewPage}=useAuth()
 
-    useEffect(()=>{
-      setLoadingNewPage(false)
-    },[])
-
-    const swimTeamName = "Neptunes Swimming Academy"
-    const swimClubDescription="Neptunes Swimming Academy is a vibrant and inclusive swim club dedicated to nurturing swimmers of all ages and skill levels. Located in a picturesque setting, the academy offers comprehensive training programs that cater to children, teens, and adults alike. With a focus on developing essential swimming techniques, the academy emphasizes safety, fitness, and fun in the water. Experienced instructors provide personalized coaching, ensuring that each swimmer maximizes their potential while fostering a love for the sport. Whether you are a beginner looking to learn the basics or an advanced swimmer aiming to refine your skills, Neptunes Swimming Academy is the perfect place to dive in and make a splash."
-    const programsAvailable = ["Learn to swim", "Competitive"]
-    const classSizes= ["Group (4:1)", "Semi-Private (2:1)"]
-    const coachPhoto="https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg"
-    const coachName="Stefan Todorov"
-    const locationAddress="115 Haynes Ave, Toronto, Ontario M3J0L8"
-    const locationCoords = {"lat":40.748817,"long": -73.985428}
-    const amenities = [1,2,3,4,5,6,7]
-    const trialLessonPrice = 30
-    const headCoachDescription = "Stefan Todorov is a highly accomplished and dedicated head swim coach at Neptunes Swimming Academy, where he has been instrumental in shaping the future of young swimmers. With over a decade of coaching experience, Stefan combines his passion for swimming with a deep commitment to developing athletes both in and out of the pool.\
-    Stefan began his journey in the world of competitive swimming at a young age, quickly rising through the ranks to compete at national levels. His firsthand experience as an athlete informs his coaching philosophy, emphasizing technique, endurance, and mental resilience. Under his leadership, Neptunes Swimming Academy has gained a reputation for excellence, producing numerous champions and fostering a love for the sport among its members.\
-    At Neptunes, Stefan focuses on creating a supportive and motivating environment where swimmers can thrive. He believes in personalized training plans tailored to each athlete's unique strengths and areas for improvement. His innovative coaching methods incorporate cutting-edge training techniques and technology, ensuring that his swimmers are always at the forefront of competitive swimming.\
-    In addition to his coaching duties, Stefan is actively involved in mentoring young coaches and promoting swimming as a vital life skill. He organizes community outreach programs to encourage youth participation in swimming, highlighting its benefits for health and personal development.\
-    Stefan’s dedication to excellence has not gone unnoticed; he has received several accolades for his contributions to the sport. His commitment to nurturing talent and fostering a positive team culture makes him a respected figure in the swimming community.\
-    Outside of coaching, Stefan enjoys sharing his knowledge through workshops and seminars, inspiring the next generation of swimmers and coaches alike. His vision for Neptunes Swimming Academy is not just about winning medals but also about building character, discipline, and lifelong friendships among athletes.\
-    With Stefan Todorov at the helm, Neptunes Swimming Academy continues to be a beacon of hope and achievement in the world of competitive swimming."
+    // useEffect(()=>{
+    //   setLoadingNewPage(false)
+    // },[])
 
     const pathName = usePathname();
-    const teamName = pathName.split('/').pop();
+    const teamNameId = pathName.split('/').pop();
 
-    const [lessonTypes,setLessonTypes] = useState([
-        { lessonType: 'Private', lessonTypeDescription: 'One one one with an instructor' },
-        { lessonType: 'Semi-Private', lessonTypeDescription: `I don't remember` },
-        { lessonType: 'Group', lessonTypeDescription: 'Group lesson with other swimmers' }
-    ]);
-    const [skillLevels,setSkillLevels] = useState([
-        { skillLevel: 'Beginner', skillLevelDescription: 'Learning swimming for the first time' },
-        { skillLevel: 'Intermediate', skillLevelDescription: `Has some swimming experience` },
-        { skillLevel: 'Advanced', skillLevelDescription: 'Already a proficient swimmer' }
-    ]);
+    const [teamName,setTeamName] = useState("Hello")
+    const [teamDescription,setTeamDescription] = useState("Hi")
+    const [programsAvailable,setProgramsAvailable]=useState([])
+    const [classSizes,setClassSizes]=useState([])
+    const [coachPhoto,setCoachPhoto]=useState([])
+    const [coachName,setCoachName]=useState("")
+    const [locationAddress,setLocationAddress]=useState("")
+    const [locationCoords,setLocationCoords]=useState({"lat":"n/a","long":"n/a"})
+    const [amenities,setAmenities]=useState([])
+    const [headCoachDescription,setHeadCoachDescription]=useState([])
+
+    const lessonTypes = CONFIG.lessonTypes
+    const skillLevels = CONFIG.skillLevels
+
+    const [images,setImages]=useState([])
+
+    useEffect(()=>{
+
+      const getTeamPageInfo = async() => {
+
+        const flattenedName = teamNameId.split("-")[0];
+        const locationId = teamNameId.split("-")[1];
+
+        const allLocationInfo = await batchedGetEntriesByConditions({queriesWithKeys:
+        [{
+          key:"teamInfo",
+          queryConfig:{
+            collectionName:'Team',
+            conditions:[{field:"flattenedTeamName",operator:"==",value:flattenedName}]
+          }}
+          ,
+          {
+            key:"locationInfo",
+            queryConfig:{
+              collectionName:'Location',
+              conditions:[{field:"id",operator:"==",value:locationId}]
+            },
+          },
+          {
+            key:"locationImages",
+            queryConfig:{
+              collectionName:'Images',
+              conditions:[{field:"locationId",operator:"==",value:locationId},
+              {field:"photoType",operator:"==",value:'location'}]
+            },
+          },
+          {
+            key:"locationOpsDays",
+            queryConfig:{
+              collectionName:'OperationDayTime',
+              conditions:[{field:"locationId",operator:"==",value:locationId}]
+            },
+          },
+          {
+            key:"locationLessonSkills",
+            queryConfig:{
+              collectionName:'SkillLevel',
+              conditions:[{field:"locationId",operator:"==",value:locationId}]
+            },
+          },
+          {
+            key:"locationLessonTypes",
+            queryConfig:{
+              collectionName:'LessonType',
+              conditions:[{field:"locationId",operator:"==",value:locationId}]
+            },
+          },
+          {
+            key:"locationCoachInfo",
+            queryConfig:{
+              collectionName:'Coach',
+              conditions:[{field:"locationId",operator:"==",value:locationId},
+              {field:"coachType",operator:"==",value:"Head Coach"}]
+            },
+          },{
+            key:"locationAvailibility",
+            queryConfig:{
+              collectionName:'TimeBlock',
+              conditions:[{field:"locationId",operator:"==",value:locationId}]
+            },
+          },{
+            key:"locationAmenities",
+            queryConfig:{
+              collectionName:'Amenities',
+              conditions:[{field:"locationId",operator:"==",value:locationId}]
+            },
+          }
+
+          ]})
+        
+        
+
+        setTeamName(allLocationInfo.teamInfo.teamName)
+        setTeamDescription(allLocationInfo.teamInfo.teamDescription)
+        setProgramsAvailable(allLocationInfo.locationLessonSkills.map(item=>item.level))
+        setClassSizes(allLocationInfo.locationLessonTypes.map(item=>item.level))
+        setCoachPhoto(allLocationInfo.locationCoachInfo[0].photoUrl)
+        setCoachName()
+
+
+      }
+
+      getTeamPageInfo()
+      setLoadingNewPage(false)
+
+    },[])
+
+  
+    const trialLessonPrice = 30
 
     const checkAvailabilityRef = useRef(null)
     const coachRef = useRef(null)
     const [isDivVisible, setIsDivVisible] = useState(true); // Track visibility of the target div
-
-    const images = [
-    "https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg",
-    "https://swimmings.s3.us-east-2.amazonaws.com/neptuneLogo.jpeg",
-    "https://swimmings.s3.us-east-2.amazonaws.com/poolThree.jpg",
-    "https://swimmings.s3.us-east-2.amazonaws.com/poolTwo.jpeg",
-    "https://swimmings.s3.us-east-2.amazonaws.com/poolTwo.jpeg"]
 
     const [isOpen, setIsOpen] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -104,6 +181,8 @@ export default function TeamPage()  {
       const ProgramsList = ({ items }) => {
         return <div className="">{formatProgramsList(items)}</div>;
       };
+
+    
 
     // KEEP TRACK OF LOWER SCREEN BOOKING PANEL
     useEffect(() => {
@@ -175,7 +254,7 @@ export default function TeamPage()  {
           />  
 
         <div className="w-full mt-[20px] text-[20px] font-bold mb-[10px]">
-        {swimTeamName}
+        {teamName}
         </div>
 
         <div className="flex space-x-[10px] pb-[25px]">
@@ -274,7 +353,7 @@ export default function TeamPage()  {
             className="relative w-full h-[1px] bg-gray-200 mt-[30px]"
           />  
         <div className="h-[25px]"/>
-        <SwimClubDescription swimClubDescription={swimClubDescription}/>
+        <SwimClubDescription swimClubDescription={teamDescription}/>
 
         <div
             className="relative w-full h-[1px] bg-gray-200 mt-[20px]"
@@ -292,7 +371,7 @@ export default function TeamPage()  {
                 Safety Certified
             </div>
             <div className="text-[15px] text-gray-400 leading-5 ">
-                {swimTeamName}'s staff is fully certified and has passed all
+                {teamName}'s staff is fully certified and has passed all
                 our rigorous safety checks
             </div>
         </div>

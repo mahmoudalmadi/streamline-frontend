@@ -32,6 +32,7 @@ export const getEntriesByConditions = async ({
     // Create query based on conditions (excluding `id` condition)
     let q = query(colRef);
     conditions.forEach(({ field, operator, value }) => {
+      
       if (field !== "id") { // Ignore `id` condition
         let queryValue = value;
         if (value instanceof Date) {
