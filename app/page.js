@@ -24,9 +24,10 @@ export default function Home() {
       })
 
       const getUniqueDays = (data) => {
-        const days = data.map((item) => item.day?.substring(0, 3)); // Extract the first three letters
-        return [...new Set(days)]; // Get unique entries using a Set
-      };
+        const daysOrder = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const daysSet = new Set(data.map((item) => item.day?.substring(0, 3)));
+        return daysOrder.filter(day => daysSet.has(day));
+      };      
 
       const updatedLocations = await Promise.all(
         locations.map(async (location) => {
@@ -50,7 +51,7 @@ export default function Home() {
             collectionName: "Team",
             conditions: [{ field: "id", operator: "==", value: location.teamId }],
           });
-          console.log("LOOKING AT TEAminfo",teamInfo)
+          
           return {
             ...location,
             uniqueDays,
@@ -61,7 +62,6 @@ export default function Home() {
       );
 
       setTeamLocations(updatedLocations)
-      console.log(updatedLocations)
       setLoadingTeams(false)
     }
 
@@ -77,9 +77,17 @@ export default function Home() {
     <div className="flex  justify-center items-center">
       <DynamicScreen className=" h-screen">
 
+        <div className="flex flex-col h-screen">
+
+
         <TopBar/>
 
-        
+        {loadingTeams?
+          <div className={"h-screen"}>
+          <LoadingSubScreen/>
+          </div>
+          :
+        <>
         {(isFetchingUserInfo || loadingNewPage) && !loadingTeams ?
         <div className="h-screen">
           <LoadingSubScreen loadingMessage={loadingNewPage?loadingNewPageMessage:null}/>
@@ -120,9 +128,11 @@ export default function Home() {
 
         <SwimTeamsMenu teamLocations={teamLocations}/>
         </>}
+        </>}
         
 
 
+        </div>
       </DynamicScreen>
     </div>
   );
