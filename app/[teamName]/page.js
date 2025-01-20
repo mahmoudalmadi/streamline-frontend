@@ -36,9 +36,9 @@ export default function TeamPage()  {
     const [coachPhoto,setCoachPhoto]=useState([])
     const [coachName,setCoachName]=useState("")
     const [locationAddress,setLocationAddress]=useState("")
-    const [locationCoords,setLocationCoords]=useState({"lat":"n/a","long":"n/a"})
+    const [locationCoords,setLocationCoords]=useState({"lat":40.748817,"long":-73.985428})
     const [amenities,setAmenities]=useState([])
-    const [headCoachDescription,setHeadCoachDescription]=useState([])
+    const [headCoachDescription,setHeadCoachDescription]=useState("")
 
     const lessonTypes = CONFIG.lessonTypes
     const skillLevels = CONFIG.skillLevels
@@ -121,24 +121,34 @@ export default function TeamPage()  {
         
         
 
-        setTeamName(allLocationInfo.teamInfo.teamName)
-        setTeamDescription(allLocationInfo.teamInfo.teamDescription)
+        setTeamName(allLocationInfo.teamInfo[0].teamName)
+        setTeamDescription(allLocationInfo.teamInfo[0].teamDescription)
         setProgramsAvailable(allLocationInfo.locationLessonSkills.map(item=>item.level))
         setClassSizes(allLocationInfo.locationLessonTypes.map(item=>item.level))
         setCoachPhoto(allLocationInfo.locationCoachInfo[0].photoUrl)
-        setCoachName()
+        setCoachName(allLocationInfo.locationCoachInfo[0].coachName)
+        setLocationAddress(allLocationInfo.locationInfo[0].address)
+        console.log("LONGY",allLocationInfo.locationInfo[0].longitude)
+        console.log("LATTY",allLocationInfo.locationInfo[0].latitude)
+        setLocationCoords({"long":allLocationInfo.locationInfo[0].longitude,"lat":allLocationInfo.locationInfo[0].latitude})
 
+        const amenitiesList = allLocationInfo.locationAmenities.map(item=>item.selectedAmenities)
+
+        setAmenities(amenitiesList)
+        setHeadCoachDescription(allLocationInfo.locationCoachInfo[0].coachBio)
+
+        setImages(allLocationInfo.locationImages.map(item=>item.imageUrl))
 
       }
 
       getTeamPageInfo()
       setLoadingNewPage(false)
-
+      setIsPageLoading(false)
     },[])
 
-  
+    const [isPageLoading,setIsPageLoading]=useState(true)
     const trialLessonPrice = 30
-
+    
     const checkAvailabilityRef = useRef(null)
     const coachRef = useRef(null)
     const [isDivVisible, setIsDivVisible] = useState(true); // Track visibility of the target div
@@ -240,7 +250,7 @@ export default function TeamPage()  {
 
         <TopBar/>
 
-        {loadingNewPage ? 
+        {loadingNewPage || isPageLoading ? 
           <div className="h-screen">
             <LoadingSubScreen loadingMessage={loadingNewPageMessage.length>0 ? loadingNewPageMessage:null}/>
           </div>
@@ -362,11 +372,10 @@ export default function TeamPage()  {
         {/* SAFETY CERTIFICATION SECTION */}
         <div className="flex items-center mt-[15px]">
         <div>
-        <SafetyCertified className="
-        md:w-[180px]
-        w-[180px] h-[100px] mt-[12px]"/>
+        <SafetyCertified className="w-[90px]
+        mt-[12px]"/>
         </div>
-        <div className="flex flex-col text-[18px] font-bold ml-[10px]">
+        <div className="flex flex-col text-[18px] font-bold ">
             <div>
                 Safety Certified
             </div>

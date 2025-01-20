@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 const Map = ({locationCoords, address}) => {
   const mapRef = useRef(null);
   const apiKey = "AIzaSyB4Ju2F2EEtL4yYDAxZekIPrUJkHakCw-w"; // Replace with your actual Google Maps API key
-
+  
   useEffect(() => {
     // Load the Google Maps script
     const script = document.createElement("script");

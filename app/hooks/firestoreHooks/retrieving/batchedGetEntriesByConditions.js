@@ -3,7 +3,7 @@ import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "fi
 export const batchedGetEntriesByConditions = async ({queriesWithKeys}) => {
   try {
     const db = getFirestore(); // Initialize Firestore instance
-    console.log("made it pasy db")
+    
     // Helper function to process a single query
     const processQuery = async ({ collectionName, conditions }) => {
       const colRef = collection(db, collectionName);
