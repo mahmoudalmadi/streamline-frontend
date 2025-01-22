@@ -36,7 +36,8 @@ export default function TeamPage()  {
     const [coachPhoto,setCoachPhoto]=useState([])
     const [coachName,setCoachName]=useState("")
     const [locationAddress,setLocationAddress]=useState("")
-    const [locationCoords,setLocationCoords]=useState({"lat":40.748817,"long":-73.985428})
+    // const [locationCoords,setLocationCoords]=useState({"lat":40.748817,"long":-73.985428})
+    const [locationCoords,setLocationCoords]=useState(null)
     const [amenities,setAmenities]=useState([])
     const [headCoachDescription,setHeadCoachDescription]=useState("")
 
@@ -142,8 +143,10 @@ export default function TeamPage()  {
       }
 
       getTeamPageInfo()
-      setLoadingNewPage(false)
-      setIsPageLoading(false)
+      setTimeout(()=>{
+        setLoadingNewPage(false)
+        setIsPageLoading(false)
+      },1000)
     },[])
 
     const [isPageLoading,setIsPageLoading]=useState(true)
@@ -401,7 +404,7 @@ export default function TeamPage()  {
 
         {/* MAP SECTION */}
         <div className="flex flex-col w-full mt-[25px]"/>
-            <Map address={locationAddress} locationCoords={locationCoords}/>
+            {locationCoords&&<Map address={locationAddress} locationCoords={locationCoords}/>}
         
         <div
             className=" w-full h-[1px] bg-gray-200 mt-[18px] mb-[30px]"
