@@ -1,11 +1,9 @@
 import React, { useEffect, useRef } from "react";
 
-const Map = ({locationCoords, address}) => {
+const GoogleMap = ({locationCoords, address}) => {
   const mapRef = useRef(null);
   const apiKey = "AIzaSyB4Ju2F2EEtL4yYDAxZekIPrUJkHakCw-w"; // Replace with your actual Google Maps API key
   
-  console.log("MY CORRDIANTATES",locationCoords.long)
-  console.log("MY CORRDIANTATES",locationCoords.lat)
   // const locationCoords = {long: -96.7732461, lat: 32.8413603}
   useEffect(() => {
     // Load the Google Maps script
@@ -72,4 +70,4 @@ const Map = ({locationCoords, address}) => {
   );
 };
 
-export default Map;
+export default GoogleMap;

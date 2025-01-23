@@ -23,16 +23,21 @@ export default function CheckoutPage() {
     const { checkoutData, setCheckoutData } = useCheckout();
     const swimTeamPhoto="https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg"
     const swimTeamName = "Neptunes Swimming Academy"
+    const [prevPage,setPrevPage]=useState("")
     const currency = "CAD"
     const [isLoginOption,setIsLoginOptions] = useState(false)
+
+    
 
     const switchModalType = () => {
         setIsLoginOptions(!isLoginOption)
     }
 
-    let teamName;
+    
     useEffect(()=>{
-        teamName = pathName.split('/')[1];
+        const pathStop = pathName.split('/')[1];
+        console.log("PATH",pathStop)
+        setPrevPage(pathStop)
         if(!checkoutData){
             // router.push(`/${teamName}`)
         }else{
@@ -110,12 +115,12 @@ export default function CheckoutPage() {
                 >
                     <div className="justify-center items-center hover:bg-gray-100 p-[10px] rounded-full
                     cursor-pointer" onClick={()=>{
-                        router.push(`/${teamName}`)
+                        router.push(`/${prevPage}`)
                     }}>
                     <BlackMoveLeft />
                     </div>
                     <div className="font-bold">
-                    Confirm and pay
+                    Review and confirm
                     </div>
                 </div>
 
@@ -162,7 +167,7 @@ export default function CheckoutPage() {
                     <div>
                         Time and date
                     </div>
-                    <div className="font-bold underline cursor-pointer"
+                    {/* <div className="font-bold underline cursor-pointer"
                     onClick={toggleIsDateTimeDropdownVisible}>
                         Edit
                     <DateTimePicker
@@ -175,7 +180,7 @@ export default function CheckoutPage() {
                     toggleIsDateTimeDropdownVisible={toggleIsDateTimeDropdownVisible}
                     dateTimePositioning={"right-0"}
                     />
-                    </div>
+                    </div> */}
 
                 </div>
                 
@@ -191,7 +196,7 @@ export default function CheckoutPage() {
                     className="relative w-full h-[1px] bg-gray-200 mt-[15px] mb-[20px]"
                 />         
 
-    <div
+                {/* <div
                 className="font-bold text-[18px] mb-[15px]"
                 >
                     Price details
@@ -231,7 +236,7 @@ export default function CheckoutPage() {
                 
                 <div
                     className="relative w-full h-[1px] bg-gray-200 mt-[20px] mb-[20px]"
-                />         
+                />          */}
 
                 <div
                 className="font-bold text-[18px] mb-[15px]"
@@ -255,7 +260,7 @@ export default function CheckoutPage() {
                 </div>
                 
                 <div
-                    className="relative w-full h-[1px] bg-gray-200 mt-[20px] mb-[20px]"
+                    className="relative w-full h-[1px]  mt-[20px] mb-[20px]"
                 />         
 
             {/* <div className="relative flex justify-between mb-[5px]"

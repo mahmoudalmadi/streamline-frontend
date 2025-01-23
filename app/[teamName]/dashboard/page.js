@@ -115,7 +115,7 @@ export default function TeamDashboard() {
           return (
             startDate >= startOfWeek &&
             startDate <= endOfWeek &&
-            item.status !== "available"
+            item.status.toLowerCase() !== "available"
           );
         });
       }    
@@ -136,7 +136,7 @@ export default function TeamDashboard() {
             setCurrDay(newDate)
             setIsCalendarLoading(false)
         }
-        console.log("currWeekNum",currWeekNum,isCalendarLoading, xWeeks)
+        
         if (Math.abs(currWeekNum)>xWeeks){
             
             updateCal()

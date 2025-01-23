@@ -4,7 +4,7 @@ import DynamicScreen from "../components/DynamicScreen";
 import ImageViewer from "../components/ImageViewer";
 import BookingPanel from "../components/TeamPageComps/LessonBookingPanel/BookingPanel";
 import SwimClubDescription from "../components/SwimClubDescription";
-import Map from "../components/TeamPageComps/Map"
+import GoogleMap from "../components/TeamPageComps/GoogleMap"
 import TopBar from "../components/TopBarComps/TopBar";
 import SafetyCertified from "../../public/SafetyCertified.svg"
 import { useState, useRef, useEffect, useContext } from "react";
@@ -41,10 +41,11 @@ export default function TeamPage()  {
     const [amenities,setAmenities]=useState([])
     const [headCoachDescription,setHeadCoachDescription]=useState("")
 
-    const lessonTypes = CONFIG.lessonTypes
-    const skillLevels = CONFIG.skillLevels
+    const [lessonTypes,setLessonTypes] = useState("")
+    const [skillLevels,setSkillLevels] = useState("")
 
     const [images,setImages]=useState([])
+    const [locationAvailability,setLocationAvailability]=useState(null)
 
     useEffect(()=>{
 
@@ -52,6 +53,10 @@ export default function TeamPage()  {
 
         const flattenedName = teamNameId.split("-")[0];
         const locationId = teamNameId.split("-")[1];
+
+        const today = new Date()
+        const cutoff = new Date(today);
+        cutoff.setDate(cutoff.getDate() + 1); // Move to 
 
         const allLocationInfo = await batchedGetEntriesByConditions({queriesWithKeys:
         [{
@@ -105,32 +110,58 @@ export default function TeamPage()  {
               {field:"coachType",operator:"==",value:"Head Coach"}]
             },
           },{
-            key:"locationAvailibility",
-            queryConfig:{
-              collectionName:'TimeBlock',
-              conditions:[{field:"locationId",operator:"==",value:locationId}]
-            },
-          },{
             key:"locationAmenities",
             queryConfig:{
               collectionName:'Amenities',
               conditions:[{field:"locationId",operator:"==",value:locationId}]
             },
+          },{
+            key:"locationAvailability",
+            queryConfig:{
+              collectionName:'TimeBlock',
+              conditions:[{field:"start",operator:">",value:cutoff},
+              {field:"locationId",operator:"==",value:locationId}]
+            }
           }
-
           ]})
+
         
+
+        function filterItemsByStatus({items,status}) {
+          const now = new Date();
         
+          // Filter the list
+          return items.filter(item => {
+            const startDate = new Date(item.start); // Parse the `start` date
+            return (
+              item.status.toLowerCase() == "available"
+            );
+          });
+        }
 
         setTeamName(allLocationInfo.teamInfo[0].teamName)
         setTeamDescription(allLocationInfo.teamInfo[0].teamDescription)
         setProgramsAvailable(allLocationInfo.locationLessonSkills.map(item=>item.level))
+        const currSkillLevels = allLocationInfo.locationLessonSkills.map(item=>item.category)
+        const locoSkillLevels = []
+        const skillLevelsDict = CONFIG.skillLevels
+        for (const skillLevel of currSkillLevels){
+          locoSkillLevels.push({"skillLevel":skillLevel,"skillLevelDescription":skillLevelsDict[skillLevel]})
+        }
+        setSkillLevels(locoSkillLevels)
+        
+        const currLessonTypes = allLocationInfo.locationLessonTypes.map(item=>item.category)
+        const locoLessonTypes = []
+        const lessonTypesDict = CONFIG.lessonTypes
+        for (const lessonType of currLessonTypes){
+          locoLessonTypes.push({"lessonType":lessonType,"lessonTypeDescription":lessonTypesDict[lessonType]})
+        }
+        setLessonTypes(locoLessonTypes)
+
         setClassSizes(allLocationInfo.locationLessonTypes.map(item=>item.level))
         setCoachPhoto(allLocationInfo.locationCoachInfo[0].photoUrl)
         setCoachName(allLocationInfo.locationCoachInfo[0].coachName)
         setLocationAddress(allLocationInfo.locationInfo[0].address)
-        console.log("LONGY",allLocationInfo.locationInfo[0].longitude)
-        console.log("LATTY",allLocationInfo.locationInfo[0].latitude)
         setLocationCoords({"long":allLocationInfo.locationInfo[0].longitude,"lat":allLocationInfo.locationInfo[0].latitude})
 
         const amenitiesList = allLocationInfo.locationAmenities.map(item=>item.selectedAmenities)
@@ -140,9 +171,67 @@ export default function TeamPage()  {
 
         setImages(allLocationInfo.locationImages.map(item=>item.imageUrl))
 
+        const allTimeBlocks= allLocationInfo.locationAvailability
+
+        const filteredAvailability = filterItemsByStatus({items:allTimeBlocks,status:"availability"})
+
+        function formatTimeIntervalsAsMap(data) {
+          const result = new Map();
+          const dateObjectsArray = []; // Array to store date objects
+        
+          // Helper function to convert Date object to 12-hour time format with AM/PM
+          function to12HourFormat(date) {
+            const hours = date.getHours();
+            const minutes = date.getMinutes();
+            const period = hours >= 12 ? 'PM' : 'AM';
+            const hour12 = hours % 12 || 12; // Convert 0 to 12 for AM
+            return `${hour12}:${minutes.toString().padStart(2, '0')} ${period}`;
+          }
+        
+          // Process each item in the data list
+          data.forEach(({ start, end }) => {
+            if (!(start instanceof Date) || !(end instanceof Date)) {
+              throw new Error("Both 'start' and 'end' must be Date objects.");
+            }
+        
+            // Normalize the date to remove the time portion
+            const startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+        
+            // Format the time interval
+            const startTime = to12HourFormat(start);
+            const endTime = to12HourFormat(end);
+            const timeInterval = `${startTime} - ${endTime}`;
+        
+            // Convert date to string for use as a key
+            const startDateString = startDate.toDateString();
+        
+            // If the date is not already in the Map, initialize it with the header
+            if (!result.has(startDateString)) {
+              result.set(startDateString, [
+                "Available times",
+                startDate.toDateString().slice(0, startDate.toDateString().length - 4),
+              ]);
+              dateObjectsArray.push(startDate); // Add to the array of date objects
+            }
+        
+            // Add the time interval to the Map
+            result.get(startDateString).push(timeInterval);
+          });
+        
+          return { datesMap: result, dates: dateObjectsArray };
+        }
+        
+        console.log("BEFORE FORMATTING")
+        const formattedDayTimes = formatTimeIntervalsAsMap(filteredAvailability)
+        
+        console.log("DAY TIMES after FROMATTING",formattedDayTimes)
+        setLocationAvailability(formattedDayTimes)
+
       }
 
+
       getTeamPageInfo()
+      console.log("SHOULD STILL BE LOADING",locationAvailability)
       setTimeout(()=>{
         setLoadingNewPage(false)
         setIsPageLoading(false)
@@ -165,6 +254,8 @@ export default function TeamPage()  {
     // Lesson type dropdown setup
     const [selectedLessonType, setSelectedLessonType] = useState("")
     const [selectedSkillLevel, setSelectedSkillLevel] = useState("")
+
+    
 
     const openModal = (index) => {
       setCurrentIndex(index);
@@ -201,15 +292,16 @@ export default function TeamPage()  {
     useEffect(() => {
     // Observer callback to check visibility
     const observerCallback = (entries) => {
-        
+      console.log('Observer entries:', entries); // Debug here
         const [entry] = entries; // There will be only one entry for this div
+        console.log("entry",entry)
         setIsDivVisible(entry.isIntersecting);
     };
 
     // Create an Intersection Observer
     const observer = new IntersectionObserver(observerCallback, {
         root: null, // Observe within the viewport
-        threshold: 0.1, // Trigger if 10% of the div is visible
+        threshold: [0.1,1], // Trigger if 10% of the div is visible
     });
     
     // Observe the target div
@@ -223,7 +315,7 @@ export default function TeamPage()  {
         observer.unobserve(checkAvailabilityRef.current);
         }
     };
-    }, []);
+    }, [checkAvailabilityRef]);
 
     // Scroll to the target div when the button is clicked
     const scrollToDiv = () => {
@@ -234,22 +326,10 @@ export default function TeamPage()  {
         coachRef.current?.scrollIntoView({ behavior: "smooth",block:'center' });
     };
     
-    const [scrollY, setScrollY] = useState(0);
-
-    useEffect(() => {
-      const handleScroll = () => {
-        setScrollY(window.scrollY);
-      };
-  
-      window.addEventListener("scroll", handleScroll);
-      return () => {
-        window.removeEventListener("scroll", handleScroll);
-      };
-    }, []);
 
   return (
     <div className="flex  justify-center items-center ">
-      <DynamicScreen className=" h-screen ">
+      <DynamicScreen className=" h-screen  md:w-[80%] lg:w-[78%]">
 
         <TopBar/>
 
@@ -404,7 +484,7 @@ export default function TeamPage()  {
 
         {/* MAP SECTION */}
         <div className="flex flex-col w-full mt-[25px]"/>
-            {locationCoords&&<Map address={locationAddress} locationCoords={locationCoords}/>}
+            {locationCoords&&<GoogleMap address={locationAddress} locationCoords={locationCoords}/>}
         
         <div
             className=" w-full h-[1px] bg-gray-200 mt-[18px] mb-[30px]"
@@ -430,22 +510,23 @@ export default function TeamPage()  {
         >
             
             <div className="flex mb-[10px] font-bold space-x-[4px] items-end">
-                <div className="text-[20px]">
-                    ${trialLessonPrice}
-                </div>
-                <div className="text-[16px]">
-                    trial lesson
+                <div className="text-[18px]">
+                    Book your free trial lesson
                 </div>
             </div>
             
-            <div>
-            <BookingPanel lessonTypes={lessonTypes} skillLevels={skillLevels}
+            <div
+            
+            >
+            <BookingPanel key={1} subKey={1} lessonTypes={lessonTypes} skillLevels={skillLevels} locationAvailability={locationAvailability}
             selectedDate={selectedDate} setSelectedDate={setSelectedDate}
             selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel}
             selectedLessonType={selectedLessonType} setSelectedLessonType={setSelectedLessonType}
             selectedTime={selectedTime} setSelectedTime={setSelectedTime} 
             dateTimePositioning={"left-1/2 transform -translate-x-1/2 "}
+            stackTimes={true}
             teamName={teamName} lessonPrice={trialLessonPrice}
+            lessonInfoDropdownStyling={"absolute border border-gray-300 border-[1px] flex bg-white left-0 top-full mt-2 py-2  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]"}
             />
             </div>
 
@@ -453,7 +534,8 @@ export default function TeamPage()  {
 
         <div
             ref={checkAvailabilityRef}
-            className=" w-full sm:hidden h-[1px] bg-gray-200 mt-[32px] mb-[100px]"
+            style={{overflow:"visible"}}
+            className=" w-full h-[1] bg-gray-200 mt-[32px] mb-[100px]"
           />  
 
         </div>
@@ -481,14 +563,15 @@ export default function TeamPage()  {
             </div>
             
             <div>
-            <BookingPanel lessonTypes={lessonTypes}
-            skillLevels={skillLevels}
+            <BookingPanel key={0} subKey={0} lessonTypes={lessonTypes}
+            skillLevels={skillLevels} locationAvailability={locationAvailability}
             selectedDate={selectedDate} setSelectedDate={setSelectedDate}
             selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel}
             selectedLessonType={selectedLessonType} setSelectedLessonType={setSelectedLessonType}
             selectedTime={selectedTime} setSelectedTime={setSelectedTime}
             dateTimePositioning={"right-0"} teamName={teamName}
             lessonPrice={trialLessonPrice}
+            lessonInfoDropdownStyling={"absolute  border border-gray-300 border-[1px] flex bg-white right-0 top-full mt-2 py-2  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]"}
             />
             </div>
             
