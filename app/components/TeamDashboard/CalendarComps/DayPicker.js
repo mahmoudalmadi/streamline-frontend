@@ -9,11 +9,11 @@ const WeekdayPicker = ({daysPicked,setDaysPicked}) => {
     };
   
     return (
-      <div className="flex flex-wrap justify-center w-full">
+      <div className="flex flex-wrap justify-center w-full space-x-[12px]">
         {daysPicked.map(({ day, isPicked }) => (
           <button
             key={day}
-            className={`w-10 h-10 text-[13px] flex items-center justify-center text-center m-1 rounded-full border 
+            className={`w-10 h-10 text-[13px] flex  items-center justify-center text-center m-1 rounded-[22px] border 
             ${isPicked ? "border-2 border-streamlineBlue" : "border border-gray-400"} 
             hover:border-2`}
             onClick={() => toggleDay(day)}

@@ -115,26 +115,31 @@ export default function TeamDashboard() {
           return (
             startDate >= startOfWeek &&
             startDate <= endOfWeek &&
-            item.status !== "available"
+            item.status.toLowerCase() !== "available"
           );
         });
       }    
 
     const [events,setEvents] = useState(null);
+    const [currDay,setCurrDay]=useState(new Date())
     const [isCalendarLoading,setIsCalendarLoading]=useState(true)
     useEffect(()=>{
 
         const updateCal = async() => {
-            const weekEvents = await getXWeeksData({locationId:currentLocation.id,x:xWeeks})
+            setIsCalendarLoading(true)
+            const newDate = new Date(currDay)
+            newDate.setDate(currDay.getDate()+currWeekNum*7)
+            const weekEvents = await getXWeeksData({locationId:currentLocation.id,x:xWeeks,currDay:newDate})
             setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents))
             setEvents(weekEvents)
             setCurrWeekNum(0)
-        }
-
-        if (Math.abs(currWeekNum)>xWeeks){
-            setIsCalendarLoading(true)
-            updateCal()
+            setCurrDay(newDate)
             setIsCalendarLoading(false)
+        }
+        
+        if (Math.abs(currWeekNum)>xWeeks){
+            
+            updateCal()
         }else
         if (events) {
             setCurrWeekEvents(filterItemsByWeekAndStatus(events))
@@ -193,13 +198,39 @@ export default function TeamDashboard() {
                   locationId: location.id,
                 },
               });
+
+              const transformData = (data) => {
+                return data.map(({ category, level }) => ({ [level]: category }));
+              };
+
+              const firestoreLocationLessonTypes = await getEntriesByMatching({
+                collectionName: "LessonType",
+                fields: {
+                  locationId: location.id,
+                },
+              });
+
+              const locationLessonTypes = transformData(firestoreLocationLessonTypes)
+
+              const firestoreLocationLessonSkills = await getEntriesByMatching({
+                collectionName: "SkillLevel",
+                fields: {
+                  locationId: location.id,
+                },
+              });
+              
+              const locationLessonSkills = transformData(firestoreLocationLessonSkills)
               
               const formattedLocationImages = transformImagesListToJsons({list:firestoreLocationImages})
               
-              location.images = formattedLocationImages
+              const extractKeys = (data) => data.map(Object.keys).flat();
               
+              location.images = formattedLocationImages
+              location.skillLevels = extractKeys(locationLessonSkills)
+              location.lessonTypes = extractKeys(locationLessonTypes)
+
               const {minHour,maxHour} = getMinMaxHours(firestoreLocationHours)
-              console.log("PAGE", minHour,maxHour)
+              
               const parsedAddress = parseAddress({address:location.address})
               parsedAddresses.push(parsedAddress)
               location.parsedAddress = parsedAddress
@@ -210,7 +241,7 @@ export default function TeamDashboard() {
             }
 
             
-            const weekEvents = await getXWeeksData({locationId:locationsInfo[0].id,x:xWeeks})
+            const weekEvents = await getXWeeksData({locationId:locationsInfo[0].id,x:xWeeks,currDay:currDay})
 
             setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents))
             setEvents(weekEvents)
@@ -235,6 +266,7 @@ export default function TeamDashboard() {
     const openAddModal = () => {setIsAddModalOpen(true)};
     const closeAddModal = () => {setIsAddModalOpen(false),setAddAvailibilityModalKey(1+addAvailibilityModalKey)};
 
+    const parentDivRef = useRef(null)
 
     return(
 
@@ -281,8 +313,8 @@ export default function TeamDashboard() {
             </ModalTemplate>
 
             {/* add Availability modal */}
-            <ModalTemplate onClose={closeAddModal} isOpen={isAddModalOpen}>
-                <AddAvailibilityModal key={addAvailibilityModalKey} addAvailibilityModalKey={addAvailibilityModalKey} setAddAvailibilityModalKey={setAddAvailibilityModalKey} onClose={closeAddModal} teamId={userInfo.teamInfo.id} 
+            <ModalTemplate onClose={closeAddModal} isOpen={isAddModalOpen} parentDivRef={parentDivRef}>
+                <AddAvailibilityModal key={addAvailibilityModalKey}  parentDivRef={parentDivRef} lessonTypes={currentLocation.lessonTypes} lessonSkills={currentLocation.skillLevels} addAvailibilityModalKey={addAvailibilityModalKey} setAddAvailibilityModalKey={setAddAvailibilityModalKey} onClose={closeAddModal} teamId={userInfo.teamInfo.id} 
                 retrievedCoaches={retrievedCoaches} locationId={currentLocation.id} events={events} setEvents={setEvents}/>
             </ModalTemplate>
 

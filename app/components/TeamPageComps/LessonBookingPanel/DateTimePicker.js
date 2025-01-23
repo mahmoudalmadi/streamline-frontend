@@ -4,7 +4,7 @@ import "react-day-picker/style.css";
 
 const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, selectedTime, 
     toggleIsDateTimeDropdownVisible,
-    setSelectedTime, dateTimePositioning}) => {
+    setSelectedTime, dateTimePositioning,stackTimes,locationAvailability}) => {
     const divRef = useRef(null);
 
     useEffect(() => {
@@ -14,6 +14,15 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
     }, [isVisible,selectedDate]);
 
     const [currentDate, setCurrentDate] = useState(null)
+
+    const availableTimes = locationAvailability
+    const myDates = locationAvailability?locationAvailability.dates:null
+
+    // Convert the list of available dates to a Set for better performance
+    const availableDatesSet = new Set(myDates);
+
+    // Disable all dates except the available ones
+    const isDateSelectable = (date) => availableDatesSet.has(date.toDateString());
 
     const handleClickOutside = (event) => {
         if (divRef.current && !divRef.current.contains(event.target)) {
@@ -28,16 +37,9 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
         new Date(2024, 10, 17)
     ];
 
-    const availableTimes = {
-        "11/15/2024" : ["Available times",currentDate?.toDateString().slice(0,
-            currentDate.toDateString().length -4),"7 AM - 7:30 AM"],
-       "11/16/2024" : ["Available times",currentDate?.toDateString().slice(0,
-        currentDate.toDateString().length -4),"7 AM - 7:30 AM", "7:30 AM - 8:30 AM","8:30 - 9:00 AM"]
-    }
-
     // Function to determine if a day is disabled
     const isDateDisabled = (date) => {
-        return !selectableDays.some(selectableDay => 
+        return !myDates.some(selectableDay => 
         selectableDay.toDateString() === date.toDateString()
         );
     };
@@ -53,11 +55,14 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
         };
     }, [isVisible]);
 
+    console.log(locationAvailability)
+    console.log("HII",currentDate?locationAvailability.datesMap.get(currentDate.toDateString()):null,currentDate)
+
     return (
         isVisible && (
             <div
                 ref={divRef}
-                className={`absolute flex bg-white
+                className={`absolute flex bg-white border border-gray-300
                 ${dateTimePositioning}
                  mt-2 py-2 
                  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)] mb-[10px]
@@ -77,14 +82,23 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
                         <DayPicker
                             mode="single"
                             selected={currentDate}
-                            onSelect={setCurrentDate}
+                            onSelect={(event)=>{
+                                console.log("EVENET",typeof(event))
+                                setCurrentDate(event)}}
                             disabled={isDateDisabled}
+                            modifiers={{
+                                selectable: (date) => isDateSelectable(date), // Highlight selectable dates
+                              }}
+                              modifiersClassNames={{
+                                selectable: 'selectable', // Class name for selectable dates
+                              }}
+
                         
                         />
                         </div>
                         </div>
                     </div>
-                    <div className='flex flex-col'>
+                    <div className='flex text-[14px] flex-col'>
 
                         <div className='flex  flex-1 justify-center 
                                 items-center max-w-[180px] px-[10px]'>
@@ -93,9 +107,9 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
                             ${currentDate?"w-[200px]":" w-[200px] text-graySubtitle"}
                             `}>
                                 {
-                                currentDate ? 
+                                (currentDate&&locationAvailability.datesMap.get(currentDate.toDateString())) ? 
                                 
-                                availableTimes[currentDate.toLocaleDateString()].map(
+                                locationAvailability.datesMap.get(currentDate.toDateString()).map(
                                     (item,index)=>
                                     (<div className={item!="Available times" ? `flex-1 leading-6
                                     ${index==1 ? "font-bold": ""} 

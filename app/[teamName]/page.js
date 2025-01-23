@@ -4,7 +4,7 @@ import DynamicScreen from "../components/DynamicScreen";
 import ImageViewer from "../components/ImageViewer";
 import BookingPanel from "../components/TeamPageComps/LessonBookingPanel/BookingPanel";
 import SwimClubDescription from "../components/SwimClubDescription";
-import Map from "../components/TeamPageComps/Map"
+import GoogleMap from "../components/TeamPageComps/GoogleMap"
 import TopBar from "../components/TopBarComps/TopBar";
 import SafetyCertified from "../../public/SafetyCertified.svg"
 import { useState, useRef, useEffect, useContext } from "react";
@@ -13,58 +13,239 @@ import HeadCoachSection from "../components/TeamPageComps/HeadCoachSection";
 import { useRouter, useSearchParams,usePathname } from "next/navigation";
 import { useAuth } from "../contexts/AuthContext";
 import LoadingSubScreen from "../components/loadingSubscreen";
+import { getEntriesByConditions } from "../hooks/firestoreHooks/retrieving/getEntriesByConditions";
+import { batchedGetEntriesByConditions } from "../hooks/firestoreHooks/retrieving/batchedGetEntriesByConditions";
+import CONFIG from "@/config";
 
 
 export default function TeamPage()  {
 
     const {loadingNewPage,loadingNewPageMessage,setLoadingNewPage}=useAuth()
 
-    useEffect(()=>{
-      setLoadingNewPage(false)
-    },[])
-
-    const swimTeamName = "Neptunes Swimming Academy"
-    const swimClubDescription="Neptunes Swimming Academy is a vibrant and inclusive swim club dedicated to nurturing swimmers of all ages and skill levels. Located in a picturesque setting, the academy offers comprehensive training programs that cater to children, teens, and adults alike. With a focus on developing essential swimming techniques, the academy emphasizes safety, fitness, and fun in the water. Experienced instructors provide personalized coaching, ensuring that each swimmer maximizes their potential while fostering a love for the sport. Whether you are a beginner looking to learn the basics or an advanced swimmer aiming to refine your skills, Neptunes Swimming Academy is the perfect place to dive in and make a splash."
-    const programsAvailable = ["Learn to swim", "Competitive"]
-    const classSizes= ["Group (4:1)", "Semi-Private (2:1)"]
-    const coachPhoto="https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg"
-    const coachName="Stefan Todorov"
-    const locationAddress="115 Haynes Ave, Toronto, Ontario M3J0L8"
-    const locationCoords = {"lat":40.748817,"long": -73.985428}
-    const amenities = [1,2,3,4,5,6,7]
-    const trialLessonPrice = 30
-    const headCoachDescription = "Stefan Todorov is a highly accomplished and dedicated head swim coach at Neptunes Swimming Academy, where he has been instrumental in shaping the future of young swimmers. With over a decade of coaching experience, Stefan combines his passion for swimming with a deep commitment to developing athletes both in and out of the pool.\
-    Stefan began his journey in the world of competitive swimming at a young age, quickly rising through the ranks to compete at national levels. His firsthand experience as an athlete informs his coaching philosophy, emphasizing technique, endurance, and mental resilience. Under his leadership, Neptunes Swimming Academy has gained a reputation for excellence, producing numerous champions and fostering a love for the sport among its members.\
-    At Neptunes, Stefan focuses on creating a supportive and motivating environment where swimmers can thrive. He believes in personalized training plans tailored to each athlete's unique strengths and areas for improvement. His innovative coaching methods incorporate cutting-edge training techniques and technology, ensuring that his swimmers are always at the forefront of competitive swimming.\
-    In addition to his coaching duties, Stefan is actively involved in mentoring young coaches and promoting swimming as a vital life skill. He organizes community outreach programs to encourage youth participation in swimming, highlighting its benefits for health and personal development.\
-    Stefan’s dedication to excellence has not gone unnoticed; he has received several accolades for his contributions to the sport. His commitment to nurturing talent and fostering a positive team culture makes him a respected figure in the swimming community.\
-    Outside of coaching, Stefan enjoys sharing his knowledge through workshops and seminars, inspiring the next generation of swimmers and coaches alike. His vision for Neptunes Swimming Academy is not just about winning medals but also about building character, discipline, and lifelong friendships among athletes.\
-    With Stefan Todorov at the helm, Neptunes Swimming Academy continues to be a beacon of hope and achievement in the world of competitive swimming."
+    // useEffect(()=>{
+    //   setLoadingNewPage(false)
+    // },[])
 
     const pathName = usePathname();
-    const teamName = pathName.split('/').pop();
+    const teamNameId = pathName.split('/').pop();
 
-    const [lessonTypes,setLessonTypes] = useState([
-        { lessonType: 'Private', lessonTypeDescription: 'One one one with an instructor' },
-        { lessonType: 'Semi-Private', lessonTypeDescription: `I don't remember` },
-        { lessonType: 'Group', lessonTypeDescription: 'Group lesson with other swimmers' }
-    ]);
-    const [skillLevels,setSkillLevels] = useState([
-        { skillLevel: 'Beginner', skillLevelDescription: 'Learning swimming for the first time' },
-        { skillLevel: 'Intermediate', skillLevelDescription: `Has some swimming experience` },
-        { skillLevel: 'Advanced', skillLevelDescription: 'Already a proficient swimmer' }
-    ]);
+    const [teamName,setTeamName] = useState("Hello")
+    const [teamDescription,setTeamDescription] = useState("Hi")
+    const [programsAvailable,setProgramsAvailable]=useState([])
+    const [classSizes,setClassSizes]=useState([])
+    const [coachPhoto,setCoachPhoto]=useState([])
+    const [coachName,setCoachName]=useState("")
+    const [locationAddress,setLocationAddress]=useState("")
+    // const [locationCoords,setLocationCoords]=useState({"lat":40.748817,"long":-73.985428})
+    const [locationCoords,setLocationCoords]=useState(null)
+    const [amenities,setAmenities]=useState([])
+    const [headCoachDescription,setHeadCoachDescription]=useState("")
 
+    const [lessonTypes,setLessonTypes] = useState("")
+    const [skillLevels,setSkillLevels] = useState("")
+
+    const [locationState,setLocationState]=useState("")
+    const [locationCity,setLocationCity]=useState("")
+
+    const [images,setImages]=useState([])
+    const [locationAvailability,setLocationAvailability]=useState(null)
+
+    useEffect(()=>{
+
+      const getTeamPageInfo = async() => {
+
+        const flattenedName = teamNameId.split("-")[0];
+        const locationId = teamNameId.split("-")[1];
+
+        const today = new Date()
+        const cutoff = new Date(today);
+        cutoff.setDate(cutoff.getDate() + 1); // Move to 
+
+        const allLocationInfo = await batchedGetEntriesByConditions({queriesWithKeys:
+        [{
+          key:"teamInfo",
+          queryConfig:{
+            collectionName:'Team',
+            conditions:[{field:"flattenedTeamName",operator:"==",value:flattenedName}]
+          }}
+          ,
+          {
+            key:"locationInfo",
+            queryConfig:{
+              collectionName:'Location',
+              conditions:[{field:"id",operator:"==",value:locationId}]
+            },
+          },
+          {
+            key:"locationImages",
+            queryConfig:{
+              collectionName:'Images',
+              conditions:[{field:"locationId",operator:"==",value:locationId},
+              {field:"photoType",operator:"==",value:'location'}]
+            },
+          },
+          {
+            key:"locationOpsDays",
+            queryConfig:{
+              collectionName:'OperationDayTime',
+              conditions:[{field:"locationId",operator:"==",value:locationId}]
+            },
+          },
+          {
+            key:"locationLessonSkills",
+            queryConfig:{
+              collectionName:'SkillLevel',
+              conditions:[{field:"locationId",operator:"==",value:locationId}]
+            },
+          },
+          {
+            key:"locationLessonTypes",
+            queryConfig:{
+              collectionName:'LessonType',
+              conditions:[{field:"locationId",operator:"==",value:locationId}]
+            },
+          },
+          {
+            key:"locationCoachInfo",
+            queryConfig:{
+              collectionName:'Coach',
+              conditions:[{field:"locationId",operator:"==",value:locationId},
+              {field:"coachType",operator:"==",value:"Head Coach"}]
+            },
+          },{
+            key:"locationAmenities",
+            queryConfig:{
+              collectionName:'Amenities',
+              conditions:[{field:"locationId",operator:"==",value:locationId}]
+            },
+          },{
+            key:"locationAvailability",
+            queryConfig:{
+              collectionName:'TimeBlock',
+              conditions:[{field:"start",operator:">",value:cutoff},
+              {field:"locationId",operator:"==",value:locationId}]
+            }
+          }
+          ]})
+
+        
+
+        function filterItemsByStatus({items,status}) {
+          const now = new Date();
+        
+          // Filter the list
+          return items.filter(item => {
+            const startDate = new Date(item.start); // Parse the `start` date
+            return (
+              item.status.toLowerCase() == "available"
+            );
+          });
+        }
+
+        setTeamName(allLocationInfo.teamInfo[0].teamName)
+        setTeamDescription(allLocationInfo.teamInfo[0].teamDescription)
+        setProgramsAvailable(allLocationInfo.locationLessonSkills.map(item=>item.level))
+        const currSkillLevels = allLocationInfo.locationLessonSkills.map(item=>item.category)
+        const locoSkillLevels = []
+        const skillLevelsDict = CONFIG.skillLevels
+        for (const skillLevel of currSkillLevels){
+          locoSkillLevels.push({"skillLevel":skillLevel,"skillLevelDescription":skillLevelsDict[skillLevel]})
+        }
+        setSkillLevels(locoSkillLevels)
+        
+        const currLessonTypes = allLocationInfo.locationLessonTypes.map(item=>item.category)
+        const locoLessonTypes = []
+        const lessonTypesDict = CONFIG.lessonTypes
+        for (const lessonType of currLessonTypes){
+          locoLessonTypes.push({"lessonType":lessonType,"lessonTypeDescription":lessonTypesDict[lessonType]})
+        }
+        setLessonTypes(locoLessonTypes)
+
+        setClassSizes(allLocationInfo.locationLessonTypes.map(item=>item.level))
+        setCoachPhoto(allLocationInfo.locationCoachInfo[0].photoUrl)
+        setCoachName(allLocationInfo.locationCoachInfo[0].coachName)
+        setLocationCity(allLocationInfo.locationInfo[0].city)
+        setLocationState(allLocationInfo.locationInfo[0].state)
+        setLocationAddress(allLocationInfo.locationInfo[0].address)
+        setLocationCoords({"long":allLocationInfo.locationInfo[0].longitude,"lat":allLocationInfo.locationInfo[0].latitude})
+
+        const amenitiesList = allLocationInfo.locationAmenities.map(item=>item.selectedAmenities)
+
+        setAmenities(amenitiesList)
+        setHeadCoachDescription(allLocationInfo.locationCoachInfo[0].coachBio)
+
+        setImages(allLocationInfo.locationImages.map(item=>item.imageUrl))
+
+        const allTimeBlocks= allLocationInfo.locationAvailability
+
+        const filteredAvailability = filterItemsByStatus({items:allTimeBlocks,status:"availability"})
+
+        function formatTimeIntervalsAsMap(data) {
+          const result = new Map();
+          const dateObjectsArray = []; // Array to store date objects
+        
+          // Helper function to convert Date object to 12-hour time format with AM/PM
+          function to12HourFormat(date) {
+            const hours = date.getHours();
+            const minutes = date.getMinutes();
+            const period = hours >= 12 ? 'PM' : 'AM';
+            const hour12 = hours % 12 || 12; // Convert 0 to 12 for AM
+            return `${hour12}:${minutes.toString().padStart(2, '0')} ${period}`;
+          }
+        
+          // Process each item in the data list
+          data.forEach(({ start, end }) => {
+            if (!(start instanceof Date) || !(end instanceof Date)) {
+              throw new Error("Both 'start' and 'end' must be Date objects.");
+            }
+        
+            // Normalize the date to remove the time portion
+            const startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+        
+            // Format the time interval
+            const startTime = to12HourFormat(start);
+            const endTime = to12HourFormat(end);
+            const timeInterval = `${startTime} - ${endTime}`;
+        
+            // Convert date to string for use as a key
+            const startDateString = startDate.toDateString();
+        
+            // If the date is not already in the Map, initialize it with the header
+            if (!result.has(startDateString)) {
+              result.set(startDateString, [
+                "Available times",
+                startDate.toDateString().slice(0, startDate.toDateString().length - 4),
+              ]);
+              dateObjectsArray.push(startDate); // Add to the array of date objects
+            }
+        
+            // Add the time interval to the Map
+            result.get(startDateString).push(timeInterval);
+          });
+        
+          return { datesMap: result, dates: dateObjectsArray };
+        }
+        
+        const formattedDayTimes = formatTimeIntervalsAsMap(filteredAvailability)
+        
+        setLocationAvailability(formattedDayTimes)
+
+      }
+
+
+      getTeamPageInfo()
+      setTimeout(()=>{
+        setLoadingNewPage(false)
+        setIsPageLoading(false)
+      },1000)
+    },[])
+
+    const [isPageLoading,setIsPageLoading]=useState(true)
+    const trialLessonPrice = 30
+    
     const checkAvailabilityRef = useRef(null)
     const coachRef = useRef(null)
     const [isDivVisible, setIsDivVisible] = useState(true); // Track visibility of the target div
-
-    const images = [
-    "https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg",
-    "https://swimmings.s3.us-east-2.amazonaws.com/neptuneLogo.jpeg",
-    "https://swimmings.s3.us-east-2.amazonaws.com/poolThree.jpg",
-    "https://swimmings.s3.us-east-2.amazonaws.com/poolTwo.jpeg",
-    "https://swimmings.s3.us-east-2.amazonaws.com/poolTwo.jpeg"]
 
     const [isOpen, setIsOpen] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -75,6 +256,8 @@ export default function TeamPage()  {
     // Lesson type dropdown setup
     const [selectedLessonType, setSelectedLessonType] = useState("")
     const [selectedSkillLevel, setSelectedSkillLevel] = useState("")
+
+    
 
     const openModal = (index) => {
       setCurrentIndex(index);
@@ -105,19 +288,22 @@ export default function TeamPage()  {
         return <div className="">{formatProgramsList(items)}</div>;
       };
 
+    
+
     // KEEP TRACK OF LOWER SCREEN BOOKING PANEL
     useEffect(() => {
     // Observer callback to check visibility
     const observerCallback = (entries) => {
-        
+      console.log('Observer entries:', entries); // Debug here
         const [entry] = entries; // There will be only one entry for this div
+        console.log("entry",entry)
         setIsDivVisible(entry.isIntersecting);
     };
 
     // Create an Intersection Observer
     const observer = new IntersectionObserver(observerCallback, {
         root: null, // Observe within the viewport
-        threshold: 0.1, // Trigger if 10% of the div is visible
+        threshold: [0.1,1], // Trigger if 10% of the div is visible
     });
     
     // Observe the target div
@@ -131,7 +317,7 @@ export default function TeamPage()  {
         observer.unobserve(checkAvailabilityRef.current);
         }
     };
-    }, []);
+    }, [checkAvailabilityRef]);
 
     // Scroll to the target div when the button is clicked
     const scrollToDiv = () => {
@@ -142,26 +328,14 @@ export default function TeamPage()  {
         coachRef.current?.scrollIntoView({ behavior: "smooth",block:'center' });
     };
     
-    const [scrollY, setScrollY] = useState(0);
-
-    useEffect(() => {
-      const handleScroll = () => {
-        setScrollY(window.scrollY);
-      };
-  
-      window.addEventListener("scroll", handleScroll);
-      return () => {
-        window.removeEventListener("scroll", handleScroll);
-      };
-    }, []);
 
   return (
     <div className="flex  justify-center items-center ">
-      <DynamicScreen className=" h-screen ">
+      <DynamicScreen className=" h-screen  md:w-[80%] lg:w-[78%]">
 
         <TopBar/>
 
-        {loadingNewPage ? 
+        {loadingNewPage || isPageLoading ? 
           <div className="h-screen">
             <LoadingSubScreen loadingMessage={loadingNewPageMessage.length>0 ? loadingNewPageMessage:null}/>
           </div>
@@ -175,7 +349,7 @@ export default function TeamPage()  {
           />  
 
         <div className="w-full mt-[20px] text-[20px] font-bold mb-[10px]">
-        {swimTeamName}
+        {teamName}
         </div>
 
         <div className="flex space-x-[10px] pb-[25px]">
@@ -242,7 +416,7 @@ export default function TeamPage()  {
         <div
         className="font-bold text-[18px]"
         >
-            Swim team in Abu Dhabi, UAE
+            Swim team in {locationCity}, {locationState}
         </div>
         
         <ProgramsList items={programsAvailable}/>
@@ -274,7 +448,7 @@ export default function TeamPage()  {
             className="relative w-full h-[1px] bg-gray-200 mt-[30px]"
           />  
         <div className="h-[25px]"/>
-        <SwimClubDescription swimClubDescription={swimClubDescription}/>
+        <SwimClubDescription swimClubDescription={teamDescription}/>
 
         <div
             className="relative w-full h-[1px] bg-gray-200 mt-[20px]"
@@ -283,16 +457,15 @@ export default function TeamPage()  {
         {/* SAFETY CERTIFICATION SECTION */}
         <div className="flex items-center mt-[15px]">
         <div>
-        <SafetyCertified className="
-        md:w-[180px]
-        w-[180px] h-[100px] mt-[12px]"/>
+        <SafetyCertified className="w-[90px]
+        mt-[12px]"/>
         </div>
-        <div className="flex flex-col text-[18px] font-bold ml-[10px]">
+        <div className="flex flex-col text-[18px] font-bold ">
             <div>
                 Safety Certified
             </div>
             <div className="text-[15px] text-gray-400 leading-5 ">
-                {swimTeamName}'s staff is fully certified and has passed all
+                {teamName}'s staff is fully certified and has passed all
                 our rigorous safety checks
             </div>
         </div>
@@ -313,7 +486,7 @@ export default function TeamPage()  {
 
         {/* MAP SECTION */}
         <div className="flex flex-col w-full mt-[25px]"/>
-            <Map address={locationAddress} locationCoords={locationCoords}/>
+            {locationCoords&&<GoogleMap address={locationAddress} locationCoords={locationCoords}/>}
         
         <div
             className=" w-full h-[1px] bg-gray-200 mt-[18px] mb-[30px]"
@@ -339,22 +512,23 @@ export default function TeamPage()  {
         >
             
             <div className="flex mb-[10px] font-bold space-x-[4px] items-end">
-                <div className="text-[20px]">
-                    ${trialLessonPrice}
-                </div>
-                <div className="text-[16px]">
-                    trial lesson
+                <div className="text-[18px]">
+                    Book your free trial lesson
                 </div>
             </div>
             
-            <div>
-            <BookingPanel lessonTypes={lessonTypes} skillLevels={skillLevels}
+            <div
+            
+            >
+            <BookingPanel key={1} subKey={1} lessonTypes={lessonTypes} skillLevels={skillLevels} locationAvailability={locationAvailability}
             selectedDate={selectedDate} setSelectedDate={setSelectedDate}
             selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel}
             selectedLessonType={selectedLessonType} setSelectedLessonType={setSelectedLessonType}
             selectedTime={selectedTime} setSelectedTime={setSelectedTime} 
             dateTimePositioning={"left-1/2 transform -translate-x-1/2 "}
+            stackTimes={true}
             teamName={teamName} lessonPrice={trialLessonPrice}
+            lessonInfoDropdownStyling={"absolute border border-gray-300 border-[1px] flex bg-white left-0 top-full mt-2 py-2  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]"}
             />
             </div>
 
@@ -362,7 +536,8 @@ export default function TeamPage()  {
 
         <div
             ref={checkAvailabilityRef}
-            className=" w-full sm:hidden h-[1px] bg-gray-200 mt-[32px] mb-[100px]"
+            style={{overflow:"visible"}}
+            className=" w-full h-[1] bg-gray-200 mt-[32px] mb-[100px]"
           />  
 
         </div>
@@ -390,14 +565,15 @@ export default function TeamPage()  {
             </div>
             
             <div>
-            <BookingPanel lessonTypes={lessonTypes}
-            skillLevels={skillLevels}
+            <BookingPanel key={0} subKey={0} lessonTypes={lessonTypes}
+            skillLevels={skillLevels} locationAvailability={locationAvailability}
             selectedDate={selectedDate} setSelectedDate={setSelectedDate}
             selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel}
             selectedLessonType={selectedLessonType} setSelectedLessonType={setSelectedLessonType}
             selectedTime={selectedTime} setSelectedTime={setSelectedTime}
             dateTimePositioning={"right-0"} teamName={teamName}
             lessonPrice={trialLessonPrice}
+            lessonInfoDropdownStyling={"absolute  border border-gray-300 border-[1px] flex bg-white right-0 top-full mt-2 py-2  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]"}
             />
             </div>
             

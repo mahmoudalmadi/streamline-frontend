@@ -1,8 +1,8 @@
 const { getEntriesByConditions } = require("../firestoreHooks/retrieving/getEntriesByConditions");
 
-const getXWeeksData = async ({locationId,x}) => {
+const getXWeeksData = async ({locationId,x,currDay}) => {
   try {
-    const today = new Date();
+    const today = new Date(currDay);
 
     // Calculate the Saturday of Week X
     const saturdayOfWeekX = new Date(today);
@@ -18,22 +18,19 @@ const getXWeeksData = async ({locationId,x}) => {
     );
     sundayOfWeekMinusX.setHours(0, 0, 0, 0); // Set to start of the day
     
-    console.log("SAT", saturdayOfWeekX)
-    console.log("SUNDA",sundayOfWeekMinusX)
-    console.log("loc id",locationId)
     // Define conditions
     const conditions = [
       { field: "locationId", operator: "==", value: locationId },
       { field: "start", operator: "<", value: saturdayOfWeekX },
       { field: "start", operator: ">", value: sundayOfWeekMinusX },
     ];
-    console.log("ABOUTTA GO GET THEI MSS")
+
     // Fetch entries using the getEntriesByConditions function
     const entries = await getEntriesByConditions({
       collectionName: "TimeBlock",
       conditions,
     });
-    console.log("GOTTEMMS",entries)
+
     return entries; // Return the filtered entries
   } catch (error) {
     console.error("Error fetching entries for time range:", error);

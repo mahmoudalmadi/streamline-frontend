@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from "react";
 
-const Map = ({locationCoords, address}) => {
+const GoogleMap = ({locationCoords, address}) => {
   const mapRef = useRef(null);
   const apiKey = "AIzaSyB4Ju2F2EEtL4yYDAxZekIPrUJkHakCw-w"; // Replace with your actual Google Maps API key
-
+  
+  // const locationCoords = {long: -96.7732461, lat: 32.8413603}
   useEffect(() => {
     // Load the Google Maps script
     const script = document.createElement("script");
@@ -52,6 +53,8 @@ const Map = ({locationCoords, address}) => {
   }, [apiKey]);
 
   return (
+    <>
+    {true &&
     <div className="flex flex-col ">
       <h3 className=" font-semibold mb-[10px] text-[18px]
       ">Our Location</h3>
@@ -62,8 +65,9 @@ const Map = ({locationCoords, address}) => {
       <h3 className="  mt-[12px] text-[18px] font-bold
       ">{address}</h3>
       
-    </div>
+    </div>}
+    </>
   );
 };
 
-export default Map;
+export default GoogleMap;

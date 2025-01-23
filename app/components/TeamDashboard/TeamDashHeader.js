@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 
 export default function TeamDashHeader({selectedPage,setIsLoading}){
 
+    const [currPage,setCurrPage]=useState(selectedPage)
     const {userInfo} = useAuth()
     const router = useRouter();
     const [teamName, setTeamName] =useState("");
@@ -20,9 +21,19 @@ export default function TeamDashHeader({selectedPage,setIsLoading}){
 
     return(
 
-        <>
+        <div style={{
+            userSelect: "none", // Prevent text selection
+            WebkitUserSelect: "none", // Safari
+            MozUserSelect: "none", // Firefox
+            msUserSelect: "none",}}>
         <TopBar/>
+            
             <div
+            style={{
+                userSelect: "none", // Prevent text selection
+                WebkitUserSelect: "none", // Safari
+                MozUserSelect: "none", // Firefox
+                msUserSelect: "none",}}
                 className="relative z-0 w-[2000px] left-[-100px] h-[1px] bg-gray-200 mt-[18px]"
             />
 
@@ -42,37 +53,42 @@ export default function TeamDashHeader({selectedPage,setIsLoading}){
                 </>}
             </div>
 
-            <div className="flex space-x-[12px] items-center">
+            <div className="flex space-x-[12px] items-center justify-center">
 
 
-            <div className={selectedPage==="dashboard" ? `text-[18px] font-bold` :`text-[18px] font-bold text-gray-400 cursor-pointer`}
+            <div className={currPage==="dashboard" ? `text-[16px] font-bold py-[6px] px-[14px] bg-gray-200 rounded-[30px]` :`text-[16px] py-[6px] px-[14px] hover:bg-gray-200 rounded-[30px] font-bold text-gray-400 cursor-pointer`}
             onClick={()=>{
                 if(userInfo.userData.accountType==="team")
                 {
+                    if(currPage!="dashboard"){
+                    setCurrPage("dashboard")
                     setIsLoading(true)
-                    router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
+                    router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)}
                 }else{
                     router.push(`/user/${userInfo.userData.firebaseId}/dashboard`)
                 }}}>
                 Dashboard
             </div>
-            <div className="font-bold text-streamlineBlue text-[20px] mb-[5px]">
+            {/* <div className="font-bold text-streamlineBlue text-[20px] mb-[5px]">
                 |
-            </div>
-            <div className={selectedPage==="profile" ? `text-[18px] font-bold` :`cursor-pointer text-[18px] font-bold text-gray-400`}
+            </div> */}
+            <div className={currPage==="profile" ? `text-[16px] font-bold py-[6px] px-[14px] bg-gray-200 rounded-[30px]` :`text-[16px] py-[6px] px-[14px] hover:bg-gray-200 rounded-[30px] font-bold text-gray-400 cursor-pointer`}
             onClick={()=>{
                 if(userInfo.userData.accountType==="team")
                 {
+                    if(currPage!="profile"){
+                    setCurrPage("profile")
                     setIsLoading(true)
                     router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/profile`)
+                }
                 }else{
                     router.push(`/user/${userInfo.userData.firebaseId}/profile`)
                 }}}>
                 Profile
             </div>
             </div>
-            <div className="w-full h-[1px] bg-gray-200 mt-[5px] mb-[20px]"/>
-        </>
+            <div className="w-full h-[1px] bg-gray-200 mt-[10px] mb-[16px] "/>
+        </div>
 
     )
 }

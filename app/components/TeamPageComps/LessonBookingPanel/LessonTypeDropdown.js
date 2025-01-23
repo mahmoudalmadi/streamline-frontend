@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 const LessonTypeDropdown = ({ isVisible, onClose, lessonTypes,skillLevels, selectedLessonType, selectedSkillLevel,
-setSelectedLessonType, setSelectedSkillLevel }) => {
+setSelectedLessonType, setSelectedSkillLevel,lessonInfoDropdownStyling}) => {
     const divRef = useRef(null);
 
     useEffect(() => {
@@ -31,16 +31,13 @@ setSelectedLessonType, setSelectedSkillLevel }) => {
         isVisible && (
             <div
                 ref={divRef}
-                className="absolute flex bg-white
-                right-0
-                 top-full mt-2 py-2 
-                 rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]
-                 "
+                className={`${lessonInfoDropdownStyling}`}
+                 
                 onClick={(e)=>e.stopPropagation()} // Close on click within the div
             >
-                <div className='flex max-h-[256px] overflow-y-scroll pl-3 pr-4'>
-                    <div className='flex flex-col'>
-                        <div className='text-[12px] mb-0.5 pl-3 whitespace-nowrap 
+                <div className='flex max-h-[256px] pl-3 pr-4'>
+                    <div className='flex flex-col '>
+                        <div className='text-[12px] mb-0.5 pl-3 
                         text-streamlineBlue pr-2 '
                         style={{
                             fontWeight:525
@@ -49,7 +46,7 @@ setSelectedLessonType, setSelectedSkillLevel }) => {
                         </div>
                         {lessonTypes.map((item, index) => (
                         <div key={index} className="flex flex-1 pl-3  pr-3 w-full py-2
-                        rounded-xl whitespace-nowrap hover:bg-gray-200  cursor-pointer"
+                        rounded-xl md:whitespace-nowrap hover:bg-gray-200  cursor-pointer"
                         onClick={()=>{setSelectedLessonType(item.lessonType)}}>
                             <div className='flex items-center space-x-2'>
                             <input
@@ -66,9 +63,9 @@ setSelectedLessonType, setSelectedSkillLevel }) => {
                         ))}
                         </div>
                     </div>
-                    <div className='flex flex-col'>
-                        <div className='text-[12px] mb-0.5 pl-3 whitespace-nowrap 
-                            text-streamlineBlue pr-2 '
+                    <div className='flex flex-col w-full'>
+                        <div className='text-[12px] mb-0.5 pl-3 w-full whitespace-nowrap 
+                            text-streamlineBlue pr-2 sm:text-center md:text-start'
                             style={{
                                 fontWeight:525
                             }}>
@@ -76,7 +73,7 @@ setSelectedLessonType, setSelectedSkillLevel }) => {
                         </div>
                         {skillLevels.map((item, index) => (
                         <div key={index} className="flex flex-1 pl-3  pr-3 w-full py-2
-                        rounded-xl whitespace-nowrap hover:bg-gray-200  cursor-pointer"
+                        rounded-xl md:whitespace-nowrap hover:bg-gray-200  cursor-pointer"
                         onClick={()=>{setSelectedSkillLevel(item.skillLevel)}}>
                             <div className='flex items-center space-x-2'>
                             <input

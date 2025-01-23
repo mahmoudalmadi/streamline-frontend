@@ -35,7 +35,7 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
       };
     };
   
-    console.log("MIN MAX HOUS",minHour,maxHour)
+    
   const [currentDate,setCurrentDate]=useState(new Date())
   
       // Function to go to the next week
@@ -44,12 +44,12 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
         setCurrWeekNum(currWeekNum+1)
         nextWeek.setDate(currentDate.getDate() + 7);
         setCurrentDate(nextWeek);
-        console.log(currWeekNum)
+        
       };
       
       // Function to go to the previous week
       const goToPreviousWeek = () => {
-        console.log(currWeekNum)
+        
         const prevWeek = new Date(currentDate);
         setCurrWeekNum(currWeekNum-1)
         prevWeek.setDate(currentDate.getDate() - 7);
@@ -64,14 +64,14 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
   const CustomToolbar = (props) => {
     return (
       <div className="custom-toolbar flex justify-between items-center py-[10px]">
-        < div className="flex items-center space-x-[6px] text-streamlineBlue font-bold px-[4px] py-[4px] rounded-full cursor-pointer select-none" onClick={() => props.onNavigate("PREV")}>
+        < div className="flex items-center space-x-[6px] text-streamlineBlue font-bold px-[4px] py-[4px] rounded-full cursor-pointer select-none" onClick={() => goToPreviousWeek()}>
         <BlueMoveLeft/>  
         <button onClick={() => goToPreviousWeek()}>
         Previous</button>
         </div>
         <span className="font-bold">{props.label}</span>
 
-        < div className="flex items-center space-x-[6px] select-none text-streamlineBlue font-bold px-[4px] py-[4px] rounded-full cursor-pointer" onClick={() => props.onNavigate("NEXT")}>
+        < div className="flex items-center space-x-[6px] select-none text-streamlineBlue font-bold px-[4px] py-[4px] rounded-full cursor-pointer" onClick={() => goToNextWeek()}>
         <button onClick={() => goToNextWeek()}>Next</button>
         <BlueMoveRight/>  
         </div>
@@ -83,9 +83,9 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
    { 
     
     return(
-      <div  >
-      <div style={{ fontWeight: "bold",fontSize:'8px' }}>{event.title}</div>
-      <div style={{ fontSize:'8px',marginTop:'2px' }}>
+      <div >
+      <div style={{ fontWeight: "bold",fontSize:'8px' }} className="leading-[10px]">{event.title}</div>
+      <div style={{ fontSize:'8px',marginTop:'2px' }} className="leading-[9px]">
       {moment(event.start).format("h:mm A")} - {moment(event.end).format("h:mm A")}
         </div>
     </div>
@@ -93,7 +93,11 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
   };
 
   return (
-    <div>
+    <div style={{
+      userSelect: "none", // Prevent text selection
+      WebkitUserSelect: "none", // Safari
+      MozUserSelect: "none", // Firefox
+      msUserSelect: "none",}} >
 
       <div className="items-center justify-center" 
       style={{ height: "800px", width: "100%" }}>
@@ -102,7 +106,7 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
           <LoadingSubScreen loadingMessage={""}/>
         </div>}
 
-        <div className="w-full h-full ">
+        <div className={`w-full h-full ${isCalendarLoading?"opacity-50":""}`} >
         <Calendar
           localizer={localizer}
           events={events}

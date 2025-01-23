@@ -7,27 +7,20 @@ import MoveRight from "../../public/MoveRight.svg"
 import { useRouter } from "next/navigation";
 import { useAuth } from "../contexts/AuthContext";
 
-export default function SwimTeamThumbnail(){
+export default function SwimTeamThumbnail({locationInfo}){
 
     const {setLoadingNewPageMessage,setLoadingNewPage}=useAuth()
     const [currentIndex, setCurrentIndex] = useState(0);
     const router = useRouter();
   
-    const images = [
+    const images = locationInfo.images
+
+    const teamPathName = locationInfo.teamInfo.flattenedTeamName
     
-    "https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg",
-    "https://swimmings.s3.us-east-2.amazonaws.com/neptuneLogo.jpeg",
-    "https://swimmings.s3.us-east-2.amazonaws.com/poolThree.jpg",
-    "https://swimmings.s3.us-east-2.amazonaws.com/poolTwo.jpeg"]
-
-    const teamPathName = "neptunes"
-    // const images = ["https://nutriflodev.s3.us-east-2.amazonaws.com/ingredients/images/brownrice.jpg",
-    // "https://nutriflodev.s3.us-east-2.amazonaws.com/ingredients/images/brownrice.jpg",
-    // "https://nutriflodev.s3.us-east-2.amazonaws.com/ingredients/images/brownrice.jpg",
-    // "https://nutriflodev.s3.us-east-2.amazonaws.com/ingredients/images/brownrice.jpg"]
-
     const handleNext = (event) => {
+        console.log("EVENT",event)
     event.stopPropagation();
+      console.log("handleNext")
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
     };
   
@@ -40,13 +33,14 @@ export default function SwimTeamThumbnail(){
   
     const handleRedirect = () => {
         setLoadingNewPage(true)
-        router.push(`/${teamPathName}`)
+        router.push(`/${teamPathName}-${locationInfo.id}`)
     }
 
     return(
 
         <div className="flex-1 cursor-pointer"
-        onClick={handleRedirect}>
+        onClick={()=>{handleRedirect()}}
+        >
 
                 {/* Image Div */}
             <div className="relative w-full aspect-[5/4] rounded-2xl overflow-hidden">
@@ -68,7 +62,7 @@ export default function SwimTeamThumbnail(){
                 ))} 
 
                 {currentIndex+1>1 &&
-                <button onClick={handlePrev}>
+                <button onClick={(event)=>{handlePrev(event)}}>
                 <div
                 className="absolute top-1/2 left-2 transform -translate-y-1/2 
                  bg-gray-700 bg-opacity-50 hover:bg-opacity-75 text-white p-2 
@@ -79,7 +73,7 @@ export default function SwimTeamThumbnail(){
                 </button>}
 
                 {currentIndex+1<images.length &&
-                <button onClick={handleNext}>
+                <button onClick={(event)=>{handleNext(event)}}>
                 <div
                 className="absolute top-1/2 right-2 transform -translate-y-1/2 
                  bg-gray-700 bg-opacity-50 hover:bg-opacity-75 text-white p-2 
@@ -103,16 +97,32 @@ export default function SwimTeamThumbnail(){
             {/* Team Description */}
             <div className="mt-[10px]">
 
-                <div className="font-bold">
-                    Neptunes Swim Club
+                <div className="flex font-bold items-center space-x-[8px]">
+                    <div className="">
+                        <img
+                        src={locationInfo.teamInfo.logoPhotoURL}
+                        className=
+                        {
+                        `w-[35px] h-full object-cover rounded-full
+                            `
+                        }
+                        />
+                    </div>
+                    <div>
+                    {locationInfo.teamInfo.teamName}
+                    </div>
                 </div>
 
-                <div className="text-gray-500 text-[14px]">
-                    Abu Dhabi, UAE
+                <div className="text-gray-500 text-[14px] mt-[2px]">
+                    {locationInfo.city}, {locationInfo.state}
                 </div>
 
-                <div className="italic text-gray-800 text-[12px]">
-                    Mon-Tue-Wed-Thu-Fri-Sun 
+                <div className="flex italic text-gray-800 text-[12px]">
+                    {locationInfo.uniqueDays.map((day,index)=>(
+                        <div className="flex">
+                           {index!=0?"-":""}{day}
+                        </div>
+                    ))}
                 </div>
             </div>
 
