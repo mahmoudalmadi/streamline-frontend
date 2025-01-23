@@ -44,6 +44,9 @@ export default function TeamPage()  {
     const [lessonTypes,setLessonTypes] = useState("")
     const [skillLevels,setSkillLevels] = useState("")
 
+    const [locationState,setLocationState]=useState("")
+    const [locationCity,setLocationCity]=useState("")
+
     const [images,setImages]=useState([])
     const [locationAvailability,setLocationAvailability]=useState(null)
 
@@ -161,6 +164,8 @@ export default function TeamPage()  {
         setClassSizes(allLocationInfo.locationLessonTypes.map(item=>item.level))
         setCoachPhoto(allLocationInfo.locationCoachInfo[0].photoUrl)
         setCoachName(allLocationInfo.locationCoachInfo[0].coachName)
+        setLocationCity(allLocationInfo.locationInfo[0].city)
+        setLocationState(allLocationInfo.locationInfo[0].state)
         setLocationAddress(allLocationInfo.locationInfo[0].address)
         setLocationCoords({"long":allLocationInfo.locationInfo[0].longitude,"lat":allLocationInfo.locationInfo[0].latitude})
 
@@ -221,17 +226,14 @@ export default function TeamPage()  {
           return { datesMap: result, dates: dateObjectsArray };
         }
         
-        console.log("BEFORE FORMATTING")
         const formattedDayTimes = formatTimeIntervalsAsMap(filteredAvailability)
         
-        console.log("DAY TIMES after FROMATTING",formattedDayTimes)
         setLocationAvailability(formattedDayTimes)
 
       }
 
 
       getTeamPageInfo()
-      console.log("SHOULD STILL BE LOADING",locationAvailability)
       setTimeout(()=>{
         setLoadingNewPage(false)
         setIsPageLoading(false)
@@ -414,7 +416,7 @@ export default function TeamPage()  {
         <div
         className="font-bold text-[18px]"
         >
-            Swim team in Abu Dhabi, UAE
+            Swim team in {locationCity}, {locationState}
         </div>
         
         <ProgramsList items={programsAvailable}/>
