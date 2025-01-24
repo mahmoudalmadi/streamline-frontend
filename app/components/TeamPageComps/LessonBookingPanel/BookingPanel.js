@@ -37,6 +37,8 @@ setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdo
             setTimeout(() => setIsLessonTypeDropdownClosing(false), 500); // Reset after a short delay
         };  
 
+        const [filteredLocalAvailability,setFilteredLocalAvailability]=useState([])
+
         const [isDateTimeDropdownVisible, setIsDateTimeDropdownVisible] = useState(false);
         const [isDateTimeDropdownClosing, setIsDateTimeDropdownClosing] = useState(false);
         const toggleIsDateTimeDropdownVisible = () => {
@@ -141,7 +143,7 @@ setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdo
                         selectedDate.toDateString().slice(0,
                             selectedDate.toDateString().length -4):"Add date"}
                     </div>
-                    {/* <DateTimePicker
+                    <DateTimePicker
                     filteredEvents={filteredEvents}
                     locationAvailability={locationAvailability}
                     stackTimes={stackTimes}
@@ -154,7 +156,7 @@ setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdo
                     setSelectedTime={setSelectedTime}
                     toggleIsDateTimeDropdownVisible={toggleIsDateTimeDropdownVisible}
                     dateTimePositioning={dateTimePositioning}
-                    /> */}
+                    />
                 </div>
                 <div className="w-[50%] p-2" 
                 onClick={()=>{

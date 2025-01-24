@@ -3,7 +3,7 @@ import { DayPicker } from 'react-day-picker';
 import "react-day-picker/style.css";
 
 const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, selectedTime, 
-    toggleIsDateTimeDropdownVisible,
+    toggleIsDateTimeDropdownVisible, filteredEvents,
     setSelectedTime, dateTimePositioning,stackTimes,locationAvailability}) => {
     const divRef = useRef(null);
 
@@ -31,11 +31,53 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
     };
 
       // Define the days that should be selectable
-    const selectableDays = [
-        new Date(2024, 10, 15),
-        new Date(2024, 10, 16),
-        new Date(2024, 10, 17)
-    ];
+    // useEffect(()=>{
+
+    //     function filterDatesMap(input,selectedSkillLevel
+    //       ){
+
+    //         const output = {dates:[],datesMap}
+          
+    //         dates.forEach((dateStr) => {
+    //           const dateKey = new Date(dateStr).toDateString();
+    //           const originalList = datesMap[dateKey];
+          
+    //           if (!originalList) return; // Skip if there's no entry for this date
+          
+    //           const filteredList = [
+    //             originalList[0],
+    //             originalList[1],
+    //           ];
+    //           console.log("OG LIST",originalList)
+    //           if(originalList[2].length==3){
+    //               console.log("OG LIST",originalList)
+    //           originalList.slice(2).forEach((item) => {
+    //             if (Array.isArray(item) && item.length === 3) {
+    //               const [first, second, list] = item;
+    //               list.forEach((entry) => {
+    //                 const [skill1, skill2] = entry.split("#");
+    //                 if (skill1 === selectedSkillLevel && skill2 === selectedSkillLevel) {
+    //                   filteredList.push(item);
+    //                 }
+    //               });
+    //             }
+    //           });
+          
+    //           if (filteredList.length > 2) {
+    //             output.dates.push(dateStr);
+    //             output.datesMap[dateKey] = filteredList;
+    //           }}
+    //         });
+
+    //         return output
+    //     }
+          
+    //     const filteredOptions = filterDatesMap(locationAvailability)
+
+    //     if(currentDate){
+
+    //     }
+    // },[currentDate])
 
     // Function to determine if a day is disabled
     const isDateDisabled = (date) => {
@@ -64,6 +106,7 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
                 ref={divRef}
                 className={`absolute flex sm:flex-row flex-col bg-white justify-center items-center border border-gray-300
                 ${dateTimePositioning}
+                
                  mt-2 py-2 
                  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)] mb-[10px]
                  `}
@@ -113,18 +156,18 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
                                     (item,index)=>
                                     (<div className={item!="Available times" ? `flex-1 leading-6
                                     ${index==1 ? "font-bold": ""} 
-                                    ${selectedTime!=item && index>1 ? "hover:bg-gray-100":""}
-                                    ${selectedTime===item && index!=1 && currentDate==selectedDate ? "text-white bg-streamlineBlue":""}
+                                    ${selectedTime!=item[0] && index>1 ? "hover:bg-gray-100":""}
+                                    ${selectedTime===item[0] && index!=1 && currentDate==selectedDate ? "text-white bg-streamlineBlue":""}
                                     ${index>1?"text-streamlineBlue border border-streamlineBlue py-[4px]":""}
                                     rounded-full
                                     ` : ""} onClick={()=>{
                                         if(index>1)
-                                        {setSelectedTime(item);
+                                        {setSelectedTime(item[0]);
                                             setSelectedDate(
                                                 currentDate
                                             )
                                         toggleIsDateTimeDropdownVisible()}}}>
-                                        {item}
+                                        {index<=1?item:item[0]}
                                     </div>)
                                 )
                                 :

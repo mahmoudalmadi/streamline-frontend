@@ -132,13 +132,12 @@ export default function TeamPage()  {
         
 
         function filterItemsByStatus({items,status}) {
-          const now = new Date();
         
           // Filter the list
           return items.filter(item => {
-            const startDate = new Date(item.start); // Parse the `start` date
+            
             return (
-              item.status.toLowerCase() == "available"
+              item.status.toLowerCase() ==status
             );
           });
         }
@@ -179,7 +178,7 @@ export default function TeamPage()  {
 
         const allTimeBlocks= allLocationInfo.locationAvailability
 
-        const filteredAvailability = filterItemsByStatus({items:allTimeBlocks,status:"availability"})
+        const filteredAvailability = filterItemsByStatus({items:allTimeBlocks,status:"available"})
 
         function formatTimeIntervalsAsMap(data) {
           const result = new Map();
@@ -193,9 +192,9 @@ export default function TeamPage()  {
             const hour12 = hours % 12 || 12; // Convert 0 to 12 for AM
             return `${hour12}:${minutes.toString().padStart(2, '0')} ${period}`;
           }
-        
+          console.log("data",data)
           // Process each item in the data list
-          data.forEach(({ id, start, end }) => {
+          data.forEach(({ id, start, end, lessonType }) => {
             if (!(start instanceof Date) || !(end instanceof Date)) {
               throw new Error("Both 'start' and 'end' must be Date objects.");
             }
@@ -210,7 +209,7 @@ export default function TeamPage()  {
         
             // Convert date to string for use as a key
             const startDateString = startDate.toDateString();
-        
+
             // If the date is not already in the Map, initialize it with the header
             if (!result.has(startDateString)) {
               result.set(startDateString, [
@@ -219,7 +218,7 @@ export default function TeamPage()  {
               ]);
               dateObjectsArray.push(startDate); // Add to the array of date objects
             }
-        
+            
             // Add the time interval with the id as a tuple to the Map
             result.get(startDateString).push([timeInterval, id]);
           });
@@ -233,7 +232,7 @@ export default function TeamPage()  {
         setLocationAvailability(formattedDayTimes)
         setFilteredEvents(filteredAvailability)
 
-        console.log(formattedDayTimes)
+        
       }
 
 
@@ -260,8 +259,6 @@ export default function TeamPage()  {
     // Lesson type dropdown setup
     const [selectedLessonType, setSelectedLessonType] = useState("")
     const [selectedSkillLevel, setSelectedSkillLevel] = useState("")
-
-    
 
     const openModal = (index) => {
       setCurrentIndex(index);
@@ -335,7 +332,7 @@ export default function TeamPage()  {
 
   return (
     <div className="flex  justify-center items-center ">
-      <DynamicScreen className=" h-screen  md:w-[80%] lg:w-[78%]">
+      <DynamicScreen className=" h-screen  md:w-[87%] lg:w-[78%]">
 
         <TopBar/>
 

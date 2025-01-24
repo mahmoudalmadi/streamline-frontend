@@ -46,7 +46,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
         const selectedLocationLessonTypes = new Set();
     
         lessonTypes.forEach(combination => {
-        const [skill, type] = combination.split("-"); // Split the string at the '-'
+        const [skill, type] = combination.split("#"); // Split the string at the '-'
         selectedLocationLessonSkills.add(skill); // Add the skill to the set
         selectedLocationLessonTypes.add(type);  // Add the type to the set
         });
@@ -154,6 +154,8 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
             const allTimeBlocks = generateJsonListGivenJsons(relevantDates,{teamId:teamId,locationId:locationId,seriesId:seriesId,createdOn:new Date()})
             setAddAvailibilityModalKey(addAvailibilityModalKey+1)
             const timeBlockId = await addListOfJsons({jsonList:allTimeBlocks,collectionName:'TimeBlock'})
+
+            onClose()
         }else{
 
             const daysOWeekFull = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -169,7 +171,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                 // Loop through both arrays to create combinations
                 selectedLocationLessonSkills.forEach(skill => {
                 selectedLocationLessonTypes.forEach(type => {
-                    lessonTypes.push(`${skill}-${type}`);
+                    lessonTypes.push(`${skill}#${type}`);
                 });
                 });
                 
@@ -196,6 +198,8 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
 
             const timeBlockId = await addListOfJsons({jsonList:allTimeBlocks,collectionName:'TimeBlock'})
             console.log(timeBlockId)
+
+            onClose()
             
         }
 

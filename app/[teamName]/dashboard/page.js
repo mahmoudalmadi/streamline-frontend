@@ -29,7 +29,7 @@ import getXWeeksData from "@/app/hooks/calendarHooks/getWeeksData";
 
 export default function TeamDashboard() {
 
-    const {userInfo}= useAuth();
+    const {userInfo,loadingNewPage,setLoadingNewPage}= useAuth();
     const [locations, setLocations] = useState([{
         address:"Banana St, Dallas, TX"
     }])
@@ -120,6 +120,7 @@ export default function TeamDashboard() {
         });
       }    
 
+      
     const [events,setEvents] = useState(null);
     const [currDay,setCurrDay]=useState(new Date())
     const [isCalendarLoading,setIsCalendarLoading]=useState(true)
@@ -250,9 +251,12 @@ export default function TeamDashboard() {
             setAllParsedAddresses(parsedAddresses)
             setIsCalendarLoading(false)
             setIsLoading(false);
+            setLoadingNewPage(false)
           }
 
     },[userInfo])
+
+    console.log(events)
 
     const [pickedEvent, setPickedEvent] = useState(null);
     const [isEventModalOpen, setIsEventModalOpen] = useState(false);
@@ -279,9 +283,9 @@ export default function TeamDashboard() {
 
             <div className="flex flex-col no-scroll" style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
             <TeamDashHeader selectedPage={"dashboard"} setSelectedPage={setSelectedPage} setIsLoading={setIsLoading}/>
-            {  isLoading?
+            {  isLoading || loadingNewPage?
             <div className="items-center">
-                <LoadingSubScreen loadingMessage={"Loading team "+selectedPage}/>
+                <LoadingSubScreen loadingMessage={!loadingNewPage?`Loading team ${selectedPage}`:""}/>
             </div>
             :
             <div className="flex flex-col flex-grow">

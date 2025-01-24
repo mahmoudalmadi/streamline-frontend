@@ -29,7 +29,7 @@ export default function TeamProfilePage() {
     const [locations, setLocations] = useState([{
         address:"Banana St, Dallas, TX"
     }])
-    const {userInfo,user} = useAuth()
+    const {userInfo,loadingNewPage,setLoadingNewPage}= useAuth();
 
     const images = [{url:"https://streamlineplatform.s3.us-east-2.amazonaws.com/coachPhotos/1734483412515-unnamed.jpg"},{url:"https://streamlineplatform.s3.us-east-2.amazonaws.com/coachPhotos/1734483412515-unnamed.jpg"}]
     // TEAMINFO STATES
@@ -131,6 +131,7 @@ export default function TeamProfilePage() {
           setLocationInfo(locationsInfo)
           setAllParsedAddresses(parsedAddresses)
           setIsLoading(false);
+          setLoadingNewPage(false)
         }
       }, [userInfo]);
       
@@ -146,9 +147,9 @@ export default function TeamProfilePage() {
           <DynamicScreen className="h-screen">
             <div className="">
             <TeamDashHeader selectedPage={selectedPage} setSelectedPage={setSelectedPage} setIsLoading={setIsLoading}/>
-            {  isLoading?
+            {  isLoading||loadingNewPage?
             <div className="items-center">
-                <LoadingSubScreen loadingMessage={"Loading team "+selectedPage}/>
+                <LoadingSubScreen loadingMessage={!loadingNewPage?`Loading team ${selectedPage}`:""}/>
             </div>
             :
             <div>
