@@ -40,6 +40,24 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
     const [selectedLocationLessonSkills,setSelectedLocationLessonSkills]=useState([])
     const [selectedLocationLessonTypes,setSelectedLocationLessonTypes]=useState([])
 
+    // Reconstruct the original arrays
+    function reconstructOriginalArrays(lessonTypes) {
+        const selectedLocationLessonSkills = new Set();
+        const selectedLocationLessonTypes = new Set();
+    
+        lessonTypes.forEach(combination => {
+        const [skill, type] = combination.split("-"); // Split the string at the '-'
+        selectedLocationLessonSkills.add(skill); // Add the skill to the set
+        selectedLocationLessonTypes.add(type);  // Add the type to the set
+        });
+    
+        // Convert sets to arrays
+        return {
+        selectedLocationLessonSkills: Array.from(selectedLocationLessonSkills),
+        selectedLocationLessonTypes: Array.from(selectedLocationLessonTypes),
+        };
+    }
+
     // Handler for time change
     const handleTimeChange = (newValue) => {
 
@@ -145,6 +163,15 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                 const startDateTime = consolidateDate({timeObj:startTime,now:date})
                 const newDate = new Date(date)
                 const endDateTime = consolidateDate({timeObj:endTime,now:newDate})
+
+                const lessonTypes = [];
+
+                // Loop through both arrays to create combinations
+                selectedLocationLessonSkills.forEach(skill => {
+                selectedLocationLessonTypes.forEach(type => {
+                    lessonTypes.push(`${skill}-${type}`);
+                });
+                });
                 
                 currEvents = [...currEvents, 
                     {start:startDateTime,
@@ -156,6 +183,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                     coachName:coach?coach.coachName:null,
                     coachEmail:coach?coach.coachEmail:null,
                     coachPhone:coach?coach.coachPhone:null,    
+                    lessonType:lessonTypes,
                     numberOfSpots:numberOfSpots
                     }]
             }

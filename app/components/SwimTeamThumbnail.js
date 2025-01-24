@@ -36,6 +36,8 @@ export default function SwimTeamThumbnail({locationInfo}){
         router.push(`/${teamPathName}-${locationInfo.id}`)
     }
 
+    console.log(locationInfo)
+
     return(
 
         <div className="flex-1 cursor-pointer"
@@ -108,8 +110,13 @@ export default function SwimTeamThumbnail({locationInfo}){
                         }
                         />
                     </div>
+                    <div className="flex-col leading-[16px]">
                     <div>
                     {locationInfo.teamInfo.teamName}
+                    </div>
+                    <div className="text-[12px] text-gray-500">
+                    {locationInfo.address.split(",")[0]}
+                    </div>
                     </div>
                 </div>
 

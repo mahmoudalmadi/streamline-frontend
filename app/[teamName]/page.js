@@ -49,6 +49,7 @@ export default function TeamPage()  {
 
     const [images,setImages]=useState([])
     const [locationAvailability,setLocationAvailability]=useState(null)
+    const [filteredEvents,setFilteredEvents]=useState(null)
 
     useEffect(()=>{
 
@@ -59,7 +60,7 @@ export default function TeamPage()  {
 
         const today = new Date()
         const cutoff = new Date(today);
-        cutoff.setDate(cutoff.getDate() + 1); // Move to 
+        cutoff.setDate(cutoff.getDate() + 2); // Move to 
 
         const allLocationInfo = await batchedGetEntriesByConditions({queriesWithKeys:
         [{
@@ -194,7 +195,7 @@ export default function TeamPage()  {
           }
         
           // Process each item in the data list
-          data.forEach(({ start, end }) => {
+          data.forEach(({ id, start, end }) => {
             if (!(start instanceof Date) || !(end instanceof Date)) {
               throw new Error("Both 'start' and 'end' must be Date objects.");
             }
@@ -219,17 +220,20 @@ export default function TeamPage()  {
               dateObjectsArray.push(startDate); // Add to the array of date objects
             }
         
-            // Add the time interval to the Map
-            result.get(startDateString).push(timeInterval);
+            // Add the time interval with the id as a tuple to the Map
+            result.get(startDateString).push([timeInterval, id]);
           });
         
           return { datesMap: result, dates: dateObjectsArray };
         }
         
+        
         const formattedDayTimes = formatTimeIntervalsAsMap(filteredAvailability)
         
         setLocationAvailability(formattedDayTimes)
+        setFilteredEvents(filteredAvailability)
 
+        console.log(formattedDayTimes)
       }
 
 
@@ -520,7 +524,7 @@ export default function TeamPage()  {
             <div
             
             >
-            <BookingPanel key={1} subKey={1} lessonTypes={lessonTypes} skillLevels={skillLevels} locationAvailability={locationAvailability}
+            <BookingPanel filteredEvents={filteredEvents} key={1} subKey={1} lessonTypes={lessonTypes} skillLevels={skillLevels} locationAvailability={locationAvailability}
             selectedDate={selectedDate} setSelectedDate={setSelectedDate}
             selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel}
             selectedLessonType={selectedLessonType} setSelectedLessonType={setSelectedLessonType}
@@ -565,7 +569,7 @@ export default function TeamPage()  {
             </div>
             
             <div>
-            <BookingPanel key={0} subKey={0} lessonTypes={lessonTypes}
+            <BookingPanel filteredEvents={filteredEvents} key={0} subKey={0} lessonTypes={lessonTypes}
             skillLevels={skillLevels} locationAvailability={locationAvailability}
             selectedDate={selectedDate} setSelectedDate={setSelectedDate}
             selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel}

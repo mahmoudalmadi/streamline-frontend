@@ -1,5 +1,5 @@
 import { useTeamSignUpContext } from "@/app/contexts/TeamSignUpProvider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EmailIcon from '../../../public/emailIcon.svg'
 import RedWarningIcon from "../../../public/RedWarningIcon.svg"
 import { checkAccountExists } from "@/app/hooks/firestoreHooks/user/getUser";
@@ -14,10 +14,11 @@ export default function TeamSignUp({switchModalType}){
     const router=useRouter();
     const isModal=false;
 
-    const {setLoadingNewPage} = useAuth();
+    const {setLoadingNewPage,loadingNewPage} = useAuth();
 
     const {handleTeamRegistrantInfo, teamRegistrantInfo,errorMessage,setErrorMessage,setTeamRegistrantInfo} = useTeamSignUpContext();
     const [showPassword,setShowPassword] = useState(false);
+
 
     const handleNavigate = () => {
         const fullName = teamRegistrantInfo.fullName;

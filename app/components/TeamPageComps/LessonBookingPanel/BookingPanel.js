@@ -10,7 +10,7 @@ import { useAuth } from "@/app/contexts/AuthContext";
 export default function BookingPanel({lessonTypes,subKey, skillLevels,
 selectedDate, setSelectedDate, selectedTime,setSelectedTime,
 selectedLessonType,setSelectedLessonType,selectedSkillLevel,
-setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdownStyling,stackTimes,locationAvailability}) {
+setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdownStyling,stackTimes,locationAvailability,teamInfo,teamImage,filteredEvents}) {
 
         const router = useRouter();
 
@@ -67,7 +67,7 @@ setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdo
         //     lessonDate=${selectedDate}?lessonPrice=${lessonPrice}`)
         // }
 
-        const { checkoutData, setCheckoutData } = useCheckout();
+        const { checkoutData, setCheckoutData,setTeamInfo,setTeamImage,setEventInfo } = useCheckout();
 
         const updateCheckout = () => {
         setCheckoutData({
@@ -141,7 +141,8 @@ setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdo
                         selectedDate.toDateString().slice(0,
                             selectedDate.toDateString().length -4):"Add date"}
                     </div>
-                    <DateTimePicker
+                    {/* <DateTimePicker
+                    filteredEvents={filteredEvents}
                     locationAvailability={locationAvailability}
                     stackTimes={stackTimes}
                     key={subKey}
@@ -153,7 +154,7 @@ setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdo
                     setSelectedTime={setSelectedTime}
                     toggleIsDateTimeDropdownVisible={toggleIsDateTimeDropdownVisible}
                     dateTimePositioning={dateTimePositioning}
-                    />
+                    /> */}
                 </div>
                 <div className="w-[50%] p-2" 
                 onClick={()=>{

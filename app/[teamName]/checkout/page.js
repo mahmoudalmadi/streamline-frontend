@@ -66,8 +66,6 @@ export default function CheckoutPage() {
     const [isDateTimeDropdownVisible, setIsDateTimeDropdownVisible] = useState(false);
     const [isDateTimeDropdownClosing, setIsDateTimeDropdownClosing] = useState(false);
 
-    const [lessonPrice, setLessonPrice] = useState(checkoutData!=null ? checkoutData.lessonPrice : "")
-
     const toggleIsDateTimeDropdownVisible = () => {
         if (isDateTimeDropdownClosing) return; // Prevent reopening if in closing state
         setIsDateTimeDropdownVisible(prev => !prev);
@@ -164,7 +162,7 @@ export default function CheckoutPage() {
                 style={{
                     zIndex:25
                 }}>
-                    <div>
+                    <div className="font-bold">
                         Time and date
                     </div>
                     {/* <div className="font-bold underline cursor-pointer"

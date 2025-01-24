@@ -268,6 +268,8 @@ export default function TeamDashboard() {
 
     const parentDivRef = useRef(null)
 
+    const [selectedPage,setSelectedPage]=useState("dashboard")
+
     return(
 
         <div className="flex flex-col no-scroll overflow-x-hidden justify-center items-center"
@@ -276,10 +278,10 @@ export default function TeamDashboard() {
 
 
             <div className="flex flex-col no-scroll" style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
-            <TeamDashHeader selectedPage={"dashboard"} setIsLoading={setIsLoading}/>
+            <TeamDashHeader selectedPage={"dashboard"} setSelectedPage={setSelectedPage} setIsLoading={setIsLoading}/>
             {  isLoading?
             <div className="items-center">
-                <LoadingSubScreen loadingMessage={"Loading team dashboard"}/>
+                <LoadingSubScreen loadingMessage={"Loading team "+selectedPage}/>
             </div>
             :
             <div className="flex flex-col flex-grow">

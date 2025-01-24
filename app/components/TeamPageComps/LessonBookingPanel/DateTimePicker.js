@@ -62,7 +62,7 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
         isVisible && (
             <div
                 ref={divRef}
-                className={`absolute flex bg-white border border-gray-300
+                className={`absolute flex sm:flex-row flex-col bg-white justify-center items-center border border-gray-300
                 ${dateTimePositioning}
                  mt-2 py-2 
                  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)] mb-[10px]
@@ -98,7 +98,7 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
                         </div>
                         </div>
                     </div>
-                    <div className='flex text-[14px] flex-col'>
+                    <div className='flex text-[14px] flex-col sm:py-0 py-[20px]'>
 
                         <div className='flex  flex-1 justify-center 
                                 items-center max-w-[180px] px-[10px]'>

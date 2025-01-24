@@ -82,6 +82,7 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                                 setLoadingNewPage(true)
                                 router.push(`/user/${userInfo.userData.firebaseId}/dashboard`)
                             }
+                            onClose()
                             }}>
                             Dashboard
                         </div>
@@ -123,6 +124,7 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                         <div className='px-[10px] text-[14px] text-gray-700 w-full hover:bg-gray-100 
                         py-[10px]' onClick={()=>{
                             setLoadingNewPage(true)
+                            onClose()
                             router.push(`/teams?${teamsLoginQuery}`)
                         }}>
                             Log in
@@ -130,6 +132,7 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                         <div className='py-[10px] px-[10px] text-[14px] text-gray-700 w-full hover:bg-gray-100'
                          onClick={()=>{
                             setLoadingNewPage(true)
+                            onClose()
                             router.push(`/teams?${teamsSignupQuery}`)
                         }}>
                             Sign up

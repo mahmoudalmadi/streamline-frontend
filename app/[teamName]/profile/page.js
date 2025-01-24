@@ -138,15 +138,17 @@ export default function TeamProfilePage() {
     const [editingTeamInfo,setEditingTeamInfo]=useState(false)
     const [editingContactInfo,setEditingContactInfo]=useState(false)
     
+    const [selectedPage,setSelectedPage]=useState("profile")
+
     return(
 
         <div className="flex overflow-x-hidden justify-center items-center">
           <DynamicScreen className="h-screen">
             <div className="">
-            <TeamDashHeader selectedPage={"profile"} setIsLoading={setIsLoading}/>
+            <TeamDashHeader selectedPage={selectedPage} setSelectedPage={setSelectedPage} setIsLoading={setIsLoading}/>
             {  isLoading?
             <div className="items-center">
-                <LoadingSubScreen loadingMessage={"Loading team profile"}/>
+                <LoadingSubScreen loadingMessage={"Loading team "+selectedPage}/>
             </div>
             :
             <div>
