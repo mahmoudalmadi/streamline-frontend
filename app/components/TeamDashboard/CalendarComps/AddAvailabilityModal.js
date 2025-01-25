@@ -47,7 +47,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
         const selectedLocationLessonTypes = new Set();
     
         lessonTypes.forEach(combination => {
-        const [skill, type] = combination.split("#"); // Split the string at the '-'
+        const [skill, type] = combination.split("`"); // Split the string at the '-'
         selectedLocationLessonSkills.add(skill); // Add the skill to the set
         selectedLocationLessonTypes.add(type);  // Add the type to the set
         });
@@ -154,7 +154,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                 // Loop through both arrays to create combinations
                 selectedLocationLessonSkills.forEach(skill => {
                 selectedLocationLessonTypes.forEach(type => {
-                    lessonTypes.push(`${skill}#${type}`);
+                    lessonTypes.push(`${skill}\`${type}`);
                 });
             });
 
@@ -183,7 +183,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                 // Loop through both arrays to create combinations
                 selectedLocationLessonSkills.forEach(skill => {
                 selectedLocationLessonTypes.forEach(type => {
-                    lessonTypes.push(`${skill}#${type}`);
+                    lessonTypes.push(`${skill}\`${type}`);
                 });
                 });
                 

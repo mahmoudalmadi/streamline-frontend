@@ -2,6 +2,7 @@
 
 import DynamicScreen from "../../components/DynamicScreen";
 
+import CONFIG from "@/config";
 import TopBar from "../../components/TopBarComps/TopBar";
 import { useState, useRef, useEffect } from "react";
 import { useRouter,usePathname } from "next/navigation";
@@ -13,34 +14,49 @@ import AuthModal from "@/app/components/AuthModalComps/AuthModal";
 import PaymentModal from "@/app/components/PaymentModal";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { SignUpProvider } from "@/app/contexts/SignUpProvider";
+import LoadingSubScreen from "@/app/components/loadingSubscreen";
 
 export default function CheckoutPage() {
 
-    const {user, setUser} = useAuth();
+    const {user, setUser,setLoadingNewPage,loadingNewPage} = useAuth();
+
+    const [isNewPageLoading,setIsNewPageLoading]=useState(true)
     const router = useRouter();
+    
+    const switchModalType = () => {
+    setIsLoginOptions(!isLoginOption)
+    }
+
     const pathName = usePathname();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const { checkoutData, setCheckoutData } = useCheckout();
-    const swimTeamPhoto="https://swimmings.s3.us-east-2.amazonaws.com/poolOne.jpg"
-    const swimTeamName = "Neptunes Swimming Academy"
+
+    const [teamName,setTeamName]=useState("")
     const [prevPage,setPrevPage]=useState("")
     const currency = "CAD"
     const [isLoginOption,setIsLoginOptions] = useState(false)
+    const [locationInfo,setLocationInfo]=useState(null)
 
+    const [lessonType,setLessonType]=useState(null)
+    const [skillLevel,setSkillLevel]=useState(null)
+    const [teamPhoto,setTeamPhoto]=useState(null)
     
-
-    const switchModalType = () => {
-        setIsLoginOptions(!isLoginOption)
-    }
-
-    
-    useEffect(()=>{
+        useEffect(()=>{
         const pathStop = pathName.split('/')[1];
-        console.log("PATH",pathStop)
+        
+        const name = pathStop.split('-')[0]
+        
         setPrevPage(pathStop)
         if(!checkoutData){
-            // router.push(`/${teamName}`)
+            router.push(`/${pathStop}`)
         }else{
+            console.log(checkoutData)
+            setIsNewPageLoading(false)
+            setLoadingNewPage(false)
+            setTeamName(checkoutData.teamInfo[0].teamName)
+            setTeamPhoto(checkoutData.images[0])
+            setLessonType(checkoutData.selectedLessonType)
+            setSkillLevel(checkoutData.selectedSkillLevel)
+            setLocationInfo(checkoutData.locationInfo[0])
         }
 
     },[])
@@ -88,6 +104,11 @@ export default function CheckoutPage() {
     //     setTimeout(() => setIsLessonTypeDropdownClosing(false), 500); // Reset after a short delay
     // };  
 
+    const handleRedirect = () => {
+        setLoadingNewPage(true)
+        router.push(pathName+`/success`)
+        }
+
     return (
         <SignUpProvider>
             <div className="flex  justify-center items-center">
@@ -95,6 +116,12 @@ export default function CheckoutPage() {
 
                 <TopBar/>
 
+                {isNewPageLoading||loadingNewPage?
+                <div className="h-screen">
+                    <LoadingSubScreen/>
+                </div>   
+                :
+                <div className="h-screen">
                 <div
                 className="relative flex flex-col items-center justify-center w-full"
                 >
@@ -113,6 +140,7 @@ export default function CheckoutPage() {
                 >
                     <div className="justify-center items-center hover:bg-gray-100 p-[10px] rounded-full
                     cursor-pointer" onClick={()=>{
+                        setLoadingNewPage(true)
                         router.push(`/${prevPage}`)
                     }}>
                     <BlackMoveLeft />
@@ -127,22 +155,27 @@ export default function CheckoutPage() {
                 shadow-[0_0_10px_rgba(0,0,0,0.1)] ">  
                     <div className="flex items-center  mb-[10px] space-x-[4px] items-end">
                             <img
-                                src={swimTeamPhoto}
+                                src={teamPhoto}
                                 className=
                                 " w-[100px] h-[100px] rounded-[10px]"
                             />
                         <div className="pl-[10px]">
                         
                         <div className="font-bold">
-                        {swimTeamName}
+                        {teamName}
                         </div>
 
-                        <div className="leading-1.25 text-[15px]">
-                        {currSelectedSkillLevel} {currSelectedLessonType.toLowerCase()} trial lesson
+                        <div className="flex-col leading-1.25 text-[14px] flex">
+                        <div className=" mr-[3px]">Trial lesson, 1 {CONFIG.athleteType.toLowerCase()}
                         </div>
-                        <div className="leading-1.25 text-[15px]">
-                        1 Swimmer
+                        <div className="flex">
+                        <div className="flex font-bold mr-[3px]">Skill level: </div> {currSelectedSkillLevel}
                         </div>
+                        <div className="flex">
+                        <div className="flex font-bold mr-[3px]">Lesson type: </div> {currSelectedLessonType}
+                        </div>
+                        </div>
+
                         </div>
                     </div>
 
@@ -158,11 +191,18 @@ export default function CheckoutPage() {
                     Your trial lesson details
                 </div>
 
+                <div className="font-bold">
+                        Address
+                </div>
+                <div>
+                    {locationInfo.address}
+                </div>
+
                 <div className="relative flex justify-between mb-[5px]"
                 style={{
                     zIndex:25
                 }}>
-                    <div className="font-bold">
+                    <div className="font-bold mt-[8px]">
                         Time and date
                     </div>
                     {/* <div className="font-bold underline cursor-pointer"
@@ -190,9 +230,7 @@ export default function CheckoutPage() {
                     {currSelectedDate!=""?currSelectedDate.toDateString():""}
                 </div>
                 
-                <div
-                    className="relative w-full h-[1px] bg-gray-200 mt-[15px] mb-[20px]"
-                />         
+                
 
                 {/* <div
                 className="font-bold text-[18px] mb-[15px]"
@@ -235,7 +273,11 @@ export default function CheckoutPage() {
                 <div
                     className="relative w-full h-[1px] bg-gray-200 mt-[20px] mb-[20px]"
                 />          */}
-
+                {!user?
+                <>
+                <div
+                    className="relative w-full h-[1px] bg-gray-200 mt-[15px] mb-[20px]"
+                />         
                 <div
                 className="font-bold text-[18px] mb-[15px]"
                 >
@@ -245,7 +287,10 @@ export default function CheckoutPage() {
                 <div className="flex justify-center">
                 { 
                 user?
-                <PaymentModal lessonPrice={lessonPrice} currency={currency.toLowerCase()}/>
+                // <PaymentModal lessonPrice={lessonPrice} currency={currency.toLowerCase()}/>
+                <div>
+                    MAKE RESERVATION
+                </div>
                 :
                 <AuthModal
                 isOpen={true}
@@ -256,6 +301,16 @@ export default function CheckoutPage() {
                 />}
 
                 </div>
+                </>:
+                <>
+                <div className="w-full mt-[30px] flex items-center justify-center">
+
+                    <div className="flex font-bold text-white bg-streamlineBlue py-[7px] px-[16px] rounded-full items-center cursor-pointer" onClick={()=>{handleRedirect()}}>
+                        Confirm free trial lesson reservation
+                    </div>
+                </div>
+                </>
+                }
                 
                 <div
                     className="relative w-full h-[1px]  mt-[20px] mb-[20px]"
@@ -302,14 +357,14 @@ export default function CheckoutPage() {
                     
                     <div className="flex items-center mt-[10px]">
                             <img
-                                src={swimTeamPhoto}
+                                src={teamPhoto}
                                 className=
                                 " w-[100px] h-[100px] rounded-[10px]"
                             />
                         <div className="pl-[10px]">
                         
                         <div className="font-bold">
-                        {swimTeamName}
+                        {teamName}
                         </div>
 
                         <div className="leading-1.25 text-[15px]">
@@ -326,6 +381,7 @@ export default function CheckoutPage() {
 
 
                 </div>
+                </div>}
                 
             </DynamicScreen>
             </div>

@@ -84,8 +84,8 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
     
     return(
       <div >
-      <div style={{ fontWeight: "bold",fontSize:'8px' }} className="leading-[10px]">{event.title}</div>
-      <div style={{ fontSize:'8px',marginTop:'2px' }} className="leading-[9px]">
+      <div style={{ fontWeight: "bold",fontSize:'10px' }} className="leading-[10px]">{event.title}</div>
+      <div style={{ fontSize:'9px',marginTop:'2px' }} className="leading-[9px]">
       {moment(event.start).format("h:mm A")} - {moment(event.end).format("h:mm A")}
         </div>
     </div>

@@ -30,9 +30,6 @@ export default function EquipmentSection() {
 
             </div>
 
-            <div className="bg-streamlineBlue text-white flex justify-center mx-[30px] py-[10px] font-bold rounded-[20px] mt-[20px] mb-[20px] cursor-pointer">
-                Go to my profile page
-            </div>
         </div>
     )
 }

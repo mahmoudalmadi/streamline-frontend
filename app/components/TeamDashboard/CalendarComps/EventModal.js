@@ -4,6 +4,7 @@ import LocationIcon from "../../../../public/LocationIcon.svg"
 import NotifIcon  from "../../../../public/NotifIcon.svg"
 import PeopleIcon  from "../../../../public/PeopleIcon.svg"
 import PersonEntry from "@/app/components/TeamDashboard/CalendarComps/PersonEntry";
+import { useEffect, useState } from "react";
 
 export default function EventModal ({pickedEvent,streetAddress}){
 
@@ -32,7 +33,33 @@ export default function EventModal ({pickedEvent,streetAddress}){
         return `${startDay}, ${startMonth} ${startDate} · ${startFormattedTime} –${endFormattedTime}`;
     }
 
+    function processEntries(entries) {
+        const firstEntries = new Set();
+        const secondEntries = new Set();
+      
+        entries.forEach(entry => {
+          const [first, second] = entry.split('`');
+          if (first && second) {
+            firstEntries.add(first.trim());
+            secondEntries.add(second.trim());
+          }
+        });
+      
+        return {
+          firstEntries: Array.from(firstEntries),
+          secondEntries: Array.from(secondEntries)
+        };
+      }
+      
+    const [selectedSkillsLevels,setSelectedSkillLevels]=useState(null)
+    const [selectedLessonTypes,setSelectedLessonTypes]=useState(null)
     
+    useEffect(()=>{
+        const {firstEntries,secondEntries} = processEntries(pickedEvent.lessonType)
+        console.log(firstEntries,secondEntries)
+        setSelectedLessonTypes(secondEntries)
+        setSelectedSkillLevels(firstEntries)
+    },[])
 
     return(
         <>
@@ -58,32 +85,47 @@ export default function EventModal ({pickedEvent,streetAddress}){
                     {formatEventTime({startTime:pickedEvent.start,endTime:pickedEvent.end})}
                     </div>
 
-                    <div className="flex flex-col mt-[4px]">
+                    <div className="flex flex-col">
                     <div className="flex items-center space-x-[16px]">
-
-                    <div className="flex w-[22px] py-[12px] mt-[4px] justify-center items-center">
+                    <div className="flex w-[22px] justify-center items-center">
                     <InfoIcon/>
                     </div>
-                        <div className="flex flex-col">
-                            <div className="flex text-[14px]">
-                            <div className="font-bold mr-[4px]">
-                            Spots:
-                            </div>    
-                            <div>
-                            {pickedEvent.numberOfSpots}
-                            </div>    
-                            </div>
-                            <div className="flex leading-[14px] text-[14px]">
-                            <div className="font-bold mr-[4px]">
-                            Status:
-                            </div>    
-                            <div>
-                            {pickedEvent.status}
-                            </div>    
-                            </div>
+                    <div className="flex flex-col mt-[20px]">
+                        <div className="flex text-[14px]">
+                        <div className="font-bold mr-[4px]">
+                        Spots:
+                        </div>    
+                        <div>
+                        {pickedEvent.numberOfSpots}
+                        </div>    
+                        </div>
+                        <div className="flex leading-[14px] text-[14px] mt-[5px]">
+                        <div className="font-bold mr-[4px]">
+                        Status:
+                        </div>    
+                        <div>
+                        {pickedEvent.status}
+                        </div>    
                         </div>
                     </div>
                     </div>
+                    </div>
+
+                    {selectedLessonTypes&&
+                    <>
+                    <div className="text-[14px] leading-[8px] mt-[10px] mb-[3px] ml-[38px] font-bold">
+                        Applicable lesson types:
+                    </div>
+                    <div className="text-[14px] ml-[38px] ">
+                        {selectedLessonTypes.join(", ")}
+                    </div>
+                    <div className="text-[14px] leading-[8px] mt-[8px] mb-[3px] ml-[38px] font-bold">
+                        Applicable skill levels:
+                    </div>
+                    <div className="text-[14px]  ml-[38px] ">
+                        {selectedSkillsLevels.join(", ")}
+                    </div>
+                    </>}
 
                     <div className="flex flex-col mt-[4px]">
                     <div className="flex items-center space-x-[16px]">

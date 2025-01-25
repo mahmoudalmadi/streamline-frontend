@@ -9,7 +9,6 @@ import { useState, useEffect, useRef } from "react";
 import LoadingSubScreen from "@/app/components/loadingSubscreen";
 import MyCalendar from "@/app/components/TeamDashboard/CalendarComps/Calendar";
 import ModalTemplate from "@/app/components/ModalTemplate";
-import EventModalContent from "@/app/components/TeamDashboard/CalendarComps/EventModalContent";
 import InfoIcon from "../../../public/InfoIcon.svg"
 import LocationIcon from "../../../public/LocationIcon.svg"
 import NotifIcon  from "../../../public/NotifIcon.svg"
@@ -276,7 +275,7 @@ export default function TeamDashboard() {
 
         <div className="flex flex-col no-scroll overflow-x-hidden justify-center items-center"
         style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
-      <DynamicScreen className={`${isEventModalOpen||isAddModalOpen?"no-scroll":"no-scroll"}`} style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
+      <DynamicScreen className={`${isEventModalOpen||isAddModalOpen?"h-screen no-scroll":"h-screen no-scroll"}`} style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
 
 
             <div className="flex flex-col no-scroll" style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>

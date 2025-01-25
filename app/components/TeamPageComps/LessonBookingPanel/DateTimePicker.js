@@ -5,7 +5,7 @@ import LoadingSubScreen from '../../loadingSubscreen';
 
 const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, setSelectedDate, selectedTime, 
     toggleIsDateTimeDropdownVisible,selectedSkillLevel,selectedLessonType,
-    setSelectedTime, dateTimePositioning,givenLocationAvailability}) => {
+    setSelectedTime, dateTimePositioning,givenLocationAvailability,setLessonId}) => {
     const divRef = useRef(null);
     
     
@@ -20,33 +20,49 @@ const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, s
 
     const [currentDate, setCurrentDate] = useState(null)
     const [availableDatesSet,setAvailableDatesSet]=useState(null)
-    const [isDateSelectable,setIsDateSelectable]=useState(null)
+    // const [isDateSelectable,setIsDateSelectable]=useState(null)
     const [myDates,setMyDates]=useState(null)
-    const [isDateDisabled,setIsDateDisabled]=useState(null)
+    // const [isDateDisabled,setIsDateDisabled]=useState(null)
 
     useEffect(()=>{
         if(locationAvailability){
-            const myDates = locationAvailability?locationAvailability.dates:null
+            const myCurrDates = locationAvailability?locationAvailability.dates:null
         
             // Convert the list of available dates to a Set for better performance
-            const availableDatesSet = new Set(myDates);
+            const availableDatesSet = new Set(myCurrDates);
 
             setAvailableDatesSet(availableDatesSet)
-            setMyDates(myDates)            
-            const isDateSelectable = (date) => availableDatesSet.has(date.toDateString());
-            setIsDateSelectable(isDateSelectable)
-
-            const isDateDisabled = (date) => {
-                return !myDates.some(selectableDay => 
-                selectableDay.toDateString() === date.toDateString()
-                );
-            };
-            setIsDateDisabled(isDateDisabled)
+            setMyDates(myCurrDates)            
+            
+            // const isDateSelectable = (date) => availableDatesSet.has(date.toDateString());
+            // // setIsDateSelectable(isDateSelectable)
+            // console.log("RIGHT AFTER",myCurrDates)
+            // const isDateDisabled = (date) => {
+            //     return !myCurrDates.some(selectableDay => 
+            //     selectableDay.toDateString() === date.toDateString()
+            //     );
+            // };
+            // setIsDateDisabled(isDateDisabled)
+            
         }
     },[locationAvailability])
 
 
     // Disable all dates except the available ones
+
+    const isDateDisabled = (date) => {
+        if(date && myDates){
+        return !myDates.some(selectableDay => 
+        selectableDay.toDateString() === date.toDateString()
+        );}
+    };
+
+    const isDateSelectable = (date) => {
+        if(date&&availableDatesSet)
+        {
+            availableDatesSet.has(date.toDateString())
+        }
+    };
 
     const handleClickOutside = (event) => {
         if (divRef.current && !divRef.current.contains(event.target)) {
@@ -59,7 +75,6 @@ const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, s
         function filterDatesMap(input,lessonTypesMapping,selectedLessonType,selectedSkillLevel){
 
             const output = {dates:[],datesMap:{}}
-            console.log("INPUTESSSZ",input,lessonTypesMapping,selectedLessonType,selectedSkillLevel)
             const { dates, datesMap } = input;
 
             dates.forEach((dateStr,index) => {
@@ -76,8 +91,10 @@ const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, s
                 if (Array.isArray(item) && item.length === 3) {
                   const [first, second, list] = item;
                   list.forEach((entry) => {
-                    const [skill1, skill2] = entry.split("#");
-                    if (skill1 === selectedSkillLevel && skill2 === selectedLessonType) {
+                    const [skill1, skill2] = entry.split("`");
+                    
+                    
+                    if (lessonTypesMapping[skill1] === selectedSkillLevel && lessonTypesMapping[skill2] === selectedLessonType) {
                       filteredList.push(item);
                     }
                   });
@@ -97,11 +114,12 @@ const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, s
         if(selectedSkillLevel && selectedLessonType){
         const filteredOptions = filterDatesMap(givenLocationAvailability,lessonTypesMapping,selectedLessonType,selectedSkillLevel)
 
-        console.log("FILTERED OPTIONS", filteredOptions)
+        
     
         setLocationAvailability(filteredOptions)
 
         setIsLoading(false)
+        
         }
 
     },[selectedSkillLevel,selectedLessonType])
@@ -116,9 +134,7 @@ const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, s
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [isVisible]);
-
-    console.log(locationAvailability)
-    // console.log("HII",currentDate?locationAvailability.datesMap.get(currentDate.toDateString()):null,currentDate)
+    
 
     return (
         isVisible && (
@@ -132,7 +148,7 @@ const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, s
                  `}
                 onClick={(e)=>e.stopPropagation()} // Close on click within the div
             >
-                {true?
+                {isLoading?
                 <div className='w-[300px] h-[300px]'>
                     <LoadingSubScreen loadingMessage={"Loading availability"}/>
                 </div>
@@ -152,7 +168,7 @@ const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, s
                             mode="single"
                             selected={currentDate}
                             onSelect={(event)=>{
-                                console.log("EVENET",typeof(event))
+                                
                                 setCurrentDate(event)}}
                             disabled={isDateDisabled}
                             modifiers={{
@@ -176,11 +192,11 @@ const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, s
                             ${currentDate?"w-[200px]":" w-[200px] text-graySubtitle"}
                             `}>
                                 {
-                                (currentDate&&locationAvailability.datesMap.get(currentDate.toDateString())) ? 
+                                (currentDate) ? 
                                 
-                                locationAvailability.datesMap.get(currentDate.toDateString()).map(
+                                locationAvailability.datesMap[currentDate.toDateString()].map(
                                     (item,index)=>
-                                    (<div className={item!="Available times" ? `flex-1 leading-6
+                                    (<div  key={index} className={item!="Available times" ? `flex-1 leading-6
                                     ${index==1 ? "font-bold": ""} 
                                     ${selectedTime!=item[0] && index>1 ? "hover:bg-gray-100":""}
                                     ${selectedTime===item[0] && index!=1 && currentDate==selectedDate ? "text-white bg-streamlineBlue":""}
@@ -189,6 +205,7 @@ const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, s
                                     ` : ""} onClick={()=>{
                                         if(index>1)
                                         {setSelectedTime(item[0]);
+                                            setLessonId(item[1])
                                             setSelectedDate(
                                                 currentDate
                                             )
@@ -197,7 +214,7 @@ const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, s
                                     </div>)
                                 )
                                 :
-                                "Please select a date to view the available times "}
+                                myDates?(myDates.length>0?"Please select a date to view the available times ":"There are no available times for the lesson type you requested. Please try another lesson type or check again later"):""}
                             </div>
                         </div>
                         
