@@ -1,4 +1,4 @@
-export default function getRelevantDates({startDate, endDate, daysPicked,timeObjStart,timeObjEnd,coach,numberOfSpots,reminder}) {
+export default function getRelevantDates({startDate, endDate, daysPicked,timeObjStart,timeObjEnd,coach,numberOfSpots,reminder,lessonType}) {
     
     const daysOWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const daysOWeekFull = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -33,7 +33,8 @@ export default function getRelevantDates({startDate, endDate, daysPicked,timeObj
                 coachName:coach?coach.coachName:null,
                 coachEmail:coach?coach.coachEmail:null,
                 coachPhone:coach?coach.coachPhone:null,    
-                numberOfSpots:numberOfSpots
+                numberOfSpots:numberOfSpots,
+                lessonType:lessonType
             });
         }
     }

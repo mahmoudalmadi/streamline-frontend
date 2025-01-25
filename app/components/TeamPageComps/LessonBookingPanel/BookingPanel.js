@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCheckout } from "../../../contexts/CheckoutContext";
 import { useAuth } from "@/app/contexts/AuthContext";
 
-export default function BookingPanel({lessonTypes,subKey, skillLevels,
+export default function BookingPanel({lessonTypesMapping, lessonTypes,subKey, skillLevels,
 selectedDate, setSelectedDate, selectedTime,setSelectedTime,
 selectedLessonType,setSelectedLessonType,selectedSkillLevel,
 setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdownStyling,stackTimes,locationAvailability,teamInfo,teamImage,filteredEvents}) {
@@ -62,12 +62,6 @@ setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdo
                 toggleIsDateTimeDropdownVisible()
             }
         },[selectedLessonType, selectedSkillLevel])
-
-        // const handleRedirect = () => {
-        //     router.push(
-        //     `/${teamName}/checkout?lessontype=${selectedLessonType}?skillLevel=${selectedSkillLevel}?lessonTime=${selectedTime}?\
-        //     lessonDate=${selectedDate}?lessonPrice=${lessonPrice}`)
-        // }
 
         const { checkoutData, setCheckoutData,setTeamInfo,setTeamImage,setEventInfo } = useCheckout();
 
@@ -144,11 +138,14 @@ setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdo
                             selectedDate.toDateString().length -4):"Add date"}
                     </div>
                     <DateTimePicker
+                    lessonTypesMapping={lessonTypesMapping}
                     filteredEvents={filteredEvents}
-                    locationAvailability={locationAvailability}
+                    givenLocationAvailability={locationAvailability}
                     stackTimes={stackTimes}
                     key={subKey}
                     selectedDate={selectedDate}
+                    selectedLessonType={selectedLessonType}
+                    selectedSkillLevel={selectedSkillLevel}
                     setSelectedDate={setSelectedDate}
                     isVisible={isDateTimeDropdownVisible}
                     onClose={handleCloseDateTimeDropdown}

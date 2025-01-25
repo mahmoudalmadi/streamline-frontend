@@ -27,6 +27,7 @@ import CONFIG from "@/config";
 
 export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey,teamId, addAvailibilityModalKey,locationId,events,setEvents,retrievedCoaches,lessonSkills,lessonTypes,parentDivRef}){
 
+    const [hasSubmitted,setHasSubmitted]=useState(false)
     const timePickerRef = useRef(null);
     // Create availibility stuffs
     const [startTime, setStartTime] = useState({ hrs: null, mins: null, xm: null });
@@ -144,20 +145,31 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
 
         if(isWeeklyOccurrence){
 
+            setHasSubmitted(true)
             const listODays = getPickedDays(daysPicked)
             const seriesId = await addInfoAsJson({jsonInfo:{startTime:startTime, endTime:endTime,days:listODays, startDate:startDate,endDate:endDate},collectionName:'TimeBlockSeries',locationId:locationId,createdOn:new Date()})
 
-            const relevantDates = getRelevantDates({startDate:startDate,endDate:endDate,daysPicked:daysPicked,timeObjStart:startTime,timeObjEnd:endTime,coach:selectedCoachId!=null?coaches[selectedCoachId]:null,numberOfSpots:numberOfSpots,reminder:{quantity:reminderQuant,metric:reminderMetric}})
+            const lessonTypes = [];
+
+                // Loop through both arrays to create combinations
+                selectedLocationLessonSkills.forEach(skill => {
+                selectedLocationLessonTypes.forEach(type => {
+                    lessonTypes.push(`${skill}#${type}`);
+                });
+            });
+
+            const relevantDates = getRelevantDates({startDate:startDate,endDate:endDate,daysPicked:daysPicked,timeObjStart:startTime,timeObjEnd:endTime,lessonType:lessonTypes,coach:selectedCoachId!=null?coaches[selectedCoachId]:null,numberOfSpots:numberOfSpots,reminder:{quantity:reminderQuant,metric:reminderMetric}})
 
             setEvents([...events,...relevantDates])
 
             const allTimeBlocks = generateJsonListGivenJsons(relevantDates,{teamId:teamId,locationId:locationId,seriesId:seriesId,createdOn:new Date()})
             setAddAvailibilityModalKey(addAvailibilityModalKey+1)
+            onClose()
             const timeBlockId = await addListOfJsons({jsonList:allTimeBlocks,collectionName:'TimeBlock'})
 
-            onClose()
         }else{
 
+            setHasSubmitted(true)
             const daysOWeekFull = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             let currEvents = []
             const coach = selectedCoachId ? coaches[selectedCoachId]:null
@@ -195,25 +207,24 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
             const allTimeBlocks = generateJsonListGivenJsons(currEvents,{teamId:teamId,locationId:locationId,createdOn:new Date()})
             setAddAvailibilityModalKey(addAvailibilityModalKey+1)
 
+            onClose()
 
             const timeBlockId = await addListOfJsons({jsonList:allTimeBlocks,collectionName:'TimeBlock'})
-            console.log(timeBlockId)
 
-            onClose()
             
         }
 
     }
 
     const scrollToBottom = () => {
-        console.log("SCROLLING TO BOTTOM",parentDivRef.current,parentDivRef.current.scrollHeight,parentDivRef.current.scrollTop)
+        
         if (parentDivRef.current) {
           parentDivRef.current.scrollTo({
             top: parentDivRef.current.scrollHeight,
             behavior: 'smooth',
           });
         }
-        console.log("SCROLLING TO BOTTOM AFTER",parentDivRef.current,parentDivRef.current.scrollHeight,parentDivRef.current.scrollTop)
+        
       };
     
 
@@ -651,8 +662,8 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                         Cancel
                     </div>
 
-                    <div className={`mt-[24px] mb-[12px] bg-streamlineBlue text-white px-[16px] py-[8px] rounded-full font-bold ${startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0 || startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&(selectedDates.length>0)&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0 ? "cursor-pointer" :"opacity-50" }`} onClick={()=>{
-                        if(startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0 || startTime.xm&&startTime.hrs&&startTime.hrs&&endTime.hrs&&endTime.xm&&(selectedDates.length>0)&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0){
+                    <div className={`mt-[24px] mb-[12px] bg-streamlineBlue text-white px-[16px] py-[8px] rounded-full font-bold ${!hasSubmitted&&startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0 || !hasSubmitted&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&(selectedDates.length>0)&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0 ? "cursor-pointer" :"opacity-50" }`} onClick={()=>{
+                        if(!hasSubmitted&&startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0 || !hasSubmitted&&startTime.xm&&startTime.hrs&&startTime.hrs&&endTime.hrs&&endTime.xm&&(selectedDates.length>0)&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0){
                             handleSubmit()
                         }
                     }}>

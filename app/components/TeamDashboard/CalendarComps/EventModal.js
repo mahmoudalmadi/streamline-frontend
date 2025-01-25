@@ -32,7 +32,7 @@ export default function EventModal ({pickedEvent,streetAddress}){
         return `${startDay}, ${startMonth} ${startDate} · ${startFormattedTime} –${endFormattedTime}`;
     }
 
-    console.log(pickedEvent)
+    
 
     return(
         <>

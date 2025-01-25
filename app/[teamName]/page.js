@@ -42,6 +42,7 @@ export default function TeamPage()  {
     const [headCoachDescription,setHeadCoachDescription]=useState("")
 
     const [lessonTypes,setLessonTypes] = useState("")
+    const [lessonTypesMapping,setLessonTypesMapping] = useState(null)
     const [skillLevels,setSkillLevels] = useState("")
 
     const [locationState,setLocationState]=useState("")
@@ -156,7 +157,14 @@ export default function TeamPage()  {
         const currLessonTypes = allLocationInfo.locationLessonTypes.map(item=>item.category)
         const locoLessonTypes = []
         const lessonTypesDict = CONFIG.lessonTypes
+        const lessonTypesMapping = {}
+        allLocationInfo.locationLessonTypes.forEach((item)=>{
+          lessonTypesMapping[item.level]=item.category
+        })
+        console.log("MY MAPPING",lessonTypesMapping)
+        setLessonTypesMapping(lessonTypesMapping)
         for (const lessonType of currLessonTypes){
+          
           locoLessonTypes.push({"lessonType":lessonType,"lessonTypeDescription":lessonTypesDict[lessonType]})
         }
         setLessonTypes(locoLessonTypes)
@@ -220,7 +228,7 @@ export default function TeamPage()  {
             }
             
             // Add the time interval with the id as a tuple to the Map
-            result.get(startDateString).push([timeInterval, id]);
+            result.get(startDateString).push([timeInterval, id,lessonType]);
           });
         
           return { datesMap: result, dates: dateObjectsArray };
@@ -521,7 +529,8 @@ export default function TeamPage()  {
             <div
             
             >
-            <BookingPanel filteredEvents={filteredEvents} key={1} subKey={1} lessonTypes={lessonTypes} skillLevels={skillLevels} locationAvailability={locationAvailability}
+            <BookingPanel lessonTypesMapping={lessonTypesMapping} 
+            filteredEvents={filteredEvents} key={1} subKey={1} lessonTypes={lessonTypes} skillLevels={skillLevels} locationAvailability={locationAvailability}
             selectedDate={selectedDate} setSelectedDate={setSelectedDate}
             selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel}
             selectedLessonType={selectedLessonType} setSelectedLessonType={setSelectedLessonType}
@@ -566,7 +575,7 @@ export default function TeamPage()  {
             </div>
             
             <div>
-            <BookingPanel filteredEvents={filteredEvents} key={0} subKey={0} lessonTypes={lessonTypes}
+            <BookingPanel  lessonTypesMapping={lessonTypesMapping}  filteredEvents={filteredEvents} key={0} subKey={0} lessonTypes={lessonTypes}
             skillLevels={skillLevels} locationAvailability={locationAvailability}
             selectedDate={selectedDate} setSelectedDate={setSelectedDate}
             selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel}

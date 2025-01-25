@@ -1,11 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { DayPicker } from 'react-day-picker';
 import "react-day-picker/style.css";
+import LoadingSubScreen from '../../loadingSubscreen';
 
-const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, selectedTime, 
-    toggleIsDateTimeDropdownVisible, filteredEvents,
-    setSelectedTime, dateTimePositioning,stackTimes,locationAvailability}) => {
+const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, setSelectedDate, selectedTime, 
+    toggleIsDateTimeDropdownVisible,selectedSkillLevel,selectedLessonType,
+    setSelectedTime, dateTimePositioning,givenLocationAvailability}) => {
     const divRef = useRef(null);
+    
+    const [isLoading,setIsLoading] = useState(true)
+    const [locationAvailability,setLocationAvailability]=useState(null)
 
     useEffect(() => {
         if (isVisible && divRef.current) {
@@ -14,15 +18,34 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
     }, [isVisible,selectedDate]);
 
     const [currentDate, setCurrentDate] = useState(null)
+    const [availableDatesSet,setAvailableDatesSet]=useState(null)
+    const [isDateSelectable,setIsDateSelectable]=useState(null)
+    const [myDates,setMyDates]=useState(null)
+    const [isDateDisabled,setIsDateDisabled]=useState(null)
 
-    const availableTimes = locationAvailability
-    const myDates = locationAvailability?locationAvailability.dates:null
+    useEffect(()=>{
+        if(locationAvailability){
+            const myDates = locationAvailability?locationAvailability.dates:null
+        
+            // Convert the list of available dates to a Set for better performance
+            const availableDatesSet = new Set(myDates);
 
-    // Convert the list of available dates to a Set for better performance
-    const availableDatesSet = new Set(myDates);
+            setAvailableDatesSet(availableDatesSet)
+            setMyDates(myDates)            
+            const isDateSelectable = (date) => availableDatesSet.has(date.toDateString());
+            setIsDateSelectable(isDateSelectable)
+
+            const isDateDisabled = (date) => {
+                return !myDates.some(selectableDay => 
+                selectableDay.toDateString() === date.toDateString()
+                );
+            };
+            setIsDateDisabled(isDateDisabled)
+        }
+    },[locationAvailability])
+
 
     // Disable all dates except the available ones
-    const isDateSelectable = (date) => availableDatesSet.has(date.toDateString());
 
     const handleClickOutside = (event) => {
         if (divRef.current && !divRef.current.contains(event.target)) {
@@ -30,62 +53,62 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
         }
     };
 
-      // Define the days that should be selectable
-    // useEffect(()=>{
+    useEffect(()=>{
 
-    //     function filterDatesMap(input,selectedSkillLevel
-    //       ){
+        function filterDatesMap(input){
 
-    //         const output = {dates:[],datesMap}
+            const output = {dates:[],datesMap:{}}
+
+            const { dates, datesMap } = input;
+
+            console.log("INPUTE",lessonTypesMapping)
+            console.log("INPUTE",lessonTypesMapping)
+            dates.forEach((dateStr,index) => {
+              const dateKey = new Date(dateStr).toDateString();
+              const originalList = datesMap.get(dateKey);
+              if (!originalList) return; // Skip if there's no entry for this date
           
-    //         dates.forEach((dateStr) => {
-    //           const dateKey = new Date(dateStr).toDateString();
-    //           const originalList = datesMap[dateKey];
+              const filteredList = [
+                originalList[0],
+                originalList[1],
+              ];
+              console.log("OG LIST",originalList)
+              if(originalList[2].length==3){
+                  console.log("OG LIST",originalList)
+              originalList.slice(2).forEach((item) => {
+                if (Array.isArray(item) && item.length === 3) {
+                  const [first, second, list] = item;
+                  list.forEach((entry) => {
+                    const [skill1, skill2] = entry.split("#");
+                    if (skill1 === selectedSkillLevel && skill2 === selectedLessonType) {
+                      filteredList.push(item);
+                    }
+                  });
+                }
+              });
           
-    //           if (!originalList) return; // Skip if there's no entry for this date
-          
-    //           const filteredList = [
-    //             originalList[0],
-    //             originalList[1],
-    //           ];
-    //           console.log("OG LIST",originalList)
-    //           if(originalList[2].length==3){
-    //               console.log("OG LIST",originalList)
-    //           originalList.slice(2).forEach((item) => {
-    //             if (Array.isArray(item) && item.length === 3) {
-    //               const [first, second, list] = item;
-    //               list.forEach((entry) => {
-    //                 const [skill1, skill2] = entry.split("#");
-    //                 if (skill1 === selectedSkillLevel && skill2 === selectedSkillLevel) {
-    //                   filteredList.push(item);
-    //                 }
-    //               });
-    //             }
-    //           });
-          
-    //           if (filteredList.length > 2) {
-    //             output.dates.push(dateStr);
-    //             output.datesMap[dateKey] = filteredList;
-    //           }}
-    //         });
+              if (filteredList.length > 2) {
+                output.dates.push(dateStr);
+                output.datesMap[dateKey] = filteredList;
+              }}
+            });
 
-    //         return output
-    //     }
-          
-    //     const filteredOptions = filterDatesMap(locationAvailability)
+                return output
+                }
+               
 
-    //     if(currentDate){
+        if(selectedSkillLevel && selectedLessonType){
+        const filteredOptions = filterDatesMap(givenLocationAvailability)
 
-    //     }
-    // },[currentDate])
+        console.log("FILTERED OPTIONS", filteredOptions)
+    
+        setLocationAvailability(filteredOptions)
 
-    // Function to determine if a day is disabled
-    const isDateDisabled = (date) => {
-        return !myDates.some(selectableDay => 
-        selectableDay.toDateString() === date.toDateString()
-        );
-    };
+        setIsLoading(false)
+        }
 
+    },[selectedSkillLevel,selectedLessonType])
+    
     useEffect(() => {
         if (isVisible) {
             document.addEventListener('mousedown', handleClickOutside);
@@ -98,7 +121,7 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
     }, [isVisible]);
 
     console.log(locationAvailability)
-    console.log("HII",currentDate?locationAvailability.datesMap.get(currentDate.toDateString()):null,currentDate)
+    // console.log("HII",currentDate?locationAvailability.datesMap.get(currentDate.toDateString()):null,currentDate)
 
     return (
         isVisible && (
@@ -112,6 +135,12 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
                  `}
                 onClick={(e)=>e.stopPropagation()} // Close on click within the div
             >
+                {true?
+                <div className='w-[300px] h-[300px]'>
+                    <LoadingSubScreen loadingMessage={"Loading availability"}/>
+                </div>
+                :
+                <>
                 <div className='flex  overflow-y-scroll pl-3 space-x-[40px]'>
                     <div className='flex-1 flex-col mr-[15px]'>
                         <div className='text-[12px] mb-0.5 pl-[10px] whitespace-nowrap 
@@ -176,6 +205,7 @@ const DateTimePicker = ({ isVisible, onClose, selectedDate, setSelectedDate, sel
                         </div>
                         
                     </div>
+                </>}
             </div>
         )
     );

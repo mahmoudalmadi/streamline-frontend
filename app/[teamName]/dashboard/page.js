@@ -256,8 +256,6 @@ export default function TeamDashboard() {
 
     },[userInfo])
 
-    console.log(events)
-
     const [pickedEvent, setPickedEvent] = useState(null);
     const [isEventModalOpen, setIsEventModalOpen] = useState(false);
 

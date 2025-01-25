@@ -39,7 +39,11 @@ const AccountSection = ({openLogInModal, setIsLogin}) => {
     return(
         
         <div className="flex relative border border-gray-200 border-[1px] rounded-full items-center justify-between space-x-[12px] px-[12px] py-[5px] cursor-pointer"
-        onClick={()=>{toggleVisibility()}}>
+        onClick={()=>{toggleVisibility()}} style={{
+            userSelect: "none", // Prevent text selection
+            WebkitUserSelect: "none", // Safari
+            MozUserSelect: "none", // Firefox
+            msUserSelect: "none",}} >
             {/* <img src="SettingsIcon.png"/> */}
             <SettingsIcon/>
 
