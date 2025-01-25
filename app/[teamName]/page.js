@@ -161,7 +161,7 @@ export default function TeamPage()  {
         allLocationInfo.locationLessonTypes.forEach((item)=>{
           lessonTypesMapping[item.level]=item.category
         })
-        console.log("MY MAPPING",lessonTypesMapping)
+        
         setLessonTypesMapping(lessonTypesMapping)
         for (const lessonType of currLessonTypes){
           

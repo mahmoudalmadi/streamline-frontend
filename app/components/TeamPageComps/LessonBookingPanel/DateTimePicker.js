@@ -8,6 +8,7 @@ const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, s
     setSelectedTime, dateTimePositioning,givenLocationAvailability}) => {
     const divRef = useRef(null);
     
+    
     const [isLoading,setIsLoading] = useState(true)
     const [locationAvailability,setLocationAvailability]=useState(null)
 
@@ -55,14 +56,12 @@ const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, s
 
     useEffect(()=>{
 
-        function filterDatesMap(input){
+        function filterDatesMap(input,lessonTypesMapping,selectedLessonType,selectedSkillLevel){
 
             const output = {dates:[],datesMap:{}}
-
+            console.log("INPUTESSSZ",input,lessonTypesMapping,selectedLessonType,selectedSkillLevel)
             const { dates, datesMap } = input;
 
-            console.log("INPUTE",lessonTypesMapping)
-            console.log("INPUTE",lessonTypesMapping)
             dates.forEach((dateStr,index) => {
               const dateKey = new Date(dateStr).toDateString();
               const originalList = datesMap.get(dateKey);
@@ -72,9 +71,7 @@ const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, s
                 originalList[0],
                 originalList[1],
               ];
-              console.log("OG LIST",originalList)
               if(originalList[2].length==3){
-                  console.log("OG LIST",originalList)
               originalList.slice(2).forEach((item) => {
                 if (Array.isArray(item) && item.length === 3) {
                   const [first, second, list] = item;
@@ -98,7 +95,7 @@ const DateTimePicker = ({ isVisible,lessonTypesMapping, onClose, selectedDate, s
                
 
         if(selectedSkillLevel && selectedLessonType){
-        const filteredOptions = filterDatesMap(givenLocationAvailability)
+        const filteredOptions = filterDatesMap(givenLocationAvailability,lessonTypesMapping,selectedLessonType,selectedSkillLevel)
 
         console.log("FILTERED OPTIONS", filteredOptions)
     

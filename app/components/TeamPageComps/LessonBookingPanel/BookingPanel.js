@@ -13,7 +13,7 @@ selectedLessonType,setSelectedLessonType,selectedSkillLevel,
 setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdownStyling,stackTimes,locationAvailability,teamInfo,teamImage,filteredEvents}) {
 
         const router = useRouter();
-
+        
         const {setLoadingNewPage,setLoadingNewPageMessage} = useAuth()
 
         const [isBeingUsed,setIsBeingUsed]=useState("")

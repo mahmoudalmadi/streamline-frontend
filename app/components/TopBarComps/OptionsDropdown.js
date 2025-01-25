@@ -84,7 +84,7 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                         </div>
                         <div className='py-[7px] px-[8px] text-[14px] text-gray-700 w-full hover:bg-gray-100'
                         onClick={()=>{
-                            console.log("HELLOOO???")
+                            
                             if(userInfo.userData.accountType==="team")
                             {
                                 setLoadingNewPage(true)
