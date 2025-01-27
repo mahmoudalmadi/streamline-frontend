@@ -24,28 +24,28 @@ const getUserByFirebaseId = async ({firebaseId}) => {
   }
 };
 
-const getDependantsByFirebaseId = async ({firebaseId}) => {
-    try {
-      const accountCollection = collection(db, "accountDependants"); // Reference the 'Account' collection
-      const q = query(accountCollection, where("accountFirebaseId", "==", firebaseId)); // Query by firebaseId
-  
-      const querySnapshot = await getDocs(q); // Execute the query
-  
-      if (!querySnapshot.empty) {
-        // Extract the document data
-        const userDoc = querySnapshot.docs[0]; // Assuming firebaseId is unique
-        const userData = userDoc.data();
-        console.log("Dependants found:", userData);
-        return userData; // Return user data
-      } else {
-        console.log("No dependants found with the given firebaseId.");
-        return null;
-      }
-    } catch (error) {
-      console.error("Error retrieving user by firebaseId:", error);
-      throw error; // Re-throw error for further handling
+const getDependantsByFirebaseId = async ({ firebaseId }) => {
+  try {
+    const accountCollection = collection(db, "accountDependants"); // Reference the 'accountDependants' collection
+    const q = query(accountCollection, where("accountFirebaseId", "==", firebaseId)); // Query by firebaseId
+
+    const querySnapshot = await getDocs(q); // Execute the query
+
+    if (!querySnapshot.empty) {
+      // Extract data from all matching documents
+      const dependants = querySnapshot.docs.map((doc) => doc.data());
+      
+      console.log("Dependants found:", dependants);
+      return dependants; // Return an array of all matching dependants
+    } else {
+      console.log("No dependants found with the given firebaseId.");
+      return []; // Return an empty array if no matches
     }
-  };
+  } catch (error) {
+    console.error("Error retrieving dependants by firebaseId:", error);
+    throw error; // Re-throw error for further handling
+  }
+};
 
   export async function checkAccountExists({ value, valueType, accountType })  {
     try {

@@ -12,7 +12,7 @@ import LoadingSubScreen from "../../loadingSubscreen";
 // Configure the localizer with Moment.js
 const localizer = momentLocalizer(moment);
 
-const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,currWeekNum, isCalendarLoading, setIsCalendarLoading, minHour,maxHour }) => {
+const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,currWeekNum, isCalendarLoading, setIsCalendarLoading, minHour,maxHour,currentDate,setCurrentDate }) => {
 
     const availableColor = CONFIG.calendar.blockColors.available
     const pendingColor = CONFIG.calendar.blockColors.pending
@@ -29,14 +29,14 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
           backgroundColor,
           color: "#000",
           padding: "4px",
-          borderWidth: "0px",
+          border: '1px solid #ffffff', // Change color and size here
           borderRadius: "5px", // Optional: Rounded corners
         },
       };
     };
   
     
-  const [currentDate,setCurrentDate]=useState(new Date())
+  
   
       // Function to go to the next week
       const goToNextWeek = () => {
@@ -83,8 +83,8 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
    { 
     
     return(
-      <div >
-      <div style={{ fontWeight: "bold",fontSize:'10px' }} className="leading-[10px]">{event.title}</div>
+      <div className="ml-[4px] mt-[1px]">
+      <div style={{ fontWeight: "bold",fontSize:'10px' }} className="leading-[10px] ">{event.title}</div>
       <div style={{ fontSize:'9px',marginTop:'2px' }} className="leading-[9px]">
       {moment(event.start).format("h:mm A")} - {moment(event.end).format("h:mm A")}
         </div>

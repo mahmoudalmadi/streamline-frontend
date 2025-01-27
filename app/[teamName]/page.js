@@ -20,7 +20,7 @@ import CONFIG from "@/config";
 
 export default function TeamPage()  {
 
-    const {loadingNewPage,loadingNewPageMessage,setLoadingNewPage}=useAuth()
+    const {loadingNewPage,loadingNewPageMessage,setLoadingNewPage,userInfo}=useAuth()
 
     // useEffect(()=>{
     //   setLoadingNewPage(false)
@@ -141,7 +141,7 @@ export default function TeamPage()  {
           return items.filter(item => {
             
             return (
-              item.status.toLowerCase() ==status
+              item.status.toLowerCase() ==status && item.numberOfSpots>0
             );
           });
         }
@@ -357,7 +357,7 @@ export default function TeamPage()  {
             <LoadingSubScreen loadingMessage={loadingNewPageMessage.length>0 ? loadingNewPageMessage:null}/>
           </div>
           :
-          <div className="h-screen">
+          <div className="flex flex-col">
         <div
         className="relative flex flex-col items-center justify-center w-full"
         >
@@ -516,7 +516,9 @@ export default function TeamPage()  {
         />
             <HeadCoachSection coachName={coachName} coachPhoto={coachPhoto} coachBio={headCoachDescription}/>
         
-        <div
+        {!userInfo.teamInfo&&
+          <>
+          <div
             
             className=" w-full h-[1px] bg-gray-200 mt-[18px] mb-[30px]"
           />  
@@ -551,6 +553,8 @@ export default function TeamPage()  {
             </div>
 
         </div>
+          </>
+        }
 
         <div
             ref={checkAvailabilityRef}
@@ -562,25 +566,26 @@ export default function TeamPage()  {
         
 
         {/* BIGGER SCREEN BOOK LESSON PANEL */}
-        <div className={`
+        {!userInfo.teamInfo&&<div className={`
         hidden sm:block p-[20px] w-[35%] border border-gray-300 rounded-xl
-        
-        shadow-[0_0_10px_rgba(0,0,0,0.1)] ${selectedTime ?"h-[290px]" :"h-[240px]"}`}
+        flex
+        shadow-[0_0_10px_rgba(0,0,0,0.1)] ${selectedTime ?"" :""}`}
+
         style={{
+          height:'fit-content',
             position: "sticky",
             // marginTop: `${scrollY}px`, // Adjust max height for stopping
             // transition: "top 0.2s ease-in-out",
           }}
         >
-            
+
             <div className="flex mb-[10px] font-bold space-x-[4px] items-end">
-                <div className="text-[20px]">
-                    ${trialLessonPrice}
-                </div>
                 <div className="text-[16px]">
-                    trial lesson
+                    Book your free trial lesson
                 </div>
             </div>
+            
+
             
             <div>
             <BookingPanel eventsList={filteredEvents} lessonTypesMapping={lessonTypesMapping}  key={0} subKey={0} lessonTypes={lessonTypes} locationInfo={locationInfo} teamInfo={teamInfo} images={images}
@@ -590,13 +595,12 @@ export default function TeamPage()  {
             selectedLessonType={selectedLessonType} setSelectedLessonType={setSelectedLessonType}
             selectedTime={selectedTime} setSelectedTime={setSelectedTime}
             dateTimePositioning={"right-0"} teamName={teamName}
-            
             lessonInfoDropdownStyling={"absolute  border border-gray-300 border-[1px] flex bg-white right-0 top-full mt-2 py-2  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]"}
             />
             </div>
             
 
-        </div>
+        </div>}
 
 
 

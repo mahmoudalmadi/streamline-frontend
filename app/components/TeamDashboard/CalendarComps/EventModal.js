@@ -7,7 +7,7 @@ import PersonEntry from "@/app/components/TeamDashboard/CalendarComps/PersonEntr
 import { useEffect, useState } from "react";
 
 export default function EventModal ({pickedEvent,streetAddress}){
-
+    
     function formatEventTime({startTime, endTime}) {
         // Days of the week and months for formatting
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -56,14 +56,18 @@ export default function EventModal ({pickedEvent,streetAddress}){
     
     useEffect(()=>{
         const {firstEntries,secondEntries} = processEntries(pickedEvent.lessonType)
-        console.log(firstEntries,secondEntries)
+        
         setSelectedLessonTypes(secondEntries)
         setSelectedSkillLevels(firstEntries)
     },[])
 
     return(
         <>
-                <div className="p-[8px]">
+                <div className="p-[8px]"  style={{
+            userSelect: "none", // Prevent text selection
+            WebkitUserSelect: "none", // Safari
+            MozUserSelect: "none", // Firefox
+            msUserSelect: "none",}} >
                     {pickedEvent && 
                     // <EventModalContent pickedEvent={pickedEvent}/>
                     <div>
@@ -72,7 +76,8 @@ export default function EventModal ({pickedEvent,streetAddress}){
                     <div className="flex items-center space-x-[16px]">
 
                     <div className="flex w-[22px] justify-center items-center">
-                    <div className="flex w-[14px] h-[14px] rounded-[4px] bg-streamlineBlue "/>
+                    <div className="flex w-[14px] h-[14px] rounded-[4px] "
+                    style={{backgroundColor:CONFIG.calendar.blockColors[pickedEvent.status.toLowerCase()]}}/>
                     </div>
                     
                         <div className="flex font-bold   text-[18px]">
@@ -85,20 +90,12 @@ export default function EventModal ({pickedEvent,streetAddress}){
                     {formatEventTime({startTime:pickedEvent.start,endTime:pickedEvent.end})}
                     </div>
 
-                    <div className="flex flex-col">
+                    <div className="flex flex-col mt-[8px]">
                     <div className="flex items-center space-x-[16px]">
-                    <div className="flex w-[22px] justify-center items-center">
+                    <div className="flex w-[22px] mt-[5px] justify-center items-center">
                     <InfoIcon/>
                     </div>
-                    <div className="flex flex-col mt-[20px]">
-                        <div className="flex text-[14px]">
-                        <div className="font-bold mr-[4px]">
-                        Spots:
-                        </div>    
-                        <div>
-                        {pickedEvent.numberOfSpots}
-                        </div>    
-                        </div>
+                    <div className="flex flex-col ">
                         <div className="flex leading-[14px] text-[14px] mt-[5px]">
                         <div className="font-bold mr-[4px]">
                         Status:
@@ -113,14 +110,22 @@ export default function EventModal ({pickedEvent,streetAddress}){
 
                     {selectedLessonTypes&&
                     <>
-                    <div className="text-[14px] leading-[8px] mt-[10px] mb-[3px] ml-[38px] font-bold">
-                        Applicable lesson types:
+                    {pickedEvent.numberOfSpots&&<div className="flex text-[14px] ml-[38px]">
+                    <div className="font-bold mr-[4px]">
+                    Spots:
+                    </div>    
+                    <div>
+                    {pickedEvent.numberOfSpots}
+                    </div>    
+                    </div>}
+                    <div className="text-[14px] leading-[8px] mt-[5px] mb-[3px] ml-[38px] font-bold">
+                        {pickedEvent.status=="Available"?"Applicable lesson types:":"Lesson type"}
                     </div>
                     <div className="text-[14px] ml-[38px] ">
                         {selectedLessonTypes.join(", ")}
                     </div>
                     <div className="text-[14px] leading-[8px] mt-[8px] mb-[3px] ml-[38px] font-bold">
-                        Applicable skill levels:
+                    {pickedEvent.status=="Available"?"Applicable skill levels:":"Skill level"}
                     </div>
                     <div className="text-[14px]  ml-[38px] ">
                         {selectedSkillsLevels.join(", ")}
@@ -180,16 +185,42 @@ export default function EventModal ({pickedEvent,streetAddress}){
                     {pickedEvent.athletes &&
                     <>
                     {pickedEvent.coachName&&<div className="flex font-bold ml-[32px] text-[14px] mt-[6px] pt-[4px]">
-                    Swimmer
+                    {CONFIG.athleteType}{pickedEvent.athletes.length>1?"'s":""}
                     </div>}
 
-                    <PersonEntry personInfo={
+                    {pickedEvent.athletes.map((athlete,index)=>
+                    (
+                    
+                    athlete.athleteInfo.phoneNumber?
+                    <PersonEntry key={index} personInfo={
                           {
-                            fullName:"Johny Apr",
-                            email:"johnyhasaLAMB@gmail.com",
-                            phoneNumber:"+1213421423"
+                            fullName:athlete.fullName,
+                            email:athlete.athleteInfo.emailAddress,
+                            phoneNumber:athlete.athleteInfo.phoneNumber
                             }}/>
-                    </>}
+                    :
+                    <div key={index}>
+                    <PersonEntry  personInfo={
+                        {
+                          fullName:athlete.fullName
+                          }}/>
+
+                    <div className="leading-[10px] mt-[12px] w-full text-[14px] ml-[73px] mb-[6px]">
+                        {athlete.fullName.split(" ")[0]}'s contact:
+                    </div>
+                    <PersonEntry noIcon={true} personInfo={
+                        {
+                          fullName:pickedEvent.contact[index].fullName,
+                          email:pickedEvent.contact[index].emailAddress,
+                          phoneNumber:pickedEvent.contact[index].phoneNumber
+                        }}
+                    />
+                    </div>
+                            
+                    ))}
+                    
+                    </>
+                    }
 
                     </div>
 

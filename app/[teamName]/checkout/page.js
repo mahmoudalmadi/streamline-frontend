@@ -15,10 +15,13 @@ import PaymentModal from "@/app/components/PaymentModal";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { SignUpProvider } from "@/app/contexts/SignUpProvider";
 import LoadingSubScreen from "@/app/components/loadingSubscreen";
+import PersonEntry from "@/app/components/TeamDashboard/CalendarComps/PersonEntry";
+import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/editingEntryByAllFields";
+import { addInfoAsJson } from "@/app/hooks/firestoreHooks/adding/addInfoAsJson";
 
 export default function CheckoutPage() {
 
-    const {user, setUser,setLoadingNewPage,loadingNewPage} = useAuth();
+    const {user, setUser,setLoadingNewPage,loadingNewPage,userInfo} = useAuth();
 
     const [isNewPageLoading,setIsNewPageLoading]=useState(true)
     const router = useRouter();
@@ -36,6 +39,7 @@ export default function CheckoutPage() {
     const [isLoginOption,setIsLoginOptions] = useState(false)
     const [locationInfo,setLocationInfo]=useState(null)
 
+    
     const [lessonType,setLessonType]=useState(null)
     const [skillLevel,setSkillLevel]=useState(null)
     const [teamPhoto,setTeamPhoto]=useState(null)
@@ -49,7 +53,6 @@ export default function CheckoutPage() {
         if(!checkoutData){
             router.push(`/${pathStop}`)
         }else{
-            console.log(checkoutData)
             setIsNewPageLoading(false)
             setLoadingNewPage(false)
             setTeamName(checkoutData.teamInfo[0].teamName)
@@ -74,6 +77,18 @@ export default function CheckoutPage() {
 
     const [currSelectedDate, setCurrSelectedDate] = useState(checkoutData!=null ? checkoutData.lessonDate : "");
     const [currSelectedTime, setCurrSelectedTime] = useState(checkoutData!=null ? checkoutData.lessonTime : "");
+
+    function invertObject(obj) {
+        const inverted = {};
+      
+        for (const [key, value] of Object.entries(obj)) {
+          inverted[value] = key; // Swap key and value
+        }
+      
+        return inverted;
+      }
+      
+    const lessonTypesMapping = invertObject(checkoutData.lessonTypesMapping)
 
     // Lesson type dropdown setup
     const [currSelectedLessonType, setCurrSelectedLessonType] = useState(checkoutData!=null ? checkoutData.lessonType : "")
@@ -104,7 +119,60 @@ export default function CheckoutPage() {
     //     setTimeout(() => setIsLessonTypeDropdownClosing(false), 500); // Reset after a short delay
     // };  
 
-    const handleRedirect = () => {
+    const [potentialAthletes,setPotentialAthletes]=useState(null)
+
+    console.log("CHECKOUTR",potentialAthletes)
+
+    useEffect(()=>{
+        if(userInfo){
+
+            if(userInfo.userData){
+            if(!userInfo.otherAthletes){
+                
+                setPotentialAthletes([{fullName:userInfo.userData.fullName,athleteInfo:userInfo.userData}])
+            }else{
+                setPotentialAthletes([{fullName:userInfo.userData.fullName,athleteInfo:userInfo.userData}])
+                  
+                  // Fix by batching updates:
+                  const newAthletes = userInfo.otherAthletes.map((item) => ({
+                    fullName: item.fullName,
+                    athleteInfo: item,
+                  }));
+                  
+                  // Set state once
+                  setPotentialAthletes((prev) => [...prev, ...newAthletes]);
+                }
+            }
+        }
+    },[userInfo])
+
+    const [selectedAthleteId,setSelectedAthleteId]=useState(null)
+    console.log(checkoutData.eventInfo)
+    const handleRedirect = async() => {
+        
+        const entryId = await addInfoAsJson({jsonInfo:{
+            coachEmail:checkoutData.eventInfo.coachEmail,
+            coachName:checkoutData.eventInfo.coachName,
+            coachPhone:checkoutData.eventInfo.coachPhone,
+            createdOn:new Date(),
+            day:checkoutData.eventInfo.day,
+            end:checkoutData.eventInfo.end,
+            lessonType:[`${lessonTypesMapping[currSelectedSkillLevel]}\`${lessonTypesMapping[currSelectedLessonType]}`],
+            locationId:checkoutData.eventInfo.locationId,
+            reminder:checkoutData.eventInfo.reminder,
+            start:checkoutData.eventInfo.start,
+            status:"Pending",
+            teamId:checkoutData.eventInfo.teamId,
+            title:checkoutData.eventInfo.title,
+            availableSister:checkoutData.eventInfo.id,
+            athletes:[potentialAthletes[selectedAthleteId]],
+            contact:[potentialAthletes[selectedAthleteId].athleteInfo.phoneNumber?{phoneNumber:"null"}:userInfo.userData]
+        },collectionName:"TimeBlock"})
+
+        await editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":checkoutData.eventInfo.id},updateData:{numberOfSpots:checkoutData.eventInfo.numberOfSpots-1,pendingSisters:checkoutData.eventInfo.pendingSisters?[...checkoutData.eventInfo.pendingSisters,entryId]:[entryId],lessonType:[`${lessonTypesMapping[currSelectedSkillLevel]}\`${lessonTypesMapping[currSelectedLessonType]}`]
+        }})
+
+
         setLoadingNewPage(true)
         router.push(pathName+`/success`)
         }
@@ -121,7 +189,7 @@ export default function CheckoutPage() {
                     <LoadingSubScreen/>
                 </div>   
                 :
-                <div className="h-screen">
+                <div className="min-h-screen">
                 <div
                 className="relative flex flex-col items-center justify-center w-full"
                 >
@@ -230,7 +298,15 @@ export default function CheckoutPage() {
                     {currSelectedDate!=""?currSelectedDate.toDateString():""}
                 </div>
                 
-                
+                <div className="font-bold mt-[8px]">
+                        Select {CONFIG.athleteType.toLowerCase()}
+                </div>
+                {potentialAthletes.map((item,index)=>(
+                                    <div key={index} className={`py-[3px] cursor-pointer hover:opacity-100 ${selectedAthleteId==index ? "": "opacity-50"}`} onClick={()=>{setSelectedAthleteId(index)}}>
+                                        <PersonEntry noLeftMargin={true} personInfo={{fullName:item.fullName}}/>
+                                    </div>
+                                )
+                )}
 
                 {/* <div
                 className="font-bold text-[18px] mb-[15px]"
@@ -305,7 +381,7 @@ export default function CheckoutPage() {
                 <>
                 <div className="w-full mt-[30px] flex items-center justify-center">
 
-                    <div className="flex font-bold text-white bg-streamlineBlue py-[7px] px-[16px] rounded-full items-center cursor-pointer" onClick={()=>{handleRedirect()}}>
+                    <div className={`flex font-bold text-white bg-streamlineBlue py-[7px] px-[16px] rounded-full items-center  ${selectedAthleteId!==null?"cursor-pointer":"opacity-50"}`} onClick={async()=>{if(selectedAthleteId!==null){await handleRedirect()}}}>
                         Confirm free trial lesson reservation
                     </div>
                 </div>
@@ -351,11 +427,11 @@ export default function CheckoutPage() {
 
                 
                 {/* BIGGER SCREEN BOOK LESSON PANEL */}
-                <div className={`hidden sm:block p-[20px] w-[35%] border 
-                flex flex-col justify-center border-gray-300 rounded-xl h-[200px]
-                shadow-[0_0_10px_rgba(0,0,0,0.1)] }`}>
+                <div className={`hidden sm:block p-[20px] border 
+                flex flex-col justify-center border-gray-300 rounded-xl
+                shadow-[0_0_10px_rgba(0,0,0,0.1)] }`} style={{height:'fit-content'}}>
                     
-                    <div className="flex items-center mt-[10px]">
+                    <div className="flex items-center  mb-[10px] space-x-[4px] items-end">
                             <img
                                 src={teamPhoto}
                                 className=
@@ -367,12 +443,17 @@ export default function CheckoutPage() {
                         {teamName}
                         </div>
 
-                        <div className="leading-1.25 text-[15px]">
-                        {currSelectedSkillLevel} {currSelectedLessonType.toLowerCase()} trial lesson
+                        <div className="flex-col leading-1.25 text-[14px] flex">
+                        <div className=" mr-[3px]">Trial lesson, 1 {CONFIG.athleteType.toLowerCase()}
                         </div>
-                        <div className="leading-1.25 text-[15px]">
-                        1 Swimmer
+                        <div className="flex">
+                        <div className="flex font-bold mr-[3px]">Skill level: </div> {currSelectedSkillLevel}
                         </div>
+                        <div className="flex">
+                        <div className="flex font-bold mr-[3px]">Lesson type: </div> {currSelectedLessonType}
+                        </div>
+                        </div>
+
                         </div>
                     </div>
 

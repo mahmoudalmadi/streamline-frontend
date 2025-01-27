@@ -17,7 +17,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isFetchingUserInfo,setIsFetchingUserInfo]=useState(true)
-  const [userInfo, setUserInfo] = useState({"userData":null, "otherSwimmers":null});
+  const [userInfo, setUserInfo] = useState({"userData":null, "otherAthletes":null});
   const [loadingNewPage,setLoadingNewPage]=useState(false)
   const [loadingNewPageMessage,setLoadingNewPageMessage]=useState("")
   useEffect(() => {
@@ -26,13 +26,13 @@ export const AuthProvider = ({ children }) => {
 
       if (currentUser){
       const userData = await getUserByFirebaseId({firebaseId:currentUser.uid})
-      const otherSwimmers = await getDependantsByFirebaseId({firebaseId:currentUser.uid})
-
-        if(otherSwimmers){
+      const otherAthletes = await getDependantsByFirebaseId({firebaseId:currentUser.uid})
+        console.log("OTHER ATHLS", otherAthletes)
+        if(otherAthletes){
         setUserInfo((prevInfo) => ({
         ...prevInfo, // Retain existing keys in the state object
         userData: userData,
-        otherSwimmers: otherSwimmers,
+        otherAthletes: otherAthletes,
         }))
         } else{
           setUserInfo((prevInfo) => ({

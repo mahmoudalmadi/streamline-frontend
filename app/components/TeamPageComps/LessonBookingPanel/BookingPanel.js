@@ -87,7 +87,8 @@ selectedDate, setSelectedDate, selectedTime,setSelectedTime,selectedLessonType,s
             lessonId:lessonId,
             locationInfo:locationInfo,
             teamInfo:teamInfo,
-            images:images
+            images:images,
+            lessonTypesMapping:lessonTypesMapping
         })
         }
         const pathName=usePathname()

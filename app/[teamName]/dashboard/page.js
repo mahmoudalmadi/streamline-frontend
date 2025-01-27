@@ -23,6 +23,7 @@ import { transformImagesListToJsons } from "@/app/hooks/firestoreHooks/retrievin
 import { parseAddress } from "@/app/hooks/addressExtraction";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import getXWeeksData from "@/app/hooks/calendarHooks/getWeeksData";
+import { calculateAge } from "@/app/hooks/miscellaneous";
 
 // import ClubScheduler from "@/app/components/TeamDashboard/ScheduleComps/Schedule";
 
@@ -94,9 +95,10 @@ export default function TeamDashboard() {
         };
       }
       
+    const [currentDate,setCurrentDate]=useState(new Date())
 
-    function filterItemsByWeekAndStatus(items) {
-        const now = new Date();
+    function filterItemsByWeekAndStatus(items,currentDate) {
+        const now = new Date(currentDate);
         
         // Calculate the start of the current week (Sunday at 12:00 AM)
         const startOfWeek = new Date(now);
@@ -124,14 +126,23 @@ export default function TeamDashboard() {
     const [currDay,setCurrDay]=useState(new Date())
     const [isCalendarLoading,setIsCalendarLoading]=useState(true)
     useEffect(()=>{
-
+        console.log("CHANGED??",currWeekEvents)
         const updateCal = async() => {
             setIsCalendarLoading(true)
             const newDate = new Date(currDay)
             newDate.setDate(currDay.getDate()+currWeekNum*7)
             const weekEvents = await getXWeeksData({locationId:currentLocation.id,x:xWeeks,currDay:newDate})
-            setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents))
-            setEvents(weekEvents)
+            const nonZeroWeekEvents=weekEvents.filter((item,index)=>{
+                if(item.numberOfSpots==0){
+                    
+                    return(false)
+                }else{
+                    return(true)
+                }
+            })
+            setCurrWeekEvents(filterItemsByWeekAndStatus(nonZeroWeekEvents,currentDate))
+            setEvents(nonZeroWeekEvents)
+            setWeeklyTrialLessons
             setCurrWeekNum(0)
             setCurrDay(newDate)
             setIsCalendarLoading(false)
@@ -142,8 +153,10 @@ export default function TeamDashboard() {
             updateCal()
         }else
         if (events) {
-            setCurrWeekEvents(filterItemsByWeekAndStatus(events))
+            console.log("SWITCHINGssss",currWeekEvents)
+            setCurrWeekEvents(filterItemsByWeekAndStatus(events,currentDate))
         }
+        console.log("SWITCHING",currWeekEvents)
     },[currWeekNum])
 
     useEffect(()=>{
@@ -242,9 +255,16 @@ export default function TeamDashboard() {
 
             
             const weekEvents = await getXWeeksData({locationId:locationsInfo[0].id,x:xWeeks,currDay:currDay})
-
-            setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents))
-            setEvents(weekEvents)
+            const nonZeroWeekEvents=weekEvents.filter((item,index)=>{
+                if(item.numberOfSpots==0){
+                    
+                    return(false)
+                }else{
+                    return(true)
+                }
+            })
+            setCurrWeekEvents(filterItemsByWeekAndStatus(nonZeroWeekEvents,currentDate))
+            setEvents(nonZeroWeekEvents)
             setCurrentLocation(locationsInfo[0])
             setLocationInfo(retrievedLocations)
             setAllParsedAddresses(parsedAddresses)
@@ -270,6 +290,11 @@ export default function TeamDashboard() {
     const parentDivRef = useRef(null)
 
     const [selectedPage,setSelectedPage]=useState("dashboard")
+
+    const handleSelectEvent = (event) => {
+        setPickedEvent(event); // Set the picked event
+        openEventModal()
+      };
 
     return(
 
@@ -307,7 +332,7 @@ export default function TeamDashboard() {
          
             <div className="w-full mt-[20px]">
                 <div className="">
-                    <MyCalendar loading events={events} setPickedEvent={setPickedEvent} openEventModal={openEventModal} setCurrWeekNum={setCurrWeekNum} isCalendarLoading={isCalendarLoading} setIsCalendarLoading={setIsCalendarLoading} currWeekNum={currWeekNum} minHour={currentLocation.minHour} maxHour={currentLocation.maxHour}/>
+                    <MyCalendar loading events={events} setPickedEvent={setPickedEvent} openEventModal={openEventModal} setCurrWeekNum={setCurrWeekNum} isCalendarLoading={isCalendarLoading} setIsCalendarLoading={setIsCalendarLoading} currWeekNum={currWeekNum} minHour={currentLocation.minHour} maxHour={currentLocation.maxHour} currentDate={currentDate} setCurrentDate={setCurrentDate}/>
                 </div>
             </div>
 
@@ -368,18 +393,18 @@ export default function TeamDashboard() {
                         :
                         <>
                         {
-                        weeklyTrialLessons.map((item,index) => (
+                        currWeekEvents.map((item,index) => (
                             <div 
                             key={index}
                             className={`flex items-center w-full rounded-[10px]
                             py-[6px]
                             ${index%2 == 0 ? "bg-gray-100" :""} cursor-pointer
-                            hover:bg-gray-200 w-full`}>
+                            hover:bg-gray-200 w-full`} onClick={()=>{handleSelectEvent(item),console.log(item)}}>
                                 <div className="w-[25%] p-[5px]">
-                                    {item.name}
+                                    {item.athletes[0].fullName}
                                 </div>            
                                 <div className="w-[15%] p-[5px]">
-                                    {item.age}
+                                    {item.athletes[0].athleteInfo.dateOfBirth?calculateAge(item.athletes[0].athleteInfo.dateOfBirth):"Over 18"}
                                 </div>            
                                 <div className="w-[20%] p-[5px]">
                                     {item.lessonType}
