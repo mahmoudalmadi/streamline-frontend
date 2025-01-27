@@ -123,6 +123,7 @@ export default function TeamDashboard() {
 
       
     const [events,setEvents] = useState(null);
+    const [allEvents,setAllEvents] = useState(null);
     const [currDay,setCurrDay]=useState(new Date())
     const [isCalendarLoading,setIsCalendarLoading]=useState(true)
     useEffect(()=>{
@@ -141,8 +142,8 @@ export default function TeamDashboard() {
                 }
             })
             setCurrWeekEvents(filterItemsByWeekAndStatus(nonZeroWeekEvents,currentDate))
+            setAllEvents(weekEvents)
             setEvents(nonZeroWeekEvents)
-            setWeeklyTrialLessons
             setCurrWeekNum(0)
             setCurrDay(newDate)
             setIsCalendarLoading(false)
@@ -264,6 +265,7 @@ export default function TeamDashboard() {
                 }
             })
             setCurrWeekEvents(filterItemsByWeekAndStatus(nonZeroWeekEvents,currentDate))
+            setAllEvents(weekEvents)
             setEvents(nonZeroWeekEvents)
             setCurrentLocation(locationsInfo[0])
             setLocationInfo(retrievedLocations)
@@ -295,6 +297,22 @@ export default function TeamDashboard() {
         setPickedEvent(event); // Set the picked event
         openEventModal()
       };
+
+    function formatDateCustom(date) {
+    // Extract day of the week, month, day, hours, and minutes
+    const options = { weekday: "short", month: "short", day: "numeric" };
+    const dayPart = new Intl.DateTimeFormat("en-US", options).format(date);
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    
+    // Combine into the desired format
+    return `${dayPart} @ ${hours}:${minutes}`;
+    }
+      
+
+    useEffect(()=>{
+        console.log(currWeekEvents)
+    },[currWeekEvents])
 
     return(
 
@@ -337,7 +355,7 @@ export default function TeamDashboard() {
             </div>
 
             <ModalTemplate isOpen={isEventModalOpen} onClose={closeEventModal}>
-                <EventModal pickedEvent={pickedEvent} streetAddress={currentLocation.parsedAddress.streetAddress}/>
+                <EventModal allEvents={allEvents} pickedEvent={pickedEvent} streetAddress={currentLocation.parsedAddress.streetAddress} onClose={closeEventModal} setCurrWeekEvents={setCurrWeekEvents} setEvents={setEvents} events={events} currWeekEvents={currWeekEvents} setAllEvents={setAllEvents}/>
             </ModalTemplate>
 
             {/* add Availability modal */}
@@ -367,7 +385,7 @@ export default function TeamDashboard() {
             <div className="flex w-full h-[1px] bg-gray-200 mt-[5px] mb-[15px]"/>
             <div className="flex w-full mt-[10px] text-[15px]">
                 <div className="w-full">
-                    <div className="flex p-[3px]">
+                    <div className="flex p-[3px] px-[5px]">
                         <div className="font-bold  w-[25%] p-[3px]">
                             {CONFIG.athleteType}
                         </div>
@@ -378,7 +396,7 @@ export default function TeamDashboard() {
                             Coach
                         </div>
                         <div className="font-bold  w-[20%] p-[3px]">
-                            Time
+                            When
                         </div>
                         <div className="font-bold  w-[90px] flex p-[3px]">
                             Status
@@ -394,12 +412,13 @@ export default function TeamDashboard() {
                         <>
                         {
                         currWeekEvents.map((item,index) => (
+                            <div key={index}>
+                            {item.athletes.length==1?
                             <div 
-                            key={index}
                             className={`flex items-center w-full rounded-[10px]
-                            py-[6px]
-                            ${index%2 == 0 ? "bg-gray-100" :""} cursor-pointer
-                            hover:bg-gray-200 w-full`} onClick={()=>{handleSelectEvent(item),console.log(item)}}>
+                            py-[10px] px-[5px]
+                            ${index != currWeekEvents.length-1 ? "border-b border-gray-200" :""} cursor-pointer
+                            hover:bg-gray-200 w-full`} onClick={()=>{handleSelectEvent(item);console.log(item)}}>
                                 <div className="w-[25%] p-[5px]">
                                     {item.athletes[0].fullName}
                                 </div>            
@@ -407,10 +426,10 @@ export default function TeamDashboard() {
                                     {item.athletes[0].athleteInfo.dateOfBirth?calculateAge(item.athletes[0].athleteInfo.dateOfBirth):"Over 18"}
                                 </div>            
                                 <div className="w-[20%] p-[5px]">
-                                    {item.lessonType}
+                                    {item.coachName}
                                 </div>            
                                 <div className="w-[20%] p-[5px]">
-                                    {item.dateTime}
+                                    {formatDateCustom(item.start)}
                                 </div>            
                                 <div className="w-[90px] flex justify-center items-center">
                                     <div className={`flex  text-white font-bold px-[10px] py-[6px] ${item.status==="Confirmed" ? "bg-green-500" : 
@@ -420,7 +439,40 @@ export default function TeamDashboard() {
                                     </div>
                                 </div>            
 
-                            </div>            
+                            </div> :
+                            <>
+                            {item.athletes.map((subItem,subIndex)=>(
+                            <div key={1000+subIndex}
+                            className={`flex items-center w-full rounded-[10px]
+                            py-[10px] px-[5px]
+                            ${(index != currWeekEvents.length-1 || subIndex!=item.athletes.length-1)? "border-b border-gray-200" :""} cursor-pointer
+                            hover:bg-gray-200 w-full`} onClick={()=>{handleSelectEvent(item);console.log(item)}}>
+                                <div className="w-[25%] p-[5px]">
+                                    {item.athletes[subIndex].fullName}
+                                </div>            
+                                <div className="w-[15%] p-[5px]">
+                                    {item.athletes[subIndex].athleteInfo.dateOfBirth?calculateAge(item.athletes[subIndex].athleteInfo.dateOfBirth):"Over 18"}
+                                </div>            
+                                <div className="w-[20%] p-[5px]">
+                                    {item.coachName}
+                                </div>            
+                                <div className="w-[20%] p-[5px]">
+                                    {formatDateCustom(item.start)}
+                                </div>            
+                                <div className="w-[90px] flex justify-center items-center">
+                                    <div className={`flex  text-white font-bold px-[10px] py-[6px] ${item.status==="Confirmed" ? "bg-green-500" : 
+                                    item.status==="Pending" ? "bg-yellow-500" : "bg-red-500"} 
+                                    rounded-full`}>
+                                    {item.status}
+                                    </div>
+                                </div>            
+
+                            </div>
+                            ))}
+                            </>
+                        
+                            }
+                            </div>
                         ))
                         }
                         </>

@@ -5,8 +5,14 @@ import NotifIcon  from "../../../../public/NotifIcon.svg"
 import PeopleIcon  from "../../../../public/PeopleIcon.svg"
 import PersonEntry from "@/app/components/TeamDashboard/CalendarComps/PersonEntry";
 import { useEffect, useState } from "react";
+import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/editingEntryByAllFields";
+import { addInfoAsJson } from "@/app/hooks/firestoreHooks/adding/addInfoAsJson";
+import { getEntriesByMatching } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByMatching";
+import { getEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByConditions";
+import removeJsonByField, { appendToJsonSubListById, editJsonById } from "@/app/hooks/jsonHooks";
+import { deleteMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/deleteEntriesByMatchingFields";
 
-export default function EventModal ({pickedEvent,streetAddress}){
+export default function EventModal ({pickedEvent,streetAddress,onClose,allEvents,setCurrWeekEvents, setEvents,events,currWeekEvents,setAllEvents}){
     
     function formatEventTime({startTime, endTime}) {
         // Days of the week and months for formatting
@@ -61,6 +67,89 @@ export default function EventModal ({pickedEvent,streetAddress}){
         setSelectedSkillLevels(firstEntries)
     },[])
 
+    console.log(pickedEvent)
+
+    const [rejectedStepOne,setRejectedStepOne] = useState(false)
+    const [acceptedStepOne,setAcceptedStepOne] = useState(false)
+
+    const [hasClickedSubmit,setHasClickedSubmit]=useState(false)
+
+    const handleAcceptRequest = async() => {
+
+        console.log(allEvents)
+        // await editingMatchingEntriesByAllFields({collectionName:"TimeBlock", matchParams:{"id":pickedEvent.availableSister},updateDate})
+        setHasClickedSubmit(true)
+
+        allEvents.forEach(async(item)=>{
+            if (item.id == pickedEvent.availableSister){
+                console.log("geer",item)
+            if (!item.confirmedSister){
+                // CREATE NEWLY ACCEPTED EVENT OR CHECK FOR EXISTING CONFIRMED
+
+                const newConfirmedEvent = {
+                    coachEmail:pickedEvent.coachEmail,
+                    coachName:pickedEvent.coachName,
+                    coachPhone:pickedEvent.coachPhone,
+                    createdOn:new Date(),
+                    day:pickedEvent.day,
+                    end:pickedEvent.end,
+                    lessonType:pickedEvent.lessonType,
+                    locationId:pickedEvent.locationId,
+                    reminder:pickedEvent.reminder,
+                    start:pickedEvent.start,
+                    status:"Confirmed",
+                    numberOfAthletes:1,
+                    teamId:pickedEvent.teamId,
+                    title:pickedEvent.title,
+                    availableSister:pickedEvent.availableSister,
+                    athletes:pickedEvent.athletes,
+                    contact:pickedEvent.contact
+                }
+
+                const createdEntryId = await addInfoAsJson({jsonInfo:newConfirmedEvent,collectionName:"TimeBlock"})
+                
+                editJsonById({fieldName:"confirmedSister",fieldValue:createdEntryId,setter:setAllEvents,id:pickedEvent.availableSister,jsonList:allEvents}) 
+
+                await editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.availableSister},updateData:{confirmedSister:createdEntryId}})
+
+                await deleteMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.id}})
+                
+                setAllEvents([...allEvents,newConfirmedEvent])
+                setEvents([...events,newConfirmedEvent])
+                setCurrWeekEvents([...currWeekEvents,newConfirmedEvent])
+                removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setEvents,jsonList:events})
+                
+                removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setCurrWeekEvents,jsonList:currWeekEvents})
+
+                onClose()
+            }else{
+
+                console.log("we good")
+                
+                let confirmedSister;
+                
+                allEvents.forEach(item=>{if(item.availableSister==pickedEvent.availableSister){confirmedSister=item}})
+
+                
+                appendToJsonSubListById({fieldMappings:{"athletes":pickedEvent.athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setCurrWeekEvents,jsonList:currWeekEvents,id:confirmedSister.id})
+                appendToJsonSubListById({fieldMappings:{"athletes":pickedEvent.athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setEvents,jsonList:events,id:confirmedSister.id})
+                removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setEvents,jsonList:events})
+                removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setCurrWeekEvents,jsonList:currWeekEvents})
+                await deleteMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.id}})
+
+                await editingMatchingEntriesByAllFields({collectionName:"TimeBlock", matchParams:{"id":item.confirmedSister},updateData:{athletes:[...confirmedSister.athletes,...pickedEvent.athletes],contact:[...confirmedSister.contact,...pickedEvent.contact],numberOfAthletes:confirmedSister.numberOfAthletes+1}})
+                onClose()
+            }
+            }
+        })
+
+
+        // await editingMatchingEntriesByAllFields({collectionName:"TimeBlock", matchParams:{"id":pickedEvent.availableSister},updateData:{confirmedSister:"createdEntryId"}})
+
+
+
+    }
+
     return(
         <>
                 <div className="p-[8px]"  style={{
@@ -69,7 +158,6 @@ export default function EventModal ({pickedEvent,streetAddress}){
             MozUserSelect: "none", // Firefox
             msUserSelect: "none",}} >
                     {pickedEvent && 
-                    // <EventModalContent pickedEvent={pickedEvent}/>
                     <div>
 
                     <div className="flex flex-col">
@@ -110,13 +198,25 @@ export default function EventModal ({pickedEvent,streetAddress}){
 
                     {selectedLessonTypes&&
                     <>
-                    {pickedEvent.numberOfSpots&&<div className="flex text-[14px] ml-[38px]">
-                    <div className="font-bold mr-[4px]">
-                    Spots:
-                    </div>    
-                    <div>
-                    {pickedEvent.numberOfSpots}
-                    </div>    
+                    {(pickedEvent.numberOfSpots||pickedEvent.numberOfAthletes)&&<div className="flex text-[14px] ml-[38px]">
+                    {pickedEvent.numberOfSpots?
+                        <>
+                        <div className="font-bold mr-[4px]">
+                        Spots:
+                        </div>    
+                        <div>
+                        {pickedEvent.numberOfSpots}
+                        </div>    
+                        </>:
+                        <>
+                        <div className="font-bold mr-[4px]">
+                        Attendees:
+                        </div>
+                        <div className=" mr-[4px]">
+                        {pickedEvent.numberOfAthletes} {CONFIG.athleteType}{pickedEvent.numberOfAthletes>1?"s":""}
+                        </div>    
+                        </>
+                    }
                     </div>}
                     <div className="text-[14px] leading-[8px] mt-[5px] mb-[3px] ml-[38px] font-bold">
                         {pickedEvent.status=="Available"?"Applicable lesson types:":"Lesson type"}
@@ -173,7 +273,7 @@ export default function EventModal ({pickedEvent,streetAddress}){
                     
                     </div>
 
-                    <div className="ml-[7px]">
+                    <div className="ml-[7px] space-y-[14px]">
 
                     {pickedEvent.coachName&&<PersonEntry personInfo={
                         {
@@ -185,7 +285,7 @@ export default function EventModal ({pickedEvent,streetAddress}){
                     {pickedEvent.athletes &&
                     <>
                     {pickedEvent.coachName&&<div className="flex font-bold ml-[32px] text-[14px] mt-[6px] pt-[4px]">
-                    {CONFIG.athleteType}{pickedEvent.athletes.length>1?"'s":""}
+                    {CONFIG.athleteType}{pickedEvent.athletes.length>1?"s":""}
                     </div>}
 
                     {pickedEvent.athletes.map((athlete,index)=>
@@ -205,7 +305,7 @@ export default function EventModal ({pickedEvent,streetAddress}){
                           fullName:athlete.fullName
                           }}/>
 
-                    <div className="leading-[10px] mt-[12px] w-full text-[14px] ml-[73px] mb-[6px]">
+                    <div className="leading-[10px] mt-[4px] w-full text-[14px] ml-[73px] mb-[6px]">
                         {athlete.fullName.split(" ")[0]}'s contact:
                     </div>
                     <PersonEntry noIcon={true} personInfo={
@@ -228,7 +328,59 @@ export default function EventModal ({pickedEvent,streetAddress}){
 
                     }
 
+                    {/* BUTTONS AT THE END */}
+                    {pickedEvent.status.toLowerCase()=="pending"&&
+                        <div className="flex space-y-[12px] flex-col w-full justify-center items-center mt-[25px]">
 
+                        {
+                            (!rejectedStepOne&&!acceptedStepOne)?
+                            <>
+                            <div className="text-white font-bold py-[8px] text-center w-[240px]    cursor-pointer text-[14px] rounded-full " style={{backgroundColor:CONFIG.calendar.blockColors.confirmed}} onClick={()=>{setAcceptedStepOne(true)}}>
+                            Accept trial lesson request
+                            </div>
+                            <div className="text-white font-bold py-[8px] text-center w-[240px] cursor-pointer text-[14px] rounded-full bg-red-500" onClick={()=>{setRejectedStepOne(true)}}>
+                                Reject trial lesson request 
+                            </div>        
+                            </>:
+                            <>
+                            {rejectedStepOne?
+                             <div className="flex flex-col items-center justify-center text-[14px] w-[270px] mb-[20px]" >
+                             <div className="flex leading-[18px] mb-[16px] text-center">
+                                 Are you sure you want to reject this trial lesson reservation? The {CONFIG.athleteType.toLowerCase()} will be notified of your response.
+                             </div>
+                             <div className="flex justify-center items-center space-x-[12px] justify-between w-full px-[12px]">
+                                 <div className="py-[6px] px-[10px] text-white font-bold rounded-full cursor-pointer bg-red-500">
+                                     Yes, reject trial lesson
+                                 </div>
+
+                                 <div className="font-bold   px-[10px] text-streamlineBlue cursor-pointer" onClick={()=>{setRejectedStepOne(false)}}>
+                                     No
+                                 </div>
+                             </div>
+                         </div>
+                            :
+                            <div className="flex flex-col items-center justify-center text-[14px]  mb-[20px]" style={{width:'280px'}}>
+                                <div className="flex leading-[18px] mb-[16px] text-center">
+                                    Are you sure you want to accept this trial lesson reservation? The {CONFIG.athleteType.toLowerCase()} will be notified of your response.
+                                </div>
+                                <div className="flex justify-center items-center space-x-[62px]  w-full">
+                                    <div className={`py-[6px] px-[10px] text-white font-bold bg-green-500 rounded-full cursor-pointer ${hasClickedSubmit?"opacity-50":""}`} onClick={()=>{handleAcceptRequest()}}>
+                                        Yes, accept trial lesson
+                                    </div>
+
+                                    <div className="font-bold text-streamlineBlue cursor-pointer" onClick={()=>{setAcceptedStepOne(false)}}>
+                                        No
+                                    </div>
+                                </div>
+                            </div>
+                            }
+                            </>
+                        }
+                        <div className="font-bold text-streamlineBlue text-[14px] py-[8px] cursor-pointer" onClick={()=>{onClose()}}>
+                            Go back to dashboard
+                        </div>                
+                        
+                    </div>        }
                 </div>
                     }
                 </div>

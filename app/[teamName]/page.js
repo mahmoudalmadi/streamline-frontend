@@ -16,6 +16,7 @@ import LoadingSubScreen from "../components/loadingSubscreen";
 import { getEntriesByConditions } from "../hooks/firestoreHooks/retrieving/getEntriesByConditions";
 import { batchedGetEntriesByConditions } from "../hooks/firestoreHooks/retrieving/batchedGetEntriesByConditions";
 import CONFIG from "@/config";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 
 export default function TeamPage()  {
@@ -347,6 +348,7 @@ export default function TeamPage()  {
     
 
   return (
+    <ErrorBoundary>
     <div className="flex  justify-center items-center ">
       <DynamicScreen className=" h-screen  md:w-[87%] lg:w-[78%]">
 
@@ -620,5 +622,6 @@ export default function TeamPage()  {
         </div>}
       </DynamicScreen>
     </div>
+    </ErrorBoundary>
   );
 }

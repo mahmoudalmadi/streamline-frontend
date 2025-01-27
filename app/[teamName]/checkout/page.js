@@ -121,8 +121,6 @@ export default function CheckoutPage() {
 
     const [potentialAthletes,setPotentialAthletes]=useState(null)
 
-    console.log("CHECKOUTR",potentialAthletes)
-
     useEffect(()=>{
         if(userInfo){
 

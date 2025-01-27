@@ -82,7 +82,7 @@ export default function SuccessfulCheckout() {
         <div className="
         text-streamlineBlue
         font-bold items-start mt-[20px] mb-[15px] leading-[18px]">
-          Your trial lesson has been requested. You will receive an email from {teamName} within 24 hrs to confirm
+          Your trial lesson has been requested. You will hear back from {teamName} within 24 hrs to confirm
         </div>
 
         <div className="h-[5px]"></div>

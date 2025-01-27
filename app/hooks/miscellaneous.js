@@ -1,5 +1,7 @@
 
-export function calculateAge(dateOfBirth) {
+export function calculateAge(dateOfBirthTimestamp) {
+    const dateOfBirth = new Date(dateOfBirthTimestamp.seconds*1000)
+    
     const today = new Date();
     let age = today.getFullYear() - dateOfBirth.getFullYear();
   
