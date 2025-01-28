@@ -12,31 +12,32 @@ import LoadingSubScreen from "../../loadingSubscreen";
 // Configure the localizer with Moment.js
 const localizer = momentLocalizer(moment);
 
-const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,currWeekNum, isCalendarLoading, setIsCalendarLoading, minHour,maxHour }) => {
+const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,currWeekNum, isCalendarLoading, setIsCalendarLoading, minHour,maxHour,currentDate,setCurrentDate }) => {
 
     const availableColor = CONFIG.calendar.blockColors.available
     const pendingColor = CONFIG.calendar.blockColors.pending
     const confirmedColor = CONFIG.calendar.blockColors.confirmed
+    const cancelledColor = CONFIG.calendar.blockColors.cancelled
 
     const statuses = [{"Availability":availableColor},{"Pending Approval":pendingColor},{"Confirmed Lesson":confirmedColor}]
 
     const eventStyleGetter = (event, start, end, isSelected) => {
       
-      const backgroundColor = event.status.toLowerCase() === "available" ? availableColor : (event.status.toLowerCase() === "pending" ? pendingColor : (event.status.toLowerCase() === "confirmed" ? confirmedColor : "#ffffff"));
+      const backgroundColor = event.status.toLowerCase() === "available" ? availableColor : (event.status.toLowerCase() === "pending" ? pendingColor : (event.status.toLowerCase() === "confirmed" ? confirmedColor : (event.status.toLowerCase() === "cancelled" ? cancelledColor : "#ffffff")));
     
       return {
         style: {
           backgroundColor,
           color: "#000",
           padding: "4px",
-          borderWidth: "0px",
+          border: '1px solid #ffffff', // Change color and size here
           borderRadius: "5px", // Optional: Rounded corners
         },
       };
     };
   
     
-  const [currentDate,setCurrentDate]=useState(new Date())
+  
   
       // Function to go to the next week
       const goToNextWeek = () => {
@@ -83,14 +84,18 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
    { 
     
     return(
-      <div >
-      <div style={{ fontWeight: "bold",fontSize:'8px' }} className="leading-[10px]">{event.title}</div>
-      <div style={{ fontSize:'8px',marginTop:'2px' }} className="leading-[9px]">
+      <div className="ml-[4px] mt-[1px]">
+      <div style={{ fontWeight: "bold",fontSize:'10px' }} className="leading-[10px] ">{event.title}</div>
+      <div style={{ fontSize:'9px',marginTop:'2px' }} className="leading-[9px]">
       {moment(event.start).format("h:mm A")} - {moment(event.end).format("h:mm A")}
         </div>
     </div>
     )
   };
+
+  const filteredEvents = events.filter(
+    (event) => !("numberOfSpots" in event) || event.numberOfSpots > 0
+  );
 
   return (
     <div style={{
@@ -109,7 +114,7 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
         <div className={`w-full h-full ${isCalendarLoading?"opacity-50":""}`} >
         <Calendar
           localizer={localizer}
-          events={events}
+          events={filteredEvents}
           defaultView="week"
           views={["week"]}
           showMultiDayTimes={false}

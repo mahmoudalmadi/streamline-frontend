@@ -7,16 +7,15 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCheckout } from "../../../contexts/CheckoutContext";
 import { useAuth } from "@/app/contexts/AuthContext";
 
-export default function BookingPanel({lessonTypes,subKey, skillLevels,
-selectedDate, setSelectedDate, selectedTime,setSelectedTime,
-selectedLessonType,setSelectedLessonType,selectedSkillLevel,
-setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdownStyling,stackTimes,locationAvailability}) {
+export default function BookingPanel({lessonTypesMapping, lessonTypes,subKey, skillLevels,
+selectedDate, setSelectedDate, selectedTime,setSelectedTime,selectedLessonType,setSelectedLessonType,selectedSkillLevel,locationInfo,teamInfo,images,setSelectedSkillLevel, dateTimePositioning,lessonInfoDropdownStyling,stackTimes,locationAvailability,eventsList}) {
 
         const router = useRouter();
-
+        
         const {setLoadingNewPage,setLoadingNewPageMessage} = useAuth()
 
         const [isBeingUsed,setIsBeingUsed]=useState("")
+        const [lessonId,setLessonId]=useState(null)
 
         const [isLessonTypeDropdownVisible, setIsLessonTypeDropdownVisible] = useState(false);
         const [isLessonTypeDropdownClosing, setIsLessonTypeDropdownClosing] = useState(false);
@@ -61,21 +60,35 @@ setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdo
             }
         },[selectedLessonType, selectedSkillLevel])
 
-        // const handleRedirect = () => {
-        //     router.push(
-        //     `/${teamName}/checkout?lessontype=${selectedLessonType}?skillLevel=${selectedSkillLevel}?lessonTime=${selectedTime}?\
-        //     lessonDate=${selectedDate}?lessonPrice=${lessonPrice}`)
-        // }
-
         const { checkoutData, setCheckoutData } = useCheckout();
+
+        const [eventInfo,setEventInfo]=useState(null)
+
+        useEffect(()=>{
+
+            // console.log(lessonId,"PICKED",eventsList)
+            eventsList.forEach(element => {
+                // console.log("HEL??",element)
+                if(element.id==lessonId){
+                    setEventInfo(element)
+                }
+            });
+
+        },[lessonId])
 
         const updateCheckout = () => {
         setCheckoutData({
             lessonType :selectedLessonType,
             lessonDate: selectedDate,
             skillLevel:selectedSkillLevel,
-            lessonPrice:lessonPrice,
-            lessonTime:selectedTime
+            eventInfo:eventInfo,
+            teamName:teamInfo,
+            lessonTime:selectedTime,
+            lessonId:lessonId,
+            locationInfo:locationInfo,
+            teamInfo:teamInfo,
+            images:images,
+            lessonTypesMapping:lessonTypesMapping
         })
         }
         const pathName=usePathname()
@@ -142,10 +155,15 @@ setSelectedSkillLevel, dateTimePositioning,teamName,lessonPrice,lessonInfoDropdo
                             selectedDate.toDateString().length -4):"Add date"}
                     </div>
                     <DateTimePicker
-                    locationAvailability={locationAvailability}
+                    setLessonId={setLessonId}
+                    lessonTypesMapping={lessonTypesMapping}
+                    
+                    givenLocationAvailability={locationAvailability}
                     stackTimes={stackTimes}
                     key={subKey}
                     selectedDate={selectedDate}
+                    selectedLessonType={selectedLessonType}
+                    selectedSkillLevel={selectedSkillLevel}
                     setSelectedDate={setSelectedDate}
                     isVisible={isDateTimeDropdownVisible}
                     onClose={handleCloseDateTimeDropdown}

@@ -9,7 +9,6 @@ import { useState, useEffect, useRef } from "react";
 import LoadingSubScreen from "@/app/components/loadingSubscreen";
 import MyCalendar from "@/app/components/TeamDashboard/CalendarComps/Calendar";
 import ModalTemplate from "@/app/components/ModalTemplate";
-import EventModalContent from "@/app/components/TeamDashboard/CalendarComps/EventModalContent";
 import InfoIcon from "../../../public/InfoIcon.svg"
 import LocationIcon from "../../../public/LocationIcon.svg"
 import NotifIcon  from "../../../public/NotifIcon.svg"
@@ -24,12 +23,13 @@ import { transformImagesListToJsons } from "@/app/hooks/firestoreHooks/retrievin
 import { parseAddress } from "@/app/hooks/addressExtraction";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import getXWeeksData from "@/app/hooks/calendarHooks/getWeeksData";
+import { calculateAge } from "@/app/hooks/miscellaneous";
 
 // import ClubScheduler from "@/app/components/TeamDashboard/ScheduleComps/Schedule";
 
 export default function TeamDashboard() {
 
-    const {userInfo}= useAuth();
+    const {userInfo,loadingNewPage,setLoadingNewPage}= useAuth();
     const [locations, setLocations] = useState([{
         address:"Banana St, Dallas, TX"
     }])
@@ -95,9 +95,10 @@ export default function TeamDashboard() {
         };
       }
       
+    const [currentDate,setCurrentDate]=useState(new Date())
 
-    function filterItemsByWeekAndStatus(items) {
-        const now = new Date();
+    function filterItemsByWeekAndStatus(items,currentDate) {
+        const now = new Date(currentDate);
         
         // Calculate the start of the current week (Sunday at 12:00 AM)
         const startOfWeek = new Date(now);
@@ -120,17 +121,19 @@ export default function TeamDashboard() {
         });
       }    
 
+      
     const [events,setEvents] = useState(null);
+    
     const [currDay,setCurrDay]=useState(new Date())
     const [isCalendarLoading,setIsCalendarLoading]=useState(true)
     useEffect(()=>{
-
+        console.log("CHANGED??",currWeekEvents)
         const updateCal = async() => {
             setIsCalendarLoading(true)
             const newDate = new Date(currDay)
             newDate.setDate(currDay.getDate()+currWeekNum*7)
             const weekEvents = await getXWeeksData({locationId:currentLocation.id,x:xWeeks,currDay:newDate})
-            setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents))
+            setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents,currentDate))
             setEvents(weekEvents)
             setCurrWeekNum(0)
             setCurrDay(newDate)
@@ -142,8 +145,10 @@ export default function TeamDashboard() {
             updateCal()
         }else
         if (events) {
-            setCurrWeekEvents(filterItemsByWeekAndStatus(events))
+            console.log("SWITCHINGssss",currWeekEvents)
+            setCurrWeekEvents(filterItemsByWeekAndStatus(events,currentDate))
         }
+        console.log("SWITCHING",currWeekEvents)
     },[currWeekNum])
 
     useEffect(()=>{
@@ -242,14 +247,15 @@ export default function TeamDashboard() {
 
             
             const weekEvents = await getXWeeksData({locationId:locationsInfo[0].id,x:xWeeks,currDay:currDay})
-
-            setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents))
+            
+            setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents,currentDate))
             setEvents(weekEvents)
             setCurrentLocation(locationsInfo[0])
             setLocationInfo(retrievedLocations)
             setAllParsedAddresses(parsedAddresses)
             setIsCalendarLoading(false)
             setIsLoading(false);
+            setLoadingNewPage(false)
           }
 
     },[userInfo])
@@ -268,18 +274,41 @@ export default function TeamDashboard() {
 
     const parentDivRef = useRef(null)
 
+    const [selectedPage,setSelectedPage]=useState("dashboard")
+
+    const handleSelectEvent = (event) => {
+        setPickedEvent(event); // Set the picked event
+        openEventModal()
+      };
+
+    function formatDateCustom(date) {
+    // Extract day of the week, month, day, hours, and minutes
+    const options = { weekday: "short", month: "short", day: "numeric" };
+    const dayPart = new Intl.DateTimeFormat("en-US", options).format(date);
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    
+    // Combine into the desired format
+    return `${dayPart} @ ${hours}:${minutes}`;
+    }
+      
+
+    useEffect(()=>{
+        console.log(currWeekEvents)
+    },[currWeekEvents])
+
     return(
 
         <div className="flex flex-col no-scroll overflow-x-hidden justify-center items-center"
         style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
-      <DynamicScreen className={`${isEventModalOpen||isAddModalOpen?"no-scroll":"no-scroll"}`} style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
+      <DynamicScreen className={`${isEventModalOpen||isAddModalOpen?"h-screen no-scroll":"h-screen no-scroll"}`} style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
 
 
             <div className="flex flex-col no-scroll" style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
-            <TeamDashHeader selectedPage={"dashboard"} setIsLoading={setIsLoading}/>
-            {  isLoading?
+            <TeamDashHeader selectedPage={"dashboard"} setSelectedPage={setSelectedPage} setIsLoading={setIsLoading}/>
+            {  isLoading || loadingNewPage?
             <div className="items-center">
-                <LoadingSubScreen loadingMessage={"Loading team dashboard"}/>
+                <LoadingSubScreen loadingMessage={!loadingNewPage?`Loading team ${selectedPage}`:""}/>
             </div>
             :
             <div className="flex flex-col flex-grow">
@@ -304,12 +333,12 @@ export default function TeamDashboard() {
          
             <div className="w-full mt-[20px]">
                 <div className="">
-                    <MyCalendar loading events={events} setPickedEvent={setPickedEvent} openEventModal={openEventModal} setCurrWeekNum={setCurrWeekNum} isCalendarLoading={isCalendarLoading} setIsCalendarLoading={setIsCalendarLoading} currWeekNum={currWeekNum} minHour={currentLocation.minHour} maxHour={currentLocation.maxHour}/>
+                    <MyCalendar loading events={events} setPickedEvent={setPickedEvent} openEventModal={openEventModal} setCurrWeekNum={setCurrWeekNum} isCalendarLoading={isCalendarLoading} setIsCalendarLoading={setIsCalendarLoading} currWeekNum={currWeekNum} minHour={currentLocation.minHour} maxHour={currentLocation.maxHour} currentDate={currentDate} setCurrentDate={setCurrentDate}/>
                 </div>
             </div>
 
             <ModalTemplate isOpen={isEventModalOpen} onClose={closeEventModal}>
-                <EventModal pickedEvent={pickedEvent} streetAddress={currentLocation.parsedAddress.streetAddress}/>
+                <EventModal pickedEvent={pickedEvent} streetAddress={currentLocation.parsedAddress.streetAddress} onClose={closeEventModal} setCurrWeekEvents={setCurrWeekEvents} setEvents={setEvents} events={events} currWeekEvents={currWeekEvents}/>
             </ModalTemplate>
 
             {/* add Availability modal */}
@@ -334,12 +363,12 @@ export default function TeamDashboard() {
             {/* TRIAL LESSONS LIST */}
             <div className="">
             <div className="flex font-bold text-streamlineBlue text-[17px] mt-[10px]">
-                Trial lessons this week
+                Trial lesson reservations this week
             </div>
             <div className="flex w-full h-[1px] bg-gray-200 mt-[5px] mb-[15px]"/>
             <div className="flex w-full mt-[10px] text-[15px]">
                 <div className="w-full">
-                    <div className="flex p-[3px]">
+                    <div className="flex p-[3px] px-[5px]">
                         <div className="font-bold  w-[25%] p-[3px]">
                             {CONFIG.athleteType}
                         </div>
@@ -350,7 +379,7 @@ export default function TeamDashboard() {
                             Coach
                         </div>
                         <div className="font-bold  w-[20%] p-[3px]">
-                            Time
+                            When
                         </div>
                         <div className="font-bold  w-[90px] flex p-[3px]">
                             Status
@@ -365,24 +394,25 @@ export default function TeamDashboard() {
                         :
                         <>
                         {
-                        weeklyTrialLessons.map((item,index) => (
+                        currWeekEvents.map((item,index) => (
+                            <div key={index}>
+                            {item.athletes.length==1?
                             <div 
-                            key={index}
                             className={`flex items-center w-full rounded-[10px]
-                            py-[6px]
-                            ${index%2 == 0 ? "bg-gray-100" :""} cursor-pointer
-                            hover:bg-gray-200 w-full`}>
+                            py-[10px] px-[5px]
+                            ${index != currWeekEvents.length-1 ? "border-b border-gray-200" :""} cursor-pointer
+                            hover:bg-gray-200 w-full`} onClick={()=>{handleSelectEvent(item);console.log(item)}}>
                                 <div className="w-[25%] p-[5px]">
-                                    {item.name}
+                                    {item.athletes[0].fullName}
                                 </div>            
                                 <div className="w-[15%] p-[5px]">
-                                    {item.age}
+                                    {item.athletes[0].athleteInfo.dateOfBirth?calculateAge(item.athletes[0].athleteInfo.dateOfBirth):"Over 18"}
                                 </div>            
                                 <div className="w-[20%] p-[5px]">
-                                    {item.lessonType}
+                                    {item.coachName}
                                 </div>            
                                 <div className="w-[20%] p-[5px]">
-                                    {item.dateTime}
+                                    {formatDateCustom(item.start)}
                                 </div>            
                                 <div className="w-[90px] flex justify-center items-center">
                                     <div className={`flex  text-white font-bold px-[10px] py-[6px] ${item.status==="Confirmed" ? "bg-green-500" : 
@@ -392,7 +422,40 @@ export default function TeamDashboard() {
                                     </div>
                                 </div>            
 
-                            </div>            
+                            </div> :
+                            <>
+                            {item.athletes.map((subItem,subIndex)=>(
+                            <div key={1000+subIndex}
+                            className={`flex items-center w-full rounded-[10px]
+                            py-[10px] px-[5px]
+                            ${(index != currWeekEvents.length-1 || subIndex!=item.athletes.length-1)? "border-b border-gray-200" :""} cursor-pointer
+                            hover:bg-gray-200 w-full`} onClick={()=>{handleSelectEvent(item);console.log(item)}}>
+                                <div className="w-[25%] p-[5px]">
+                                    {item.athletes[subIndex].fullName}
+                                </div>            
+                                <div className="w-[15%] p-[5px]">
+                                    {item.athletes[subIndex].athleteInfo.dateOfBirth?calculateAge(item.athletes[subIndex].athleteInfo.dateOfBirth):"Over 18"}
+                                </div>            
+                                <div className="w-[20%] p-[5px]">
+                                    {item.coachName}
+                                </div>            
+                                <div className="w-[20%] p-[5px]">
+                                    {formatDateCustom(item.start)}
+                                </div>            
+                                <div className="w-[90px] flex justify-center items-center">
+                                    <div className={`flex  text-white font-bold px-[10px] py-[6px] ${item.status==="Confirmed" ? "bg-green-500" : 
+                                    item.status==="Pending" ? "bg-yellow-500" : "bg-red-500"} 
+                                    rounded-full`}>
+                                    {item.status}
+                                    </div>
+                                </div>            
+
+                            </div>
+                            ))}
+                            </>
+                        
+                            }
+                            </div>
                         ))
                         }
                         </>

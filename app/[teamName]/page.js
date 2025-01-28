@@ -16,11 +16,12 @@ import LoadingSubScreen from "../components/loadingSubscreen";
 import { getEntriesByConditions } from "../hooks/firestoreHooks/retrieving/getEntriesByConditions";
 import { batchedGetEntriesByConditions } from "../hooks/firestoreHooks/retrieving/batchedGetEntriesByConditions";
 import CONFIG from "@/config";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 
 export default function TeamPage()  {
 
-    const {loadingNewPage,loadingNewPageMessage,setLoadingNewPage}=useAuth()
+    const {loadingNewPage,loadingNewPageMessage,setLoadingNewPage,userInfo}=useAuth()
 
     // useEffect(()=>{
     //   setLoadingNewPage(false)
@@ -42,6 +43,7 @@ export default function TeamPage()  {
     const [headCoachDescription,setHeadCoachDescription]=useState("")
 
     const [lessonTypes,setLessonTypes] = useState("")
+    const [lessonTypesMapping,setLessonTypesMapping] = useState(null)
     const [skillLevels,setSkillLevels] = useState("")
 
     const [locationState,setLocationState]=useState("")
@@ -49,6 +51,10 @@ export default function TeamPage()  {
 
     const [images,setImages]=useState([])
     const [locationAvailability,setLocationAvailability]=useState(null)
+    const [filteredEvents,setFilteredEvents]=useState(null)
+
+    const [teamInfo,setTeamInfo]=useState(null)
+    const [locationInfo,setLocationInfo]=useState(null)
 
     useEffect(()=>{
 
@@ -59,7 +65,7 @@ export default function TeamPage()  {
 
         const today = new Date()
         const cutoff = new Date(today);
-        cutoff.setDate(cutoff.getDate() + 1); // Move to 
+        cutoff.setDate(cutoff.getDate() + 2); // Move to 
 
         const allLocationInfo = await batchedGetEntriesByConditions({queriesWithKeys:
         [{
@@ -131,17 +137,18 @@ export default function TeamPage()  {
         
 
         function filterItemsByStatus({items,status}) {
-          const now = new Date();
         
           // Filter the list
           return items.filter(item => {
-            const startDate = new Date(item.start); // Parse the `start` date
+            
             return (
-              item.status.toLowerCase() == "available"
+              item.status.toLowerCase() ==status && item.numberOfSpots>0
             );
           });
         }
 
+        setTeamInfo(allLocationInfo.teamInfo)
+        setLocationInfo(allLocationInfo.locationInfo)
         setTeamName(allLocationInfo.teamInfo[0].teamName)
         setTeamDescription(allLocationInfo.teamInfo[0].teamDescription)
         setProgramsAvailable(allLocationInfo.locationLessonSkills.map(item=>item.level))
@@ -156,7 +163,17 @@ export default function TeamPage()  {
         const currLessonTypes = allLocationInfo.locationLessonTypes.map(item=>item.category)
         const locoLessonTypes = []
         const lessonTypesDict = CONFIG.lessonTypes
+        const lessonTypesMapping = {}
+        allLocationInfo.locationLessonTypes.forEach((item)=>{
+          lessonTypesMapping[item.level]=item.category
+        })
+        allLocationInfo.locationLessonSkills.forEach((item)=>{
+          lessonTypesMapping[item.level]=item.category
+        })
+        
+        setLessonTypesMapping(lessonTypesMapping)
         for (const lessonType of currLessonTypes){
+          
           locoLessonTypes.push({"lessonType":lessonType,"lessonTypeDescription":lessonTypesDict[lessonType]})
         }
         setLessonTypes(locoLessonTypes)
@@ -178,7 +195,7 @@ export default function TeamPage()  {
 
         const allTimeBlocks= allLocationInfo.locationAvailability
 
-        const filteredAvailability = filterItemsByStatus({items:allTimeBlocks,status:"availability"})
+        const filteredAvailability = filterItemsByStatus({items:allTimeBlocks,status:"available"})
 
         function formatTimeIntervalsAsMap(data) {
           const result = new Map();
@@ -192,9 +209,9 @@ export default function TeamPage()  {
             const hour12 = hours % 12 || 12; // Convert 0 to 12 for AM
             return `${hour12}:${minutes.toString().padStart(2, '0')} ${period}`;
           }
-        
+          
           // Process each item in the data list
-          data.forEach(({ start, end }) => {
+          data.forEach(({ id, start, end, lessonType }) => {
             if (!(start instanceof Date) || !(end instanceof Date)) {
               throw new Error("Both 'start' and 'end' must be Date objects.");
             }
@@ -209,7 +226,7 @@ export default function TeamPage()  {
         
             // Convert date to string for use as a key
             const startDateString = startDate.toDateString();
-        
+
             // If the date is not already in the Map, initialize it with the header
             if (!result.has(startDateString)) {
               result.set(startDateString, [
@@ -218,18 +235,21 @@ export default function TeamPage()  {
               ]);
               dateObjectsArray.push(startDate); // Add to the array of date objects
             }
-        
-            // Add the time interval to the Map
-            result.get(startDateString).push(timeInterval);
+            
+            // Add the time interval with the id as a tuple to the Map
+            result.get(startDateString).push([timeInterval, id,lessonType]);
           });
         
           return { datesMap: result, dates: dateObjectsArray };
         }
         
+        
         const formattedDayTimes = formatTimeIntervalsAsMap(filteredAvailability)
         
         setLocationAvailability(formattedDayTimes)
+        setFilteredEvents(filteredAvailability)
 
+        
       }
 
 
@@ -256,8 +276,6 @@ export default function TeamPage()  {
     // Lesson type dropdown setup
     const [selectedLessonType, setSelectedLessonType] = useState("")
     const [selectedSkillLevel, setSelectedSkillLevel] = useState("")
-
-    
 
     const openModal = (index) => {
       setCurrentIndex(index);
@@ -330,8 +348,9 @@ export default function TeamPage()  {
     
 
   return (
+    <ErrorBoundary>
     <div className="flex  justify-center items-center ">
-      <DynamicScreen className=" h-screen  md:w-[80%] lg:w-[78%]">
+      <DynamicScreen className=" h-screen  md:w-[87%] lg:w-[78%]">
 
         <TopBar/>
 
@@ -340,7 +359,7 @@ export default function TeamPage()  {
             <LoadingSubScreen loadingMessage={loadingNewPageMessage.length>0 ? loadingNewPageMessage:null}/>
           </div>
           :
-          <>
+          <div className="flex flex-col">
         <div
         className="relative flex flex-col items-center justify-center w-full"
         >
@@ -499,7 +518,9 @@ export default function TeamPage()  {
         />
             <HeadCoachSection coachName={coachName} coachPhoto={coachPhoto} coachBio={headCoachDescription}/>
         
-        <div
+        {!userInfo.teamInfo&&
+          <>
+          <div
             
             className=" w-full h-[1px] bg-gray-200 mt-[18px] mb-[30px]"
           />  
@@ -520,19 +541,22 @@ export default function TeamPage()  {
             <div
             
             >
-            <BookingPanel key={1} subKey={1} lessonTypes={lessonTypes} skillLevels={skillLevels} locationAvailability={locationAvailability}
-            selectedDate={selectedDate} setSelectedDate={setSelectedDate}
+            <BookingPanel eventsList={filteredEvents} lessonTypesMapping={lessonTypesMapping} 
+            filteredEvents={filteredEvents} key={1} subKey={1} lessonTypes={lessonTypes} skillLevels={skillLevels} locationAvailability={locationAvailability} locationInfo={locationInfo} teamInfo={teamInfo} images={images}
+            selectedDate={selectedDate} setSelectedDate={setSelectedDate} 
             selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel}
             selectedLessonType={selectedLessonType} setSelectedLessonType={setSelectedLessonType}
             selectedTime={selectedTime} setSelectedTime={setSelectedTime} 
             dateTimePositioning={"left-1/2 transform -translate-x-1/2 "}
             stackTimes={true}
-            teamName={teamName} lessonPrice={trialLessonPrice}
+            teamName={teamName} 
             lessonInfoDropdownStyling={"absolute border border-gray-300 border-[1px] flex bg-white left-0 top-full mt-2 py-2  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]"}
             />
             </div>
 
         </div>
+          </>
+        }
 
         <div
             ref={checkAvailabilityRef}
@@ -544,41 +568,41 @@ export default function TeamPage()  {
         
 
         {/* BIGGER SCREEN BOOK LESSON PANEL */}
-        <div className={`
+        {!userInfo.teamInfo&&<div className={`
         hidden sm:block p-[20px] w-[35%] border border-gray-300 rounded-xl
-        
-        shadow-[0_0_10px_rgba(0,0,0,0.1)] ${selectedTime ?"h-[290px]" :"h-[240px]"}`}
+        flex
+        shadow-[0_0_10px_rgba(0,0,0,0.1)] ${selectedTime ?"" :""}`}
+
         style={{
+          height:'fit-content',
             position: "sticky",
             // marginTop: `${scrollY}px`, // Adjust max height for stopping
             // transition: "top 0.2s ease-in-out",
           }}
         >
-            
+
             <div className="flex mb-[10px] font-bold space-x-[4px] items-end">
-                <div className="text-[20px]">
-                    ${trialLessonPrice}
-                </div>
                 <div className="text-[16px]">
-                    trial lesson
+                    Book your free trial lesson
                 </div>
             </div>
             
+
+            
             <div>
-            <BookingPanel key={0} subKey={0} lessonTypes={lessonTypes}
+            <BookingPanel eventsList={filteredEvents} lessonTypesMapping={lessonTypesMapping}  key={0} subKey={0} lessonTypes={lessonTypes} locationInfo={locationInfo} teamInfo={teamInfo} images={images}
             skillLevels={skillLevels} locationAvailability={locationAvailability}
             selectedDate={selectedDate} setSelectedDate={setSelectedDate}
             selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel}
             selectedLessonType={selectedLessonType} setSelectedLessonType={setSelectedLessonType}
             selectedTime={selectedTime} setSelectedTime={setSelectedTime}
             dateTimePositioning={"right-0"} teamName={teamName}
-            lessonPrice={trialLessonPrice}
             lessonInfoDropdownStyling={"absolute  border border-gray-300 border-[1px] flex bg-white right-0 top-full mt-2 py-2  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]"}
             />
             </div>
             
 
-        </div>
+        </div>}
 
 
 
@@ -595,8 +619,9 @@ export default function TeamPage()  {
             </button>
         )}
 
-        </>}
+        </div>}
       </DynamicScreen>
     </div>
+    </ErrorBoundary>
   );
 }

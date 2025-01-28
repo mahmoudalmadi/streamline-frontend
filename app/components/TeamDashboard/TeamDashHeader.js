@@ -5,7 +5,7 @@ import { useAuth } from "@/app/contexts/AuthContext"
 import TopBar from "../TopBarComps/TopBar"
 import { useRouter } from "next/navigation";
 
-export default function TeamDashHeader({selectedPage,setIsLoading}){
+export default function TeamDashHeader({selectedPage,setIsLoading,setSelectedPage}){
 
     const [currPage,setCurrPage]=useState(selectedPage)
     const {userInfo} = useAuth()
@@ -62,6 +62,7 @@ export default function TeamDashHeader({selectedPage,setIsLoading}){
                 {
                     if(currPage!="dashboard"){
                     setCurrPage("dashboard")
+                    setSelectedPage("dashboard")
                     setIsLoading(true)
                     router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)}
                 }else{
@@ -78,6 +79,7 @@ export default function TeamDashHeader({selectedPage,setIsLoading}){
                 {
                     if(currPage!="profile"){
                     setCurrPage("profile")
+                    setSelectedPage("profile")
                     setIsLoading(true)
                     router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/profile`)
                 }

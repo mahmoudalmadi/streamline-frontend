@@ -43,7 +43,11 @@ const TopBar = () => {
 
     return (
         <SignUpProvider>
-        <div className='flex justify-between items-center'>
+        <div className='flex justify-between items-center' style={{
+            userSelect: "none", // Prevent text selection
+            WebkitUserSelect: "none", // Safari
+            MozUserSelect: "none", // Firefox
+            msUserSelect: "none",}} >
             <button onClick={redirectHome}>
             {
                 

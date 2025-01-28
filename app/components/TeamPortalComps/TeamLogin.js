@@ -5,12 +5,15 @@ import RedWarningIcon from "../../../public/RedWarningIcon.svg"
 import { checkAccountExists } from "@/app/hooks/firestoreHooks/user/getUser";
 import { useRouter } from "next/navigation";
 import { emailLogin } from "@/app/hooks/authHooks/firebaseAuth";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function TeamLogin({switchModalType}){
 
     const router=useRouter();
     const isModal=false;
     const teamName="Neptunes Swimming Academy"
+
+    const {loadingNewPage,setLoadingNewPage} = useAuth()
 
     const {handleTeamRegistrantInfo, teamRegistrantInfo,errorMessage,setErrorMessage} = useTeamSignUpContext();
     const [showPassword,setShowPassword] = useState(false);
@@ -103,6 +106,8 @@ export default function TeamLogin({switchModalType}){
             if(teamRegistrantInfo.emailAddress.length>0 && teamRegistrantInfo.password.length>3){
             try{
                 
+            setLoadingNewPage(true)
+            
             const accountExists = await checkAccountExists({valueType:"emailAddress",value:teamRegistrantInfo.emailAddress,accountType:"team"})
             if (!accountExists){
                 throw("ExistenceError")
@@ -113,6 +118,7 @@ export default function TeamLogin({switchModalType}){
             if(isModal){onClose()}
             }
             catch(error){
+            setLoadingNewPage(false)
             let finalErrMessage    
             if (error === "ExistenceError"){
                 finalErrMessage="A team account with the following credentials does not exist"

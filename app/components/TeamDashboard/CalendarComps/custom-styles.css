@@ -7,7 +7,8 @@
 
 .rbc-event .rbc-event-content {
   font-size: 11px; /* Change font size for event title and time */
-  color:#ffffff
+  color:#ffffff;
+  border-color: #ffffff;
 }
 
 .rbc-event-label {

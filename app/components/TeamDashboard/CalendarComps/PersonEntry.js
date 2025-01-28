@@ -1,6 +1,6 @@
 import EmailIcon  from "../../../../public/smallerEmailIcon.svg"
 
-export default function PersonEntry({personInfo}){
+export default function PersonEntry({personInfo,noLeftMargin,noIcon}){
 
     function getFirstOneOrTwoInitials({input}) {
         if (typeof input !== "string") {
@@ -19,10 +19,11 @@ export default function PersonEntry({personInfo}){
 
       return(
 
-        <div className="ml-[32px] flex flex-col mt-[4px] text-[14px]">
+        <div className={noLeftMargin?"flex flex-col mt-[4px] text-[14px]":"ml-[32px] flex flex-col mt-[4px] text-[14px]"}>
                         
                         <div className="flex items-center space-x-[10px]">
-                        <div className="w-[32px] h-[32px] bg-black rounded-full text-white items-center text-center justify-center">
+                        <div className=
+                        {`w-[32px] h-[32px] rounded-full text-white items-center text-center justify-center ${noIcon?"":"bg-black"}`} >
                             <div className="mt-[6px]">
                                 {getFirstOneOrTwoInitials({input:personInfo.fullName})}
                             </div>

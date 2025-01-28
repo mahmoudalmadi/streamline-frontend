@@ -13,11 +13,7 @@ export default function ClientTeamsPage() {
   const searchParams = useSearchParams();
   const stateValue = searchParams.get("state");
 
-  const {isLoadingNewPage,setLoadingNewPage} = useAuth()
-
-  useEffect(()=>{
-    setLoadingNewPage(false)
-  },[isLoadingNewPage])
+  const {loadingNewPage,setLoadingNewPage} = useAuth()
 
 
   const [isLogin, setIsLogin]  = useState(stateValue=="login");
@@ -28,6 +24,7 @@ export default function ClientTeamsPage() {
     setIsSignUp(!isSignUp)
   }
   const redirectHome = () => {
+    setLoadingNewPage(true)
     router.push("/");
   };
 
@@ -49,7 +46,7 @@ export default function ClientTeamsPage() {
           </button>
         </div>
 
-        {isLoadingNewPage ? 
+        {loadingNewPage ? 
         <div className="h-screen">
           <LoadingSubScreen />
         </div>

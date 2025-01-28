@@ -40,6 +40,7 @@ export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
         dateJoined:new Date(),
         emailAddress: guardianInfo.emailAddress,
         firebaseId: userId.uid,
+        dateOfBirth:guardianInfo.dateOfBirth,
         fullName: guardianInfo.fullName,
         phoneNumber: guardianInfo.phoneNumber,
     }

@@ -1,13 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { logout } from '@/app/hooks/authHooks/firebaseAuth';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
 
     const divRef = useRef(null);
     const {user, userInfo,setLoadingNewPage} = useAuth();
     const router = useRouter();
+
+    const pathName = usePathname()
 
     const [teamName, setTeamName] =useState("");
     useEffect(()=>{
@@ -46,6 +48,7 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                   top-full mt-[5px] right-0 py-[8px] 
                  rounded-[10px] shadow-[0_0_15px_rgba(0,0,0,0.2)] z-[200]"
                 onClick={(e)=>e.stopPropagation()} // Close on click within the div
+                
             >
                 <div className=''
                 style={{
@@ -60,7 +63,14 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                         onClick={()=>{
                             if(userInfo.userData.accountType==="team"){
                             setLoadingNewPage(true)
-                            router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/profile`)
+                              if(pathName.split("/").length>2){
+                                if(pathName.split("/")[2]=="profile")
+                                {
+                                    window.location.reload()
+                                }
+                                }else{
+                                router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/profile`)}
+
                             }
                             else{
                             setLoadingNewPage(true)
@@ -74,14 +84,22 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                         </div>
                         <div className='py-[7px] px-[8px] text-[14px] text-gray-700 w-full hover:bg-gray-100'
                         onClick={()=>{
+                            
                             if(userInfo.userData.accountType==="team")
                             {
                                 setLoadingNewPage(true)
-                                router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)
+                                if(pathName.split("/").length>2){
+                                if(pathName.split("/")[2]=="dashboard")
+                                {
+                                    window.location.reload()
+                                }
+                                }else{
+                                router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)}
                             }else{
                                 setLoadingNewPage(true)
                                 router.push(`/user/${userInfo.userData.firebaseId}/dashboard`)
                             }
+                            onClose()
                             }}>
                             Dashboard
                         </div>
@@ -123,6 +141,7 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                         <div className='px-[10px] text-[14px] text-gray-700 w-full hover:bg-gray-100 
                         py-[10px]' onClick={()=>{
                             setLoadingNewPage(true)
+                            onClose()
                             router.push(`/teams?${teamsLoginQuery}`)
                         }}>
                             Log in
@@ -130,6 +149,7 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                         <div className='py-[10px] px-[10px] text-[14px] text-gray-700 w-full hover:bg-gray-100'
                          onClick={()=>{
                             setLoadingNewPage(true)
+                            onClose()
                             router.push(`/teams?${teamsSignupQuery}`)
                         }}>
                             Sign up
