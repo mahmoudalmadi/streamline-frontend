@@ -18,9 +18,9 @@ export default function SwimTeamThumbnail({locationInfo}){
     const teamPathName = locationInfo.teamInfo.flattenedTeamName
     
     const handleNext = (event) => {
-        console.log("EVENT",event)
+        
     event.stopPropagation();
-      console.log("handleNext")
+      
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
     };
   
@@ -36,7 +36,7 @@ export default function SwimTeamThumbnail({locationInfo}){
         router.push(`/${teamPathName}-${locationInfo.id}`)
     }
 
-    console.log(locationInfo)
+    
 
     return(
 

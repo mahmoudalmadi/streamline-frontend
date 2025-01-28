@@ -123,7 +123,7 @@ export default function TeamDashboard() {
 
       
     const [events,setEvents] = useState(null);
-    const [allEvents,setAllEvents] = useState(null);
+    
     const [currDay,setCurrDay]=useState(new Date())
     const [isCalendarLoading,setIsCalendarLoading]=useState(true)
     useEffect(()=>{
@@ -133,17 +133,8 @@ export default function TeamDashboard() {
             const newDate = new Date(currDay)
             newDate.setDate(currDay.getDate()+currWeekNum*7)
             const weekEvents = await getXWeeksData({locationId:currentLocation.id,x:xWeeks,currDay:newDate})
-            const nonZeroWeekEvents=weekEvents.filter((item,index)=>{
-                if(item.numberOfSpots==0){
-                    
-                    return(false)
-                }else{
-                    return(true)
-                }
-            })
-            setCurrWeekEvents(filterItemsByWeekAndStatus(nonZeroWeekEvents,currentDate))
-            setAllEvents(weekEvents)
-            setEvents(nonZeroWeekEvents)
+            setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents,currentDate))
+            setEvents(weekEvents)
             setCurrWeekNum(0)
             setCurrDay(newDate)
             setIsCalendarLoading(false)
@@ -256,17 +247,9 @@ export default function TeamDashboard() {
 
             
             const weekEvents = await getXWeeksData({locationId:locationsInfo[0].id,x:xWeeks,currDay:currDay})
-            const nonZeroWeekEvents=weekEvents.filter((item,index)=>{
-                if(item.numberOfSpots==0){
-                    
-                    return(false)
-                }else{
-                    return(true)
-                }
-            })
-            setCurrWeekEvents(filterItemsByWeekAndStatus(nonZeroWeekEvents,currentDate))
-            setAllEvents(weekEvents)
-            setEvents(nonZeroWeekEvents)
+            
+            setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents,currentDate))
+            setEvents(weekEvents)
             setCurrentLocation(locationsInfo[0])
             setLocationInfo(retrievedLocations)
             setAllParsedAddresses(parsedAddresses)
@@ -355,7 +338,7 @@ export default function TeamDashboard() {
             </div>
 
             <ModalTemplate isOpen={isEventModalOpen} onClose={closeEventModal}>
-                <EventModal allEvents={allEvents} pickedEvent={pickedEvent} streetAddress={currentLocation.parsedAddress.streetAddress} onClose={closeEventModal} setCurrWeekEvents={setCurrWeekEvents} setEvents={setEvents} events={events} currWeekEvents={currWeekEvents} setAllEvents={setAllEvents}/>
+                <EventModal pickedEvent={pickedEvent} streetAddress={currentLocation.parsedAddress.streetAddress} onClose={closeEventModal} setCurrWeekEvents={setCurrWeekEvents} setEvents={setEvents} events={events} currWeekEvents={currWeekEvents}/>
             </ModalTemplate>
 
             {/* add Availability modal */}
@@ -380,7 +363,7 @@ export default function TeamDashboard() {
             {/* TRIAL LESSONS LIST */}
             <div className="">
             <div className="flex font-bold text-streamlineBlue text-[17px] mt-[10px]">
-                Trial lessons this week
+                Trial lesson reservations this week
             </div>
             <div className="flex w-full h-[1px] bg-gray-200 mt-[5px] mb-[15px]"/>
             <div className="flex w-full mt-[10px] text-[15px]">

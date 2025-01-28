@@ -12,6 +12,15 @@ export const editJsonById = ({fieldName,fieldValue,setter,jsonList,id}) => {
   return updatedData
 };
 
+export const multipleEditsJsonById = ({ fieldMappings,  jsonList, id }) => {
+  const updatedData = jsonList.map((item) =>
+    item.id === id ? { ...item, ...fieldMappings } : item
+  );
+
+  return updatedData;
+};
+
+
 export const appendToJsonSubListById = ({ fieldMappings, setter, jsonList, id }) => {
   const updatedData = jsonList.map((item) =>
    item.id === id

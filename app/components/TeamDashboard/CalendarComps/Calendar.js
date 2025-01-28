@@ -17,12 +17,13 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
     const availableColor = CONFIG.calendar.blockColors.available
     const pendingColor = CONFIG.calendar.blockColors.pending
     const confirmedColor = CONFIG.calendar.blockColors.confirmed
+    const cancelledColor = CONFIG.calendar.blockColors.cancelled
 
     const statuses = [{"Availability":availableColor},{"Pending Approval":pendingColor},{"Confirmed Lesson":confirmedColor}]
 
     const eventStyleGetter = (event, start, end, isSelected) => {
       
-      const backgroundColor = event.status.toLowerCase() === "available" ? availableColor : (event.status.toLowerCase() === "pending" ? pendingColor : (event.status.toLowerCase() === "confirmed" ? confirmedColor : "#ffffff"));
+      const backgroundColor = event.status.toLowerCase() === "available" ? availableColor : (event.status.toLowerCase() === "pending" ? pendingColor : (event.status.toLowerCase() === "confirmed" ? confirmedColor : (event.status.toLowerCase() === "cancelled" ? cancelledColor : "#ffffff")));
     
       return {
         style: {
@@ -92,6 +93,10 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
     )
   };
 
+  const filteredEvents = events.filter(
+    (event) => !("numberOfSpots" in event) || event.numberOfSpots > 0
+  );
+
   return (
     <div style={{
       userSelect: "none", // Prevent text selection
@@ -109,7 +114,7 @@ const MyCalendar = ({ events, setPickedEvent, openEventModal, setCurrWeekNum,cur
         <div className={`w-full h-full ${isCalendarLoading?"opacity-50":""}`} >
         <Calendar
           localizer={localizer}
-          events={events}
+          events={filteredEvents}
           defaultView="week"
           views={["week"]}
           showMultiDayTimes={false}

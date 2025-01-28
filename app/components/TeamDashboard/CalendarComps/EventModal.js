@@ -12,7 +12,7 @@ import { getEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/ge
 import removeJsonByField, { appendToJsonSubListById, editJsonById } from "@/app/hooks/jsonHooks";
 import { deleteMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/deleteEntriesByMatchingFields";
 
-export default function EventModal ({pickedEvent,streetAddress,onClose,allEvents,setCurrWeekEvents, setEvents,events,currWeekEvents,setAllEvents}){
+export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWeekEvents, setEvents,events,currWeekEvents}){
     
     function formatEventTime({startTime, endTime}) {
         // Days of the week and months for formatting
@@ -67,7 +67,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,allEvents
         setSelectedSkillLevels(firstEntries)
     },[])
 
-    console.log(currWeekEvents)
+    console.log(events)
 
     const [rejectedStepOne,setRejectedStepOne] = useState(false)
     const [acceptedStepOne,setAcceptedStepOne] = useState(false)
@@ -76,11 +76,10 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,allEvents
 
     const handleAcceptRequest = async() => {
 
-        console.log(allEvents)
         // await editingMatchingEntriesByAllFields({collectionName:"TimeBlock", matchParams:{"id":pickedEvent.availableSister},updateDate})
         setHasClickedSubmit(true)
 
-        allEvents.forEach(async(item)=>{
+        events.forEach(async(item)=>{
             if (item.id == pickedEvent.availableSister){
                 console.log("geer",item)
             if (!item.confirmedSister){
@@ -108,17 +107,15 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,allEvents
 
                 const createdEntryId = await addInfoAsJson({jsonInfo:newConfirmedEvent,collectionName:"TimeBlock"})
                 
-                const editedAllFields= editJsonById({fieldName:"confirmedSister",fieldValue:createdEntryId,setter:setAllEvents,id:pickedEvent.availableSister,jsonList:allEvents}) 
+                const editedEvents= editJsonById({fieldName:"confirmedSister",fieldValue:createdEntryId,setter:setEvents,id:pickedEvent.availableSister,jsonList:events}) 
 
                 await editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.availableSister},updateData:{confirmedSister:createdEntryId}})
 
                 await deleteMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.id}})
                 
-                const updatedAllEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setEvents,jsonList:editedAllFields})
-                const updatedEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setEvents,jsonList:events})
+                const updatedEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setEvents,jsonList:editedEvents})
                 const updatedCurrWeekEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setCurrWeekEvents,jsonList:currWeekEvents})
                 
-                setAllEvents([...updatedAllEvents,newConfirmedEvent])
                 setEvents([...updatedEvents,newConfirmedEvent])
                 setCurrWeekEvents([...updatedCurrWeekEvents,newConfirmedEvent])
 
@@ -129,7 +126,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,allEvents
                 
                 let confirmedSister;
                 
-                allEvents.forEach(item=>{if(item.availableSister==pickedEvent.availableSister){confirmedSister=item}})
+                events.forEach(item=>{if(item.availableSister==pickedEvent.availableSister){confirmedSister=item}})
 
                 
                 const updatedCurrWeekEvents = appendToJsonSubListById({fieldMappings:{"athletes":pickedEvent.athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setCurrWeekEvents,jsonList:currWeekEvents,id:confirmedSister.id})
@@ -146,6 +143,37 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,allEvents
             }
             }
         })
+
+    }
+
+    const handleRejectRequest=()=>{
+
+
+        const editedEvents= editJsonById({fieldName:"status",fieldValue:"Cancelled",setter:setEvents,id:pickedEvent.id,jsonList:events}) 
+        const editedCurrEvents= editJsonById({fieldName:"status",fieldValue:"Cancelled",setter:setEvents,id:pickedEvent.id,jsonList:currWeekEvents}) 
+
+        // const currEvent = pickedEvent
+
+        // currEvent["status"] = "Cancelled"
+
+        events.forEach(item=>{if(item.id==pickedEvent.availableSister){
+
+            editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":item.id},updateData:{numberOfSpots:item.numberOfSpots+1}})
+            editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":pickedEvent.id},updateData:{status:"Cancelled"}})
+            
+            const editedAvailEvents= editJsonById({fieldName:"numberOfSpots",fieldValue:item.numberOfSpots+1,setter:setEvents,id:pickedEvent.availableSister,jsonList:editedEvents}) 
+            const editedAvailCurrEvents= editJsonById({fieldName:"numberOfSpots",fieldValue:item.numberOfSpots+1,setter:setEvents,id:pickedEvent.availableSister,jsonList:editedCurrEvents}) 
+            console.log("MADE ITITITI",item)
+            
+            setEvents(editedAvailEvents)
+            setCurrWeekEvents(editedAvailCurrEvents)
+            onClose()
+        }
+    
+    
+        })
+
+
 
     }
 
@@ -348,7 +376,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,allEvents
                                  Are you sure you want to reject this trial lesson reservation? The {CONFIG.athleteType.toLowerCase()} will be notified of your response.
                              </div>
                              <div className="flex justify-center items-center space-x-[12px] justify-between w-full px-[12px]">
-                                 <div className="py-[6px] px-[10px] text-white font-bold rounded-full cursor-pointer bg-red-500">
+                                 <div className="py-[6px] px-[10px] text-white font-bold rounded-full cursor-pointer bg-red-500" onClick={()=>{handleRejectRequest()}}>
                                      Yes, reject trial lesson
                                  </div>
 
