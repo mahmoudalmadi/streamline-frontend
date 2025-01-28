@@ -29,7 +29,7 @@ export default function TeamProfilePage() {
     const [locations, setLocations] = useState([{
         address:"Banana St, Dallas, TX"
     }])
-    const {userInfo,loadingNewPage,setLoadingNewPage}= useAuth();
+    const {userInfo,loadingNewPage,setLoadingNewPage,user}= useAuth();
 
     const images = [{url:"https://streamlineplatform.s3.us-east-2.amazonaws.com/coachPhotos/1734483412515-unnamed.jpg"},{url:"https://streamlineplatform.s3.us-east-2.amazonaws.com/coachPhotos/1734483412515-unnamed.jpg"}]
     // TEAMINFO STATES

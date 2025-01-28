@@ -6,7 +6,7 @@ import InfoDropdown from "../InfoDropdown";
 import GenericOptionsDropdown from "../../GenericOptionsDropdown";
 
 
-export default function LocationThumbnail({location, pullLocoInfo,setSelectedLocation,selectedLocation}){
+export default function LocationThumbnail({location, pullLocoInfo,setSelectedLocation,selectedLocation,isNotPulling}){
 
     const [showThreeDotMenu,setShowThreeDotMenu]=useState(location.status=="Pending Verifications")
     const [isVisible, setIsVisible] = useState(false);
@@ -39,7 +39,8 @@ export default function LocationThumbnail({location, pullLocoInfo,setSelectedLoc
               
               onClick={async()=>{
                 setSelectedLocation(location.id)
-                await pullLocoInfo({locationId:location.id})}}
+                await pullLocoInfo({locationId:location.id})}
+              }
               >
               {/* Image with 1:1 Aspect Ratio */}
               <div className="w-[37%] aspect-[1/1] max-h-[100%] rounded-[10px] overflow-hidden">
@@ -52,15 +53,16 @@ export default function LocationThumbnail({location, pullLocoInfo,setSelectedLoc
   
               {/* Address and Status */}
               <div className="flex flex-col flex-1">
-                <div className="flex-col text-[15px] font-bold pb-[5px] leading-[16px]">
+                <div className="flex text-[15px] font-bold pb-[5px] leading-[16px]">
                   <div className="">{location?.parsedAddress?.streetAddress || "Unknown St Address"}</div>
                   <div className="flex space-x-[5px]">
+                  <div>, </div>
                   <div>{location.parsedAddress?.city || "Unknown City"}, </div>
                   <div>{location.parsedAddress?.state || "Unknown State"}</div>
                   </div>
                 </div>
                 <div className="flex-col text-[15px] mt-[2px]">
-                  <div className="flex-col">
+                  {/* <div className="flex-col">
                     <div>
                     <div className="mr-2 pb-[7px] ">Status</div>
         
@@ -69,14 +71,14 @@ export default function LocationThumbnail({location, pullLocoInfo,setSelectedLoc
                       className={`font-bold leading-[1px] mt-[1px] ${
                         location.status === "Pending Verification"
                           ? "text-yellow-500"
-                          : location.status === "Published"
+                          : (location.status === "Published" || location.status === "Verified")
                           ? "text-green-500"
                           : "text-orange-500"
                       }`}
                     >
                       {location.status}
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 

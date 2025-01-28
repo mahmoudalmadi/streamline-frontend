@@ -14,6 +14,7 @@ import formatHoursOfOperations from "@/app/hooks/retrieveHoursOfOps";
 import ViewCoachInfo from "./ViewCoachInfo";
 import { useRouter } from "next/navigation";
 import { changeField } from "@/app/hooks/changeField";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function TeamProfileLocationsSection({ locationsInfo,teamId,teamName }) {
 
@@ -39,6 +40,7 @@ export default function TeamProfileLocationsSection({ locationsInfo,teamId,teamN
   const [coachId,setCoachId]=useState("")
 
   const [selectedLocation,setSelectedLocation]=useState("")
+  const {setLoadingNewPage}=useAuth()
 
   const pullLocoInfo = async({locationId}) => {
       setIsViewingLocationInfo(true)
@@ -90,6 +92,7 @@ export default function TeamProfileLocationsSection({ locationsInfo,teamId,teamN
 
     const handleNavigateToAddLocation = () => {
 
+      setLoadingNewPage(true)
       const isSigningUp = false
   
       // Construct the query string
