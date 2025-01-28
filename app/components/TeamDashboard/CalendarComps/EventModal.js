@@ -67,7 +67,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,allEvents
         setSelectedSkillLevels(firstEntries)
     },[])
 
-    console.log(pickedEvent)
+    console.log(currWeekEvents)
 
     const [rejectedStepOne,setRejectedStepOne] = useState(false)
     const [acceptedStepOne,setAcceptedStepOne] = useState(false)
@@ -108,18 +108,19 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,allEvents
 
                 const createdEntryId = await addInfoAsJson({jsonInfo:newConfirmedEvent,collectionName:"TimeBlock"})
                 
-                editJsonById({fieldName:"confirmedSister",fieldValue:createdEntryId,setter:setAllEvents,id:pickedEvent.availableSister,jsonList:allEvents}) 
+                const editedAllFields= editJsonById({fieldName:"confirmedSister",fieldValue:createdEntryId,setter:setAllEvents,id:pickedEvent.availableSister,jsonList:allEvents}) 
 
                 await editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.availableSister},updateData:{confirmedSister:createdEntryId}})
 
                 await deleteMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.id}})
                 
-                setAllEvents([...allEvents,newConfirmedEvent])
-                setEvents([...events,newConfirmedEvent])
-                setCurrWeekEvents([...currWeekEvents,newConfirmedEvent])
-                removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setEvents,jsonList:events})
+                const updatedAllEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setEvents,jsonList:editedAllFields})
+                const updatedEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setEvents,jsonList:events})
+                const updatedCurrWeekEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setCurrWeekEvents,jsonList:currWeekEvents})
                 
-                removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setCurrWeekEvents,jsonList:currWeekEvents})
+                setAllEvents([...updatedAllEvents,newConfirmedEvent])
+                setEvents([...updatedEvents,newConfirmedEvent])
+                setCurrWeekEvents([...updatedCurrWeekEvents,newConfirmedEvent])
 
                 onClose()
             }else{
@@ -131,10 +132,13 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,allEvents
                 allEvents.forEach(item=>{if(item.availableSister==pickedEvent.availableSister){confirmedSister=item}})
 
                 
-                appendToJsonSubListById({fieldMappings:{"athletes":pickedEvent.athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setCurrWeekEvents,jsonList:currWeekEvents,id:confirmedSister.id})
-                appendToJsonSubListById({fieldMappings:{"athletes":pickedEvent.athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setEvents,jsonList:events,id:confirmedSister.id})
-                removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setEvents,jsonList:events})
-                removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setCurrWeekEvents,jsonList:currWeekEvents})
+                const updatedCurrWeekEvents = appendToJsonSubListById({fieldMappings:{"athletes":pickedEvent.athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setCurrWeekEvents,jsonList:currWeekEvents,id:confirmedSister.id})
+                const updatedEvents = appendToJsonSubListById({fieldMappings:{"athletes":pickedEvent.athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setEvents,jsonList:events,id:confirmedSister.id})
+                const finalizedEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setEvents,jsonList:updatedEvents})
+                const finalizedCurrWeekEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setCurrWeekEvents,jsonList:updatedCurrWeekEvents})
+
+                setEvents(finalizedEvents)
+                setCurrWeekEvents(finalizedCurrWeekEvents)
                 await deleteMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.id}})
 
                 await editingMatchingEntriesByAllFields({collectionName:"TimeBlock", matchParams:{"id":item.confirmedSister},updateData:{athletes:[...confirmedSister.athletes,...pickedEvent.athletes],contact:[...confirmedSister.contact,...pickedEvent.contact],numberOfAthletes:confirmedSister.numberOfAthletes+1}})
@@ -142,11 +146,6 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,allEvents
             }
             }
         })
-
-
-        // await editingMatchingEntriesByAllFields({collectionName:"TimeBlock", matchParams:{"id":pickedEvent.availableSister},updateData:{confirmedSister:"createdEntryId"}})
-
-
 
     }
 

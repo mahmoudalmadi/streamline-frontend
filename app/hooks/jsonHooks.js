@@ -2,14 +2,14 @@
 
 const removeJsonByField = ({fieldName,fieldValue,setter,jsonList}) => {
     const updatedData = jsonList.filter((item) => item[fieldName] !== fieldValue);
-    setter(updatedData);
+    return updatedData
   };
 
 export const editJsonById = ({fieldName,fieldValue,setter,jsonList,id}) => {
   const updatedData = jsonList.map((item) =>
   item.id === id ? { ...item, [fieldName]: fieldValue } : item
   );
-  setter(updatedData);
+  return updatedData
 };
 
 export const appendToJsonSubListById = ({ fieldMappings, setter, jsonList, id }) => {
@@ -32,7 +32,7 @@ export const appendToJsonSubListById = ({ fieldMappings, setter, jsonList, id })
         }
     : item
   );
-  setter(updatedData);
+  return updatedData;
 };
 
 
