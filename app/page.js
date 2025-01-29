@@ -8,6 +8,7 @@ import { useAuth } from "./contexts/AuthContext";
 import LoadingSubScreen from "./components/loadingSubscreen";
 import { useEffect, useState } from "react";
 import { getEntriesByConditions } from "./hooks/firestoreHooks/retrieving/getEntriesByConditions";
+import CONFIG from "@/config";
 
 export default function Home() {
   
@@ -15,6 +16,21 @@ export default function Home() {
 
   const [teamLocations,setTeamLocations] = useState([])
   const [loadingTeams,setLoadingTeams]=useState(true)
+
+  const cities=new Set()
+  const citiesToIds={}
+
+  const addCityAndId = (city, state,locationId) => {
+    const cityState = `${city}, ${state}`;
+    cities.add(cityState);
+  
+    if (citiesToIds[cityState]) {
+      citiesToIds[cityState] = [...citiesToIds[cityState], locationId];
+    } else {
+      citiesToIds[cityState] = [locationId];
+    }
+  };
+
   useEffect(()=>{
 
     const getTeamLocations = async() => {
@@ -27,7 +43,22 @@ export default function Home() {
         const daysOrder = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const daysSet = new Set(data.map((item) => item.day?.substring(0, 3)));
         return daysOrder.filter(day => daysSet.has(day));
-      };      
+      };
+
+      const getHoursOfOp = (existingData = {}) => (newData) => {
+        return newData.reduce((acc, item) => {
+            const key = `${item.day}${item.hour}`; // Create key by concatenating day and hour
+            if (!acc[key]) {
+                acc[key] = [];
+            }
+            acc[key].push(item.locationId); // Append the new id to the list
+            return acc;
+        }, existingData);
+    };
+    
+      let hoursOfOpsToIds;
+
+      const processHours = getHoursOfOp();
 
       const updatedLocations = await Promise.all(
         locations.map(async (location) => {
@@ -37,7 +68,7 @@ export default function Home() {
           });
     
           const uniqueDays = getUniqueDays(daysHoursOps);
-    
+
           const locationImages = await getEntriesByConditions({
             collectionName: "Images",
             conditions: [
@@ -46,12 +77,27 @@ export default function Home() {
             ],
           });
           const listOfLocationImages = locationImages.map((item) => item.imageUrl);
-    
+          
+          if (location.state.length < 3) {
+            if (CONFIG.abbreviationToState[location.state]) {
+              addCityAndId(location.city, CONFIG.abbreviationToState[location.state],location.id);
+            } else {
+              addCityAndId(location.city, location.state,location.id);
+            }
+          } else {
+            addCityAndId(location.city, location.state,location.id);
+          }
+
+          hoursOfOpsToIds= processHours(daysHoursOps)
+          
+
           const teamInfo = await getEntriesByConditions({
             collectionName: "Team",
             conditions: [{ field: "id", operator: "==", value: location.teamId }],
           });
           
+          console.log("HOURSOSS", hoursOfOpsToIds)
+
           return {
             ...location,
             uniqueDays,
@@ -61,6 +107,7 @@ export default function Home() {
         })
       );
 
+      console.log("CITITESS",cities)
       setTeamLocations(updatedLocations)
       setLoadingTeams(false)
     }
@@ -77,13 +124,13 @@ export default function Home() {
     <div className="flex  justify-center items-center">
       <DynamicScreen className=" h-screen">
 
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-min-screen">
 
 
         <TopBar/>
 
         {loadingTeams?
-          <div className={"h-screen"}>
+          <div className={"h-min-screen"}>
           <LoadingSubScreen/>
           </div>
           :
@@ -130,7 +177,7 @@ export default function Home() {
         </>}
         </>}
         
-
+        <div className="h-[50px]"/>
 
         </div>
       </DynamicScreen>

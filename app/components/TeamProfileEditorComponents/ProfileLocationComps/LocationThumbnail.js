@@ -54,12 +54,7 @@ export default function LocationThumbnail({location, pullLocoInfo,setSelectedLoc
               {/* Address and Status */}
               <div className="flex flex-col flex-1">
                 <div className="flex text-[15px] font-bold pb-[5px] leading-[16px]">
-                  <div className="">{location?.parsedAddress?.streetAddress || "Unknown St Address"}</div>
-                  <div className="flex space-x-[5px]">
-                  <div>, </div>
-                  <div>{location.parsedAddress?.city || "Unknown City"}, </div>
-                  <div>{location.parsedAddress?.state || "Unknown State"}</div>
-                  </div>
+                  <div className="">{location?.parsedAddress?.streetAddress || "Unknown St Address"}, {location.parsedAddress?.city || "Unknown City"}, {location.parsedAddress?.state || "Unknown State"}</div>
                 </div>
                 <div className="flex-col text-[15px] mt-[2px]">
                   {/* <div className="flex-col">

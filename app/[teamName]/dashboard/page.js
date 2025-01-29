@@ -32,7 +32,7 @@ export default function TeamDashboard() {
 
     const {userInfo,loadingNewPage,setLoadingNewPage}= useAuth();
 
-    const [locationInfo,setLocationInfo]=useState([])
+    const [locationInfo,setLocationInfo]=useState({})
     const [allParsedAddresess,setAllParsedAddresses]=useState([])
     const [currentLocation,setCurrentLocation]=useState([])
 
@@ -218,7 +218,7 @@ export default function TeamDashboard() {
               location.maxHour = maxHour
               location.minHour = minHour
 
-              retrievedLocations[parsedAddress.streetAddress]=location
+              retrievedLocations[location.id]=location
             }
 
             
@@ -228,6 +228,7 @@ export default function TeamDashboard() {
             setEvents(weekEvents)
             setCurrentLocation(locationsInfo[0])
             setSelectedLocation(locationsInfo[0].id)
+            console.log("LOCATION INFO",retrievedLocations)
             setLocationInfo(retrievedLocations)
             setAllParsedAddresses(parsedAddresses)
             setIsCalendarLoading(false)
@@ -270,10 +271,6 @@ export default function TeamDashboard() {
     }
       
 
-    useEffect(()=>{
-        console.log(currWeekEvents)
-    },[currWeekEvents])
-
     const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
     const openChangeModal = () => {setIsChangeModalOpen(true)};
     const closeChangeModal = () => setIsChangeModalOpen(false);
@@ -291,6 +288,8 @@ export default function TeamDashboard() {
             setIsCalendarLoading(false)
         }
         updateCal({locationId:locationId})   
+        setCurrentLocation(locationInfo[locationId])
+        closeChangeModal()
     }
 
     return(
