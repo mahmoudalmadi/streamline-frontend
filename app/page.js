@@ -9,6 +9,8 @@ import LoadingSubScreen from "./components/loadingSubscreen";
 import { useEffect, useState } from "react";
 import { getEntriesByConditions } from "./hooks/firestoreHooks/retrieving/getEntriesByConditions";
 import CONFIG from "@/config";
+import { batchedGetEntriesByConditions } from "./hooks/firestoreHooks/retrieving/batchedGetEntriesByConditions";
+import { changeField } from "./hooks/changeField";
 
 export default function Home() {
   
@@ -17,7 +19,12 @@ export default function Home() {
   const [teamLocations,setTeamLocations] = useState([])
   const [loadingTeams,setLoadingTeams]=useState(true)
 
+  const [locoIdsToHours,setLocoIdsToHours]=useState({})
+  const [hoursToIds,setHoursToIds]=useState()
+
   const cities=new Set()
+  const untetheredCities=new Set()
+  
   const citiesToIds={}
 
   const addCityAndId = (city, state,locationId) => {
@@ -69,6 +76,8 @@ export default function Home() {
     
           const uniqueDays = getUniqueDays(daysHoursOps);
 
+          changeField({setDict:setLocoIdsToHours,field:location.id,value:daysHoursOps})
+          
           const locationImages = await getEntriesByConditions({
             collectionName: "Images",
             conditions: [
@@ -96,7 +105,7 @@ export default function Home() {
             conditions: [{ field: "id", operator: "==", value: location.teamId }],
           });
           
-          console.log("HOURSOSS", hoursOfOpsToIds)
+          console.log("HOURSOSS", uniqueDays)
 
           return {
             ...location,
@@ -107,18 +116,52 @@ export default function Home() {
         })
       );
 
+      
+      
       console.log("CITITESS",cities)
       setTeamLocations(updatedLocations)
       setLoadingTeams(false)
     }
-
-
+    
+    
     getTeamLocations()
     if(!isFetchingUserInfo){
       setLoadingNewPage(false)
     }
   },[isFetchingUserInfo])
+  
+  
+  const searchTeams = async() => {
 
+    const lessonTypeConditions = ['Private','Semi-Private'].map(item=>
+    (
+      {
+        key:`ApplicableBy${item}LessonTypePrice`,
+        queryConfig:{
+          collectionName:'LessonType',
+          conditions:[{'field':"category",'operator':'==',value:item},{'field':'price','operator':'<=',value:200},{'field':'price','operator':'>=',value:0}]
+        }}
+    ))
+    const skillTypeConditions = ['1 - Beginner','4 - Intermediate'].map(item=>
+      (
+        {
+          key:`ApplicableBy${item}SkillType`,
+          queryConfig:{
+            collectionName:'SkillLevel',
+            conditions:[{'field':"category",'operator':'==',value:item}]
+          }}
+      ))
+    const matchedTeams = await batchedGetEntriesByConditions({
+      queriesWithKeys:[
+        ...lessonTypeConditions,
+        ...skillTypeConditions]
+    })
+
+    console.log("MATCHED,", matchedTeams)
+    
+  }
+
+  console.log("LCOCOC",locoIdsToHours)
 
   return (
     <div className="flex  justify-center items-center">
@@ -159,7 +202,7 @@ export default function Home() {
 
             {/* SearchBar with high z-index */}
           <div className="relative z-40 w-full ">
-            <SearchBar />
+            <SearchBar searchTeams={searchTeams} />
           </div>
 
           {/* Gray line with lower z-index */}

@@ -8,7 +8,7 @@ import { useState } from "react";
 
 import PriceDropdown from "./PriceDropdown";
 import CONFIG from "@/config";
-const SearchBar = () => {
+const SearchBar = ({searchTeams}) => {
 
     // lesson location dropdown setup
     const [isLocationDropdownVisible, setIsLocationDropdownVisible] = useState(false);
@@ -170,35 +170,50 @@ const SearchBar = () => {
             </div>
 
             {/* Price box */}
-            <div className={`relative group flex flex-1 
-            justify-between items-center rounded-full py-1 pr-1 pl-4
-            hover:bg-gray-200 cursor-pointer ${isPriceDropdownVisible?"bg-gray-200":""}`}
-            onClick={toggleIsPriceDropdownVisible}>
+            <div 
+                className={`relative flex flex-1 
+                    justify-between items-center rounded-full py-1 pr-1 pl-4
+                    cursor-pointer hover:bg-gray-200 
+                    ${isPriceDropdownVisible ? "bg-gray-200" : ""}`}
+                onClick={toggleIsPriceDropdownVisible}
+            >
                 <div className="flex flex-col">
-                    <div className="font-semibold text-[14px]">
-                        Price
-                    </div>
-                    <div className=" text-graySubtitle text-[12px]">
-                        Per Lesson
-                    </div>
+                    <div className="font-semibold text-[14px]">Price</div>
+                    <div className="text-graySubtitle text-[12px]">Per Lesson</div>
                 </div>
 
-                <button>
-                <div className="flex justify-center items-center
-                rounded-full w-[42px] h-[42px] mt-1 mb-1 bg-streamlineBlue">
-                <FaSearch style={{ color: 'white', fontSize: '20px' }} />
-                </div>  
+                {/* The button should NOT interfere with the parent's hover */}
+                <button 
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        searchTeams();
+                    }} 
+                    className="pointer-events-auto"
+                >
+                    <div 
+                        className="flex justify-center items-center 
+                            rounded-full w-[42px] h-[42px] mt-1 mb-1 
+                            bg-streamlineBlue hover:bg-blue-600"
+                    >
+                        <FaSearch style={{ color: 'white', fontSize: '20px' }} />
+                    </div>  
                 </button>      
 
-                <PriceDropdown isVisible={isPriceDropdownVisible} 
-                setPriceLowerBound={setPriceLowerBound}
-                priceLowerBound={priceLowerBound} setPriceUpperBound={setPriceUpperBound}
-                priceUpperBound={priceUpperBound}
-                onClose={handleClosePriceDropdown} 
-                minPrice={desiredMinPrice} setMinPrice ={setDesiredMinPrice}
-                maxPrice={desiredMaxPrice} setMaxPrice={setDesiredMaxPrice}
-                biggestPrice={biggestPrice}/>
+                <PriceDropdown 
+                    isVisible={isPriceDropdownVisible} 
+                    setPriceLowerBound={setPriceLowerBound}
+                    priceLowerBound={priceLowerBound} 
+                    setPriceUpperBound={setPriceUpperBound}
+                    priceUpperBound={priceUpperBound}
+                    onClose={handleClosePriceDropdown} 
+                    minPrice={desiredMinPrice} 
+                    setMinPrice={setDesiredMinPrice}
+                    maxPrice={desiredMaxPrice} 
+                    setMaxPrice={setDesiredMaxPrice}
+                    biggestPrice={biggestPrice}
+                />
             </div>
+
 
         </div>
 

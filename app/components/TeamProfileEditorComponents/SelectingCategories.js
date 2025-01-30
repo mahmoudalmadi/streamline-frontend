@@ -111,7 +111,7 @@ export default function SelectingCategories({categoryTypes, programs, setProgram
                         type="text"
                         value={program.price}
                         className="w-[35px] border mr-[4px] rounded-[12px] px-[6px] py-[4px] text-center" onChange={(e)=>{
-                            handleInputChange(index,'price',e.target.value)
+                            handleInputChange(index,'price',Number(e.target.value))
                         }}/>
                         $CAD
                     </div>
