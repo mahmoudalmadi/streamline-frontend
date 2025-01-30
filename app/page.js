@@ -23,14 +23,14 @@ export default function Home() {
   const [hoursToIds,setHoursToIds]=useState()
 
   const cities=new Set()
-  const untetheredCities=new Set()
+  const [citiesToUntethered,setCitiesToUntethered]=useState({})
 
   const citiesToIds={}
 
-  const addCityAndId = (city, state,locationId) => {
+  const addCityAndId = (city, state,locationId,untetheredState) => {
     const cityState = `${city}, ${state}`;
-    cities.add(cityState);
-  
+    console.log("right before!!!",untetheredState)
+    changeField({setDict:setCitiesToUntethered,field:cityState,value:untetheredState})
     if (citiesToIds[cityState]) {
       citiesToIds[cityState] = [...citiesToIds[cityState], locationId];
     } else {
@@ -89,14 +89,13 @@ export default function Home() {
           
           if (location.state.length < 3) {
             if (CONFIG.abbreviationToState[location.state]) {
-              addCityAndId(location.city, CONFIG.abbreviationToState[location.state],location.id);
+              addCityAndId(location.city, CONFIG.abbreviationToState[location.state],location.id, [location.city,location.state]);
             } else {
-              addCityAndId(location.city, location.state,location.id);
+              addCityAndId(location.city, location.state,location.id,[location.city,location.state]);
             }
           } else {
-            addCityAndId(location.city, location.state,location.id);
+            addCityAndId(location.city, location.state,location.id,[location.city,location.state]);
           }
-
           hoursOfOpsToIds= processHours(daysHoursOps)
           
 
@@ -105,7 +104,7 @@ export default function Home() {
             conditions: [{ field: "id", operator: "==", value: location.teamId }],
           });
           
-          console.log("HOURSOSS", uniqueDays)
+           
 
           return {
             ...location,
@@ -115,10 +114,7 @@ export default function Home() {
           };
         })
       );
-
       
-      
-      console.log("CITITESS",cities)
       setTeamLocations(updatedLocations)
       setLoadingTeams(false)
     }
@@ -159,9 +155,9 @@ export default function Home() {
 
     console.log("MATCHED,", matchedTeams)
     
+    console.log("LCOCOC",citiesToUntethered)
   }
 
-  console.log("LCOCOC",locoIdsToHours)
 
   return (
     <div className="flex  justify-center items-center">

@@ -119,10 +119,10 @@ export default function TeamDashboard() {
             updateCal()
         }else
         if (events) {
-            console.log("SWITCHINGssss",currWeekEvents)
+            
             setCurrWeekEvents(filterItemsByWeekAndStatus(events,currentDate))
         }
-        console.log("SWITCHING",currWeekEvents)
+        
     },[currWeekNum])
 
     
@@ -228,7 +228,7 @@ export default function TeamDashboard() {
             setEvents(weekEvents)
             setCurrentLocation(locationsInfo[0])
             setSelectedLocation(locationsInfo[0].id)
-            console.log("LOCATION INFO",retrievedLocations)
+            
             setLocationInfo(retrievedLocations)
             setAllParsedAddresses(parsedAddresses)
             setIsCalendarLoading(false)
@@ -296,13 +296,13 @@ export default function TeamDashboard() {
 
         <div className="flex flex-col no-scroll overflow-x-hidden justify-center items-center"
         style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
-      <DynamicScreen className={`${isEventModalOpen||isAddModalOpen?"h-screen no-scroll":"h-screen no-scroll"}`} style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
+      <DynamicScreen className={`${isEventModalOpen||isAddModalOpen?"min-h-screen no-scroll":"min-h-screen no-scroll"}`} style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
 
 
-            <div className="flex flex-col no-scroll" style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
+            <div className="flex flex-col min-h-screen no-scroll" style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
             <TeamDashHeader selectedPage={"dashboard"} setSelectedPage={setSelectedPage} setIsLoading={setIsLoading}/>
             {  isLoading || loadingNewPage?
-            <div className="items-center">
+            <div className="items-center min-h-screen">
                 <LoadingSubScreen loadingMessage={!loadingNewPage?`Loading team ${selectedPage}`:""}/>
             </div>
             :
@@ -416,7 +416,7 @@ export default function TeamDashboard() {
                             className={`flex items-center w-full rounded-[10px]
                             py-[10px] px-[5px]
                             ${index != currWeekEvents.length-1 ? "border-b border-gray-200" :""} cursor-pointer
-                            hover:bg-gray-200 w-full`} onClick={()=>{handleSelectEvent(item);console.log(item)}}>
+                            hover:bg-gray-200 w-full`} onClick={()=>{handleSelectEvent(item);}}>
                                 <div className="w-[25%] p-[5px]">
                                     {item.athletes[0].fullName}
                                 </div>            
@@ -444,7 +444,7 @@ export default function TeamDashboard() {
                             className={`flex items-center w-full rounded-[10px]
                             py-[10px] px-[5px]
                             ${(index != currWeekEvents.length-1 || subIndex!=item.athletes.length-1)? "border-b border-gray-200" :""} cursor-pointer
-                            hover:bg-gray-200 w-full`} onClick={()=>{handleSelectEvent(item);console.log(item)}}>
+                            hover:bg-gray-200 w-full`} onClick={()=>{handleSelectEvent(item);}}>
                                 <div className="w-[25%] p-[5px]">
                                     {item.athletes[subIndex].fullName}
                                 </div>            

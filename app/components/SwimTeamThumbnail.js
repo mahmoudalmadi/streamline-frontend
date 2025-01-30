@@ -126,7 +126,7 @@ export default function SwimTeamThumbnail({locationInfo}){
 
                 <div className="flex italic text-gray-800 text-[12px]">
                     {locationInfo.uniqueDays.map((day,index)=>(
-                        <div className="flex">
+                        <div className="flex" key={index}>
                            {index!=0?"-":""}{day}
                         </div>
                     ))}
