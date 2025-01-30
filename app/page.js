@@ -8,6 +8,9 @@ import { useAuth } from "./contexts/AuthContext";
 import LoadingSubScreen from "./components/loadingSubscreen";
 import { useEffect, useState } from "react";
 import { getEntriesByConditions } from "./hooks/firestoreHooks/retrieving/getEntriesByConditions";
+import CONFIG from "@/config";
+import { batchedGetEntriesByConditions } from "./hooks/firestoreHooks/retrieving/batchedGetEntriesByConditions";
+import { changeField } from "./hooks/changeField";
 
 export default function Home() {
   
@@ -15,6 +18,26 @@ export default function Home() {
 
   const [teamLocations,setTeamLocations] = useState([])
   const [loadingTeams,setLoadingTeams]=useState(true)
+
+  const [locoIdsToHours,setLocoIdsToHours]=useState({})
+  const [hoursToIds,setHoursToIds]=useState()
+
+  const cities=new Set()
+  const untetheredCities=new Set()
+  
+  const citiesToIds={}
+
+  const addCityAndId = (city, state,locationId) => {
+    const cityState = `${city}, ${state}`;
+    cities.add(cityState);
+  
+    if (citiesToIds[cityState]) {
+      citiesToIds[cityState] = [...citiesToIds[cityState], locationId];
+    } else {
+      citiesToIds[cityState] = [locationId];
+    }
+  };
+
   useEffect(()=>{
 
     const getTeamLocations = async() => {
@@ -27,7 +50,22 @@ export default function Home() {
         const daysOrder = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const daysSet = new Set(data.map((item) => item.day?.substring(0, 3)));
         return daysOrder.filter(day => daysSet.has(day));
-      };      
+      };
+
+      const getHoursOfOp = (existingData = {}) => (newData) => {
+        return newData.reduce((acc, item) => {
+            const key = `${item.day}${item.hour}`; // Create key by concatenating day and hour
+            if (!acc[key]) {
+                acc[key] = [];
+            }
+            acc[key].push(item.locationId); // Append the new id to the list
+            return acc;
+        }, existingData);
+    };
+    
+      let hoursOfOpsToIds;
+
+      const processHours = getHoursOfOp();
 
       const updatedLocations = await Promise.all(
         locations.map(async (location) => {
@@ -37,7 +75,9 @@ export default function Home() {
           });
     
           const uniqueDays = getUniqueDays(daysHoursOps);
-    
+
+          changeField({setDict:setLocoIdsToHours,field:location.id,value:daysHoursOps})
+          
           const locationImages = await getEntriesByConditions({
             collectionName: "Images",
             conditions: [
@@ -46,12 +86,27 @@ export default function Home() {
             ],
           });
           const listOfLocationImages = locationImages.map((item) => item.imageUrl);
-    
+          
+          if (location.state.length < 3) {
+            if (CONFIG.abbreviationToState[location.state]) {
+              addCityAndId(location.city, CONFIG.abbreviationToState[location.state],location.id);
+            } else {
+              addCityAndId(location.city, location.state,location.id);
+            }
+          } else {
+            addCityAndId(location.city, location.state,location.id);
+          }
+
+          hoursOfOpsToIds= processHours(daysHoursOps)
+          
+
           const teamInfo = await getEntriesByConditions({
             collectionName: "Team",
             conditions: [{ field: "id", operator: "==", value: location.teamId }],
           });
           
+          console.log("HOURSOSS", uniqueDays)
+
           return {
             ...location,
             uniqueDays,
@@ -61,29 +116,64 @@ export default function Home() {
         })
       );
 
+      
+      
+      console.log("CITITESS",cities)
       setTeamLocations(updatedLocations)
       setLoadingTeams(false)
     }
-
-
+    
+    
     getTeamLocations()
     if(!isFetchingUserInfo){
       setLoadingNewPage(false)
     }
   },[isFetchingUserInfo])
+  
+  
+  const searchTeams = async() => {
 
+    const lessonTypeConditions = ['Private','Semi-Private'].map(item=>
+    (
+      {
+        key:`ApplicableBy${item}LessonTypePrice`,
+        queryConfig:{
+          collectionName:'LessonType',
+          conditions:[{'field':"category",'operator':'==',value:item},{'field':'price','operator':'<=',value:200},{'field':'price','operator':'>=',value:0}]
+        }}
+    ))
+    const skillTypeConditions = ['1 - Beginner','4 - Intermediate'].map(item=>
+      (
+        {
+          key:`ApplicableBy${item}SkillType`,
+          queryConfig:{
+            collectionName:'SkillLevel',
+            conditions:[{'field':"category",'operator':'==',value:item}]
+          }}
+      ))
+    const matchedTeams = await batchedGetEntriesByConditions({
+      queriesWithKeys:[
+        ...lessonTypeConditions,
+        ...skillTypeConditions]
+    })
+
+    console.log("MATCHED,", matchedTeams)
+    
+  }
+
+  console.log("LCOCOC",locoIdsToHours)
 
   return (
     <div className="flex  justify-center items-center">
       <DynamicScreen className=" h-screen">
 
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-min-screen">
 
 
         <TopBar/>
 
         {loadingTeams?
-          <div className={"h-screen"}>
+          <div className={"h-min-screen"}>
           <LoadingSubScreen/>
           </div>
           :
@@ -112,7 +202,7 @@ export default function Home() {
 
             {/* SearchBar with high z-index */}
           <div className="relative z-40 w-full ">
-            <SearchBar />
+            <SearchBar searchTeams={searchTeams} />
           </div>
 
           {/* Gray line with lower z-index */}
@@ -130,7 +220,7 @@ export default function Home() {
         </>}
         </>}
         
-
+        <div className="h-[50px]"/>
 
         </div>
       </DynamicScreen>

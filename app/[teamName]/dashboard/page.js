@@ -24,49 +24,23 @@ import { parseAddress } from "@/app/hooks/addressExtraction";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import getXWeeksData from "@/app/hooks/calendarHooks/getWeeksData";
 import { calculateAge } from "@/app/hooks/miscellaneous";
+import LocationThumbnail from "@/app/components/TeamProfileEditorComponents/ProfileLocationComps/LocationThumbnail";
 
 // import ClubScheduler from "@/app/components/TeamDashboard/ScheduleComps/Schedule";
 
 export default function TeamDashboard() {
 
     const {userInfo,loadingNewPage,setLoadingNewPage}= useAuth();
-    const [locations, setLocations] = useState([{
-        address:"Banana St, Dallas, TX"
-    }])
-    const [locationInfo,setLocationInfo]=useState([])
+
+    const [locationInfo,setLocationInfo]=useState({})
     const [allParsedAddresess,setAllParsedAddresses]=useState([])
     const [currentLocation,setCurrentLocation]=useState([])
-    const [location, setLocation] = useState(locations[0]["address"]) 
 
     const availableColor = CONFIG.calendar.blockColors.available
     const pendingColor = CONFIG.calendar.blockColors.pending
     const confirmedColor = CONFIG.calendar.blockColors.confirmed
 
     const statuses = [{"Availability":availableColor},{"Pending Approval":pendingColor},{"Confirmed Lesson":confirmedColor}]
-
-    const [weeklyTrialLessons, setWeeklyTrialLessons] = useState([
-        {
-            name:"Mahmoud Al-Madi",
-            age:"15 yo",
-            lessonType:"Gold, Intermediate",
-            dateTime:"Jan 22nd, 8:30 AM",
-            status:"Pending"
-        },    
-        {
-            name:"Mahmoud Al-Madi",
-            age:"15 yo",
-            lessonType:"Gold, Intermediate",
-            dateTime:"Jan 22nd, 8:30 AM",
-            status:"Confirmed"
-        },
-        {
-            name:"Mahmoud Al-Madi",
-            age:"15 yo",
-            lessonType:"Gold, Intermediate",
-            dateTime:"Jan 22nd, 8:30 AM",
-            status:"Cancelled"
-        }
-    ])
 
     const triggerTimeRef = useRef(null); // Use a ref instead of state
     const intervalRef = useRef(null);
@@ -126,8 +100,8 @@ export default function TeamDashboard() {
     
     const [currDay,setCurrDay]=useState(new Date())
     const [isCalendarLoading,setIsCalendarLoading]=useState(true)
+    const [selectedLocation,setSelectedLocation] = useState(null)
     useEffect(()=>{
-        console.log("CHANGED??",currWeekEvents)
         const updateCal = async() => {
             setIsCalendarLoading(true)
             const newDate = new Date(currDay)
@@ -150,6 +124,8 @@ export default function TeamDashboard() {
         }
         console.log("SWITCHING",currWeekEvents)
     },[currWeekNum])
+
+    
 
     useEffect(()=>{
         triggerTimeRef.current = Date.now(); // Set trigger time
@@ -242,7 +218,7 @@ export default function TeamDashboard() {
               location.maxHour = maxHour
               location.minHour = minHour
 
-              retrievedLocations[parsedAddress.streetAddress]=location
+              retrievedLocations[location.id]=location
             }
 
             
@@ -251,6 +227,8 @@ export default function TeamDashboard() {
             setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents,currentDate))
             setEvents(weekEvents)
             setCurrentLocation(locationsInfo[0])
+            setSelectedLocation(locationsInfo[0].id)
+            console.log("LOCATION INFO",retrievedLocations)
             setLocationInfo(retrievedLocations)
             setAllParsedAddresses(parsedAddresses)
             setIsCalendarLoading(false)
@@ -293,9 +271,26 @@ export default function TeamDashboard() {
     }
       
 
-    useEffect(()=>{
-        console.log(currWeekEvents)
-    },[currWeekEvents])
+    const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
+    const openChangeModal = () => {setIsChangeModalOpen(true)};
+    const closeChangeModal = () => setIsChangeModalOpen(false);
+
+    const pullLocoInfo = async({locationId}) => {
+        const updateCal = async({locationId}) => {
+            setIsCalendarLoading(true)
+            const newDate = new Date(currDay)
+            newDate.setDate(currDay.getDate()+currWeekNum*7)
+            const weekEvents = await getXWeeksData({locationId:locationId,x:xWeeks,currDay:newDate})
+            setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents,currentDate))
+            setEvents(weekEvents)
+            setCurrWeekNum(0)
+            setCurrDay(newDate)
+            setIsCalendarLoading(false)
+        }
+        updateCal({locationId:locationId})   
+        setCurrentLocation(locationInfo[locationId])
+        closeChangeModal()
+    }
 
     return(
 
@@ -322,7 +317,7 @@ export default function TeamDashboard() {
                     </div>
                     {
                         Object.keys(locationInfo).length>1 &&
-                        <div className="text-streamlineBlue font-bold pl-[7px] text-[12px] cursor-pointer">
+                        <div className="text-streamlineBlue font-bold pl-[7px] text-[12px] cursor-pointer" onClick={()=>{openChangeModal()}}>
                             Change
                         </div>
                     }
@@ -336,6 +331,26 @@ export default function TeamDashboard() {
                     <MyCalendar loading events={events} setPickedEvent={setPickedEvent} openEventModal={openEventModal} setCurrWeekNum={setCurrWeekNum} isCalendarLoading={isCalendarLoading} setIsCalendarLoading={setIsCalendarLoading} currWeekNum={currWeekNum} minHour={currentLocation.minHour} maxHour={currentLocation.maxHour} currentDate={currentDate} setCurrentDate={setCurrentDate}/>
                 </div>
             </div>
+
+            <ModalTemplate isOpen={isChangeModalOpen} onClose={closeChangeModal}>
+                
+                <div className="flex-col overflow-y-scroll py-[20px] items-center justiy-center">
+                <div className="w-full flex justify-center text-center font-bold mb-[15px] space-y-[20px]">
+                    Select location to view schedule
+                </div>
+                <div className="space-y-[20px] overflow-y-scroll">
+                {   
+                Object.keys(locationInfo).map((item,index)=>(
+
+                    <LocationThumbnail key={index} location={locationInfo[item]} pullLocoInfo={pullLocoInfo} setSelectedLocation={setSelectedLocation} selectedLocation={selectedLocation}/>
+                )
+                )
+                }
+                </div>
+                </div>
+
+                
+            </ModalTemplate>
 
             <ModalTemplate isOpen={isEventModalOpen} onClose={closeEventModal}>
                 <EventModal pickedEvent={pickedEvent} streetAddress={currentLocation.parsedAddress.streetAddress} onClose={closeEventModal} setCurrWeekEvents={setCurrWeekEvents} setEvents={setEvents} events={events} currWeekEvents={currWeekEvents}/>

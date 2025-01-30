@@ -43,7 +43,7 @@ export default function TeamDashHeader({selectedPage,setIsLoading,setSelectedPag
                 <div className="flex items-center space-x-[20px]">
                     <img
                     src={teamLogo}
-                    className='h-[90px] py-[8px]'
+                    className='h-[90px] py-[8px] '
                     />
                     <div className="font-bold text-streamlineBlue text-[20px]">
                         {teamName}
@@ -67,7 +67,7 @@ export default function TeamDashHeader({selectedPage,setIsLoading,setSelectedPag
                     router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)}
                 }else{
                     router.push(`/user/${userInfo.userData.firebaseId}/dashboard`)
-                }}}>
+                }}}>            
                 Dashboard
             </div>
             {/* <div className="font-bold text-streamlineBlue text-[20px] mb-[5px]">
