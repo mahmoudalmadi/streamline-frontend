@@ -13,7 +13,7 @@ import LessonTypeDropdown from "@/app/components/searchBarComps/LessonTypeDropdo
 import AuthModal from "@/app/components/AuthModalComps/AuthModal";
 import PaymentModal from "@/app/components/PaymentModal";
 import { useAuth } from "@/app/contexts/AuthContext";
-import { SignUpProvider } from "@/app/contexts/SignUpProvider";
+import { SignUpProvider, useSignUpContext } from "@/app/contexts/SignUpProvider";
 import LoadingSubScreen from "@/app/components/loadingSubscreen";
 import PersonEntry from "@/app/components/TeamDashboard/CalendarComps/PersonEntry";
 import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/editingEntryByAllFields";
@@ -88,7 +88,7 @@ export default function CheckoutPage() {
         return inverted;
       }
       
-    const lessonTypesMapping = invertObject(checkoutData.lessonTypesMapping)
+    const lessonTypesMapping = invertObject(checkoutData?checkoutData?.lessonTypesMapping:{})
 
     // Lesson type dropdown setup
     const [currSelectedLessonType, setCurrSelectedLessonType] = useState(checkoutData!=null ? checkoutData.lessonType : "")
@@ -121,17 +121,32 @@ export default function CheckoutPage() {
 
     const [potentialAthletes,setPotentialAthletes]=useState(null)
 
+    const {kids} = useSignUpContext()
+
     useEffect(()=>{
+        console.log("ROGER THAT FROM CHECKOUT PAGE",kids)
+    },[kids])
+
+    useEffect(()=>{
+
+        
+
         if(userInfo){
 
             if(userInfo.userData){
             if(!userInfo.otherAthletes){
                 
                 setPotentialAthletes([{fullName:userInfo.userData.fullName,athleteInfo:userInfo.userData}])
+
+                const newAthletes = kids.map((item) => ({
+                    fullName: item.fullName,
+                  }));
+                  
+                  // Set state once
+                  setPotentialAthletes((prev) => [...prev, ...newAthletes]);
             }else{
                 setPotentialAthletes([{fullName:userInfo.userData.fullName,athleteInfo:userInfo.userData}])
                   
-                  // Fix by batching updates:
                   const newAthletes = userInfo.otherAthletes.map((item) => ({
                     fullName: item.fullName,
                     athleteInfo: item,
@@ -145,7 +160,7 @@ export default function CheckoutPage() {
     },[userInfo])
 
     const [selectedAthleteId,setSelectedAthleteId]=useState(null)
-    console.log(checkoutData.eventInfo)
+    
     const handleRedirect = async() => {
         
         const entryId = await addInfoAsJson({jsonInfo:{
@@ -176,7 +191,6 @@ export default function CheckoutPage() {
         }
 
     return (
-        <SignUpProvider>
             <div className="flex  justify-center items-center">
                 <DynamicScreen className=" h-screen ">
 
@@ -296,6 +310,9 @@ export default function CheckoutPage() {
                     {currSelectedDate!=""?currSelectedDate.toDateString():""}
                 </div>
                 
+                {
+                potentialAthletes&&
+                <>
                 <div className="font-bold mt-[8px]">
                         Select {CONFIG.athleteType.toLowerCase()}
                 </div>
@@ -305,6 +322,8 @@ export default function CheckoutPage() {
                                     </div>
                                 )
                 )}
+                </>
+                }
 
                 {/* <div
                 className="font-bold text-[18px] mb-[15px]"
@@ -464,6 +483,5 @@ export default function CheckoutPage() {
                 
             </DynamicScreen>
             </div>
-        </SignUpProvider>
     );
 }

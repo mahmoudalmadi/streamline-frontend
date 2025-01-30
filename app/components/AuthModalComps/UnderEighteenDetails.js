@@ -91,7 +91,7 @@ export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) 
         <div className="w-full mx-auto space-y-[10px] mt-[10px]">
 
         <MultiFieldEntryEditor
-            prompt={"Your Full Name"}
+            prompt={"Guardian Full Name"}
             placeholder={"Full Name"}
             field={"fullName"}
             fieldResponse={guardianInfo}
