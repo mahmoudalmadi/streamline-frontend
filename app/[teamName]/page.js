@@ -350,7 +350,7 @@ export default function TeamPage()  {
   return (
     <ErrorBoundary>
     <div className="flex  justify-center items-center ">
-      <DynamicScreen className=" h-screen  md:w-[87%] lg:w-[78%]">
+      <DynamicScreen className=" h-min-screen  md:w-[87%] lg:w-[78%]">
 
         <TopBar/>
 

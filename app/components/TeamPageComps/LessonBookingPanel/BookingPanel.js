@@ -22,11 +22,7 @@ selectedDate, setSelectedDate, selectedTime,setSelectedTime,selectedLessonType,s
         const toggleIsLessonTypeDropdownVisible = () => {
             if (isLessonTypeDropdownClosing) return; // Prevent reopening if in closing state
 
-            if(isLessonTypeDropdownClosing){
-                setIsBeingUsed(false)
-            }else{
-                setIsBeingUsed(true)
-            }
+            setIsBeingUsed(true)
             
             setIsLessonTypeDropdownVisible(prev => !prev);
         };
@@ -93,7 +89,14 @@ selectedDate, setSelectedDate, selectedTime,setSelectedTime,selectedLessonType,s
         }
         const pathName=usePathname()
         
+        const scrollToTop = () => {
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0; // For older browsers
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+
         const handleRedirect = () => {
+            scrollToTop()
             setLoadingNewPage(true)
             setLoadingNewPageMessage("")
             updateCheckout()
