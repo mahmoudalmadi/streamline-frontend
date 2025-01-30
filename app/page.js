@@ -24,7 +24,7 @@ export default function Home() {
 
   const cities=new Set()
   const untetheredCities=new Set()
-  
+
   const citiesToIds={}
 
   const addCityAndId = (city, state,locationId) => {
@@ -165,19 +165,19 @@ export default function Home() {
 
   return (
     <div className="flex  justify-center items-center">
-      <DynamicScreen className=" h-screen">
+      <DynamicScreen className=" ">
 
-        <div className="flex flex-col h-min-screen">
+        <div className="flex flex-col min-h-screen ">
 
 
         <TopBar/>
 
         {loadingTeams?
-          <div className={"h-min-screen"}>
+          <div className={"h-screen"}>
           <LoadingSubScreen/>
           </div>
           :
-        <>
+        <div className="h-[100%]">
         {(isFetchingUserInfo || loadingNewPage) && !loadingTeams ?
         <div className="h-screen">
           <LoadingSubScreen loadingMessage={loadingNewPage?loadingNewPageMessage:null}/>
@@ -185,7 +185,7 @@ export default function Home() {
         :
           <>
         <div
-        className="relative flex flex-col items-center justify-center w-full"
+        className="relative flex flex-col items-center justify-center w-full "
         >
           <div className="flex font-bold text-[18px] text-center mb-2 mt-2">
             <div>
@@ -218,7 +218,7 @@ export default function Home() {
 
         <SwimTeamsMenu teamLocations={teamLocations}/>
         </>}
-        </>}
+        </div>}
         
         <div className="h-[50px]"/>
 

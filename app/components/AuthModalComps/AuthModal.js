@@ -11,12 +11,15 @@ import CompleteSignUpDetails from './CompleteSignUpDetails';
 import {  useSignUpContext } from '../../contexts/SignUpProvider';
 import BlackMoveLeft from "../../../public/BlackMoveLeft.svg";
 import { checkAccountExists } from '@/app/hooks/firestoreHooks/user/getUser';
+import { usePathname } from 'next/navigation';
 
 const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
     const [showPassword, setShowPassword] = useState(false)
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState('')
+
+    const path = usePathname()
     
     const [finishSignUpDetails, setFinishSignUpDetails] = useState(false)
     const [isEmailCollected, setIsEmailCollected] = useState(false)
@@ -54,6 +57,8 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
             signUpMethod: "email",
           }));
     },[])
+
+    console.log(path.includes('checkout'))
 
   if (!isOpen && isModal) return null
 
@@ -158,7 +163,10 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
             }
 
             await emailLogin({email:email,password:password});
+            
+            if (!path.toLowerCase().includes('checkout')){
             window.location.reload()
+            }
             if(isModal){onClose()}
             }
             catch(error){
