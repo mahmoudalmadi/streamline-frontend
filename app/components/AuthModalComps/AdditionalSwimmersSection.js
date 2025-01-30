@@ -9,8 +9,13 @@ export default function AdditionalSwimmersSection({isMinor}) {
 
     const [isPickerOpen, setIsPickerOpen] = useState(false);
 
-    const toggleDatePicker = () => {
+    const [kidBdayEditorId,setKidBdayEditorId]=useState(false)
+
+    const toggleDatePicker = ({id}) => {
         setIsPickerOpen(!isPickerOpen);
+        if(id){
+            setKidBdayEditorId(id)
+        }
     };
 
     const handleInputChange = (id, field, value) => {
@@ -83,13 +88,15 @@ export default function AdditionalSwimmersSection({isMinor}) {
                     value={kid.dateOfBirth ? kid.dateOfBirth.toLocaleDateString() : ""}
                     placeholder="Select birthday"
                     readOnly
-                    onClick={toggleDatePicker}
+                    onClick={()=>{console.log(kid.id);
+                                    toggleDatePicker({id:kid.id})}
+                                }
                     className="w-full text-gray-700 border border-gray-300 rounded-[12px] text-[15px]    
           resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
           focus:outline-none focus:border-blue-500" 
                 />
-                {isPickerOpen && (
-                    <>
+                {(isPickerOpen && kidBdayEditorId==kid.id) && (
+                    <div key={kid.id}>
                         {/* Backdrop */}
                         <div
                             className="fixed inset-0 bg-black bg-opacity-50 z-20"
@@ -105,7 +112,7 @@ export default function AdditionalSwimmersSection({isMinor}) {
                             setIsPickerOpen={setIsPickerOpen}
                             />                            
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
             </div>

@@ -57,7 +57,7 @@ export const ChildBirthDatePicker = ({ kid, handleInputChange, setIsPickerOpen }
     console.error("Kid prop is missing!");
     return null;
   }
-
+  console.log(kid)
   const handleDateChange = (date) => {
     handleInputChange(kid.id, "dateOfBirth", date);
     setIsPickerOpen(false);
