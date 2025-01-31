@@ -7,7 +7,7 @@ const ModalTemplate = ({ isOpen, onClose, children, parentDivRef }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center h-[100%] w-[100%]"
+      className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center h-[100%] w-[100%]"
       onClick={onClose} // Close modal when clicking on the background
       ref={parentDivRef}
     >

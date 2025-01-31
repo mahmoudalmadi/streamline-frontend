@@ -314,7 +314,6 @@ export default function TeamPage()  {
     const observerCallback = (entries) => {
       console.log('Observer entries:', entries); // Debug here
         const [entry] = entries; // There will be only one entry for this div
-        console.log("entry",entry)
         setIsDivVisible(entry.isIntersecting);
     };
 

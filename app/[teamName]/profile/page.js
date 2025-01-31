@@ -144,8 +144,8 @@ export default function TeamProfilePage() {
     return(
 
         <div className="flex overflow-x-hidden justify-center items-center">
-          <DynamicScreen className="h-min-screen">
-            <div className="h-min-screen">
+          <DynamicScreen className="min-h-screen">
+            <div className="min-h-screen">
             <TeamDashHeader selectedPage={selectedPage} setSelectedPage={setSelectedPage} setIsLoading={setIsLoading}/>
             {  isLoading||loadingNewPage?
             <div className="items-center">
