@@ -8,10 +8,11 @@ export const SearchLocationsPovider = ({ children }) => {
   const [selectedLessonTypes,setSelectedLessonTypes]=useState([])
   const [selectedSkillLevels,setSelectedSkillLevels]=useState([])
   const [selectedHoursOfOps,setSelectedHoursOfOps]=useState({"Monday":[],"Tuesday":[],"Wednesday":[],"Thursday":[],"Friday":[],"Saturday":[],"Sunday":[]})
-  const [setMinPrice,setMaxPrice]=useState(useState([]));
+  const [minPrice,setMinePrice]=useState(0);
+  const [maxPrice,setMaxPrice]=useState(200);
 
   return (
-    <SearchLocationsContext.Provider value={{  }}>
+    <SearchLocationsContext.Provider value={{selectedCities,setSelectedCities,selectedLessonTypes,setSelectedLessonTypes,selectedSkillLevels,setSelectedSkillLevels,selectedHoursOfOps,setSelectedHoursOfOps,minPrice,setMinePrice,maxPrice,setMaxPrice}}>
       {children}
     </SearchLocationsContext.Provider>
   );

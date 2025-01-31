@@ -48,17 +48,22 @@ const SearchBar = ({searchTeams}) => {
         setIsLessonTypeDropdownVisible(false);
         setTimeout(() => setIsLessonTypeDropdownClosing(false), 500); // Reset after a short delay
     };
-    const [lessonTypes,setLessonTypes] = useState([
-        { lessonType: 'Private', lessonTypeDescription: 'One one one with an instructor' },
-        { lessonType: 'Semi-Private', lessonTypeDescription: `I don't remember` },
-        { lessonType: 'Group', lessonTypeDescription: 'Group lesson with other swimmers' }
-    ]);
-    const [skillLevels,setSkillLevels] = useState([
-        { skillLevel: 'Beginner', skillLevelDescription: 'Learning swimming for the first time' },
-        { skillLevel: 'Intermediate', skillLevelDescription: `Has some swimming experience` },
-        { skillLevel: 'Advanced', skillLevelDescription: 'Already a proficient swimmer' }
-    ]);
-    
+    const [lessonTypes, setLessonTypes] = useState(
+        Object.keys(CONFIG.lessonTypes).map(item => ({
+          lessonType: item,
+          lessonTypeDescription: CONFIG.lessonTypes[item]
+        }))
+      );
+      
+    const [skillLevels, setSkillLevels] = useState(
+        Object.keys(CONFIG.skillLevels).map(item => ({
+          skillLevel: item,
+          skillLevelDescription: CONFIG.skillLevels[item]
+        }))
+      );
+      
+    console.log(skillLevels)
+
     // Lesson pricing dropdown setup
     const [priceLowerBound, setPriceLowerBound] = useState(0)
     const [priceUpperBound, setPriceUpperBound] = useState(200)
@@ -97,9 +102,13 @@ const SearchBar = ({searchTeams}) => {
         <>
         <div className="relative flex shadow-[0_0_10px_rgba(0,0,0,0.1)] 
          justify-between border-[0.5px] border-graySubtitle rounded-full w-[100%]"
-         style={{
-            zIndex:100
-         }}>
+        style={{
+            zIndex:100,
+            userSelect: "none", // Prevent text selection
+            WebkitUserSelect: "none", // Safari
+            MozUserSelect: "none", // Firefox
+            msUserSelect: "none",}} 
+         >
         
             {/* where box */}
 

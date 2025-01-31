@@ -26,15 +26,15 @@ setSelectedLessonType, setSelectedSkillLevel, additionalStyling }) => {
             <div
                 ref={divRef}
                 className=
-                {`absolute flex bg-white
+                {`absolute sm:flex-row flex-col bg-white
                     ${additionalStyling===null?
-                    "-left-[14px] transform -translate-x-1/2":additionalStyling}
-                 top-full mt-2 py-2 
+                    "left-1/2 transform -translate-x-1/2":additionalStyling}
+                 top-full mt-2 py-2 w-[340px]
                  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]
                  `}
                 onClick={(e)=>e.stopPropagation()} // Close on click within the div
             >
-                <div className='flex max-h-[256px] overflow-y-scroll pl-3 pr-4'>
+                <div className='flex  overflow-y-scroll pl-3 pr-4'>
                     <div className='flex flex-col'>
                         <div className='text-[12px] mb-0.5 pl-3 whitespace-nowrap 
                         text-streamlineBlue pr-2 '
@@ -62,7 +62,7 @@ setSelectedLessonType, setSelectedSkillLevel, additionalStyling }) => {
                         ))}
                         </div>
                     </div>
-                    <div className='flex flex-col'>
+                    <div className='flex flex-col pl-3 pr-4'>
                         <div className='text-[12px] mb-0.5 pl-3 whitespace-nowrap 
                             text-streamlineBlue pr-2 '
                             style={{
@@ -80,10 +80,13 @@ setSelectedLessonType, setSelectedSkillLevel, additionalStyling }) => {
                             checked={selectedSkillLevel==item.skillLevel} 
                             onChange={()=>{setSelectedSkillLevel(item.skillLevel)}}
                             />
-                                <div className='flex-col'>
-                                    <div className='text-[14px] font-semibold'>{item.skillLevel}</div>
-                                    <div className='text-[12px] text-graySubtitle'>{item.skillLevelDescription}</div>
+                                <div className="flex flex-col">
+                                    <div className="text-[14px] font-semibold">{item.skillLevel}</div>
+                                    <div className="text-[12px]  text-graySubtitle whitespace-normal">
+                                        {item.skillLevelDescription}
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                         ))}
