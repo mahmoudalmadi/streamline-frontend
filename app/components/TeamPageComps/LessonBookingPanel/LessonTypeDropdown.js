@@ -42,7 +42,7 @@ setSelectedLessonType, setSelectedSkillLevel,lessonInfoDropdownStyling}) => {
                         style={{
                             fontWeight:525
                         }}>
-                            Available lesson types
+                            Lesson types
                         </div>
                         {lessonTypes.map((item, index) => (
                         <div key={index} className="flex flex-1 pl-3  pr-3 w-full py-2

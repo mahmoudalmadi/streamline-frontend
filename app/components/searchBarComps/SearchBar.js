@@ -135,7 +135,7 @@ const SearchBar = ({searchTeams}) => {
             justify-center rounded-full px-3 py-1 pl-6 hover:bg-gray-200
             ${isLessonTimingDropdownVisible?"bg-gray-200":""}`}
             onClick={toggleIsLessonTimingDropdownVisible}>
-                    <div className="absolute right-0 h-[32px] h-full w-[0.5px] bg-gray-200 transform -translate-x-1/2
+                    <div className="absolute right-0 h-[30px] h-full w-[0.5px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                     <div className="font-semibold text-[14px]">
                         When
@@ -143,7 +143,7 @@ const SearchBar = ({searchTeams}) => {
                     <div className=" text-graySubtitle text-[12px]">
                         Lesson times
                     </div>
-                    <div className="absolute left-0 h-[32px] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
+                    <div className="absolute left-0 h-[3px] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                     <LessonTimingDropdown isVisible={isLessonTimingDropdownVisible}
                     onClose={handleCloseLessonTimingDropdown} 
@@ -161,7 +161,7 @@ const SearchBar = ({searchTeams}) => {
                 <div className="absolute right-0 h-[32px] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                 <div className="font-semibold text-[14px]">
-                    Type
+                    Level
                 </div>
                 <div className=" text-graySubtitle text-[12px]">
                     Add Level
