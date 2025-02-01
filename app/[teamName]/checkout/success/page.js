@@ -121,7 +121,7 @@ export default function SuccessfulCheckout() {
 
         <div className="h-[25px]"></div>
 
-        <EquipmentSection/>
+        {/* <EquipmentSection/> */}
 
         <div className="w-full flex items-center justify-center">
         <div className=" bg-streamlineBlue text-white flex px-[20px] justify-center mx-[30px] py-[10px] font-bold rounded-[20px] mt-[20px] mb-[20px] cursor-pointer">

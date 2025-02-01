@@ -160,13 +160,20 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
 
             const relevantDates = getRelevantDates({startDate:startDate,endDate:endDate,daysPicked:daysPicked,timeObjStart:startTime,timeObjEnd:endTime,lessonType:lessonTypes,coach:selectedCoachId!=null?coaches[selectedCoachId]:null,numberOfSpots:numberOfSpots,reminder:{quantity:reminderQuant,metric:reminderMetric}})
 
-            setEvents([...events,...relevantDates])
-
+            
             const allTimeBlocks = generateJsonListGivenJsons(relevantDates,{teamId:teamId,locationId:locationId,seriesId:seriesId,createdOn:new Date()})
-            setAddAvailibilityModalKey(addAvailibilityModalKey+1)
-            onClose()
             const timeBlockId = await addListOfJsons({jsonList:allTimeBlocks,collectionName:'TimeBlock'})
-
+            
+            // Assign the IDs back to allTimeBlocks in order
+            const updatedTimeBlocks = allTimeBlocks.map((block, index) => ({
+                ...block,  // Keep existing properties
+                id: timeBlockId[index],  // Assign corresponding ID
+            }));
+            
+            setEvents([...events,...updatedTimeBlocks])
+            
+            onClose()
+            setAddAvailibilityModalKey(addAvailibilityModalKey+1)
         }else{
 
             setHasSubmitted(true)
@@ -202,15 +209,20 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                     }]
             }
 
-            setEvents([...events,...currEvents])
-
+            
             const allTimeBlocks = generateJsonListGivenJsons(currEvents,{teamId:teamId,locationId:locationId,createdOn:new Date()})
-            setAddAvailibilityModalKey(addAvailibilityModalKey+1)
-
-            onClose()
-
+            
+            
             const timeBlockId = await addListOfJsons({jsonList:allTimeBlocks,collectionName:'TimeBlock'})
-
+            
+            const updatedTimeBlocks = allTimeBlocks.map((block, index) => ({
+                ...block,  // Keep existing properties
+                id: timeBlockId[index],  // Assign corresponding ID
+            }));
+            
+            setEvents([...events,...updatedTimeBlocks])
+            onClose()
+            setAddAvailibilityModalKey(addAvailibilityModalKey+1)
             
         }
 
