@@ -67,7 +67,7 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                                 if(pathName.split("/")[2]=="profile")
                                 {
                                     window.location.reload()
-                                }
+                                }else{router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/profile`)}
                                 }else{
                                 router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/profile`)}
 
@@ -92,7 +92,7 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                                 if(pathName.split("/")[2]=="dashboard")
                                 {
                                     window.location.reload()
-                                }
+                                }else{router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)}
                                 }else{
                                 router.push(`/${teamName.replace(/\s+/g, '').toLowerCase()}/dashboard`)}
                             }else{
