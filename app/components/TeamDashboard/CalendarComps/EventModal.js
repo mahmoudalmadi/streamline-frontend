@@ -10,7 +10,11 @@ import { addInfoAsJson } from "@/app/hooks/firestoreHooks/adding/addInfoAsJson";
 import { getEntriesByMatching } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByMatching";
 import { getEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByConditions";
 import removeJsonByField, { appendToJsonSubListById, editJsonById } from "@/app/hooks/jsonHooks";
+import { FaTrash } from "react-icons/fa";
+
 import { deleteMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/deleteEntriesByMatchingFields";
+import LoadingSubScreen from "../../loadingSubscreen";
+import { changeField } from "@/app/hooks/changeField";
 
 export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWeekEvents, setEvents,events,currWeekEvents}){
     
@@ -67,8 +71,6 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
         setSelectedSkillLevels(firstEntries)
     },[])
 
-    console.log(events)
-
     const [rejectedStepOne,setRejectedStepOne] = useState(false)
     const [acceptedStepOne,setAcceptedStepOne] = useState(false)
 
@@ -81,7 +83,6 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
 
         events.forEach(async(item)=>{
             if (item.id == pickedEvent.availableSister){
-                console.log("geer",item)
             if (!item.confirmedSister){
                 // CREATE NEWLY ACCEPTED EVENT OR CHECK FOR EXISTING CONFIRMED
 
@@ -122,7 +123,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                 onClose()
             }else{
 
-                console.log("we good")
+                
                 
                 let confirmedSister;
                 
@@ -163,7 +164,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
             
             const editedAvailEvents= editJsonById({fieldName:"numberOfSpots",fieldValue:item.numberOfSpots+1,setter:setEvents,id:pickedEvent.availableSister,jsonList:editedEvents}) 
             const editedAvailCurrEvents= editJsonById({fieldName:"numberOfSpots",fieldValue:item.numberOfSpots+1,setter:setEvents,id:pickedEvent.availableSister,jsonList:editedCurrEvents}) 
-            console.log("MADE ITITITI",item)
+            
             
             setEvents(editedAvailEvents)
             setCurrWeekEvents(editedAvailCurrEvents)
@@ -177,6 +178,68 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
 
     }
 
+    const [isDeleting,setIsDeleting]= useState(false)
+    const [loadingDeleteMenu,setLoadingDeleteMenu]=useState(true)
+    const [seriesInfo,setSeriesInfo]=useState(null)
+    useEffect(()=>{
+
+        const getSeries = async()=>{
+            const retrieveSeriesInfo = await getEntriesByConditions({collectionName:'TimeBlockSeries',conditions:[{field:"id",value:pickedEvent.seriesId,operator:"=="}]})
+            
+            setSeriesInfo(retrieveSeriesInfo[0])
+            const starter = new Date(retrieveSeriesInfo[0].startDate.seconds*1000)
+            const ender  = new Date(retrieveSeriesInfo[0].endDate.seconds*1000)
+            changeField({setDict:setSeriesInfo,field:"dateStart",value:starter})
+            changeField({setDict:setSeriesInfo,field:"dateEnd",value:ender})
+            setLoadingDeleteMenu(false)
+            
+        }
+
+        if(pickedEvent.seriesId){
+            getSeries()
+            setLoadingDeleteMenu(false)
+
+        }else{
+            setLoadingDeleteMenu(false)
+        }
+
+    },[])
+
+    
+
+    const handleDeleteEvent = async() => {
+
+        const updatedEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setEvents,jsonList:events})
+        const updatedCurrWeekEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setCurrWeekEvents,jsonList:currWeekEvents})
+        setEvents([...updatedEvents])
+        setCurrWeekEvents([...updatedCurrWeekEvents])
+        onClose()
+        
+        await deleteMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":pickedEvent.id}})
+    }
+
+    const handleDeleteSeries = async() => {
+        const updatedEvents = removeJsonByField({fieldName:"seriesId",fieldValue:pickedEvent.seriesId,setter:setEvents,jsonList:events})
+        const updatedCurrWeekEvents = removeJsonByField({fieldName:"seriesId",fieldValue:pickedEvent.seriesId,setter:setCurrWeekEvents,jsonList:currWeekEvents})
+        setEvents([...updatedEvents])
+        setCurrWeekEvents([...updatedCurrWeekEvents])
+        onClose()
+
+        await deleteMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"seriesId":pickedEvent.seriesId}})
+
+    }
+
+    const dayMap= {
+        mon: "Monday",
+        tue: "Tuesday",
+        wed: "Wednesday",
+        thu: "Thursday",
+        fri: "Friday",
+        sat: "Saturday",
+        sun: "Sunday",
+      };
+      
+      
     return(
         <>
                 <div className="p-[8px]"  style={{
@@ -184,11 +247,100 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
             WebkitUserSelect: "none", // Safari
             MozUserSelect: "none", // Firefox
             msUserSelect: "none",}} >
-                    {pickedEvent && 
+                    {(!isDeleting&&pickedEvent.status.toLowerCase()=="available")&&<div className="absolute top-[10px] h-[20px] right-[42px] cursor-pointer" >
+                        <FaTrash className="text-gray-400 w-[14px] h-[20px] hover:text-black" onClick={()=>{
+                            if(pickedEvent.seriesId){setLoadingDeleteMenu(true)}
+                            setIsDeleting(true)}}/>
+                    </div>}
+
+                    {isDeleting?
                     <div>
+                        {
+                        pickedEvent.seriesId?
+                        <div>
+
+                            {true?
+                            <>
+                            <div className="text-[14px] text-center">
+                                This event belongs to the following weekly series:
+                            </div>
+                            <div className="flex justify-center text-[14px] space-x-[5px] text-center mt-[10px] mb-[5px]">
+                                <div className="text-[14px] font-bold text-center">
+                                    Days:
+                                </div>
+                                <div className=" text-[14px] text-center">
+                                {seriesInfo.days
+                                    ?.map((day) => dayMap[day.toLowerCase()] || day) // Convert to full name, fallback to original if not found
+                                    .join(" - ")}
+                                </div>
+                            </div>
+                            <div className="text-[14px] flex justify-center space-x-[30px]  text-center">
+                                <div className=" flex justify-center space-x-[5px] text-[14px] text-center">
+                                    <div className="text-[14px] font-bold text-center">
+                                        Start Date: 
+                                    </div>
+                                    <div className="  text-[14px] text-center">
+                                        {seriesInfo.dateStart.toDateString()}
+                                    </div>
+                                </div>
+                                <div className="flex justify-center text-[14px] space-x-[5px] text-center">
+                                    <div className="text-[14px] font-bold text-center">
+                                        Date: 
+                                    </div>
+                                    <div className="  text-[14px] text-center">
+                                    {seriesInfo.dateEnd.toDateString()}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex mt-[12px] justify-center items-center space-x-[30px]  w-full">
+                                        <div className={`py-[6px] text-[14px] px-[10px] text-white font-bold bg-red-500 rounded-full cursor-pointer ${hasClickedSubmit?"opacity-50":""}`} onClick={async()=>{await handleDeleteSeries()}}>
+                                            Delete entire series
+                                        </div>
+                                        <div className={`py-[6px] text-[14px] px-[10px] text-white font-bold bg-red-500 rounded-full cursor-pointer ${hasClickedSubmit?"opacity-50":""}`} onClick={async()=>{await handleDeleteEvent()}}>
+                                            Delete only this event
+                                        </div>
+
+                                        <div className="font-bold text-[14px] text-streamlineBlue cursor-pointer" onClick={()=>{setIsDeleting(false)}}>
+                                            Cancel
+                                        </div>
+                            </div>
+                            </>
+                            :
+                            <div className="w-[100px] h-[100px]">
+                                <LoadingSubScreen/>
+                            </div>
+                            }
+                            
+                        </div>
+                        :
+                        <div>
+                        <div>
+                            Are you sure you want to delete this event?
+                        </div>
+                        <div className="flex mt-[12px] justify-center items-center space-x-[50px]  w-full">
+                                    <div className={`py-[6px] px-[10px] text-white font-bold bg-red-500 rounded-full cursor-pointer ${hasClickedSubmit?"opacity-50":""}`} onClick={async()=>{await handleDeleteEvent()}}>
+                                        Yes, delete this event
+                                    </div>
+
+                                    <div className="font-bold text-streamlineBlue cursor-pointer" onClick={()=>{setIsDeleting(false)}}>
+                                        No
+                                    </div>
+                        </div>
+                        </div>
+
+                        }
+
+                    </div>
+                        :
+                    <>
+                    {pickedEvent && 
+                    <div className="relative">
+
+
 
                     <div className="flex flex-col">
-                    <div className="flex items-center space-x-[16px]">
+                    <div className="flex items-center space-x-[16px] mt-[10px]">
 
                     <div className="flex w-[22px] justify-center items-center">
                     <div className="flex w-[14px] h-[14px] rounded-[4px] "
@@ -205,7 +357,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                     {formatEventTime({startTime:pickedEvent.start,endTime:pickedEvent.end})}
                     </div>
 
-                    <div className="flex flex-col mt-[8px]">
+                    <div className="flex flex-col pt-[8px]">
                     <div className="flex items-center space-x-[16px]">
                     <div className="flex w-[22px] mt-[5px] justify-center items-center">
                     <InfoIcon/>
@@ -410,6 +562,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                     </div>        }
                 </div>
                     }
+                    </>}
                 </div>
         </>
     )

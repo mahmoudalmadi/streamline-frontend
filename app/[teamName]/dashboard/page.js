@@ -47,6 +47,7 @@ export default function TeamDashboard() {
     const timesOfDay = CONFIG.timesOfDay
     const [isLoading,setIsLoading]=useState(true)
     const [retrievedCoaches,setRetrievedCoaches] = useState(null)
+    const [currLocoCoaches,setCurrLocoCoaches] = useState(null)
 
     const [xWeeks,setXWeeks]=useState(3)
     const [currWeekNum,setCurrWeekNum]=useState(null)
@@ -227,6 +228,10 @@ export default function TeamDashboard() {
             setCurrWeekEvents(filterItemsByWeekAndStatus(weekEvents,currentDate))
             setEvents(weekEvents)
             setCurrentLocation(locationsInfo[0])
+            setCurrLocoCoaches(
+                firestoreCoaches.filter(coach => coach.locationId === locationsInfo[0].id)
+              );
+              
             setSelectedLocation(locationsInfo[0].id)
             
             setLocationInfo(retrievedLocations)
@@ -237,6 +242,7 @@ export default function TeamDashboard() {
           }
 
     },[userInfo])
+
 
     const [pickedEvent, setPickedEvent] = useState(null);
     const [isEventModalOpen, setIsEventModalOpen] = useState(false);
@@ -289,6 +295,10 @@ export default function TeamDashboard() {
         }
         updateCal({locationId:locationId})   
         setCurrentLocation(locationInfo[locationId])
+        setCurrLocoCoaches(
+            retrievedCoaches.filter(coach => locationId === coach.locationId)
+          );
+          
         closeChangeModal()
     }
 
@@ -359,7 +369,7 @@ export default function TeamDashboard() {
             {/* add Availability modal */}
             <ModalTemplate onClose={closeAddModal} isOpen={isAddModalOpen} parentDivRef={parentDivRef}>
                 <AddAvailibilityModal key={addAvailibilityModalKey}  parentDivRef={parentDivRef} lessonTypes={currentLocation.lessonTypes} lessonSkills={currentLocation.skillLevels} addAvailibilityModalKey={addAvailibilityModalKey} setAddAvailibilityModalKey={setAddAvailibilityModalKey} onClose={closeAddModal} teamId={userInfo.teamInfo.id} 
-                retrievedCoaches={retrievedCoaches} locationId={currentLocation.id} events={events} setEvents={setEvents}/>
+                retrievedCoaches={currLocoCoaches} locationId={currentLocation.id} events={events} setEvents={setEvents}/>
             </ModalTemplate>
 
             <div className="flex w-full justify-end">

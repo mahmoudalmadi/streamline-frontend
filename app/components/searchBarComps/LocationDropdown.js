@@ -31,7 +31,7 @@ const LocationDropdown = ({ isVisible, onClose, locations,setLocations }) => {
             <div
                 ref={divRef}
                 className="absolute bg-white
-                 flex flex-col left-0 top-full mt-2 py-2 
+                 flex flex-col  left-0 top-full mt-2 py-2 
                  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)] "
                  style={{
                     zIndex:100
@@ -42,7 +42,7 @@ const LocationDropdown = ({ isVisible, onClose, locations,setLocations }) => {
                 style={{
                     overflowY:'scroll'
                 }}
-                className='max-h-[256px] pl-3 pr-4'> 
+                className='max-x-[400px] pl-3 pr-4'> 
 
                 <div className='text-[12px] mb-0.5 pl-3 whitespace-nowrap 
                 text-streamlineBlue pr-2 '
@@ -52,7 +52,7 @@ const LocationDropdown = ({ isVisible, onClose, locations,setLocations }) => {
                     Cities with available swim clubs
                 </div>
                 {locations.map((item, index) => (
-                <div key={index} className="flex flex-1 pl-3  pr-3 w-full text-[14px] py-2
+                <div key={index} className="flex flex-1 pl-3  pr-3 w-full text-[14px] py-[12px]
                 rounded-xl whitespace-nowrap items-center hover:bg-gray-200 
                 space-x-1.5" onClick={()=>{handleCheckboxChange(item.id)}}
                 style={{

@@ -57,7 +57,7 @@ export default function LocationThumbnail({location, pullLocoInfo,setSelectedLoc
                   <div className="">{location?.parsedAddress?.streetAddress || "Unknown St Address"}, {location.parsedAddress?.city || "Unknown City"}, {location.parsedAddress?.state || "Unknown State"}</div>
                 </div>
                 <div className="flex-col text-[15px] mt-[2px]">
-                  {/* <div className="flex-col">
+                  <div className="flex-col">
                     <div>
                     <div className="mr-2 pb-[7px] ">Status</div>
         
@@ -73,7 +73,7 @@ export default function LocationThumbnail({location, pullLocoInfo,setSelectedLoc
                     >
                       {location.status}
                     </div>
-                  </div> */}
+                  </div>
                 </div>
               </div>
 

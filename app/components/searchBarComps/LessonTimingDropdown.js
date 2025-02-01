@@ -55,7 +55,7 @@ setTimesOfDay, setDaysOfWeek }) => {
                             Preferred day(s)
                         </div>
                         {daysOfWeek.map((item, index) => (
-                        <div key={index} className="flex flex-1 pl-3  pr-3 w-full  py-1
+                        <div key={index} className="flex flex-1 pl-3  pr-3 w-full  py-[8px]
                         text-[15px] 
                         rounded-xl whitespace-nowrap items-center hover:bg-gray-200 
                         space-x-1.5" onClick={()=>{handleDaysCheckboxChange(item.id)}}>

@@ -37,7 +37,7 @@ export default function TeamProfileEditor() {
   const router = useRouter();
   const [isLoading,setIsLoading] = useState(false)
   const [firstLoading,setFirstLoading]=useState(true)
-  const {user, setUser,userInfo} = useAuth()
+  const {user, setUser,userInfo,loadingNewPage,setLoadingNewPage} = useAuth()
   const isSigningUp = searchParams.get("isSigningUp")==="true";
   const params = new URLSearchParams(searchParams.toString());
 
@@ -51,11 +51,14 @@ export default function TeamProfileEditor() {
       // setTimeout(()=>{
         // window.location.reload(); // Trigger a full page reload
       // },400)
+      setLoadingNewPage(false)
     } else {
       if(isSigningUp){
       setFirstLoading(false); // Proceed if already refreshed
+      setLoadingNewPage(false)
       }else{
       setFirstLoading(false)
+      setLoadingNewPage(false)
       }
     }
   }, [searchParams, router]);
@@ -493,12 +496,13 @@ export default function TeamProfileEditor() {
 
     }
     
-    if (isLoading || firstLoading){
+    if (isLoading || firstLoading || loadingNewPage){
       if(isSigningUp)
       {return<LoadingScreen loadingMessage={
         firstLoading?`${isSigningUp?"Loading sign up page":"Loading team profile page"}`:"Creating your new team account"}/>}
       else{
-        return<LoadingScreen loadingMessage={firstLoading?'Preparing your new location form':'Creating new location'}/>
+        return<LoadingScreen loadingMessage={
+          firstLoading?'Preparing your new location form':loadingNewPage?"":'Creating new location'}/>
       }
     }
 
