@@ -101,7 +101,7 @@ const SearchBar = ({searchTeams}) => {
     return(
         <>
         <div className="relative flex shadow-[0_0_10px_rgba(0,0,0,0.1)] 
-         justify-between border-[0.5px] border-graySubtitle rounded-full w-[100%]"
+         justify-between border-[1px] border-gray-300 py-[3px] rounded-full w-[100%]"
         style={{
             zIndex:100,
             userSelect: "none", // Prevent text selection
@@ -201,10 +201,10 @@ const SearchBar = ({searchTeams}) => {
                 >
                     <div 
                         className="flex justify-center items-center 
-                            rounded-full w-[42px] h-[42px] mt-1 mb-1 
+                            rounded-full w-[32px] h-[32px] sm:w-[42px] sm:h-[42px] mt-1 mb-1 
                             bg-streamlineBlue hover:bg-blue-600"
                     >
-                        <FaSearch style={{ color: 'white', fontSize: '20px' }} />
+                        <FaSearch style={{ color: 'white', fontSize: '19px' }} />
                     </div>  
                 </button>      
 

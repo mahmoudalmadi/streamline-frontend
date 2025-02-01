@@ -93,7 +93,7 @@ export default function TeamDashboard() {
             startDate <= endOfWeek &&
             item.status.toLowerCase() !== "available"
           );
-        });
+        }).sort((a, b) => new Date(a.start) - new Date(b.start));
       }    
 
       
