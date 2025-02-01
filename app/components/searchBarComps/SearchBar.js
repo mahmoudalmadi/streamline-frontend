@@ -122,7 +122,7 @@ const SearchBar = ({searchTeams}) => {
                 <div className="font-semibold text-[14px]">
                     Where
                 </div>
-                <div className=" text-graySubtitle text-[12px]">
+                <div className="hidden sm:block text-graySubtitle text-[12px]">
                     Search locations 
                 </div>
 
@@ -135,15 +135,15 @@ const SearchBar = ({searchTeams}) => {
             justify-center rounded-full px-3 py-1 pl-6 hover:bg-gray-200
             ${isLessonTimingDropdownVisible?"bg-gray-200":""}`}
             onClick={toggleIsLessonTimingDropdownVisible}>
-                    <div className="absolute right-0 h-[30px] h-full w-[0.5px] bg-gray-200 transform -translate-x-1/2
+                    <div className="absolute right-0 h-[30px]  w-[0.5px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                     <div className="font-semibold text-[14px]">
                         When
                     </div>
-                    <div className=" text-graySubtitle text-[12px]">
+                    <div className="hidden sm:block text-graySubtitle text-[12px]">
                         Lesson times
                     </div>
-                    <div className="absolute left-0 h-[3px] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
+                    <div className="absolute left-0 h-[32px] w-[1px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                     <LessonTimingDropdown isVisible={isLessonTimingDropdownVisible}
                     onClose={handleCloseLessonTimingDropdown} 
@@ -158,15 +158,15 @@ const SearchBar = ({searchTeams}) => {
             <div className={`relative group flex w-[23%] flex-col justify-center rounded-full px-3 py-1
              hover:bg-gray-200 pl-6 cursor-pointer ${isLessonTypeDropdownVisible?"bg-gray-200":""}`}
              onClick={toggleIsLessonTypeDropdownVisible}>
-                <div className="absolute right-0 h-[32px] h-full w-[1px] bg-gray-200 transform -translate-x-1/2
+                <div className="absolute right-0 h-[32px]  w-[1px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                 <div className="font-semibold text-[14px]">
                     Level
                 </div>
-                <div className=" text-graySubtitle text-[12px]">
+                <div className="hidden sm:block text-graySubtitle text-[12px]">
                     Add Level
                 </div>
-                <div className="absolute left-0 h-[32px] h-full w-[0.5px] bg-gray-200 transform -translate-x-1/2
+                <div className="absolute left-0 h-[32px] w-[0.5px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                 <LessonTypeDropdown isVisible={isLessonTypeDropdownVisible}
                     onClose={handleCloseLessonTypeDropdown} 
@@ -188,7 +188,7 @@ const SearchBar = ({searchTeams}) => {
             >
                 <div className="flex flex-col">
                     <div className="font-semibold text-[14px]">Price</div>
-                    <div className="text-graySubtitle text-[12px]">Per Lesson</div>
+                    <div className="text-graySubtitle hidden sm:block text-[12px]">Per Lesson</div>
                 </div>
 
                 {/* The button should NOT interfere with the parent's hover */}
