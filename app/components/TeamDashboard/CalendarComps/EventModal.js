@@ -195,7 +195,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
         }
 
     }
-
+    console.log(pickedEvent)
     const handleRejectRequest=()=>{
 
 

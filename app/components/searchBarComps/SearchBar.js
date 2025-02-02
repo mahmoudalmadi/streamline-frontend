@@ -8,7 +8,7 @@ import { useState } from "react";
 
 import PriceDropdown from "./PriceDropdown";
 import CONFIG from "@/config";
-const SearchBar = ({searchTeams}) => {
+const SearchBar = ({searchTeams,locations,setLocations,setDaysOfWeek,daysOfWeek,timesOfDay,setTimesOfDay,selectedLessonType,setSelectedLessonType,selectedSkillLevel,setSelectedSkillLevel,desiredMaxPrice,setDesiredMaxPrice,desiredMinPrice,setDesiredMinPrice,biggestPrice}) => {
 
     // lesson location dropdown setup
     const [isLocationDropdownVisible, setIsLocationDropdownVisible] = useState(false);
@@ -22,21 +22,9 @@ const SearchBar = ({searchTeams}) => {
         setIsLocationDropdownVisible(false);
         setTimeout(() => setIsDropdownClosing(false), 500); // Reset after a short delay
     };
-    const [locations, setLocations] = useState([
-        {id:1, city: 'New York', state: 'NY', checked:false },
-        {id:2, city: 'Los Angeles', state: 'CA', checked:false },
-        {id:3, city: 'Chicago', state: 'IL' , checked:false},
-        {id:4, city: 'Houston', state: 'TX' , checked:false},
-        {id:5, city: 'New York', state: 'NY', checked:false },
-        {id:6, city: 'Los Angeles', state: 'CA', checked:false },
-        {id:7, city: 'Chicago', state: 'IL' , checked:false},
-        {id:8, city: 'Houston', state: 'TX' , checked:false}
-      ]);
 
       
     // Lesson type dropdown setup
-    const [selectedLessonType, setSelectedLessonType] = useState("")
-    const [selectedSkillLevel, setSelectedSkillLevel] = useState("")
     const [isLessonTypeDropdownVisible, setIsLessonTypeDropdownVisible] = useState(false);
     const [isLessonTypeDropdownClosing, setIsLessonTypeDropdownClosing] = useState(false);
     const toggleIsLessonTypeDropdownVisible = () => {
@@ -48,6 +36,7 @@ const SearchBar = ({searchTeams}) => {
         setIsLessonTypeDropdownVisible(false);
         setTimeout(() => setIsLessonTypeDropdownClosing(false), 500); // Reset after a short delay
     };
+    
     const [lessonTypes, setLessonTypes] = useState(
         Object.keys(CONFIG.lessonTypes).map(item => ({
           lessonType: item,
@@ -62,14 +51,12 @@ const SearchBar = ({searchTeams}) => {
         }))
       );
       
-    console.log(skillLevels)
 
     // Lesson pricing dropdown setup
     const [priceLowerBound, setPriceLowerBound] = useState(0)
-    const [priceUpperBound, setPriceUpperBound] = useState(200)
-    let biggestPrice = 200;
-    const [desiredMaxPrice, setDesiredMaxPrice] = useState(biggestPrice);
-    const [desiredMinPrice, setDesiredMinPrice] = useState(0);
+    const [priceUpperBound, setPriceUpperBound] = useState(biggestPrice)
+    
+    
     const [isPriceDropdownVisible, setIsPriceDropdownVisible] = useState(false);
     const [isPriceDropdownClosing, setIsPriceDropdownClosing] = useState(false);
     const toggleIsPriceDropdownVisible = () => {
@@ -94,21 +81,20 @@ const SearchBar = ({searchTeams}) => {
         setIsLessonTimingDropdownVisible(false);
         setTimeout(() => setIsLessonTimingDropdownClosing(false), 500); // Reset after a short delay
     };
-    const [daysOfWeek,setDaysOfWeek] = useState(CONFIG.daysOfWeek);
-    const [timesOfDay,setTimesOfDay] = useState(CONFIG.timesOfDay);
+    
 
 
     return(
         <>
         <div className="relative flex shadow-[0_0_10px_rgba(0,0,0,0.1)] 
-         justify-between border-[1px] border-gray-300 py-[3px] rounded-full w-[100%]"
+         justify-between border-[1px] border-gray-300  h-[60px] rounded-full w-[100%] md:w-[65%] lg:w-[75%]"
         style={{
             zIndex:100,
             userSelect: "none", // Prevent text selection
             WebkitUserSelect: "none", // Safari
             MozUserSelect: "none", // Firefox
             msUserSelect: "none",}} 
-         >
+         >  
         
             {/* where box */}
 

@@ -62,7 +62,7 @@ const LocationDropdown = ({ isVisible, onClose, locations,setLocations }) => {
                     <input
                     type='checkbox' checked={item.checked} onChange={()=>{handleCheckboxChange(item.id)}}
                     />
-                    <p>{item.city}, {item.state}</p>
+                    <p>{item.location}</p>
                 </div>
                 ))}
                 </div>

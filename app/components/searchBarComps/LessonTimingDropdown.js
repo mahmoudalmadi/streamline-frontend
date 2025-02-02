@@ -21,18 +21,48 @@ setTimesOfDay, setDaysOfWeek }) => {
         };
     }, [isVisible]);
 
+    const [dayId, setDayId] = useState(null)
 
     const handleDaysCheckboxChange = (id) => {
+        setTimesOfDay(timesOfDay.map(item => ({ ...item, checked: false })));
+        if(id==dayId){
+            setDayId(null)
+            setDaysOfWeek(daysOfWeek.map(item => 
+                item.id === id ? { ...item, checked: !item.checked } : item
+              ));
+            return
+        }
+        setDayId(id)
         setDaysOfWeek(daysOfWeek.map(item => 
           item.id === id ? { ...item, checked: !item.checked } : item
         ));
       };
 
-    const handleTimingCheckboxChange = (id) => {
+    const handleTimingCheckboxChange = (id,dayId) => {
+    setDaysOfWeek(daysOfWeek.map(item => {
+        if (item.id === dayId) {
+            const time = timesOfDay.find(entry => entry.id === id)?.timeOfDay || null;
+            const alreadySelected = item.hoursOfOps.includes(time); // Check if timing exists
+
+            return {
+                ...item,
+                hoursOfOps: alreadySelected
+                    ? item.hoursOfOps.filter(t => t !== time) // Remove if exists
+                    : [...item.hoursOfOps, time] // Add if not exists
+            };
+        }
+        return item;
+    }));
     setTimesOfDay(timesOfDay.map(item => 
         item.id === id ? { ...item, checked: !item.checked } : item
     ));
     };
+
+    useEffect(()=>{
+
+        console.log("DAYS O WEEK,",daysOfWeek)
+
+    },[daysOfWeek])
     
 
     return (
@@ -45,7 +75,7 @@ setTimesOfDay, setDaysOfWeek }) => {
                  transform -translate-x-1/2 pr-1.5"
                 onClick={(e)=>e.stopPropagation()} // Close on click within the div
             >
-                <div className='flex max-h-[256px] overflow-y-scroll pl-3 pr-4'>
+                <div className='flex min-w-[150px] overflow-y-scroll pl-3 pr-4'>
                     <div className='flex flex-col'>
                         <div className='text-[12px] mb-0.5 pl-3 whitespace-nowrap 
                         text-streamlineBlue pr-4 '
@@ -68,25 +98,39 @@ setTimesOfDay, setDaysOfWeek }) => {
                         ))}
                         </div>
                     </div>
-                    <div className='flex flex-col'>
+                    <div className='flex flex-col min-w-[150px]'>
                         <div className='text-[12px] mb-0.5 pl-3 whitespace-nowrap 
                             text-streamlineBlue pr-2 '
                             style={{
                                 fontWeight:525
                             }}>
-                            Preferred time of day
+                            Preferred time(s)
                         </div>
+                        {dayId&&<div className='text-[11px] mb-0.5 pl-3 whitespace-nowrap 
+                            text-gray-400 pr-2 '
+                            style={{
+                                fontWeight:525
+                            }}>
+                            Selecting for {daysOfWeek.find(item=>item.id===dayId).day}
+                        </div>}
+
+                        {dayId?<>
                         {timesOfDay.map((item, index) => (
                         <div key={index} className="flex flex-1 pl-3  pr-3 w-full py-1
                         rounded-xl whitespace-nowrap items-center hover:bg-gray-200 text-[15px]
-                        space-x-1.5" onClick={()=>{handleTimingCheckboxChange(item.id)}}>
+                        space-x-1.5" onClick={()=>{handleTimingCheckboxChange(item.id,dayId)}}>
                             <input
                             className='mr-2'
-                            type='checkbox' checked={item.checked} onChange={()=>{handleTimingCheckboxChange(item.id)}}
+                            type='checkbox' checked={item.checked} onChange={()=>{handleTimingCheckboxChange(item.id,dayId)}}
                             />
                             {item.timeOfDay}
                         </div>
                         ))}
+                        </>:
+                        <div className='flex flex-1 text-gray-400 text-[14px] items-center justify-center text-center'>
+                            Please select a day to indicated preferred time(s)
+                        </div>
+                        }
                         </div>
             </div>
         )

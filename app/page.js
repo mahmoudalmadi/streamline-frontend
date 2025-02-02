@@ -19,8 +19,21 @@ export default function Home() {
   const [teamLocations,setTeamLocations] = useState([])
   const [loadingTeams,setLoadingTeams]=useState(true)
 
+  const [locations,setLocations]=useState(null)
+
+  const [daysOfWeek,setDaysOfWeek] = useState(CONFIG.daysOfWeek);
+  const [timesOfDay,setTimesOfDay] = useState(CONFIG.timesOfDay);
+
+  const [selectedLessonType, setSelectedLessonType] = useState("")
+  const [selectedSkillLevel, setSelectedSkillLevel] = useState("")
+
   const [locoIdsToHours,setLocoIdsToHours]=useState({})
   const [hoursToIds,setHoursToIds]=useState()
+
+  let biggestPrice = 200;
+  const [desiredMaxPrice, setDesiredMaxPrice] = useState(biggestPrice);
+  const [desiredMinPrice, setDesiredMinPrice] = useState(0);
+
 
   const cities=new Set()
   const [citiesToUntethered,setCitiesToUntethered]=useState({})
@@ -29,7 +42,7 @@ export default function Home() {
 
   const addCityAndId = (city, state,locationId,untetheredState) => {
     const cityState = `${city}, ${state}`;
-    console.log("right before!!!",untetheredState)
+    cities.add(cityState)
     changeField({setDict:setCitiesToUntethered,field:cityState,value:untetheredState})
     if (citiesToIds[cityState]) {
       citiesToIds[cityState] = [...citiesToIds[cityState], locationId];
@@ -105,6 +118,13 @@ export default function Home() {
           });
           
            
+          const myLocations = [...cities].map((location, index) => ({
+            id: index,
+            checked: false,
+            location: location
+          }))
+          console.log("my locations",myLocations)
+          setLocations(myLocations);
 
           return {
             ...location,
@@ -129,7 +149,7 @@ export default function Home() {
   
   const searchTeams = async() => {
 
-    const lessonTypeConditions = ['Private','Semi-Private'].map(item=>
+    const lessonTypeConditions = [selectedLessonType].map(item=>
     (
       {
         key:`ApplicableBy${item}LessonTypePrice`,
@@ -138,7 +158,7 @@ export default function Home() {
           conditions:[{'field':"category",'operator':'==',value:item},{'field':'price','operator':'<=',value:200},{'field':'price','operator':'>=',value:0}]
         }}
     ))
-    const skillTypeConditions = ['1 - Beginner','4 - Intermediate'].map(item=>
+    const skillTypeConditions = [selectedSkillLevel].map(item=>
       (
         {
           key:`ApplicableBy${item}SkillType`,
@@ -152,6 +172,8 @@ export default function Home() {
         ...lessonTypeConditions,
         ...skillTypeConditions]
     })
+
+    
 
     console.log("MATCHED,", matchedTeams)
     
@@ -197,8 +219,8 @@ export default function Home() {
 
 
             {/* SearchBar with high z-index */}
-          <div className="relative z-40 w-full ">
-            <SearchBar searchTeams={searchTeams} />
+          <div className="relative flex justify-center z-40 w-full ">
+            <SearchBar searchTeams={searchTeams} locations={locations} setLocations={setLocations} setDaysOfWeek={setDaysOfWeek} timesOfDay={timesOfDay} setTimesOfDay={setTimesOfDay} daysOfWeek={daysOfWeek} selectedLessonType={selectedLessonType} setSelectedLessonType={setSelectedLessonType} selectedSkillLevel={selectedSkillLevel} setSelectedSkillLevel={setSelectedSkillLevel} desiredMaxPrice={desiredMaxPrice} desiredMinPrice={desiredMinPrice} setDesiredMaxPrice={setDesiredMaxPrice} setDesiredMinPrice={setDesiredMinPrice} biggestPrice={biggestPrice}/>
           </div>
 
           {/* Gray line with lower z-index */}

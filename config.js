@@ -72,10 +72,17 @@ const CONFIG = Object.freeze({
     ]    
     ,
     timesOfDay:[
-        {id:1, timeOfDay: '9 AM - 12 PM',checked:false},
-        {id:2, timeOfDay: '3 PM - 6 PM',checked:false},
-        {id:3, timeOfDay: '6 PM - 9 PM',checked:false}
+        {id:1, timeOfDay: '6 AM - 10 AM',checked:false},
+        {id:2, timeOfDay: '10 AM - 2 PM',checked:false},
+        {id:3, timeOfDay: '2 PM - 6 PM',checked:false},
+        {id:4, timeOfDay: '6 PM - 10 PM',checked:false}
     ],
+    timingToHours:{
+            '6 AM - 10 AM':[6,7,8,9],
+            '10 AM - 2 PM':[10,11,12,1],
+            '2 PM - 6 PM':[2,3,4,5],
+            '6 PM - 10 PM':[6,7,8,9]
+    },  
     contactInfoDisclaimer:"* Your contact information will be used only to communicate where necessary once you have booked a lesson with a swim team",
     abbreviationToState:{
         "AB": "Alberta",
