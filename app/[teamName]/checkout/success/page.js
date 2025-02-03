@@ -61,7 +61,7 @@ export default function SuccessfulCheckout() {
     }
   return (
     <div className="flex  justify-center items-center">
-      <DynamicScreen className=" h-screen">
+      <DynamicScreen className="w-[99%] md:w-[82%] lg:[75%] h-screen">
 
         <TopBar/>
 

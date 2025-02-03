@@ -78,7 +78,7 @@ export default function Home() {
     const getTeamLocations = async() => {
 
       const locations =  await getEntriesByConditions({collectionName:"Location",
-        conditions:[]
+        conditions:[{field:'status',operator:'==',value:'Verified'}]
       })
 
       const getUniqueDays = (data) => {
@@ -271,7 +271,7 @@ export default function Home() {
 
   return (
     <div className="flex  justify-center items-center">
-      <DynamicScreen className=" ">
+      <DynamicScreen className=" w-[98%]">
 
         <div className="flex flex-col min-h-screen ">
 
