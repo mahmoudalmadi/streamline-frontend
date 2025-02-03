@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-
 const LessonTypeDropdown = ({ isVisible, onClose, lessonTypes,skillLevels, selectedLessonType, selectedSkillLevel,
 setSelectedLessonType, setSelectedSkillLevel, additionalStyling }) => {
     const divRef = useRef(null);

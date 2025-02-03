@@ -57,7 +57,7 @@ setPriceUpperBound, priceUpperBound, minPrice, setMinPrice, maxPrice,setMaxPrice
                     <div className='flex-col mt-[15px] space-y-[20px]'>
                     <div className="flex h-full text-black pt-[2px] items-center mt-[4px] items-center space-x-[6px] justify-center pr-[10px]"> 
                     <div className="text-[14px] font-bold">
-                    Min Price: 
+                    Minimum: 
                     </div>
                             
                     <div className="flex mt-[2px] text-[14px] items-center">   
@@ -76,7 +76,7 @@ setPriceUpperBound, priceUpperBound, minPrice, setMinPrice, maxPrice,setMaxPrice
                     </div>
                     <div className="flex h-full text-black pt-[2px] items-center mt-[4px] items-center space-x-[6px] justify-center pr-[10px]"> 
                     <div className="text-[14px] font-bold">
-                    Max Price: 
+                    Maximum: 
                     </div>
                             
                     <div className="flex mt-[2px] text-[14px] items-center">   

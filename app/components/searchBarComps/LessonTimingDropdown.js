@@ -25,17 +25,17 @@ setTimesOfDay, setDaysOfWeek }) => {
 
     const handleDaysCheckboxChange = (id) => {
         setTimesOfDay(timesOfDay.map(item => ({ ...item, checked: false })));
-        if(id==dayId){
+        if(id==dayId || daysOfWeek.some(item => item.id === id && item.checked)){
             setDayId(null)
             setDaysOfWeek(daysOfWeek.map(item => 
-                item.id === id ? { ...item, checked: !item.checked } : item
+                item.id === id ? { ...item, checked: !item.checked,hoursOfOps:[] } : item
               ));
             return
-        }
+        }else{
         setDayId(id)
         setDaysOfWeek(daysOfWeek.map(item => 
           item.id === id ? { ...item, checked: !item.checked } : item
-        ));
+        ));}
       };
 
     const handleTimingCheckboxChange = (id,dayId) => {
@@ -58,12 +58,6 @@ setTimesOfDay, setDaysOfWeek }) => {
     ));
     };
 
-    useEffect(()=>{
-
-        console.log("DAYS O WEEK,",daysOfWeek)
-
-    },[daysOfWeek])
-    
 
     return (
         isVisible && (
