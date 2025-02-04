@@ -98,7 +98,7 @@ export default function DisplayLocationInfo({parsedAddress,locationImages,amenit
                     <AmenitiesSection amenities={amenitiesList} withoutHeader={true}/>
                     </div>
 
-                    </div>
+        </div>
 
     )
 }

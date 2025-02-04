@@ -50,6 +50,13 @@ export default function PersonEntry({personInfo,noLeftMargin,noIcon}){
                                 {personInfo.phoneNumber}
                             </div>                    
                             </div>       }
+
+                            {personInfo.age &&
+                            <div className="flex mt-[6px] items-center space-x-[3px] leading-[5px]">
+                            <div>
+                                {personInfo.age} yrs old
+                            </div>                    
+                            </div>       }
                         </div>        
                         
                         </div>

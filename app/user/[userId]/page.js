@@ -25,16 +25,18 @@ import deleteS3Objects from "@/app/hooks/awsHooks/deleteFromS3";
 import { uploadImagesToS3 } from "@/app/hooks/awsHooks/uploadToS3";
 import { batchedGetEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/batchedGetEntriesByConditions";
 import UserDashHeader from "@/app/components/UserProfilePage/UserDashHeader";
+import PersonEntry from "@/app/components/TeamDashboard/CalendarComps/PersonEntry";
+import { calculateAge } from "@/app/hooks/miscellaneous";
 
 export default function UserProfilePage() {
 
     const {userInfo,loadingNewPage,setLoadingNewPage,user}= useAuth();
 
     //CONTACT INFO STATES
-    const [phoneNumberObj, setPhoneNumberObj] = useState({phoneNumber:"", isValid:null})
-    const [emailAddress,setEmailAddress]= useState("")
-    const [contactName,setContactName]=useState("")
-
+    const [accountPhoneNumber, setAccountPhoneNumber] = useState({phoneNumber:"", isValid:null})
+    const [accountFullname,setAccountFullname]=useState("")
+    const [accountEmailAddress,setAccountEmailAddress]=useState("")
+    const [otherAthletes,setOtherAthletes]=useState([])
     const [locationInfo, setLocationInfo] = useState([])
     const [allParsedAddresess,setAllParsedAddresses]=useState([])
     const intervalRef = useRef(null);
@@ -48,18 +50,15 @@ export default function UserProfilePage() {
 
                 const elapsed = Date.now() - triggerTimeRef.current;
 
-                    if (userInfo.otherAthletes) {
+                    if (userInfo.userData) {
                         clearInterval(intervalRef.current); // Break the interval
                         // TEAM INFO
-                        setNewTeamName(userInfo.teamInfo.teamName);
-                        setTeamDescription(userInfo.teamInfo.teamDescription);
-                        setTeamLogo([{ id: userInfo.teamInfo.logoPhotoURL, url: userInfo.teamInfo.logoPhotoURL }]);
                         
                         // CONTACT INFO
-                        changeField({ setDict: setPhoneNumberObj, field: "phoneNumber", value: userInfo.teamInfo.phoneNumber });
-                        changeField({ setDict: setPhoneNumberObj, field: "isValid", value: true });
-                        setEmailAddress(userInfo.teamInfo.contactEmail);
-                        setContactName(userInfo.teamInfo.contactName);
+                        changeField({ setDict: setAccountPhoneNumber, field: "phoneNumber", value: userInfo.teamInfo.phoneNumber });
+                        changeField({ setDict: setAccountPhoneNumber, field: "isValid", value: true });
+                        setAccountEmailAddress(userInfo.teamInfo.contactEmail);
+                        setAccountFullname(userInfo.teamInfo.contactName);
                         
                         getLocationInfo(); // Call after it's defined
                         
@@ -151,6 +150,50 @@ export default function UserProfilePage() {
                 <div className="h-[8px]"/>
 
                 <div className="w-full h-[1px] bg-gray-200 mt-[5px] mb-[18px]"/>
+
+                <div>
+
+                    <div className="font-bold text-[16px] pt-[8px]">Account Holder Info</div>    
+                    <div className="space-y-[4px] mt-[5px]">
+                    <div className="flex">
+                    <div className="flex text-[16px]">Contact person: 
+                    </div>
+                    <div className="ml-[4px]">
+                    {accountFullname}
+                    </div>
+                    </div>
+                    <div className="flex text-[16px] items-center space-x-[6px]"><EmailIcon/>
+                    <div className="mt-[1px] text-[16px]">
+                    {accountEmailAddress} 
+                    </div>
+                    </div>
+                    <div className="flex text-[16px] items-center space-x-[6px]">
+                    <div>
+                        <img src="/PhoneIcon.png"
+                        className="w-[30px]"
+                        />
+                    </div>
+                    <div className="mt-[1px]">
+                    {accountPhoneNumber.phoneNumber} 
+                    </div></div>
+                    <div>
+                    
+                    </div>
+                    </div>
+
+                    {otherAthletes.length>1&&<div>
+                      <div className="font-bold text-[16px] pt-[8px]">{CONFIG.athleteType}s on this account</div>
+
+                      <div className="flex flex-col">
+                        {otherAthletes.map(athlete=>(
+                          <PersonEntry personInfo={{fullName:athlete.fullName,age:calculateAge(athlete.dateOfBirth.seconds*1000)}}/>
+                        ))}
+                      </div>
+
+                    </div>}
+
+                </div>
+
 
                 {/* CONTACT INFO SECTION */}
                 <div>
