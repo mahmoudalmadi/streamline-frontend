@@ -30,7 +30,7 @@ export default function PersonEntry({personInfo,noLeftMargin,noIcon}){
                         </div>
                         <div className="">
                             <div className="font-bold">
-                            {personInfo.fullName}
+                            {personInfo.fullName} {personInfo.age? `(${personInfo.age} yrs)`:""} 
                             </div>
                             
                             {personInfo.email &&
@@ -51,12 +51,7 @@ export default function PersonEntry({personInfo,noLeftMargin,noIcon}){
                             </div>                    
                             </div>       }
 
-                            {personInfo.age &&
-                            <div className="flex mt-[6px] items-center space-x-[3px] leading-[5px]">
-                            <div>
-                                {personInfo.age} yrs old
-                            </div>                    
-                            </div>       }
+
                         </div>        
                         
                         </div>

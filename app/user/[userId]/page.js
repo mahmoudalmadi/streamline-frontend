@@ -37,7 +37,7 @@ export default function UserProfilePage() {
     const [accountFullname,setAccountFullname]=useState("")
     const [accountEmailAddress,setAccountEmailAddress]=useState("")
     const [otherAthletes,setOtherAthletes]=useState([])
-    const [locationInfo, setLocationInfo] = useState([])
+    const [bookingInfo,setBookingInfo]=useState()
     const [allParsedAddresess,setAllParsedAddresses]=useState([])
     const intervalRef = useRef(null);
     const triggerTimeRef = useRef(null);
@@ -50,16 +50,18 @@ export default function UserProfilePage() {
 
                 const elapsed = Date.now() - triggerTimeRef.current;
 
-                    if (userInfo.userData) {
+                    if (userInfo.userData&&userInfo.otherAthletes) {
                         clearInterval(intervalRef.current); // Break the interval
                         // TEAM INFO
                         
                         // CONTACT INFO
-                        changeField({ setDict: setAccountPhoneNumber, field: "phoneNumber", value: userInfo.teamInfo.phoneNumber });
+                        changeField({ setDict: setAccountPhoneNumber, field: "phoneNumber", value: userInfo.userData.phoneNumber });
                         changeField({ setDict: setAccountPhoneNumber, field: "isValid", value: true });
-                        setAccountEmailAddress(userInfo.teamInfo.contactEmail);
-                        setAccountFullname(userInfo.teamInfo.contactName);
+                        setAccountEmailAddress(userInfo.userData.emailAddress)
+                        setAccountFullname(userInfo.userData.fullName);
+                        console.log(userInfo.otherAthletes)
                         
+                        setOtherAthletes(userInfo.otherAthletes)
                         getLocationInfo(); // Call after it's defined
                         
                     }
@@ -113,14 +115,17 @@ export default function UserProfilePage() {
                 ]
                 })
 
+                bookingsInfo["locationInfo"]=locoInfo.locationInfo
+                bookingsInfo["skillMapping"]=locoInfo.skillMapping
+                bookingsInfo["lessonTypeMapping"]=locoInfo.lessonTypeMapping
+                bookingsInfo["locationImgs"]=locoInfo.locationImgs
 
 
             })
           }
 
 
-          setLocationInfo(locationsInfo)
-          setAllParsedAddresses(parsedAddresses)
+          setBookingInfo(bookingsInfo)
           
           setLoadingNewPage(false)
         }
@@ -181,12 +186,12 @@ export default function UserProfilePage() {
                     </div>
                     </div>
 
-                    {otherAthletes.length>1&&<div>
+                    {(otherAthletes.length>1&&otherAthletes[0]!="nothing")&&<div>
                       <div className="font-bold text-[16px] pt-[8px]">{CONFIG.athleteType}s on this account</div>
 
-                      <div className="flex flex-col">
-                        {otherAthletes.map(athlete=>(
-                          <PersonEntry personInfo={{fullName:athlete.fullName,age:calculateAge(athlete.dateOfBirth.seconds*1000)}}/>
+                      <div className="flex flex-col space-y-[20px]">
+                        {otherAthletes.map((athlete,index)=>(
+                          <PersonEntry key={index} noLeftMargin={true} personInfo={{fullName:athlete.fullName,age:calculateAge(athlete.dateOfBirth).toString()}}/>
                         ))}
                       </div>
 
