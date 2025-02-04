@@ -16,7 +16,7 @@ export default function SuccessfulCheckout() {
 
     const router = useRouter();
 
-    const {setLoadingNewPage,loadingNewPage}=useAuth()
+    const {setLoadingNewPage,loadingNewPage,user}=useAuth()
     
     const pathName = usePathname();
     const { checkoutData, setCheckoutData } = useCheckout();
@@ -61,7 +61,7 @@ export default function SuccessfulCheckout() {
     }
   return (
     <div className="flex  justify-center items-center">
-      <DynamicScreen className="w-[99%] md:w-[82%] lg:[75%] h-screen">
+      <DynamicScreen className="w-[99%] md:w-[82%] lg:[75%]">
 
         <TopBar/>
 
@@ -77,7 +77,7 @@ export default function SuccessfulCheckout() {
             className="relative w-screen h-[1px] bg-gray-200 mt-[18px]"
           />  
 
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full  min-h-screen">
 
         <div className="
         text-streamlineBlue
@@ -124,7 +124,9 @@ export default function SuccessfulCheckout() {
         {/* <EquipmentSection/> */}
 
         <div className="w-full flex items-center justify-center">
-        <div className=" bg-streamlineBlue text-white flex px-[20px] justify-center mx-[30px] py-[10px] font-bold rounded-[20px] mt-[20px] mb-[20px] cursor-pointer">
+        <div className=" bg-streamlineBlue text-white flex px-[20px] justify-center mx-[30px] py-[10px] font-bold rounded-[20px] mt-[20px] mb-[20px] cursor-pointer" onClick={()=>{
+          setLoadingNewPage(true)
+          router.push(`/user/${user.uid}`)}}>
                 Go to my profile page
           </div>
         </div>

@@ -124,10 +124,6 @@ export default function CheckoutPage() {
     const {kids} = useSignUpContext()
 
     useEffect(()=>{
-        console.log("ROGER THAT FROM CHECKOUT PAGE",kids)
-    },[kids])
-
-    useEffect(()=>{
 
         
 
@@ -163,10 +159,13 @@ export default function CheckoutPage() {
     
     const handleRedirect = async() => {
         
+        console.log("HELLOO,",user.uid)
+
         const entryId = await addInfoAsJson({jsonInfo:{
             coachEmail:checkoutData.eventInfo.coachEmail,
             coachName:checkoutData.eventInfo.coachName,
             coachPhone:checkoutData.eventInfo.coachPhone,
+            userId:user.uid,
             createdOn:new Date(),
             day:checkoutData.eventInfo.day,
             end:checkoutData.eventInfo.end,

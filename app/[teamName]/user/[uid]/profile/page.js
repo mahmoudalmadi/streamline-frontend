@@ -4,7 +4,7 @@ import DynamicScreen from "@/app/components/DynamicScreen";
 import TeamDashHeader from "@/app/components/TeamDashboard/TeamDashHeader";
 import TopBar from "@/app/components/TopBarComps/TopBar";
 import { useAuth } from "@/app/contexts/AuthContext";
-import EmailIcon from '../../../public/emailIcon.svg'
+import EmailIcon from '../../../../public/emailIcon.svg'
 
 import CONFIG from "@/config";
 import { useEffect, useState,useRef } from "react";
@@ -138,7 +138,7 @@ export default function UserProfilePage() {
         <div className="flex overflow-x-hidden justify-center items-center w-full">
           <DynamicScreen className="flex min-h-screen w-[98%] md:w-[80%] lg:w-[72%]">
             <div className="min-h-screen">
-            <UserDashHeader />
+            {/* <UserDashHeader /> */}
             {  loadingNewPage?
             <div className="items-center">
                 <LoadingSubScreen loadingMessage={!loadingNewPage?`Loading your profile`:""}/>

@@ -203,7 +203,7 @@ export default function Home() {
         key:`ApplicableByLessonTypePrice`,
         queryConfig:{
           collectionName:'LessonType',
-          conditions:[{'field':"category",'operator':'==',value:item},{'field':'price','operator':'<=',value:200},{'field':'price','operator':'>=',value:0}]
+          conditions:[{'field':"category",'operator':'==',value:item},{'field':'price','operator':'<=',value:desiredMaxPrice},{'field':'price','operator':'>=',value:desiredMinPrice}]
         }}
     ))
     const skillTypeConditions = [selectedSkillLevel].map(item=>
@@ -291,9 +291,9 @@ export default function Home() {
         :
           <>
         <div
-        className="relative flex flex-col items-center justify-center w-full "
+        className="relative flex flex-col items-center justify-center w-full pt-[10px]"
         >
-          <div className="flex font-bold text-[18px] text-center mb-2 mt-2">
+          <div className="flex font-bold text-[18px] text-center mb-[12px] mt-2">
             <div>
             Find Your
             </div>
@@ -313,7 +313,7 @@ export default function Home() {
 
           {/* Gray line with lower z-index */}
           <div
-            className="relative z-0 w-screen h-[1px] bg-gray-200 mt-[18px]"
+            className="relative z-0 w-screen h-[1px] bg-gray-200 mt-[20px]"
           />
 
         </div>
@@ -340,7 +340,7 @@ export default function Home() {
         }
         </>:
         <>
-             <div className="text-[18px] font-semibold mt-[14px] mb-4">
+             <div className="text-[18px] font-semibold mt-[18px] mb-4">
           Partnered Swim Teams
         </div>
         <SwimTeamsMenu teamLocations={teamLocations}/>
