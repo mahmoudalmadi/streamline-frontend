@@ -1,8 +1,11 @@
 import CONFIG from "@/config"
 import PersonEntry from "../TeamDashboard/CalendarComps/PersonEntry"
+import EmailIcon from "../../../public/emailIcon.svg"
+import { calculateAge } from "@/app/hooks/miscellaneous"
 
 export default function DisplayUserInfo({accountFullname,accountEmailAddress,accountPhoneNumber,otherAthletes}){
 
+    console.log("HIIII",accountFullname,accountEmailAddress,accountPhoneNumber)
 
     return(
 
@@ -29,7 +32,7 @@ export default function DisplayUserInfo({accountFullname,accountEmailAddress,acc
         />
     </div>
     <div className="mt-[1px]">
-    {accountPhoneNumber.phoneNumber} 
+    {accountPhoneNumber} 
     </div></div>
     <div>
     

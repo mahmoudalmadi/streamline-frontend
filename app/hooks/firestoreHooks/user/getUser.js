@@ -26,17 +26,20 @@ const getUserByFirebaseId = async ({firebaseId}) => {
 
 const getDependantsByFirebaseId = async ({ firebaseId }) => {
   try {
-    const accountCollection = collection(db, "accountDependants"); // Reference the 'accountDependants' collection
+    const accountCollection = collection(db, "accountDependants"); // Reference the collection
     const q = query(accountCollection, where("accountFirebaseId", "==", firebaseId)); // Query by firebaseId
 
     const querySnapshot = await getDocs(q); // Execute the query
 
     if (!querySnapshot.empty) {
-      // Extract data from all matching documents
-      const dependants = querySnapshot.docs.map((doc) => doc.data());
+      // Extract data and include the auto-assigned Firebase document ID
+      const dependants = querySnapshot.docs.map((doc) => ({
+        id: doc.id, // Include Firebase auto-generated ID
+        ...doc.data() // Spread the rest of the document fields
+      }));
       
       console.log("Dependants found:", dependants);
-      return dependants; // Return an array of all matching dependants
+      return dependants; // Return an array with document IDs included
     } else {
       console.log("No dependants found with the given firebaseId.");
       return []; // Return an empty array if no matches
@@ -46,6 +49,7 @@ const getDependantsByFirebaseId = async ({ firebaseId }) => {
     throw error; // Re-throw error for further handling
   }
 };
+
 
   export async function checkAccountExists({ value, valueType, accountType })  {
     try {

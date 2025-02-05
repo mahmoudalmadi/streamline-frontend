@@ -1,10 +1,11 @@
+import { useState } from "react";
 import CONFIG from "@/config";
 import ChildBirthDatePicker from "../AuthModalComps/BirthDatePicker";
 
 export default function AdditionalAthletesEditor({kids,setKids}) {
 
     const [isPickerOpen, setIsPickerOpen] = useState(false);
-
+    console.log(kids)
     const [kidBdayEditorId,setKidBdayEditorId]=useState(false)
 
     const toggleDatePicker = ({id}) => {
@@ -44,7 +45,7 @@ export default function AdditionalAthletesEditor({kids,setKids}) {
     return(
         <>
         <div 
-        className="text-[15px] font-semibold mb-[3px] leading-[8px] pt-[6px]">
+        className="text-[15px] font-semibold pb-[18px] leading-[8px] pt-[6px]">
             Enter additional {CONFIG.athleteType.toLowerCase()}(s) information
         </div>
         
@@ -79,7 +80,13 @@ export default function AdditionalAthletesEditor({kids,setKids}) {
                 </label>
                 <input
                     type="text"
-                    value={kid.dateOfBirth ? kid.dateOfBirth.toLocaleDateString() : ""}
+                    value={
+                        kid.dateOfBirth
+                          ? kid.dateOfBirth.seconds
+                            ? new Date(kid.dateOfBirth.seconds * 1000).toLocaleDateString()
+                            : kid.dateOfBirth.toLocaleDateString()
+                          : ""
+                      }
                     placeholder="Select birthday"
                     readOnly
                     onClick={()=>{console.log(kid.id);

@@ -4,8 +4,10 @@ import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/ed
 import { useAuth } from "@/app/contexts/AuthContext"
 import UserEditorWrapper from "./UserEditorWrapper"
 import DisplayUserInfo from "./DisplayUserInfo"
+import { deleteMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/deleteEntriesByMatchingFields"
+import { addAccountDependants } from "@/app/hooks/firestoreHooks/createAccount"
 
-export default function ViewUserInfo({userEmail,setUserEmail,userName,setUserName,userPhone,setUserPhone,otherAthletes,setOtherAthletes}){
+export default function ViewUserInfo({accountId, userEmail,setUserEmail,userName,setUserName,userPhone,setUserPhone,otherAthletes,setOtherAthletes}){
 
     const {user,userData} = useAuth()
 
@@ -16,6 +18,8 @@ export default function ViewUserInfo({userEmail,setUserEmail,userName,setUserNam
     })
     const [defaultOtherAthletes,setDefaultOtherAthletes]=useState(otherAthletes)
 
+    console.log("USER INFO VIEW",userName)
+    console.log("USER INFO VIEW",userEmail)
 
     return(
         <>
@@ -29,12 +33,12 @@ export default function ViewUserInfo({userEmail,setUserEmail,userName,setUserNam
       }}}
     EditableInfoWrapper={UserEditorWrapper} GeneralInfoDisplayWrapper={DisplayUserInfo} 
       fields={{
-        incompleteFieldsError:"IDKK??",
         accountHolderEmailAddress:userEmail,
         setAccountHolderEmailAddress:setUserEmail,
         accountFullName:userName,
         setAccountFullName:setUserName,
-        accountPhoneNumber:setUserPhone,
+        accountPhoneNumber:userPhone,
+        setAccountPhoneNumber:setUserPhone,
         otherAthletes:otherAthletes,
         setOtherAthletes:setOtherAthletes
         }
@@ -42,7 +46,7 @@ export default function ViewUserInfo({userEmail,setUserEmail,userName,setUserNam
       displayFields={{
         accountFullName:userName,
         accountEmailAddress:userEmail,
-        accountPhoneNumber:userPhone,
+        accountPhoneNumber:userPhone.phoneNumber,
         otherAthletes:otherAthletes
       }}
       editButtonText={"account info"} 
@@ -86,27 +90,18 @@ export default function ViewUserInfo({userEmail,setUserEmail,userName,setUserNam
 
         try{
 
-        if(coachPhoto != defaultCoachPhoto){
-          await deleteS3Objects({urls:[defaultCoachPhoto]})
-          const desiredURLs = await uploadImagesToS3({files:[coachPhoto[0].url],s3Uri:"s3://streamlineplatform/coachPhotos/"})
-          await editingMatchingEntriesByAllFields({collectionName:"Coach",matchParams:{id:coachEntryId},
+          await editingMatchingEntriesByAllFields({collectionName:"Account",matchParams:{id:accountId},
           updateData:{
-          coachName:coachName,
-          coachBio:coachDescription,
-          coachEmail:coachEmail,
-          coachPhone:coachPhone.phoneNumber,
-          photoUrl:desiredURLs[0],
+          emailAddress:accountEmailAddress,
+          fullName:userName,
+          phoneNumber:userPhone.phoneNumber,
           editTimestamp:new Date()}})
-        }else{
-          
-          await editingMatchingEntriesByAllFields({collectionName:"Coach",matchParams:{id:coachEntryId},
-          updateData:{
-          coachName:coachName,
-          coachEmail:coachEmail,
-          coachPhone:coachPhone.phoneNumber,
-          coachBio:coachDescription,
-          editTimestamp:new Date()}})
-        }
+
+          await deleteMatchingEntriesByAllFields({collectionName:"Account",matchParams:{accountFirebaseId:user.uid}})
+
+          if(kids.length>1){
+          await addAccountDependants({dependantsList:kids,firebaseId:user.uid})
+            }
 
     }catch(error)
     {
