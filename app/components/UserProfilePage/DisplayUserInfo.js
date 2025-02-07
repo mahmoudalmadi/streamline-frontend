@@ -5,8 +5,6 @@ import { calculateAge } from "@/app/hooks/miscellaneous"
 
 export default function DisplayUserInfo({accountFullname,accountEmailAddress,accountPhoneNumber,otherAthletes}){
 
-    console.log("HIIII",accountFullname,accountEmailAddress,accountPhoneNumber)
-
     return(
 
     <div>
@@ -39,7 +37,7 @@ export default function DisplayUserInfo({accountFullname,accountEmailAddress,acc
     </div>
     </div>
 
-    {(otherAthletes.length>1&&otherAthletes[0]!="nothing")&&<div>
+    {(otherAthletes.length>0&&otherAthletes[0]!="nothing")&&<div>
       <div className="font-bold text-[16px] pt-[8px]">{CONFIG.athleteType}s on this account</div>
 
       <div className="flex flex-col space-y-[20px]">

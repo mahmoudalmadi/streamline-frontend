@@ -7,19 +7,23 @@ import DisplayUserInfo from "./DisplayUserInfo"
 import { deleteMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/deleteEntriesByMatchingFields"
 import { addAccountDependants } from "@/app/hooks/firestoreHooks/createAccount"
 
-export default function ViewUserInfo({accountId, userEmail,setUserEmail,userName,setUserName,userPhone,setUserPhone,otherAthletes,setOtherAthletes}){
+export default function ViewUserInfo({userEmail,setUserEmail,userName,setUserName,userPhone,setUserPhone,otherAthletes,setOtherAthletes}){
 
     const {user,userData} = useAuth()
 
-    const [defaultUserEmail,setDefaultUserEmail]=useState(userEmail)
-    const [defaultUserName,setDefaultUserName]=useState(userName)
+    const [defaultUserEmail,setDefaultUserEmail]=useState("")
+    const [defaultUserName,setDefaultUserName]=useState("")
     const [defaultUserPhone,setDefaultUserPhone]=useState({
-        "phoneNumber":userPhone.phoneNumber,"isValid":true
+        "phoneNumber":"","isValid":true
     })
-    const [defaultOtherAthletes,setDefaultOtherAthletes]=useState(otherAthletes)
+    const [defaultOtherAthletes,setDefaultOtherAthletes]=useState([])
 
-    console.log("USER INFO VIEW",userName)
-    console.log("USER INFO VIEW",userEmail)
+    useEffect(()=>{
+      setDefaultOtherAthletes(otherAthletes)
+      setDefaultUserEmail(userEmail)
+      setDefaultUserName(userName)
+      setDefaultUserPhone({"phoneNumber":userPhone.phoneNumber,"isValid":true})
+    },[])
 
     return(
         <>
@@ -44,7 +48,7 @@ export default function ViewUserInfo({accountId, userEmail,setUserEmail,userName
         }
       }
       displayFields={{
-        accountFullName:userName,
+        accountFullname:userName,
         accountEmailAddress:userEmail,
         accountPhoneNumber:userPhone.phoneNumber,
         otherAthletes:otherAthletes
@@ -61,7 +65,7 @@ export default function ViewUserInfo({accountId, userEmail,setUserEmail,userName
           },
           {
             value:defaultOtherAthletes,
-            setter:setDefaultOtherAthletes
+            setter:setOtherAthletes
           },
           {
             value:defaultUserPhone.phoneNumber,
@@ -90,18 +94,20 @@ export default function ViewUserInfo({accountId, userEmail,setUserEmail,userName
 
         try{
 
-          await editingMatchingEntriesByAllFields({collectionName:"Account",matchParams:{id:accountId},
+          await editingMatchingEntriesByAllFields({collectionName:"Account",matchParams:{firebaseId:user.uid},
           updateData:{
-          emailAddress:accountEmailAddress,
+          emailAddress:userEmail,
           fullName:userName,
           phoneNumber:userPhone.phoneNumber,
           editTimestamp:new Date()}})
 
-          await deleteMatchingEntriesByAllFields({collectionName:"Account",matchParams:{accountFirebaseId:user.uid}})
+          if(otherAthletes!=defaultOtherAthletes){
+          await deleteMatchingEntriesByAllFields({collectionName:"accountDependants",matchParams:{accountFirebaseId:user.uid}})
 
-          if(kids.length>1){
-          await addAccountDependants({dependantsList:kids,firebaseId:user.uid})
+          if(otherAthletes.length>0&&otherAthletes[0]!="nothing"){
+          await addAccountDependants({dependantsList:otherAthletes,firebaseId:user.uid})
             }
+          }
 
     }catch(error)
     {

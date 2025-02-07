@@ -160,7 +160,6 @@ export default function UserProfilePage() {
                 <div className="h-[8px]"/>
 
                 <ViewUserInfo
-                accountId={userInfo.userData.id}
                 userEmail={accountEmailAddress}
                 setUserEmail={setAccountEmailAddress}
                 userName={accountFullname}

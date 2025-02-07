@@ -1,11 +1,12 @@
 import { useState } from "react";
 import CONFIG from "@/config";
 import ChildBirthDatePicker from "../AuthModalComps/BirthDatePicker";
+import isUnderEighteen from "@/app/hooks/isUnderEighteen";
 
 export default function AdditionalAthletesEditor({kids,setKids}) {
 
     const [isPickerOpen, setIsPickerOpen] = useState(false);
-    console.log(kids)
+    
     const [kidBdayEditorId,setKidBdayEditorId]=useState(false)
 
     const toggleDatePicker = ({id}) => {
@@ -89,7 +90,7 @@ export default function AdditionalAthletesEditor({kids,setKids}) {
                       }
                     placeholder="Select birthday"
                     readOnly
-                    onClick={()=>{console.log(kid.id);
+                    onClick={()=>{;
                                     toggleDatePicker({id:kid.id})}
                                 }
                     className="w-full text-gray-700 border border-gray-300 rounded-[12px] text-[15px]    
@@ -101,7 +102,7 @@ export default function AdditionalAthletesEditor({kids,setKids}) {
                         {/* Backdrop */}
                         <div
                             className="fixed inset-0 bg-black bg-opacity-50 z-20"
-                            onClick={() => {setIsPickerOpen(false), console.log(kid)}} // Close on backdrop click
+                            onClick={() => {setIsPickerOpen(false)}} // Close on backdrop click
                         >
                         </div>
                         {/* Centered DatePicker */}

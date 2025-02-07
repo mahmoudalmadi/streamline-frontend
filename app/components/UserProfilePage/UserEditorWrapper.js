@@ -5,12 +5,10 @@ import AdditionalSwimmersSection from "../AuthModalComps/AdditionalSwimmersSecti
 import AdditionalAthletesEditor from "./AdditionalAthletesEditor";
 import MultiFieldPhoneEntry from "../AuthModalComps/MultiFieldPhoneEntry";
 import { useState } from "react";
-import MultiFieldEntryEditor from "../AuthModalComps/MultiFieldEntryEditor";
+import ProfileEntryEditor from "../TeamProfileEditorComponents/ProfileEntryEditor";
 
 
 export default function UserEditorWrapper({accountHolderEmailAddress,setAccountHolderEmailAddress,accountFullName,setAccountFullName,accountPhoneNumber,setAccountPhoneNumber,otherAthletes,setOtherAthletes}){
-
-    console.log("OOIOIOl,,,,",accountHolderEmailAddress,accountFullName,accountPhoneNumber)
 
     return(
 
@@ -18,20 +16,18 @@ export default function UserEditorWrapper({accountHolderEmailAddress,setAccountH
 
             <div className="w-full mx-auto space-y-[10px] mt-[10px]">
 
-            <MultiFieldEntryEditor
+            <ProfileEntryEditor
                 prompt={"Account holder full name"}
                 placeholder={"Full Name"}
-                field={"fullName"}
-                fieldResponse={accountFullName}
-                setFieldResponse={setAccountFullName}
+                response={accountFullName}
+                setResponse={setAccountFullName}
             />
 
-                <MultiFieldEntryEditor
+                <ProfileEntryEditor
                 prompt={"Account holder Email"}
                 placeholder={"Email Address"}
-                field={"emailAddress"}
-                fieldResponse={accountHolderEmailAddress}
-                setFieldResponse={setAccountHolderEmailAddress}
+                response={accountHolderEmailAddress}
+                setResponse={setAccountHolderEmailAddress}
                 />
 
                 <MultiFieldPhoneEntry
