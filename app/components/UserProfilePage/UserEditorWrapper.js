@@ -10,6 +10,8 @@ import ProfileEntryEditor from "../TeamProfileEditorComponents/ProfileEntryEdito
 
 export default function UserEditorWrapper({accountHolderEmailAddress,setAccountHolderEmailAddress,accountFullName,setAccountFullName,accountPhoneNumber,setAccountPhoneNumber,otherAthletes,setOtherAthletes}){
 
+    console.log(accountPhoneNumber)
+
     return(
 
         <div>

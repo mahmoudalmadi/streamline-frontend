@@ -10,8 +10,10 @@ export default function EditableInfoSection({EditableInfoWrapper,GeneralInfoDisp
     const [isEditingWrapperInfo,setIsEditingWrapperInfo] =useState(false)
     const [mustFixInputInfo,setMustFixInputInfo]=useState(false)
 
+
     const saveDefaultValuesOnCancel = ({actions}) => {
         actions.forEach(({ setter, setDict, field, value }) => {
+          console.log("ACRTION",actions)
           if (setter) {
             // Directly set the value using a setter function
             setter(value);
@@ -76,7 +78,7 @@ export default function EditableInfoSection({EditableInfoWrapper,GeneralInfoDisp
             <div className="flex justify-end space-x-[12px] items-center pb-[8px]">
                 <div className="text-streamlineBlue px-[10px]  py-[6px] border border-[1px] border-streamlineBlue text-[14px] rounded-full font-bold cursor-pointer"
                 onClick={()=>{
-                    // saveDefaultValuesOnCancel({actions:savingDefaultValuesOnCancel})
+                    saveDefaultValuesOnCancel({actions:savingDefaultValuesOnCancel})
                     setMustFixInputInfo(false)
                     setEnableInputChanges(false)
                     setIsEditingWrapperInfo(!isEditingWrapperInfo)

@@ -31,7 +31,18 @@ export default function ViewUserInfo({userEmail,setUserEmail,userName,setUserNam
     <EditableInfoSection 
     daysOfWeekHook={()=>{
       if (userPhone.isValid==true){
+        
         console.log("great")
+        
+        if(otherAthletes.length>0&&otherAthletes[0]!="nothing"){
+        otherAthletes.forEach((item,index)=>{
+          if(item.fullName && item.dateOfBirth){
+            console.log("great")
+          }else{
+            throw new Error("Missing dependant info")
+          }
+        })}
+
       }else{
         throw new Error("Phone Number isn't right")
       }}}
@@ -79,7 +90,7 @@ export default function ViewUserInfo({userEmail,setUserEmail,userName,setUserNam
         {value:userName,setter:setDefaultUserName},
         {value:userEmail,setter:setDefaultUserEmail},
         {value:otherAthletes,setter:setDefaultOtherAthletes},
-        {value:userPhone,setDict:setDefaultUserPhone,field:'phoneNumber'},
+        {value:userPhone.phoneNumber,setDict:setDefaultUserPhone,field:'phoneNumber'},
         ]
     }
     allStatesJson={
