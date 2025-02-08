@@ -10,9 +10,11 @@ import AdditionalSwimmersSection from "./AdditionalSwimmersSection";
 import validateFields from "@/app/hooks/firestoreHooks/validateFields";
 import { emailSignUp } from "@/app/hooks/authHooks/firebaseAuth";
 import { addAccountDependants, addAccountDetails } from "@/app/hooks/firestoreHooks/createAccount";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
 
+    const {setLoadingNewPage}=useAuth()
     const {guardianInfo, setGuardianInfo, hasEmail, hasNumber,kids,setErrorMessage} = useSignUpContext()
     const [wannaAddSwimmers,setWannaAddSwimmers] =useState()
     const [incompleteFieldsError, setIncompleteFieldsError] = useState(false)
@@ -31,7 +33,7 @@ export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
         if (guardianInfo.signUpMethod==="email"){
             
         
-            userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password})
+            userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password,setLoadingNewPage:setLoadingNewPage})
         
             console.log("JUST COMPLETED SIGNUP",userId)
     }
@@ -100,6 +102,7 @@ export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
             <MultiFieldEntryEditor
             prompt={"Your Email"}
             placeholder={"Email Address"}
+            uneditable={true}
             field={"emailAddress"}
             fieldResponse={guardianInfo}
             setFieldResponse={setGuardianInfo}

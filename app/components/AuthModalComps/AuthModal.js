@@ -12,6 +12,7 @@ import {  useSignUpContext } from '../../contexts/SignUpProvider';
 import BlackMoveLeft from "../../../public/BlackMoveLeft.svg";
 import { checkAccountExists } from '@/app/hooks/firestoreHooks/user/getUser';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/app/contexts/AuthContext';
 
 const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
@@ -27,6 +28,8 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
     const [underEighteen, setUnderEighteen] = useState(null)
 
     const {guardianInfo, setGuardianInfo, kids, setKids,errorMessage,setErrorMessage} = useSignUpContext();
+
+    const {setLoadingNewPage}=useAuth()
 
     function extractContent(str) {
         const match = str.match(/:(.*?)(?=\()/);
@@ -160,7 +163,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
                 throw("ExistenceError")
             }
 
-            await emailLogin({email:email,password:password});
+            await emailLogin({email:email,password:password,setLoadingNewPage:setLoadingNewPage});
             
             if (!path.toLowerCase().includes('checkout')){
             window.location.reload()
