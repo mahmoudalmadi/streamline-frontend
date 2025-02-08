@@ -132,10 +132,11 @@ export default function CheckoutPage() {
             if(userInfo.userData){
             if(!userInfo.otherAthletes){
                 
-                setPotentialAthletes([{fullName:userInfo.userData.fullName,athleteInfo:userInfo.userData,userId:user.uid}])
+                setPotentialAthletes([{fullName:userInfo.userData.fullName,athleteInfo:userInfo.userData,firebaseId:user.uid}])
 
                 const newAthletes = kids.map((item) => ({
                     fullName: item.fullName,
+                    firebaseId:user.uid
                   }));
                   
                   // Set state once
@@ -158,7 +159,8 @@ export default function CheckoutPage() {
     const [selectedAthleteId,setSelectedAthleteId]=useState(null)
     
     const handleRedirect = async() => {
-        
+        setLoadingNewPage(true)
+
         const entryId = await addInfoAsJson({jsonInfo:{
             coachEmail:checkoutData.eventInfo.coachEmail,
             coachName:checkoutData.eventInfo.coachName,
@@ -192,7 +194,7 @@ export default function CheckoutPage() {
         }})
 
 
-        setLoadingNewPage(true)
+        
         router.push(pathName+`/success`)
         }
 
