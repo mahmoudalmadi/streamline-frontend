@@ -1,6 +1,6 @@
 
 export function calculateAge(dateOfBirthTimestamp) {
-    const dateOfBirth = new Date(dateOfBirthTimestamp.seconds*1000)
+    const dateOfBirth = dateOfBirthTimestamp.seconds ? new Date(dateOfBirthTimestamp.seconds*1000):new Date(dateOfBirthTimestamp)
     
     const today = new Date();
     let age = today.getFullYear() - dateOfBirth.getFullYear();

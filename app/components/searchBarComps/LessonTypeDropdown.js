@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-
 const LessonTypeDropdown = ({ isVisible, onClose, lessonTypes,skillLevels, selectedLessonType, selectedSkillLevel,
 setSelectedLessonType, setSelectedSkillLevel, additionalStyling }) => {
     const divRef = useRef(null);
@@ -29,7 +28,7 @@ setSelectedLessonType, setSelectedSkillLevel, additionalStyling }) => {
                 {`absolute sm:flex-row flex-col bg-white
                     ${additionalStyling===null?
                     "left-1/2 transform -translate-x-1/2":additionalStyling}
-                 top-full mt-2 py-2 w-[340px]
+                 top-full mt-2 py-2 w-[300px]
                  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)]
                  `}
                 onClick={(e)=>e.stopPropagation()} // Close on click within the div
@@ -62,7 +61,7 @@ setSelectedLessonType, setSelectedSkillLevel, additionalStyling }) => {
                         ))}
                         </div>
                     </div>
-                    <div className='flex flex-col pl-3 pr-4'>
+                    <div className='flex flex-col pl-3 pr-4 pt-[10px] sm:pt-[0px]'>
                         <div className='text-[12px] mb-0.5 pl-3 whitespace-nowrap 
                             text-streamlineBlue pr-2 '
                             style={{

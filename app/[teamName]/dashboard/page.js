@@ -93,7 +93,7 @@ export default function TeamDashboard() {
             startDate <= endOfWeek &&
             item.status.toLowerCase() !== "available"
           );
-        });
+        }).sort((a, b) => new Date(a.start) - new Date(b.start));
       }    
 
       
@@ -306,7 +306,7 @@ export default function TeamDashboard() {
 
         <div className="flex flex-col no-scroll overflow-x-hidden justify-center items-center"
         style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
-      <DynamicScreen className={`${isEventModalOpen||isAddModalOpen?"min-h-screen no-scroll":"min-h-screen no-scroll"}`} style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
+      <DynamicScreen className={`${isEventModalOpen||isAddModalOpen?"min-h-screen w-[98%] no-scroll":"w-[99%] min-h-screen no-scroll"}`} style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
 
 
             <div className="flex flex-col min-h-screen no-scroll" style={{overflow:isEventModalOpen||isAddModalOpen?'hidden':''}}>
@@ -431,7 +431,7 @@ export default function TeamDashboard() {
                                     {item.athletes[0].fullName}
                                 </div>            
                                 <div className="w-[15%] p-[5px]">
-                                    {item.athletes[0].athleteInfo.dateOfBirth?calculateAge(item.athletes[0].athleteInfo.dateOfBirth):"Over 18"}
+                                    {item.athletes[0].athleteInfo.dateOfBirth?calculateAge(item.athletes[0].athleteInfo.dateOfBirth):"Over 18"} yrs
                                 </div>            
                                 <div className="w-[20%] p-[5px]">
                                     {item.coachName}

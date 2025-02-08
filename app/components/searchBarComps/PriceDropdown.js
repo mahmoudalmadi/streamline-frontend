@@ -31,7 +31,7 @@ setPriceUpperBound, priceUpperBound, minPrice, setMinPrice, maxPrice,setMaxPrice
                  rounded-3xl shadow-[0_0_12px_rgba(0,0,0,0.1)] px-2"
                 onClick={(e)=>e.stopPropagation()} // Close on click within the div
             >
-                <div className='text-[12px] mb-0.5 pl-3 whitespace-nowrap 
+                <div className='hidden sm:block text-[12px] mb-0.5 pl-3 whitespace-nowrap 
                 text-streamlineBlue pr-2 '
                 style={{
                     fontWeight:525
@@ -44,6 +44,56 @@ setPriceUpperBound, priceUpperBound, minPrice, setMinPrice, maxPrice,setMaxPrice
                 maxPrice={maxPrice} setMaxPrice={setMaxPrice}
                 biggestPrice={biggestPrice}
                 />
+                </div>
+                <div className='block sm:hidden text-[12px] mb-0.5 pl-3 whitespace-nowrap 
+                text-streamlineBlue pr-2 '
+                style={{
+                    // fontWeight:525
+                }}> 
+                    <div className='font-bold'>
+                    Per lesson price range ($CAD)
+                    </div>
+                    
+                    <div className='flex-col mt-[15px] space-y-[20px]'>
+                    <div className="flex h-full text-black pt-[2px] items-center mt-[4px] items-center space-x-[6px] justify-center pr-[10px]"> 
+                    <div className="text-[14px] font-bold">
+                    Minimum: 
+                    </div>
+                            
+                    <div className="flex mt-[2px] text-[14px] items-center">   
+                        <input 
+                        type="text"
+                        value={minPrice}
+                        className="w-[40px] border mr-[4px] rounded-[12px] px-[6px] py-[4px] text-center" onChange={(e)=>{
+                            if(Number(e.target.value))
+                            setMinPrice(e.target.value)
+                            else if(e.target.value=="")
+                            setMinPrice("")
+                        }}/>
+                        $CAD
+                    </div>
+                    
+                    </div>
+                    <div className="flex h-full text-black pt-[2px] items-center mt-[4px] items-center space-x-[6px] justify-center pr-[10px]"> 
+                    <div className="text-[14px] font-bold">
+                    Maximum: 
+                    </div>
+                            
+                    <div className="flex mt-[2px] text-[14px] items-center">   
+                        <input 
+                        type="text"
+                        value={maxPrice}
+                        className="w-[40px] border mr-[4px] rounded-[12px] px-[6px] py-[4px] text-center" onChange={(e)=>{
+                            if(Number(e.target.value))
+                            setMaxPrice(e.target.value)
+                            else if(e.target.value=="")
+                            setMaxPrice("")
+                        }}/>
+                        $CAD
+                    </div>
+                    
+                    </div>
+                    </div>
                 </div>
             </div>
         )

@@ -3,7 +3,7 @@ import BottomTab from "./BottomTab";
 const DynamicScreen = ({ children, className = "" }) => {
     return (
         <div
-            className={`flex flex-col w-full md:w-[98%] lg:w-[98%] px-[15px] py-[8px] ${className}`}
+            className={`flex flex-col px-[15px] py-[8px] ${className}`}
         >
             {/* Children container */}
             <div className="flex flex-col flex-grow z-10">

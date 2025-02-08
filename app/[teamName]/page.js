@@ -348,8 +348,8 @@ export default function TeamPage()  {
 
   return (
     <ErrorBoundary>
-    <div className="flex  justify-center items-center ">
-      <DynamicScreen className=" h-min-screen  md:w-[87%] lg:w-[78%]">
+    <div className="flex  justify-center items-center w-screen">
+      <DynamicScreen className="flex w-[98%] md:w-[82%] lg:[75%]">
 
         <TopBar/>
 
@@ -377,7 +377,7 @@ export default function TeamPage()  {
                     src={images[0]}
                     onClick={()=>{openModal(0)}}
                     className=
-                    "  object-cover w-full h-full cursor-pointer rounded-[15px]"
+                    "aspect-square  object-cover w-full h-full cursor-pointer rounded-[15px]"
                 />
                 </div>
             

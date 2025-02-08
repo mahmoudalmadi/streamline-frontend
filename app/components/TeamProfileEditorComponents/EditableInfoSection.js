@@ -10,8 +10,10 @@ export default function EditableInfoSection({EditableInfoWrapper,GeneralInfoDisp
     const [isEditingWrapperInfo,setIsEditingWrapperInfo] =useState(false)
     const [mustFixInputInfo,setMustFixInputInfo]=useState(false)
 
+
     const saveDefaultValuesOnCancel = ({actions}) => {
         actions.forEach(({ setter, setDict, field, value }) => {
+          console.log("ACRTION",actions)
           if (setter) {
             // Directly set the value using a setter function
             setter(value);

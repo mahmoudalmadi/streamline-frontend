@@ -122,7 +122,7 @@ export default function GoogleAddyEntryEditor({address,setAddress,streetAddress,
     return(
 
         <>
-        <div className="pb-[10px] w-[80%]">
+        <div className="pb-[10px] w-[100%]">
           <div className="text-[15px] mb-[3px] font-bold mb-[8px]">
             Full Address
           </div>
@@ -145,57 +145,63 @@ export default function GoogleAddyEntryEditor({address,setAddress,streetAddress,
           </div>}
           <div className="flex flex-col mt-[10px] space-y-[10px]">
             <div className="flex items-center">
-            <div className="flex w-[50%] items-center">
-            <div className="text-[15px] mr-[8px]">
-              City
+              <div className="flex flex-1 items-center">
+              <div className="text-[15px] mr-[8px]">
+                City
+              </div>
+              <input
+              value={city}
+              ref={divRef}
+              onChange={(event) => setCity(event.target.value)}
+              className="flex-1 text-gray-700 border border-gray-300 rounded-[12px]    
+              resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
+              focus:outline-none focus:border-blue-500 mr-[8px]" 
+              />
+              </div>
+              <div className="flex flex-1">
+                <div className="text-[15px]  mr-[8px] ml-[8px]">
+                  Province
+                </div>
+                <input
+                value={province}
+                ref={divRef}
+                onChange={(event) => setProvince(event.target.value)}
+                className="flex-1 text-gray-700 border border-gray-300 rounded-[12px]    
+                resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
+                focus:outline-none focus:border-blue-500 " 
+                />
+              </div>
             </div>
-            <input
-            value={city}
-            ref={divRef}
-            onChange={(event) => setCity(event.target.value)}
-            className=" text-gray-700 border border-gray-300 rounded-[12px]    
-            resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
-            focus:outline-none focus:border-blue-500 mr-[8px]" 
-            />
-            </div>
-            <div className="text-[15px]  mr-[8px] ml-[8px]">
-              Province
-            </div>
-            <input
-            value={province}
-            ref={divRef}
-            onChange={(event) => setProvince(event.target.value)}
-            className=" text-gray-700 border border-gray-300 rounded-[12px]    
-            resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
-            focus:outline-none focus:border-blue-500 " 
-            />
-            </div>
-            <div className="flex items-center">
-            <div className="flex w-[50%] items-center">
-            <div className="flex text-[15px] w-[160px] ">
-              Postal Code
-            </div>
-            <input
-            value={postalCode}
-            ref={divRef}
-            onChange={(event) => setPostalCode(event.target.value)}
-            className="text-gray-700 border border-gray-300 rounded-[12px]    
-            resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
-            focus:outline-none focus:border-blue-500 mr-[8px]" 
-            />
-            </div>
-            <div className="text-[15px]  mr-[8px] ml-[8px]">
-              Country
-            </div>
-            <input
-            value={country}
-            ref={divRef}
-            onChange={(event) => setCountry(event.target.value)}
-            className="text-gray-700 border border-gray-300 rounded-[12px]    
-            resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
-            focus:outline-none focus:border-blue-500" 
-            />
-            </div>
+
+              <div className="flex items-center w-full">
+                <div className="flex items-center w-[50%]">
+                <div className="flex text-[15px] pr-[10px] min-w-[95px]">
+                  Postal Code
+                </div>
+                <input
+                value={postalCode}
+                ref={divRef}
+                onChange={(event) => setPostalCode(event.target.value)}
+                className="flex-1 text-gray-700 border border-gray-300 rounded-[12px]    
+                resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
+                focus:outline-none focus:border-blue-500 mr-[8px]" 
+                />
+                </div>
+                <div className="flex w-[50%] items-center">
+                <div className="text-[15px]  mr-[8px] ml-[8px]">
+                  Country
+                </div>
+                <input
+                value={country}
+                ref={divRef}
+                onChange={(event) => setCountry(event.target.value)}
+                className="flex-1 text-gray-700 border border-gray-300 rounded-[12px]    
+                resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
+                focus:outline-none focus:border-blue-500" 
+                />
+                </div>
+
+              </div>
             </div>
         </div>
         </>

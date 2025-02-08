@@ -58,8 +58,6 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
           }));
     },[])
 
-    console.log(path.includes('checkout'))
-
   if (!isOpen && isModal) return null
 
   return (

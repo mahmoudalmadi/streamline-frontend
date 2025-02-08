@@ -38,6 +38,7 @@ export const AuthProvider = ({ children }) => {
           setUserInfo((prevInfo) => ({
             ...prevInfo, // Retain existing keys in the state object
             userData: userData,
+            otherAthletes:["nothing"]
             }))
         }
         

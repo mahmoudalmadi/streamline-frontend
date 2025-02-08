@@ -30,7 +30,7 @@ export default function PersonEntry({personInfo,noLeftMargin,noIcon}){
                         </div>
                         <div className="">
                             <div className="font-bold">
-                            {personInfo.fullName}
+                            {personInfo.fullName} {personInfo.age? `(${personInfo.age} yrs)`:""} 
                             </div>
                             
                             {personInfo.email &&
@@ -50,6 +50,8 @@ export default function PersonEntry({personInfo,noLeftMargin,noIcon}){
                                 {personInfo.phoneNumber}
                             </div>                    
                             </div>       }
+
+
                         </div>        
                         
                         </div>

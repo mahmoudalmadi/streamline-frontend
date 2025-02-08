@@ -80,9 +80,12 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
 
         // await editingMatchingEntriesByAllFields({collectionName:"TimeBlock", matchParams:{"id":pickedEvent.availableSister},updateDate})
         setHasClickedSubmit(true)
-
+        let foundSister=false
         events.forEach(async(item)=>{
             if (item.id == pickedEvent.availableSister){
+
+            foundSister=true
+
             if (!item.confirmedSister){
                 // CREATE NEWLY ACCEPTED EVENT OR CHECK FOR EXISTING CONFIRMED
 
@@ -107,7 +110,9 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                 }
 
                 const createdEntryId = await addInfoAsJson({jsonInfo:newConfirmedEvent,collectionName:"TimeBlock"})
-                
+
+                await editingMatchingEntriesByAllFields({matchedParams:{'lessonId':pickedEvent.id},updateData:{lessonId:createdEntryId}})
+
                 const editedEvents= editJsonById({fieldName:"confirmedSister",fieldValue:createdEntryId,setter:setEvents,id:pickedEvent.availableSister,jsonList:events}) 
 
                 await editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.availableSister},updateData:{confirmedSister:createdEntryId}})
@@ -118,7 +123,12 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                 const updatedCurrWeekEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setCurrWeekEvents,jsonList:currWeekEvents})
                 
                 setEvents([...updatedEvents,newConfirmedEvent])
-                setCurrWeekEvents([...updatedCurrWeekEvents,newConfirmedEvent])
+
+                const newCurrEvents = [...updatedCurrWeekEvents,newConfirmedEvent]
+
+                const sortedNewCurrEvents = newCurrEvents.sort((a, b) => new Date(a.start) - new Date(b.start));
+
+                setCurrWeekEvents(sortedNewCurrEvents)
 
                 onClose()
             }else{
@@ -129,6 +139,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                 
                 events.forEach(item=>{if(item.availableSister==pickedEvent.availableSister){confirmedSister=item}})
 
+                await editingMatchingEntriesByAllFields({matchedParams:{'lessonId':pickedEvent.id},updateData:{lessonId:confirmedSister.id}})
                 
                 const updatedCurrWeekEvents = appendToJsonSubListById({fieldMappings:{"athletes":pickedEvent.athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setCurrWeekEvents,jsonList:currWeekEvents,id:confirmedSister.id})
                 const updatedEvents = appendToJsonSubListById({fieldMappings:{"athletes":pickedEvent.athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setEvents,jsonList:events,id:confirmedSister.id})
@@ -142,11 +153,52 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                 await editingMatchingEntriesByAllFields({collectionName:"TimeBlock", matchParams:{"id":item.confirmedSister},updateData:{athletes:[...confirmedSister.athletes,...pickedEvent.athletes],contact:[...confirmedSister.contact,...pickedEvent.contact],numberOfAthletes:confirmedSister.numberOfAthletes+1}})
                 onClose()
             }
+
             }
         })
 
-    }
+        if(!foundSister){
 
+            const newConfirmedEvent = {
+                coachEmail:pickedEvent.coachEmail,
+                coachName:pickedEvent.coachName,
+                coachPhone:pickedEvent.coachPhone,
+                createdOn:new Date(),
+                day:pickedEvent.day,
+                end:pickedEvent.end,
+                lessonType:pickedEvent.lessonType,
+                locationId:pickedEvent.locationId,
+                reminder:pickedEvent.reminder,
+                start:pickedEvent.start,
+                status:"Confirmed",
+                numberOfAthletes:1,
+                teamId:pickedEvent.teamId,
+                title:pickedEvent.title,
+                availableSister:pickedEvent.availableSister,
+                athletes:pickedEvent.athletes,
+                contact:pickedEvent.contact
+            }
+
+            const createdEntryId = await addInfoAsJson({jsonInfo:newConfirmedEvent,collectionName:"TimeBlock"})
+
+            await deleteMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.id}})
+            
+            const updatedEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setEvents,jsonList:events})
+            const updatedCurrWeekEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setCurrWeekEvents,jsonList:currWeekEvents})
+            
+            setEvents([...updatedEvents,newConfirmedEvent])
+
+            const newCurrEvents = [...updatedCurrWeekEvents,newConfirmedEvent]
+
+            const sortedNewCurrEvents = newCurrEvents.sort((a, b) => new Date(a.start) - new Date(b.start));
+
+            setCurrWeekEvents(sortedNewCurrEvents)            
+
+            onClose()
+        }
+
+    }
+    console.log(pickedEvent)
     const handleRejectRequest=()=>{
 
 
@@ -154,11 +206,12 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
         const editedCurrEvents= editJsonById({fieldName:"status",fieldValue:"Cancelled",setter:setEvents,id:pickedEvent.id,jsonList:currWeekEvents}) 
 
         // const currEvent = pickedEvent
+        let foundSister=false
 
         // currEvent["status"] = "Cancelled"
 
         events.forEach(item=>{if(item.id==pickedEvent.availableSister){
-
+            foundSister=true
             editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":item.id},updateData:{numberOfSpots:item.numberOfSpots+1}})
             editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":pickedEvent.id},updateData:{status:"Cancelled"}})
             
@@ -173,6 +226,15 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
     
     
         })
+
+        if(!foundSister){
+            editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":pickedEvent.id},updateData:{status:"Cancelled"}})
+            
+            setEvents(editedEvents)
+            setCurrWeekEvents(editedCurrEvents)
+            onClose()
+
+        }
 
 
 
@@ -225,7 +287,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
         setCurrWeekEvents([...updatedCurrWeekEvents])
         onClose()
 
-        await deleteMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"seriesId":pickedEvent.seriesId}})
+        await deleteMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"seriesId":pickedEvent.seriesId,"status":"Available"}})
 
     }
 

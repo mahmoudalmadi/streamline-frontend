@@ -74,7 +74,7 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                             }
                             else{
                             setLoadingNewPage(true)
-                            router.push(`/user/${userInfo.userData.firebaseId}`)
+                            router.push(`/user/${user.uid}`)
                             }
                             onClose()
                         }
@@ -82,7 +82,9 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                         >
                             Profile
                         </div>
-                        <div className='py-[7px] px-[8px] text-[14px] text-gray-700 w-full hover:bg-gray-100'
+                        {
+                           userInfo.userData.accountType==="team"&& 
+                            <div className='py-[7px] px-[8px] text-[14px] text-gray-700 w-full hover:bg-gray-100'
                         onClick={()=>{
                             
                             if(userInfo.userData.accountType==="team")
@@ -102,7 +104,7 @@ const OptionsDropdown = ({isVisible, onClose, setIsLogin, openLogInModal}) => {
                             onClose()
                             }}>
                             Dashboard
-                        </div>
+                        </div>}
                         <div className='w-full bg-gray-200 h-[1px]'/>
                         <div className='py-[7px] px-[8px] text-[14px] text-gray-700 w-full hover:bg-gray-100'
                         onClick={()=>{logout(router); onClose()}}>

@@ -509,7 +509,7 @@ export default function TeamProfileEditor() {
     return(
       // !firstLoading &&
       <div className="flex justify-center items-center h-full">
-      <DynamicScreen className=" h-full">
+      <DynamicScreen className="w-[99%] md:w-[82%] lg:[75%] h-full">
 
         <TopBar/>
 
