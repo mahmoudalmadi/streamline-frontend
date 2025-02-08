@@ -363,7 +363,7 @@ export default function TeamDashboard() {
             </ModalTemplate>
 
             <ModalTemplate isOpen={isEventModalOpen} onClose={closeEventModal}>
-                <EventModal pickedEvent={pickedEvent} streetAddress={currentLocation.parsedAddress.streetAddress} onClose={closeEventModal} setCurrWeekEvents={setCurrWeekEvents} setEvents={setEvents} events={events} currWeekEvents={currWeekEvents}/>
+                <EventModal pickedEvent={pickedEvent} streetAddress={currentLocation.parsedAddress.streetAddress} onClose={closeEventModal} setCurrWeekEvents={setCurrWeekEvents} setEvents={setEvents} events={events} currWeekEvents={currWeekEvents} athletes={pickedEvent.athletes}/>
             </ModalTemplate>
 
             {/* add Availability modal */}

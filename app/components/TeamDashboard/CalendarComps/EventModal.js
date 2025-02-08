@@ -15,9 +15,12 @@ import { FaTrash } from "react-icons/fa";
 import { deleteMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/deleteEntriesByMatchingFields";
 import LoadingSubScreen from "../../loadingSubscreen";
 import { changeField } from "@/app/hooks/changeField";
+import { useAuth } from "@/app/contexts/AuthContext";
 
-export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWeekEvents, setEvents,events,currWeekEvents}){
+export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWeekEvents, setEvents,events,currWeekEvents,athletes}){
     
+    const {userInfo}=useAuth()
+
     function formatEventTime({startTime, endTime}) {
         // Days of the week and months for formatting
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -105,13 +108,13 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                     teamId:pickedEvent.teamId,
                     title:pickedEvent.title,
                     availableSister:pickedEvent.availableSister,
-                    athletes:pickedEvent.athletes,
+                    athletes:athletes,
                     contact:pickedEvent.contact
                 }
 
                 const createdEntryId = await addInfoAsJson({jsonInfo:newConfirmedEvent,collectionName:"TimeBlock"})
 
-                await editingMatchingEntriesByAllFields({matchedParams:{'lessonId':pickedEvent.id},updateData:{lessonId:createdEntryId}})
+                await editingMatchingEntriesByAllFields({collectionName:"LessonBookings",matchedParams:{'lessonId':pickedEvent.id},updateData:{lessonId:createdEntryId}})
 
                 const editedEvents= editJsonById({fieldName:"confirmedSister",fieldValue:createdEntryId,setter:setEvents,id:pickedEvent.availableSister,jsonList:events}) 
 
@@ -139,10 +142,10 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                 
                 events.forEach(item=>{if(item.availableSister==pickedEvent.availableSister){confirmedSister=item}})
 
-                await editingMatchingEntriesByAllFields({matchedParams:{'lessonId':pickedEvent.id},updateData:{lessonId:confirmedSister.id}})
+                await editingMatchingEntriesByAllFields({collectionName:"LessonBookings",matchedParams:{'lessonId':pickedEvent.id},updateData:{lessonId:confirmedSister.id}})
                 
-                const updatedCurrWeekEvents = appendToJsonSubListById({fieldMappings:{"athletes":pickedEvent.athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setCurrWeekEvents,jsonList:currWeekEvents,id:confirmedSister.id})
-                const updatedEvents = appendToJsonSubListById({fieldMappings:{"athletes":pickedEvent.athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setEvents,jsonList:events,id:confirmedSister.id})
+                const updatedCurrWeekEvents = appendToJsonSubListById({fieldMappings:{"athletes":athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setCurrWeekEvents,jsonList:currWeekEvents,id:confirmedSister.id})
+                const updatedEvents = appendToJsonSubListById({fieldMappings:{"athletes":athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setEvents,jsonList:events,id:confirmedSister.id})
                 const finalizedEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setEvents,jsonList:updatedEvents})
                 const finalizedCurrWeekEvents = removeJsonByField({fieldName:"id",fieldValue:pickedEvent.id,setter:setCurrWeekEvents,jsonList:updatedCurrWeekEvents})
 
@@ -150,7 +153,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                 setCurrWeekEvents(finalizedCurrWeekEvents)
                 await deleteMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.id}})
 
-                await editingMatchingEntriesByAllFields({collectionName:"TimeBlock", matchParams:{"id":item.confirmedSister},updateData:{athletes:[...confirmedSister.athletes,...pickedEvent.athletes],contact:[...confirmedSister.contact,...pickedEvent.contact],numberOfAthletes:confirmedSister.numberOfAthletes+1}})
+                await editingMatchingEntriesByAllFields({collectionName:"TimeBlock", matchParams:{"id":item.confirmedSister},updateData:{athletes:[...confirmedSister.athletes,...athletes],contact:[...confirmedSister.contact,...pickedEvent.contact],numberOfAthletes:confirmedSister.numberOfAthletes+1}})
                 onClose()
             }
 
@@ -175,7 +178,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                 teamId:pickedEvent.teamId,
                 title:pickedEvent.title,
                 availableSister:pickedEvent.availableSister,
-                athletes:pickedEvent.athletes,
+                athletes:athletes,
                 contact:pickedEvent.contact
             }
 
@@ -437,7 +440,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                     </div>
                     </div>
 
-                    {selectedLessonTypes&&
+                    {(selectedLessonTypes&&userInfo.userData.accountType=='team')&&
                     <>
                     {(pickedEvent.numberOfSpots||pickedEvent.numberOfAthletes)&&<div className="flex text-[14px] ml-[38px]">
                     {pickedEvent.numberOfSpots?
@@ -499,7 +502,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                     </div>
                     
                     </div>
-                    {(pickedEvent.coachName || pickedEvent.athletes) &&
+                    {(pickedEvent.coachName || athletes) &&
                     <>
                     <div className="flex items-center pt-[10px] space-x-[16px]">
 
@@ -523,13 +526,14 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                             phoneNumber:pickedEvent.coachPhone
                             }}/>}
 
-                    {pickedEvent.athletes &&
+                    {athletes &&
                     <>
+                    {athletes.length>0&&<>
                     {pickedEvent.coachName&&<div className="flex font-bold ml-[32px] text-[14px] mt-[6px] pt-[4px]">
-                    {CONFIG.athleteType}{pickedEvent.athletes.length>1?"s":""}
+                    {CONFIG.athleteType}{athletes.length>1?"s":""}
                     </div>}
 
-                    {pickedEvent.athletes.map((athlete,index)=>
+                    {athletes.map((athlete,index)=>
                     (
                     
                     athlete.athleteInfo.phoneNumber?
@@ -559,6 +563,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                     </div>
                             
                     ))}
+                    </>}
                     
                     </>
                     }
@@ -570,7 +575,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                     }
 
                     {/* BUTTONS AT THE END */}
-                    {pickedEvent.status.toLowerCase()=="pending"&&
+                    {(pickedEvent.status.toLowerCase()=="pending"&&userInfo.userData.accountType=="team")&&
                         <div className="flex space-y-[12px] flex-col w-full justify-center items-center mt-[25px]">
 
                         {
