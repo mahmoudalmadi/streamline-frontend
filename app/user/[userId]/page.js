@@ -51,9 +51,35 @@ export default function UserProfilePage() {
     const intervalRef = useRef(null);
     const triggerTimeRef = useRef(null);
     const [stillLoading,setStillLoading] = useState(true)
+    const [orderedLessons,setOrderedLessons]=useState([])
       useEffect(()=>{
         setLoadingNewPage(true)
       },[])
+
+      function formatEventTime({startTime, endTime}) {
+        // Days of the week and months for formatting
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      
+        // Extracting components for the start time
+        const startDay = daysOfWeek[startTime.getDay()];
+        const startMonth = months[startTime.getMonth()];
+        const startDate = startTime.getDate();
+      
+        // Formatting hours and minutes for start and end time
+        const formatTime = (date) => {
+          const hours = date.getHours() % 12 || 12; // Convert to 12-hour format
+          const minutes = date.getMinutes().toString().padStart(2, "0");
+          const amPm = date.getHours() >= 12 ? "PM" : "AM";
+          return `${hours}${minutes !== "00" ? `:${minutes}` : ""} ${amPm}`;
+        };
+      
+        const startFormattedTime = formatTime(startTime);
+        const endFormattedTime = formatTime(endTime);
+      
+        // Return formatted string
+        return `${startDay}, ${startMonth} ${startDate} · ${startFormattedTime} –${endFormattedTime}`;
+    }
 
     useEffect(() => {
         triggerTimeRef.current = Date.now(); // Set trigger time
@@ -165,21 +191,29 @@ export default function UserProfilePage() {
                   currentBooking["locationImgs"]=locoInfo.locationImgs
                   currentBooking["teamInfo"]=locoInfo.teamInfo[0]
                   currentBooking['status']=currEvent.status
-                  currentBooking['athletes']=currEvent.athletes.length>0?currEvent.athletes.filter(item => item.athleteInfo.firebaseId === user.uid):[]
+                  currentBooking['athletes']=currEvent.athletes.length>0?currEvent.athletes.filter(item => (item.athleteInfo.accountFirebaseId === user.uid) || (item.athleteInfo.firebaseId === user.uid)):[]
                   currentBooking['eventInfo']=currEvent
+                  currentBooking['eventId']=item.lessonId
 
                   bookingsInfo[item.lessonId]=currentBooking
                   changeField({setDict:setBookingInfo,field:item.lessonId,value:currentBooking})
+                  console.log("HEIRHEIHRE",bookingInfo)
                 }
 
             })
           }
 
+          
           setLoadingNewPage(false)
           setStillLoading(false)
         }
       }, [userInfo]);
       
+    useEffect(()=>{
+      const unorderedLessons = Object.values(bookingInfo)
+      console.log("UNORDERED",bookingInfo)
+      setOrderedLessons(unorderedLessons.sort((b,a)=>new Date(a.eventInfo.start).getTime() - new Date(b.eventInfo.start).getTime()));
+    },[bookingInfo])
 
     const [editingTeamInfo,setEditingTeamInfo]=useState(false)
     const [editingContactInfo,setEditingContactInfo]=useState(false)
@@ -223,7 +257,9 @@ export default function UserProfilePage() {
 
                 {/* CONTACT INFO SECTION */}
                 <div className="flex flex-col">
-                  <div className="font-bold text-[18px] text-streamlineBlue">
+                  <div className="font-bold text-[18px] text-streamlineBlue" onClick={()=>{
+                    console.log(bookingInfo)
+                  }}>
                     Trial lessons 
                   </div>
                   {Object.keys(bookingInfo).length>0&&<div className="font-bold text-[14px] text-gray-400 leading-[12px] pb-[18px]">
@@ -231,50 +267,53 @@ export default function UserProfilePage() {
                   </div>}
 
                   <div className="w-full flex flex-col space-y-[16px] md:grid md:grid-cols-2 sm:space-y-[0px] md:gap-4 py-[10px]">
-                  {Object.keys(bookingInfo).map((item,index)=> 
+                  {orderedLessons.map((item,index)=> 
                   
                   <div className="flex w-full justify-center" key={index}>
                   <div className=" py-[20px] px-[20px] w-[80%] sm:w-[100%] border border-gray-300 rounded-xl
-                          shadow-[0_0_10px_rgba(0,0,0,0.1)] hover:shadow-streamlineBlue cursor-pointer transition-shadow duration-300" onClick={()=>{setSelectedEventId(item);openEventModal()}}>  
+                          shadow-[0_0_10px_rgba(0,0,0,0.1)] hover:shadow-streamlineBlue cursor-pointer transition-shadow duration-300" onClick={()=>{setSelectedEventId(item.eventId);openEventModal();console.log(bookingInfo[selectedEventId])}}>  
                               <div className="flex items-center  mb-[10px] space-x-[4px] items-end">
                                       <img
-                                          src={bookingInfo[item].locationImgs[0].imageUrl}
+                                          src={bookingInfo[item.eventId].locationImgs[0].imageUrl}
                                           className=
                                           " w-[140px] h-[140px] rounded-[10px]"
                                       />
                                   <div className="pl-[10px]">
                                   
                                   <div className="font-bold text-streamlineBlue">
-                                  {bookingInfo[item].teamInfo.teamName}
+                                  {bookingInfo[item.eventId].teamInfo.teamName}
+                                  </div>
+                                  <div className=" flex  text-[12px] leading-[12px] pb-[4px]">
+                                  {formatEventTime({startTime:bookingInfo[item.eventId].eventInfo.start,endTime:bookingInfo[item.eventId].eventInfo.end})}
                                   </div>
 
                                   <div className="flex-col leading-1.25 text-[14px] flex">
                                   <div className="flex">
-                                  <div className="flex font-bold mr-[3px]">{CONFIG.athleteType}{bookingInfo[item].athletes.length>1?"s":""}: 
+                                  <div className="flex font-bold mr-[3px]">{CONFIG.athleteType}{bookingInfo[item.eventId].athletes.length>1?"s":""}: 
                                   {/* </div> */}
                                   {/* <div className=" mr-[3px]"> */}
-                                    {bookingInfo[item].athletes.map((item,index)=>`${index==0?" ":", "}${item.athleteInfo.fullName}`)}
+                                    {bookingInfo[item.eventId].athletes.map((item,index)=>`${index==0?" ":", "}${item.athleteInfo.fullName}`)}
                                   </div>
                                   </div>
                                   <div className="flex">
-                                  <div className="flex font-bold mr-[3px]">Skill level: </div> {bookingInfo[item].skillLevel}
+                                  <div className="flex font-bold mr-[3px]">Skill level: </div> {bookingInfo[item.eventId].skillLevel}
                                   </div>
                                   <div className="flex">
-                                  <div className="flex font-bold mr-[3px]">Lesson type: </div> {bookingInfo[item].lessonType}
+                                  <div className="flex font-bold mr-[3px]">Lesson type: </div> {bookingInfo[item.eventId].lessonType}
                                   </div>
                                   <div className="flex-col itext-[14px]">
                                     <div className="flex items-center">
                                       <div className="mr-2 font-bold">Status:</div>
                                       <div
                                         className={`font-bold ${
-                                          bookingInfo[item].status === "Pending"
+                                          bookingInfo[item.eventId].status === "Pending"
                                             ? "text-yellow-500"
-                                            : (bookingInfo[item].status === "Confirmed")
+                                            : (bookingInfo[item.eventId].status === "Confirmed")
                                             ? "text-green-500"
                                             : "text-red-500"
                                         }`}
                                       >
-                                        {bookingInfo[item].status}
+                                        {bookingInfo[item.eventId].status}
                                       </div>
                                     </div>
                                   </div>
