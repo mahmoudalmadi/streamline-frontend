@@ -370,7 +370,7 @@ export default function TeamProfileEditor() {
         let teamId;
         
         if (isSigningUp){
-          const firebaseId = await emailSignUp({email:useDifferentEmailThanContact?alternativeSignUpEmail:contactInfo.emailAddress,password:password})
+          const firebaseId = await emailSignUp({email:useDifferentEmailThanContact?alternativeSignUpEmail:contactInfo.emailAddress,password:password,setLoadingNewPage:setLoadingNewPage})
   
           // FIRESTORE ACCOUNT INFO - DONE
           const accountId = await addInfoAsJson({jsonInfo:{

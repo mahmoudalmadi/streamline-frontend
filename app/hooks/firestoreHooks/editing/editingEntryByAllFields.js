@@ -13,6 +13,7 @@ export const editingMatchingEntriesByAllFields = async ({collectionName, matchPa
 
     // If we're querying by ID, handle it differently
     if (matchParams.id) {
+      console.log("HININI",matchParams)
       const docRef = doc(db, collectionName, matchParams.id);
       await writeBatch(db).update(docRef, updateData).commit();
       console.log(`Document with ID ${matchParams.id} updated successfully.`);

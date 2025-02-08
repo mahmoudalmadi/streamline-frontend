@@ -114,7 +114,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
 
                 const createdEntryId = await addInfoAsJson({jsonInfo:newConfirmedEvent,collectionName:"TimeBlock"})
 
-                await editingMatchingEntriesByAllFields({collectionName:"LessonBookings",matchedParams:{'lessonId':pickedEvent.id},updateData:{lessonId:createdEntryId}})
+                await editingMatchingEntriesByAllFields({collectionName:"LessonBookings",matchParams:{lessonId:pickedEvent.id},updateData:{lessonId:createdEntryId}})
 
                 const editedEvents= editJsonById({fieldName:"confirmedSister",fieldValue:createdEntryId,setter:setEvents,id:pickedEvent.availableSister,jsonList:events}) 
 
@@ -142,7 +142,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                 
                 events.forEach(item=>{if(item.availableSister==pickedEvent.availableSister){confirmedSister=item}})
 
-                await editingMatchingEntriesByAllFields({collectionName:"LessonBookings",matchedParams:{'lessonId':pickedEvent.id},updateData:{lessonId:confirmedSister.id}})
+                await editingMatchingEntriesByAllFields({collectionName:"LessonBookings",matchParams:{'lessonId':pickedEvent.id},updateData:{lessonId:confirmedSister.id}})
                 
                 const updatedCurrWeekEvents = appendToJsonSubListById({fieldMappings:{"athletes":athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setCurrWeekEvents,jsonList:currWeekEvents,id:confirmedSister.id})
                 const updatedEvents = appendToJsonSubListById({fieldMappings:{"athletes":athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setEvents,jsonList:events,id:confirmedSister.id})
@@ -202,7 +202,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
 
     }
     console.log(pickedEvent)
-    const handleRejectRequest=()=>{
+    const handleRejectRequest=async()=>{
 
 
         const editedEvents= editJsonById({fieldName:"status",fieldValue:"Cancelled",setter:setEvents,id:pickedEvent.id,jsonList:events}) 
@@ -213,7 +213,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
 
         // currEvent["status"] = "Cancelled"
 
-        events.forEach(item=>{if(item.id==pickedEvent.availableSister){
+        events.forEach((item)=>{if(item.id==pickedEvent.availableSister){
             foundSister=true
             editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":item.id},updateData:{numberOfSpots:item.numberOfSpots+1}})
             editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":pickedEvent.id},updateData:{status:"Cancelled"}})
@@ -231,7 +231,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
         })
 
         if(!foundSister){
-            editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":pickedEvent.id},updateData:{status:"Cancelled"}})
+            await editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":pickedEvent.id},updateData:{status:"Cancelled"}})
             
             setEvents(editedEvents)
             setCurrWeekEvents(editedCurrEvents)
@@ -595,7 +595,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                                  Are you sure you want to reject this trial lesson reservation? The {CONFIG.athleteType.toLowerCase()} will be notified of your response.
                              </div>
                              <div className="flex justify-center items-center space-x-[12px] justify-between w-full px-[12px]">
-                                 <div className="py-[6px] px-[10px] text-white font-bold rounded-full cursor-pointer bg-red-500" onClick={()=>{handleRejectRequest()}}>
+                                 <div className="py-[6px] px-[10px] text-white font-bold rounded-full cursor-pointer bg-red-500" onClick={async ()=>{await handleRejectRequest()}}>
                                      Yes, reject trial lesson
                                  </div>
 

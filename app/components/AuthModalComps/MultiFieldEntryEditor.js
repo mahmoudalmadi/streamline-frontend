@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
 
-export default function MultiFieldEntryEditor({prompt, placeholder, fieldResponse, setFieldResponse,field,isLong}) {
+export default function MultiFieldEntryEditor({prompt, placeholder, fieldResponse, setFieldResponse,field,isLong,uneditable}) {
 
     const divRef = useRef(null);
 
@@ -36,20 +36,22 @@ export default function MultiFieldEntryEditor({prompt, placeholder, fieldRespons
           value={fieldResponse[field]}
           ref={divRef}
           placeholder={placeholder}
+          disabled={uneditable}
           onChange={(event) => handleChange(divRef,event,setFieldResponse)}
-          className="w-full text-gray-700 border border-gray-300 rounded-[12px]  
+          className={`w-full text-gray-700 border border-gray-300 rounded-[12px]  
           resize-none overflow-auto overflow-hidden pl-[7px] pt-[7px] 
-          focus:outline-none focus:border-blue-500" 
+          focus:outline-none focus:border-blue-500 ${uneditable ?"bg-gray-300":""}`}
           />
           :
           <input
           value={fieldResponse[field]}
           ref={divRef}
+          disabled={uneditable}
           placeholder={placeholder}
           onChange={(event) => handleChange(divRef,event,setFieldResponse)}
-          className="w-full text-gray-700 border border-gray-300 rounded-[12px]    
+          className={`w-full text-gray-700 border border-gray-300 rounded-[12px]    
           resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
-          focus:outline-none focus:border-blue-500" 
+          focus:outline-none focus:border-blue-500 ${uneditable ?"bg-gray-300":""}`} 
           />
           }
         </div>

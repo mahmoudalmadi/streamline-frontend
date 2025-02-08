@@ -36,6 +36,7 @@ export default function ProfileEntryEditor({prompt, placeholder, response, setRe
           <textarea 
           value={response}
           ref={divRef}
+          uneditable={uneditable}
           placeholder={placeholder}
           onChange={(event) => handleChange(divRef,event,setResponse)}
           className="w-full text-gray-700 border border-gray-300 rounded-[12px]  
@@ -46,9 +47,9 @@ export default function ProfileEntryEditor({prompt, placeholder, response, setRe
           <input
           value={response}
           ref={divRef}
+          disabled={uneditable}
           placeholder={placeholder}
           onChange={(event) => handleChange(divRef,event,setResponse)}
-          disabled={uneditable}
           className={`w-full text-gray-700 border border-gray-300 rounded-[12px]    
           resize-none overflow-auto overflow-hidden pl-[9px] pt-[3px] pb-[2px]
           focus:outline-none focus:border-blue-500 text-[15px] ${uneditable ?"bg-gray-300":""}`} 

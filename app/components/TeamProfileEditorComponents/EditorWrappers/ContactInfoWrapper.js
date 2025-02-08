@@ -17,6 +17,7 @@ export default function ContactInfoWrapper({fullName,setFullName,emailAddress,se
               prompt={"Team Contact Email"}
               response={emailAddress}
               setResponse={setEmailAddress}
+              uneditable={true}
               placeholder={"Email Address"}
               isLong={false}
               />

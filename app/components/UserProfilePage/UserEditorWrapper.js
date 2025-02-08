@@ -28,6 +28,7 @@ export default function UserEditorWrapper({accountHolderEmailAddress,setAccountH
                 <ProfileEntryEditor
                 prompt={"Account holder Email"}
                 placeholder={"Email Address"}
+                uneditable={true}
                 response={accountHolderEmailAddress}
                 setResponse={setAccountHolderEmailAddress}
                 />

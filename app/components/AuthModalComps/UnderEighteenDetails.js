@@ -14,9 +14,11 @@ import CONFIG from "@/config";
 import validateFields from "@/app/hooks/firestoreHooks/validateFields";
 import { emailSignUp } from "@/app/hooks/authHooks/firebaseAuth";
 import { addAccountDependants, addAccountDetails } from "@/app/hooks/firestoreHooks/createAccount";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) {
     
+    const {setLoadingNewPage}=useAuth()
     const {guardianInfo, setGuardianInfo, kids, setKids, hasEmail, hasNumber, setErrorMessage} = useSignUpContext()
     const [guardianFullName, setGuardianFullName] = useState("")
     const [incompleteFieldsError, setIncompleteFieldsError] = useState(false)
@@ -57,7 +59,7 @@ export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) 
             let userId; 
 
             if (guardianInfo.signUpMethod==="email"){
-            userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password})
+            userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password,setLoadingNewPage:setLoadingNewPage})
             }
         
         const accountDetails={
@@ -104,6 +106,7 @@ export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) 
             prompt={"Guardian Email"}
             placeholder={"Email Address"}
             field={"emailAddress"}
+            uneditable={true}
             fieldResponse={guardianInfo}
             setFieldResponse={setGuardianInfo}
             />

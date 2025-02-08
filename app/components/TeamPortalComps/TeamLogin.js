@@ -112,7 +112,7 @@ export default function TeamLogin({switchModalType}){
             if (!accountExists){
                 throw("ExistenceError")
             }
-            await emailLogin({email:teamRegistrantInfo.emailAddress,password:teamRegistrantInfo.password});
+            await emailLogin({email:teamRegistrantInfo.emailAddress,password:teamRegistrantInfo.password,setLoadingNewPage:setLoadingNewPage});
             
             router.push(`/${teamName}/dashboard`)
             if(isModal){onClose()}
