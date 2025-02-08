@@ -202,7 +202,7 @@ export default function UserProfilePage() {
                 <LoadingSubScreen loadingMessage={!loadingNewPage?`Loading your profile`:""}/>
             </div>
             :
-            <div>
+            <div className="">
                 
                 {/* TEAM INFO SECTION */}
 
