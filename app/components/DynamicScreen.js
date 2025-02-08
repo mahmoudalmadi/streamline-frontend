@@ -15,7 +15,7 @@ const DynamicScreen = ({ children, className = "" }) => {
             <div className="mt-[10px]">
                 {/* Divider */}
                 <div className="mt-[30px]">
-                    <div className="h-[1px] bg-gray-400 w-full" />
+                    {/* <div className="h-[1px] bg-gray-400 w-full" /> */}
                 </div>
                 <BottomTab />
             </div>

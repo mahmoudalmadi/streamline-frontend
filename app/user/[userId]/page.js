@@ -30,14 +30,14 @@ import { calculateAge } from "@/app/hooks/miscellaneous";
 import ViewUserInfo from "@/app/components/UserProfilePage/ViewUserInfo";
 import { getEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByConditions";
 import { useRouter } from "next/navigation";
+import ModalTemplate from "@/app/components/ModalTemplate";
+import EventModal from "@/app/components/TeamDashboard/CalendarComps/EventModal";
 
 export default function UserProfilePage() {
 
-    const {userInfo
-      // loadingNewPage,setLoadingNewPage
+    const {userInfo,
+      loadingNewPage,setLoadingNewPage
       ,user}= useAuth();
-
-    const [loadingNewPage,setLoadingNewPage]=useState(true)
 
     const router = useRouter()
 
@@ -46,10 +46,14 @@ export default function UserProfilePage() {
     const [accountFullname,setAccountFullname]=useState("")
     const [accountEmailAddress,setAccountEmailAddress]=useState("")
     const [otherAthletes,setOtherAthletes]=useState([])
-    const [bookingInfo,setBookingInfo]=useState()
+    const [bookingInfo,setBookingInfo]=useState({})
     const [allParsedAddresess,setAllParsedAddresses]=useState([])
     const intervalRef = useRef(null);
     const triggerTimeRef = useRef(null);
+    const [stillLoading,setStillLoading] = useState(true)
+      useEffect(()=>{
+        setLoadingNewPage(true)
+      },[])
 
     useEffect(() => {
         triggerTimeRef.current = Date.now(); // Set trigger time
@@ -68,7 +72,7 @@ export default function UserProfilePage() {
                         changeField({ setDict: setAccountPhoneNumber, field: "isValid", value: true });
                         setAccountEmailAddress(userInfo.userData.emailAddress)
                         setAccountFullname(userInfo.userData.fullName);
-                        console.log(userInfo.otherAthletes)
+                        
                         
                         setOtherAthletes(userInfo.otherAthletes)
                         getLocationInfo(); // Call after it's defined
@@ -93,6 +97,7 @@ export default function UserProfilePage() {
 
           const lessonIds = new Set()
           const bookingsInfo = {}
+          
 
           if (lessonEntries.length>0){
 
@@ -105,13 +110,13 @@ export default function UserProfilePage() {
                   const eventInfo = await getEntriesByConditions({collectionName:"TimeBlock",conditions:[{'field':'id',operator:"==",value:item.lessonId}]})
 
                   const currEvent = eventInfo[0]
-  
+                  console.log("WTF HAPPENED",currEvent,item)
                   const locoInfo = await batchedGetEntriesByConditions({
                       queriesWithKeys:[{
                           key:`locationInfo`,
                           queryConfig:{
                             collectionName:'Location',
-                            conditions:[{'field':"locationId",'operator':'==',value:currEvent.locationId}]
+                            conditions:[{'field':"id",'operator':'==',value:currEvent.locationId}]
                           }
                       },{
                           key:`skillMapping`,
@@ -154,39 +159,45 @@ export default function UserProfilePage() {
                   const currentBooking = {}
   
                   const eventTypesInfo = currEvent.lessonType[0].split('`')
-
-                  currentBooking["locationInfo"]=locoInfo.locationInfo
+                  currentBooking["locationInfo"]=locoInfo.locationInfo[0]
                   currentBooking["skillLevel"]=skillLevelsMapping[eventTypesInfo[0]]
                   currentBooking["lessonType"]=lessonTypesMapping[eventTypesInfo[1]]
                   currentBooking["locationImgs"]=locoInfo.locationImgs
-                  currentBooking["teamInfo"]=locoInfo.teamInfo
-  
-                  bookingsInfo[lessonEntries.id]=currentBooking
+                  currentBooking["teamInfo"]=locoInfo.teamInfo[0]
+                  currentBooking['status']=currEvent.status
+                  currentBooking['athletes']=currEvent.athletes.length>0?currEvent.athletes.filter(item => item.athleteInfo.firebaseId === user.uid):[]
+                  currentBooking['eventInfo']=currEvent
+
+                  bookingsInfo[item.lessonId]=currentBooking
+                  changeField({setDict:setBookingInfo,field:item.lessonId,value:currentBooking})
                 }
 
             })
           }
 
-          console.log("bookings infooo",bookingsInfo)
-          setBookingInfo(bookingsInfo)
-          
           setLoadingNewPage(false)
+          setStillLoading(false)
         }
       }, [userInfo]);
       
 
     const [editingTeamInfo,setEditingTeamInfo]=useState(false)
     const [editingContactInfo,setEditingContactInfo]=useState(false)
-    
+    const [selectedEventId,setSelectedEventId]=useState(null)
     const [selectedPage,setSelectedPage]=useState("profile")
+
+    const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+
+    const openEventModal = () => {setIsEventModalOpen(true)};
+    const closeEventModal = () => setIsEventModalOpen(false);
 
     return(
 
         <div className="flex overflow-x-hidden justify-center items-center w-full">
-          <DynamicScreen className="flex min-h-screen w-[98%] md:w-[80%] lg:w-[72%]">
+          <DynamicScreen className="flex min-h-screen w-[98%] md:w-[85%] lg:w-[72%]">
             <div className="min-h-screen">
             <UserDashHeader />
-            {  loadingNewPage?
+            {  loadingNewPage||stillLoading?
             <div className="items-center">
                 <LoadingSubScreen loadingMessage={!loadingNewPage?`Loading your profile`:""}/>
             </div>
@@ -215,32 +226,57 @@ export default function UserProfilePage() {
                   <div className="font-bold text-[18px] text-streamlineBlue">
                     Trial lessons 
                   </div>
+                  {Object.keys(bookingInfo).length>0&&<div className="font-bold text-[14px] text-gray-400 leading-[12px] pb-[18px]">
+                    Click on lesson for more details/contact info
+                  </div>}
 
+                  <div className="w-full flex flex-col space-y-[16px] md:grid md:grid-cols-2 sm:space-y-[0px] md:gap-4 py-[10px]">
                   {Object.keys(bookingInfo).map((item,index)=> 
                   
                   <div className="flex w-full justify-center" key={index}>
-                  <div className=" py-[20px] px-[20px] border border-gray-300 rounded-xl
-                          shadow-[0_0_10px_rgba(0,0,0,0.1)] ">  
+                  <div className=" py-[20px] px-[20px] w-[80%] sm:w-[100%] border border-gray-300 rounded-xl
+                          shadow-[0_0_10px_rgba(0,0,0,0.1)] hover:shadow-streamlineBlue cursor-pointer transition-shadow duration-300" onClick={()=>{setSelectedEventId(item);openEventModal()}}>  
                               <div className="flex items-center  mb-[10px] space-x-[4px] items-end">
                                       <img
-                                          src={bookingInfo[item].locationImgs[0]}
+                                          src={bookingInfo[item].locationImgs[0].imageUrl}
                                           className=
                                           " w-[140px] h-[140px] rounded-[10px]"
                                       />
                                   <div className="pl-[10px]">
                                   
-                                  <div className="font-bold">
+                                  <div className="font-bold text-streamlineBlue">
                                   {bookingInfo[item].teamInfo.teamName}
                                   </div>
 
                                   <div className="flex-col leading-1.25 text-[14px] flex">
-                                  <div className=" mr-[3px]">Trial lesson, 1 {CONFIG.athleteType.toLowerCase()}
+                                  <div className="flex">
+                                  <div className="flex font-bold mr-[3px]">{CONFIG.athleteType}{bookingInfo[item].athletes.length>1?"s":""}: 
+                                  {/* </div> */}
+                                  {/* <div className=" mr-[3px]"> */}
+                                    {bookingInfo[item].athletes.map((item,index)=>`${index==0?" ":", "}${item.athleteInfo.fullName}`)}
+                                  </div>
                                   </div>
                                   <div className="flex">
-                                  <div className="flex font-bold mr-[3px]">Skill level: </div> {currSelectedSkillLevel}
+                                  <div className="flex font-bold mr-[3px]">Skill level: </div> {bookingInfo[item].skillLevel}
                                   </div>
                                   <div className="flex">
-                                  <div className="flex font-bold mr-[3px]">Lesson type: </div> {currSelectedLessonType}
+                                  <div className="flex font-bold mr-[3px]">Lesson type: </div> {bookingInfo[item].lessonType}
+                                  </div>
+                                  <div className="flex-col itext-[14px]">
+                                    <div className="flex items-center">
+                                      <div className="mr-2 font-bold">Status:</div>
+                                      <div
+                                        className={`font-bold ${
+                                          bookingInfo[item].status === "Pending"
+                                            ? "text-yellow-500"
+                                            : (bookingInfo[item].status === "Confirmed")
+                                            ? "text-green-500"
+                                            : "text-red-500"
+                                        }`}
+                                      >
+                                        {bookingInfo[item].status}
+                                      </div>
+                                    </div>
                                   </div>
                                   </div>
 
@@ -249,6 +285,7 @@ export default function UserProfilePage() {
 
                           </div>
                   </div>)}
+                  </div>
 
                   {
                     Object.keys(bookingInfo).length==0&&
@@ -270,6 +307,10 @@ export default function UserProfilePage() {
 
                 </div>
                 {/* LOCATION SECTION */}
+
+                <ModalTemplate isOpen={isEventModalOpen} onClose={closeEventModal}>
+                {selectedEventId&&<EventModal pickedEvent={bookingInfo[selectedEventId].eventInfo} athletes={bookingInfo[selectedEventId].athletes} streetAddress={bookingInfo[selectedEventId].locationInfo.address} onClose={closeEventModal}/>}
+                </ModalTemplate>
 
             </div>
             }
