@@ -132,7 +132,7 @@ export default function CheckoutPage() {
             if(userInfo.userData){
             if(!userInfo.otherAthletes){
                 
-                setPotentialAthletes([{fullName:userInfo.userData.fullName,athleteInfo:userInfo.userData}])
+                setPotentialAthletes([{fullName:userInfo.userData.fullName,athleteInfo:userInfo.userData,userId:user.uid}])
 
                 const newAthletes = kids.map((item) => ({
                     fullName: item.fullName,
@@ -159,8 +159,6 @@ export default function CheckoutPage() {
     
     const handleRedirect = async() => {
         
-        console.log("HELLOO,",user.uid)
-
         const entryId = await addInfoAsJson({jsonInfo:{
             coachEmail:checkoutData.eventInfo.coachEmail,
             coachName:checkoutData.eventInfo.coachName,
@@ -180,6 +178,15 @@ export default function CheckoutPage() {
             athletes:[potentialAthletes[selectedAthleteId]],
             contact:[potentialAthletes[selectedAthleteId].athleteInfo.phoneNumber?{phoneNumber:"null"}:userInfo.userData]
         },collectionName:"TimeBlock"})
+
+        const bookedLessonId=await addInfoAsJson({
+            jsonInfo:{
+                userId:user.uid,
+                lessonId:entryId,
+                athlete:potentialAthletes[selectedAthleteId].fullName
+            },
+            collectionName:"LessonBookings"
+        })
 
         await editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":checkoutData.eventInfo.id},updateData:{numberOfSpots:checkoutData.eventInfo.numberOfSpots-1,pendingSisters:checkoutData.eventInfo.pendingSisters?[...checkoutData.eventInfo.pendingSisters,entryId]:[entryId],lessonType:[`${lessonTypesMapping[currSelectedSkillLevel]}\`${lessonTypesMapping[currSelectedLessonType]}`]
         }})

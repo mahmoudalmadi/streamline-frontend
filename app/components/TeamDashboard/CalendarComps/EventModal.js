@@ -110,7 +110,9 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                 }
 
                 const createdEntryId = await addInfoAsJson({jsonInfo:newConfirmedEvent,collectionName:"TimeBlock"})
-                
+
+                await editingMatchingEntriesByAllFields({matchedParams:{'lessonId':pickedEvent.id},updateData:{lessonId:createdEntryId}})
+
                 const editedEvents= editJsonById({fieldName:"confirmedSister",fieldValue:createdEntryId,setter:setEvents,id:pickedEvent.availableSister,jsonList:events}) 
 
                 await editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.availableSister},updateData:{confirmedSister:createdEntryId}})
@@ -137,6 +139,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                 
                 events.forEach(item=>{if(item.availableSister==pickedEvent.availableSister){confirmedSister=item}})
 
+                await editingMatchingEntriesByAllFields({matchedParams:{'lessonId':pickedEvent.id},updateData:{lessonId:confirmedSister.id}})
                 
                 const updatedCurrWeekEvents = appendToJsonSubListById({fieldMappings:{"athletes":pickedEvent.athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setCurrWeekEvents,jsonList:currWeekEvents,id:confirmedSister.id})
                 const updatedEvents = appendToJsonSubListById({fieldMappings:{"athletes":pickedEvent.athletes,"contact":pickedEvent.contact,"numberOfAthletes":1},setter:setEvents,jsonList:events,id:confirmedSister.id})

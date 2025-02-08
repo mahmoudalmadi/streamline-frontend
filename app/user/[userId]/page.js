@@ -28,6 +28,8 @@ import UserDashHeader from "@/app/components/UserProfilePage/UserDashHeader";
 import PersonEntry from "@/app/components/TeamDashboard/CalendarComps/PersonEntry";
 import { calculateAge } from "@/app/hooks/miscellaneous";
 import ViewUserInfo from "@/app/components/UserProfilePage/ViewUserInfo";
+import { getEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByConditions";
+import { useRouter } from "next/navigation";
 
 export default function UserProfilePage() {
 
@@ -36,6 +38,8 @@ export default function UserProfilePage() {
       ,user}= useAuth();
 
     const [loadingNewPage,setLoadingNewPage]=useState(true)
+
+    const router = useRouter()
 
     //CONTACT INFO STATES
     const [accountPhoneNumber, setAccountPhoneNumber] = useState({phoneNumber:"", isValid:null})
@@ -82,54 +86,88 @@ export default function UserProfilePage() {
         // Define the function BEFORE calling it
         async function getLocationInfo() {
       
-          const bookingsInfo = await getEntriesByMatching({
-            collectionName: "TimeBlock",
+          const lessonEntries = await getEntriesByMatching({
+            collectionName: "LessonBookings",
             fields: { userId: user.uid },
           });
-          
-          if (bookingsInfo.length>1){
 
-            bookingsInfo.forEach(async(item)=>{
+          const lessonIds = new Set()
+          const bookingsInfo = {}
 
-                const locoInfo = await batchedGetEntriesByConditions({
-                    queriesWithKeys:[{
-                        key:`locationInfo`,
-                        queryConfig:{
-                          collectionName:'Location',
-                          conditions:[{'field':"locationId",'operator':'==',value:item.locationId}]
-                        }
-                    },{
-                        key:`skillMapping`,
-                        queryConfig:{
-                          collectionName:'SkillLevel',
-                          conditions:[{'field':"locationId",'operator':'==',value:item.locationId}]
-                        }
-                    },{
-                        key:`lessonTypeMapping`,
-                        queryConfig:{
-                          collectionName:'LessonType',
-                          conditions:[{'field':"locationId",'operator':'==',value:item.locationId}]
-                        }
-                    },{
-                        key:`locationImgs`,
-                        queryConfig:{
-                          collectionName:'Images',
-                          conditions:[{'field':"locationId",'operator':'==',value:item.locationId}]
-                        }
-                    },
-                ]
-                })
+          if (lessonEntries.length>0){
 
-                bookingsInfo["locationInfo"]=locoInfo.locationInfo
-                bookingsInfo["skillMapping"]=locoInfo.skillMapping
-                bookingsInfo["lessonTypeMapping"]=locoInfo.lessonTypeMapping
-                bookingsInfo["locationImgs"]=locoInfo.locationImgs
+            lessonEntries.forEach(async(item)=>{
 
+                if(!lessonIds.has(item.lessonId)){
+                  
+                  lessonIds.add(item.lessonId)
+  
+                  const eventInfo = await getEntriesByConditions({collectionName:"TimeBlock",conditions:[{'field':'id',operator:"==",value:item.lessonId}]})
+
+                  const currEvent = eventInfo[0]
+  
+                  const locoInfo = await batchedGetEntriesByConditions({
+                      queriesWithKeys:[{
+                          key:`locationInfo`,
+                          queryConfig:{
+                            collectionName:'Location',
+                            conditions:[{'field':"locationId",'operator':'==',value:currEvent.locationId}]
+                          }
+                      },{
+                          key:`skillMapping`,
+                          queryConfig:{
+                            collectionName:'SkillLevel',
+                            conditions:[{'field':"locationId",'operator':'==',value:currEvent.locationId}]
+                          }
+                      },{
+                          key:`lessonTypeMapping`,
+                          queryConfig:{
+                            collectionName:'LessonType',
+                            conditions:[{'field':"locationId",'operator':'==',value:currEvent.locationId}]
+                          }
+                      },{
+                          key:`locationImgs`,
+                          queryConfig:{
+                            collectionName:'Images',
+                            conditions:[{'field':"locationId",'operator':'==',value:currEvent.locationId}]
+                          }
+                      },{
+                        key:`teamInfo`,
+                        queryConfig:{
+                          collectionName:'Team',
+                          conditions:[{'field':"id",'operator':'==',value:currEvent.teamId}]
+                        }
+                    }
+                  ]
+                  })
+  
+                  const lessonTypesMapping = {}
+                  locoInfo.lessonTypeMapping.forEach((itemType)=>{
+                    lessonTypesMapping[itemType.level]=itemType.category
+                  })
+  
+                  const skillLevelsMapping = {}
+                  locoInfo.skillMapping.forEach((itemSkill)=>{
+                    skillLevelsMapping[itemSkill.level]=itemSkill.category
+                  })
+  
+                  const currentBooking = {}
+  
+                  const eventTypesInfo = currEvent.lessonType[0].split('`')
+
+                  currentBooking["locationInfo"]=locoInfo.locationInfo
+                  currentBooking["skillLevel"]=skillLevelsMapping[eventTypesInfo[0]]
+                  currentBooking["lessonType"]=lessonTypesMapping[eventTypesInfo[1]]
+                  currentBooking["locationImgs"]=locoInfo.locationImgs
+                  currentBooking["teamInfo"]=locoInfo.teamInfo
+  
+                  bookingsInfo[lessonEntries.id]=currentBooking
+                }
 
             })
           }
 
-
+          console.log("bookings infooo",bookingsInfo)
           setBookingInfo(bookingsInfo)
           
           setLoadingNewPage(false)
@@ -170,14 +208,67 @@ export default function UserProfilePage() {
                 setOtherAthletes={setOtherAthletes}
                 />
 
+                <div className="w-full h-[1px] bg-gray-200 mt-[30px] mb-[18px]"/>
 
                 {/* CONTACT INFO SECTION */}
-                <div>
- 
+                <div className="flex flex-col">
+                  <div className="font-bold text-[18px] text-streamlineBlue">
+                    Trial lessons 
+                  </div>
+
+                  {Object.keys(bookingInfo).map((item,index)=> 
+                  
+                  <div className="flex w-full justify-center" key={index}>
+                  <div className=" py-[20px] px-[20px] border border-gray-300 rounded-xl
+                          shadow-[0_0_10px_rgba(0,0,0,0.1)] ">  
+                              <div className="flex items-center  mb-[10px] space-x-[4px] items-end">
+                                      <img
+                                          src={bookingInfo[item].locationImgs[0]}
+                                          className=
+                                          " w-[140px] h-[140px] rounded-[10px]"
+                                      />
+                                  <div className="pl-[10px]">
+                                  
+                                  <div className="font-bold">
+                                  {bookingInfo[item].teamInfo.teamName}
+                                  </div>
+
+                                  <div className="flex-col leading-1.25 text-[14px] flex">
+                                  <div className=" mr-[3px]">Trial lesson, 1 {CONFIG.athleteType.toLowerCase()}
+                                  </div>
+                                  <div className="flex">
+                                  <div className="flex font-bold mr-[3px]">Skill level: </div> {currSelectedSkillLevel}
+                                  </div>
+                                  <div className="flex">
+                                  <div className="flex font-bold mr-[3px]">Lesson type: </div> {currSelectedLessonType}
+                                  </div>
+                                  </div>
+
+                                  </div>
+                              </div>
+
+                          </div>
+                  </div>)}
+
+                  {
+                    Object.keys(bookingInfo).length==0&&
+                    <div className="flex flex-col justify-center">
+
+                      <div className="w-full text-center pt-[45px] text-gray-400 font-bold">
+                        You have no reserved trial lessons
+                      </div>      
+
+                      <div className="flex justify-center">
+                        <div className=" text-center mt-[25px] rounded-full px-[16px] py-[8px] text-white bg-streamlineBlue cursor-pointer font-bold" onClick={()=>{router.push('/'); setLoadingNewPage(true)}}>
+                          Find your perfect swim club!
+                        </div>      
+                      </div>      
+
+                    </div>
+                  }
+
+
                 </div>
-
-                <div className="w-full h-[1px] bg-gray-200 mt-[18px] mb-[18px]"/>
-
                 {/* LOCATION SECTION */}
 
             </div>

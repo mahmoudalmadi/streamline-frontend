@@ -100,6 +100,7 @@ export default function ViewUserInfo({userEmail,setUserEmail,userName,setUserNam
         otherAthletes:otherAthletes,
         }}
     headerText={"Account info"}
+    
     // CURRENTLY OVER HERE
     onEdit={async()=>{
 
