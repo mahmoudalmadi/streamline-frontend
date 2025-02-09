@@ -15,6 +15,8 @@ import validateFields from "@/app/hooks/firestoreHooks/validateFields";
 import { emailSignUp } from "@/app/hooks/authHooks/firebaseAuth";
 import { addAccountDependants, addAccountDetails } from "@/app/hooks/firestoreHooks/createAccount";
 import { useAuth } from "@/app/contexts/AuthContext";
+import TermsAcknowledgment from "../termAcknowledgment";
+import SMSAgreement from "./SMSAgreement";
 
 export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) {
     
@@ -22,6 +24,7 @@ export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) 
     const {guardianInfo, setGuardianInfo, kids, setKids, hasEmail, hasNumber, setErrorMessage} = useSignUpContext()
     const [guardianFullName, setGuardianFullName] = useState("")
     const [incompleteFieldsError, setIncompleteFieldsError] = useState(false)
+    const [userPhoneAgreement,setUserPhoneAgreement]=useState(false)
 
     useEffect(()=>{
         setGuardianInfo(prevState => ({
@@ -69,6 +72,7 @@ export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) 
             firebaseId: userId.uid,
             fullName: guardianInfo.fullName,
             phoneNumber: guardianInfo.phoneNumber,
+            smsAgreement:userPhoneAgreement
         }
         addAccountDetails({accountData:accountDetails})
         
@@ -134,6 +138,13 @@ export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) 
             "Please ensure you have entered a correct phone number"
             }
         </div>}
+
+        
+        <SMSAgreement setUserPhoneAgreement={setUserPhoneAgreement} blurb={"I agree to receive SMS notifications for lesson scheduling. Standard SMS carrier rates apply."}/>
+
+
+        <TermsAcknowledgment buttonText={"Create Account"} termsPageRoute={"termsOfService/swimmers"}/>
+
 
         <div>
         <div className="flex w-full align-center justify-center mt-[10px]">

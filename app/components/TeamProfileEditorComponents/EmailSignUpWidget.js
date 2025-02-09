@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 import RedWarningIcon from "public/RedWarningIcon.svg";
 import { extractContent } from "@/app/hooks/authHooks/errorMessageProcessing";
 import { extractLatterContent } from "@/app/hooks/authHooks/errorMessageProcessing";
+import TermsAcknowledgment from "../termAcknowledgment";
+import SMSAgreement from "../AuthModalComps/SMSAgreement";
 
-const EmailSignupWidget = ({setAlternativeSignUpEmail, alternativeSignUpEmail, useDifferentEmailThanContact, setUseDifferentEmailThanContact, emailAddress, setEmailAddress, password, setPassword, completeSignUp, errorMessage,setErrorMessage}) => {
+const EmailSignupWidget = ({setAlternativeSignUpEmail, alternativeSignUpEmail, useDifferentEmailThanContact, setUseDifferentEmailThanContact, emailAddress, setEmailAddress, password, setPassword, completeSignUp, errorMessage,setErrorMessage,setUserPhoneAgreement}) => {
 
 
     return(
@@ -59,6 +61,14 @@ const EmailSignupWidget = ({setAlternativeSignUpEmail, alternativeSignUpEmail, u
         </div>}
             </div>
             <div className="h-[10px]"/>
+            <div className="w-[60%] pb-[4px]">
+
+            <SMSAgreement setUserPhoneAgreement={setUserPhoneAgreement} blurb={"I agree to have coaches registered under this team to receive SMS notifications for lesson scheduling. Standard SMS carrier rates apply."}/>
+
+            <div className="h-[10px]"/>
+
+            <TermsAcknowledgment buttonText={"Sign Up"} termsPageRoute={"termsOfService/teams"}/>
+            </div>
 
             <div className="flex justify-center rounded-[20px] font-bold text-white bg-streamlineBlue py-[7px] w-[130px] mt-[20px] cursor-pointer"
             onClick={async()=>{try{await completeSignUp()}
