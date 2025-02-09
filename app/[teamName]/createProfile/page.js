@@ -40,7 +40,7 @@ export default function TeamProfileEditor() {
   const {user, setUser,userInfo,loadingNewPage,setLoadingNewPage} = useAuth()
   const isSigningUp = searchParams.get("isSigningUp")==="true";
   const params = new URLSearchParams(searchParams.toString());
-
+  const [userPhoneAgreement,setUserPhoneAgreement]=useState(false)
   
   useEffect(() => {
     // Get current search params
@@ -380,6 +380,7 @@ export default function TeamProfileEditor() {
             firebaseId:firebaseId.uid,
             fullName:contactInfo.contactName,
             phoneNumber:contactInfo.phoneNumber,
+            smsAgreement:userPhoneAgreement,
             uploadTimestamp:new Date()
           },collectionName:"Account"})
           console.log("just registered")
@@ -725,6 +726,7 @@ export default function TeamProfileEditor() {
                     <div className="h-screen flex-col justify-center items-center">
                       <EmailSignUpWidget setAlternativeSignUpEmail={setAlternativeSignUpEmail} alternativeSignUpEmail={alternativeSignUpEmail} useDifferentEmailThanContact={useDifferentEmailThanContact} setUseDifferentEmailThanContact={setUseDifferentEmailThanContact} emailAddress={emailAddress} setEmailAddress={setEmailAddress} password={password} setPassword={setPassword}
                       completeSignUp={completeSignUp}
+                      setUserPhoneAgreement={setUserPhoneAgreement}
                       errorMessage={emailWidgetError}
                       setErrorMessage={setEmailWidgetError}
                       />

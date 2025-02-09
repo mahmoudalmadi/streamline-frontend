@@ -11,6 +11,8 @@ import validateFields from "@/app/hooks/firestoreHooks/validateFields";
 import { emailSignUp } from "@/app/hooks/authHooks/firebaseAuth";
 import { addAccountDependants, addAccountDetails } from "@/app/hooks/firestoreHooks/createAccount";
 import { useAuth } from "@/app/contexts/AuthContext";
+import TermsAcknowledgment from "../termAcknowledgment";
+import SMSAgreement from "./SMSAgreement";
 
 export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
 
@@ -18,6 +20,7 @@ export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
     const {guardianInfo, setGuardianInfo, hasEmail, hasNumber,kids,setErrorMessage} = useSignUpContext()
     const [wannaAddSwimmers,setWannaAddSwimmers] =useState()
     const [incompleteFieldsError, setIncompleteFieldsError] = useState(false)
+    const [userPhoneAgreement,setUserPhoneAgreement]=useState(false)
 
     const handleSubmit = async() => {
         try{
@@ -45,6 +48,7 @@ export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
         dateOfBirth:guardianInfo.dateOfBirth,
         fullName: guardianInfo.fullName,
         phoneNumber: guardianInfo.phoneNumber,
+        smsAgreement:userPhoneAgreement,
     }
     console.log("ABOUT TO ADD ACC details",accountDetails)
     addAccountDetails({accountData:accountDetails})
@@ -163,6 +167,12 @@ export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
             "Please ensure all the fields above are completely filled out":
             "Please ensure you have entered a correct phone number"}
         </div>}
+
+        <SMSAgreement setUserPhoneAgreement={setUserPhoneAgreement} blurb={"I agree to receive SMS notifications for lesson scheduling. Standard SMS carrier rates apply."}/>
+
+        <TermsAcknowledgment buttonText={"Create Account"} termsPageRoute={"termsOfService/swimmers"}/>
+        
+
 
         <div className="flex w-full justify-center">
         <button
