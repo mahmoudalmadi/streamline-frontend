@@ -305,7 +305,7 @@ export default function UserProfilePage() {
                                     <div className="flex items-center">
                                       <div className="mr-2 font-bold">Status:</div>
                                       <div
-                                        className={`font-bold ${
+                                        className={`font-bold mt-[1px] ${
                                           bookingInfo[item.eventId].status === "Pending"
                                             ? "text-yellow-500"
                                             : (bookingInfo[item.eventId].status === "Confirmed")
