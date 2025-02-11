@@ -33,13 +33,13 @@ export default function BottomTab() {
         Privacy Policy
         </div>
         <div className="flex flex-col break-all w-[33%] ">
-        <div className="font-bold text-center">Contact Info</div>
+        <div className="font-bold text-start">Contact Info</div>
         <div className="flex text-[14px]  items-center space-x-[6px]">
           <div className="flex justify-center w-[30px]">
             <EmailIcon/>
             </div>
         <div className="flex mt-[1px] text-[14px] break-words">
-        {"contact@experiencestreamline.com"} 
+        {CONFIG.contactEmail} 
         </div>
         </div>
         <div className="flex text-[14px] items-center space-x-[6px]">
@@ -49,7 +49,7 @@ export default function BottomTab() {
             />
         </div>
         <div className="mt-[1px]">
-        {"+1-437-242-5657"} 
+        {CONFIG.contactPhoneNumber} 
         </div></div>
         </div>
       </div>
