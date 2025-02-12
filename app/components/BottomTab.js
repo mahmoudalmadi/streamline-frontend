@@ -33,7 +33,7 @@ export default function BottomTab() {
         Privacy Policy
         </div>
         <div className="flex flex-col break-all w-[33%] ">
-        <div className="font-bold text-start">Contact Info</div>
+        <div className="font-bold text-center sm:text-start">Contact Info</div>
         <div className="flex text-[14px]  items-center space-x-[6px]">
           <div className="flex justify-center w-[30px]">
             <EmailIcon/>
