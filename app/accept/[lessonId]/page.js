@@ -7,6 +7,8 @@ import TopBar from "@/app/components/TopBarComps/TopBar";
 import LoadingSubScreen from "@/app/components/loadingSubscreen";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { changeField } from "@/app/hooks/changeField";
+import { addInfoAsJson } from "@/app/hooks/firestoreHooks/adding/addInfoAsJson";
+import { deleteMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/deleteEntriesByMatchingFields";
 import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/editingEntryByAllFields";
 import { batchedGetEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/batchedGetEntriesByConditions";
 import { getEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByConditions";
@@ -16,7 +18,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 
-export default function RejectLessonRequestPage(){
+export default function AcceptLessonRequestPage(){
 
     const router = useRouter()
     const {loadingNewPage,setLoadingNewPage,userInfo} = useAuth()
@@ -62,13 +64,80 @@ export default function RejectLessonRequestPage(){
         }
     }
 
-    const handleRejectRequest=async(availableSisterId,eventId)=>{
+    const handleAcceptRequest = async(pickedEvent) => {
 
-        const availableSister = await getEntriesByConditions({collectionName:"TimeBlock",conditions:[{field:"id",operator:"==",value:availableSisterId}]})
+            const availableSister = await getEntriesByConditions({collectionName:"TimeBlock",conditions:[{operator:"==",field:"id",value:pickedEvent.availableSister}]})
 
-        editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":availableSisterId},updateData:{numberOfSpots:availableSister[0].numberOfSpots+1}})
-        editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":eventId},updateData:{status:"Cancelled"}})
-    
+            if(availableSister.length==1){
+            if (!availableSister[0].confirmedSister){
+                // CREATE NEWLY ACCEPTED EVENT OR CHECK FOR EXISTING CONFIRMED
+
+                const newConfirmedEvent = {
+                    coachEmail:pickedEvent.coachEmail,
+                    coachName:pickedEvent.coachName,
+                    coachPhone:pickedEvent.coachPhone,
+                    createdOn:new Date(),
+                    day:pickedEvent.day,
+                    end:pickedEvent.end,
+                    lessonType:pickedEvent.lessonType,
+                    locationId:pickedEvent.locationId,
+                    reminder:pickedEvent.reminder,
+                    start:pickedEvent.start,
+                    status:"Confirmed",
+                    numberOfAthletes:1,
+                    teamId:pickedEvent.teamId,
+                    title:pickedEvent.title,
+                    availableSister:pickedEvent.availableSister,
+                    athletes:pickedEvent.athletes,
+                    contact:pickedEvent.contact
+                }
+
+                const createdEntryId = await addInfoAsJson({jsonInfo:newConfirmedEvent,collectionName:"TimeBlock"})
+
+                await editingMatchingEntriesByAllFields({collectionName:"LessonBookings",matchParams:{lessonId:pickedEvent.id},updateData:{lessonId:createdEntryId}})
+
+                await editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.availableSister},updateData:{confirmedSister:createdEntryId}})
+
+                await deleteMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.id}})
+                
+            }else{
+                
+                const confirmedSister = await getEntriesByConditions({collectionName:"TimeBlock",conditions:[{operator:"==",field:"id",value:availableSister[0].confirmedSister}]})
+
+                await editingMatchingEntriesByAllFields({collectionName:"LessonBookings",matchParams:{'lessonId':pickedEvent.id},updateData:{lessonId:availableSister[0].confirmedSister}})
+                
+                await deleteMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.id}})
+
+                await editingMatchingEntriesByAllFields({collectionName:"TimeBlock", matchParams:{"id":availableSister[0].confirmedSister},updateData:{athletes:[...confirmedSister[0].athletes,...pickedEvent.athletes],contact:[...confirmedSister[0].contact,...pickedEvent.contact],numberOfAthletes:confirmedSister[0].numberOfAthletes+1}})
+            }}else{
+                const newConfirmedEvent = {
+                    coachEmail:pickedEvent.coachEmail,
+                    coachName:pickedEvent.coachName,
+                    coachPhone:pickedEvent.coachPhone,
+                    createdOn:new Date(),
+                    day:pickedEvent.day,
+                    end:pickedEvent.end,
+                    lessonType:pickedEvent.lessonType,
+                    locationId:pickedEvent.locationId,
+                    reminder:pickedEvent.reminder,
+                    start:pickedEvent.start,
+                    status:"Confirmed",
+                    numberOfAthletes:1,
+                    teamId:pickedEvent.teamId,
+                    title:pickedEvent.title,
+                    availableSister:pickedEvent.availableSister,
+                    athletes:pickedEvent.athletes,
+                    contact:pickedEvent.contact
+                }
+
+                const createdEntryId = await addInfoAsJson({jsonInfo:newConfirmedEvent,collectionName:"TimeBlock"})
+
+                await editingMatchingEntriesByAllFields({collectionName:"LessonBookings",matchParams:{lessonId:pickedEvent.id},updateData:{lessonId:createdEntryId}})
+
+                await deleteMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{id:pickedEvent.id}})
+
+            }
+
     }
 
     useEffect(()=>{
@@ -130,24 +199,22 @@ export default function RejectLessonRequestPage(){
             currentBooking["lessonType"]=lessonTypesMapping[eventTypesInfo[1]]
             currentBooking["locationImgs"]=locoInfo.locationImgs
             currentBooking["teamInfo"]=locoInfo.teamInfo[0]
-            currentBooking['status']="Cancelled"
+            currentBooking['status']="Confirmed"
             currentBooking['athletes']=currEvent.athletes
             currentBooking['eventInfo']=currEvent
             currentBooking['eventId']=currEvent.id
             currentBooking['lessonId']=currEvent.id
-            console.log("CURRENT BOOKING",currentBooking)
             changeField({setDict:setBookingInfo,field:currEvent.id,value:currentBooking})
-            console.log("BOOKING INFO",bookingInfo)
         }
           
 
-        const rejectLessonRequest = async(id) => {
+        const acceptLessonRequest = async(id) => {
             const lessonInfo = await getEntriesByConditions({collectionName:"TimeBlock",conditions:[{field:"id",operator:"==",value:id}]})
 
             if(lessonInfo.length==1){
                 if((lessonInfo[0].status.toLowerCase()!="cancelled") && (lessonInfo[0].status.toLowerCase()!="confirmed")){
                 getLocationInfo(lessonInfo)
-                handleRejectRequest(lessonInfo[0].availableSister,lessonInfo[0].id)}
+                handleAcceptRequest(lessonInfo[0])}
                 else{
                 setRequestAlreadyDone(true)    
                 }
@@ -158,9 +225,8 @@ export default function RejectLessonRequestPage(){
 
         // console.log("PATHNAME",pathName.split('/')[2])
         const lessonId = pathName.split('/')[2]
-        console.log(lessonId)
 
-        rejectLessonRequest(lessonId)
+        acceptLessonRequest(lessonId)
 
         setLoadingNewPage(false)
         setLocalLoading(false)
@@ -217,9 +283,12 @@ export default function RejectLessonRequestPage(){
 
                                 {bookingInfo[lessonId]&&
                                 <>
+                                <div className="flex flex-1 h-full text-center mt-[30%] font-bold text-gray-500 text-[16px] mb-[15px]">
+                                    The following trial lesson request has been confirmed. The swimmer will receive an automatic notification about the confirmation.
+                                </div>
 
-                                <div className="flex flex-1 h-full text-center mt-[30%] font-bold text-gray-500 text-[16px] mb-[30px]">
-                                    The following trial lesson request has been cancelled. The swimmer will receive an automatic notification about the cancellation. If you'd like the {CONFIG.athleteType.toLowerCase()}'s contact info or view more information on this request, click on the request below.
+                                <div className=" text-center font-bold text-gray-500 text-[16px] mb-[30px]">
+                                You will both receive a reminder {bookingInfo[lessonId].eventInfo.reminder.quantity} {bookingInfo[lessonId].eventInfo.reminder.metric} before the lesson. If you'd like the {CONFIG.athleteType.toLowerCase()}'s contact info or view more information on this request, click on the request below.
                                 </div>
 
                                 <div className="flex w-full justify-center" >
@@ -258,9 +327,9 @@ export default function RejectLessonRequestPage(){
                                                 <div className="flex items-center">
                                                     <div className="mr-2 font-bold">Status:</div>
                                                     <div
-                                                    className={`font-bold mt-[1px] text-red-500`}
+                                                    className={`font-bold mt-[1px] text-green-500`}
                                                     >
-                                                    {"Cancelled"}
+                                                    {bookingInfo[lessonId].status}
                                                     </div>
                                                 </div>
                                                 </div>

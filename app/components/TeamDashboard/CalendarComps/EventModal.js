@@ -575,7 +575,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                     }
 
                     {/* BUTTONS AT THE END */}
-                    {(pickedEvent.status.toLowerCase()=="pending"&&(userInfo.teamInfo||userInfo.userData==null))&&
+                    {(pickedEvent.status.toLowerCase()=="pending"&&(userInfo.teamInfo||userInfo.userData==null)&&!auxiliaryStatus)&&
                         <div className="flex space-y-[12px] flex-col w-full justify-center items-center mt-[25px]">
 
                         {
