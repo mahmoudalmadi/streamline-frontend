@@ -17,7 +17,7 @@ import LoadingSubScreen from "../../loadingSubscreen";
 import { changeField } from "@/app/hooks/changeField";
 import { useAuth } from "@/app/contexts/AuthContext";
 
-export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWeekEvents, setEvents,events,currWeekEvents,athletes}){
+export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWeekEvents, setEvents,events,currWeekEvents,athletes,auxiliaryStatus}){
     
     const {userInfo}=useAuth()
 
@@ -409,7 +409,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
 
                     <div className="flex w-[22px] justify-center items-center">
                     <div className="flex w-[14px] h-[14px] rounded-[4px] "
-                    style={{backgroundColor:CONFIG.calendar.blockColors[pickedEvent.status.toLowerCase()]}}/>
+                    style={{backgroundColor:CONFIG.calendar.blockColors[auxiliaryStatus?auxiliaryStatus.toLowerCase():pickedEvent.status.toLowerCase()]}}/>
                     </div>
                     
                         <div className="flex font-bold   text-[18px]">
@@ -433,14 +433,14 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                         Status:
                         </div>    
                         <div>
-                        {pickedEvent.status}
+                        {auxiliaryStatus?auxiliaryStatus:pickedEvent.status}
                         </div>    
                         </div>
                     </div>
                     </div>
                     </div>
 
-                    {(selectedLessonTypes&&userInfo.userData.accountType=='team')&&
+                    {(selectedLessonTypes&&(userInfo.teamInfo||userInfo.userData==null))&&
                     <>
                     {(pickedEvent.numberOfSpots||pickedEvent.numberOfAthletes)&&<div className="flex text-[14px] ml-[38px]">
                     {pickedEvent.numberOfSpots?
@@ -575,7 +575,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
                     }
 
                     {/* BUTTONS AT THE END */}
-                    {(pickedEvent.status.toLowerCase()=="pending"&&userInfo.userData.accountType=="team")&&
+                    {(pickedEvent.status.toLowerCase()=="pending"&&(userInfo.teamInfo||userInfo.userData==null)&&!auxiliaryStatus)&&
                         <div className="flex space-y-[12px] flex-col w-full justify-center items-center mt-[25px]">
 
                         {

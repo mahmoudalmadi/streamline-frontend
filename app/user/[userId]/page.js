@@ -215,11 +215,7 @@ export default function UserProfilePage() {
       setOrderedLessons(unorderedLessons.sort((b,a)=>new Date(a.eventInfo.start).getTime() - new Date(b.eventInfo.start).getTime()));
     },[bookingInfo])
 
-    const [editingTeamInfo,setEditingTeamInfo]=useState(false)
-    const [editingContactInfo,setEditingContactInfo]=useState(false)
     const [selectedEventId,setSelectedEventId]=useState(null)
-    const [selectedPage,setSelectedPage]=useState("profile")
-
     const [isEventModalOpen, setIsEventModalOpen] = useState(false);
 
     const openEventModal = () => {setIsEventModalOpen(true)};

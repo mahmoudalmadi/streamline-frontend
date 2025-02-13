@@ -147,7 +147,9 @@ const CONFIG = Object.freeze({
         "WV": "West Virginia",
         "WI": "Wisconsin",
         "WY": "Wyoming"
-      }
+      },
+      contactEmail:"contact@experiencestreamline.com",
+      contactPhoneNumber:"+1-437-242-5657",
       
 })
 
