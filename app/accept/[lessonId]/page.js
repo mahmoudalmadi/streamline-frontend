@@ -288,7 +288,7 @@ export default function AcceptLessonRequestPage(){
                                 </div>
 
                                 <div className=" text-center font-bold text-gray-500 text-[16px] mb-[30px]">
-                                You will both receive a reminder {bookingInfo[lessonId].eventInfo.reminder.quantity} {bookingInfo[lessonId].eventInfo.reminder.metric} before the lesson. If you'd like the {CONFIG.athleteType.toLowerCase()}'s contact info or view more information on this request, click on the request below.
+                                You will both receive a reminder {bookingInfo[lessonId].eventInfo.reminder.quantity} {bookingInfo[lessonId].eventInfo.reminder.metric} before the lesson. If you'd like the {CONFIG.athleteType.toLowerCase()}'s contact info or view more information on this request, click on the thumbnail below.
                                 </div>
 
                                 <div className="flex w-full justify-center" >

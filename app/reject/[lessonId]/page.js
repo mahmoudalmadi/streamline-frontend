@@ -219,7 +219,7 @@ export default function RejectLessonRequestPage(){
                                 <>
 
                                 <div className="flex flex-1 h-full text-center mt-[30%] font-bold text-gray-500 text-[16px] mb-[30px]">
-                                    The following trial lesson request has been cancelled. The swimmer will receive an automatic notification about the cancellation. If you'd like the {CONFIG.athleteType.toLowerCase()}'s contact info or view more information on this request, click on the request below.
+                                    The following trial lesson request has been cancelled. The swimmer will receive an automatic notification about the cancellation. If you'd like the {CONFIG.athleteType.toLowerCase()}'s contact info or view more information on this request, click on the thumbnail below.
                                 </div>
 
                                 <div className="flex w-full justify-center" >

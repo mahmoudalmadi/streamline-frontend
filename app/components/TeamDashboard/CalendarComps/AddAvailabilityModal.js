@@ -367,9 +367,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                         
                         <div className="flex items-center text-[14px] py-[4px]">
                             <div className="flex flex-col w-[145px]">
-                            <div className="text-[14px] leading-[14px] text-center">
-                                Coach (optional)
-                            </div>
+                            
                             <div className="leading-[14px] mt-[6px] text-gray-500 text-center">
                                 Select coach or 
                             </div>
@@ -674,8 +672,8 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                         Cancel
                     </div>
 
-                    <div className={`mt-[24px] mb-[12px] bg-streamlineBlue text-white px-[16px] py-[8px] rounded-full font-bold ${!hasSubmitted&&startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0 || !hasSubmitted&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&(selectedDates.length>0)&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0 ? "cursor-pointer" :"opacity-50" }`} onClick={()=>{
-                        if(!hasSubmitted&&startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0 || !hasSubmitted&&startTime.xm&&startTime.hrs&&startTime.hrs&&endTime.hrs&&endTime.xm&&(selectedDates.length>0)&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0){
+                    <div className={`mt-[24px] mb-[12px] bg-streamlineBlue text-white px-[16px] py-[8px] rounded-full font-bold ${!hasSubmitted&&startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0&&(selectedCoachId!=null) || !hasSubmitted&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&(selectedDates.length>0)&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0&&(selectedCoachId!=null) ? "cursor-pointer" :"opacity-50" }`} onClick={()=>{
+                        if(!hasSubmitted&&startDate&&endDate&&startTime.xm&&startTime.hrs&&endTime.xm&&endTime.hrs&&isDaySelected&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0&&(selectedCoachId!=null) || !hasSubmitted&&startTime.xm&&startTime.hrs&&startTime.hrs&&endTime.hrs&&endTime.xm&&(selectedDates.length>0)&&selectedLocationLessonSkills.length>0&&selectedLocationLessonTypes.length>0&&(selectedCoachId!=null)){
                             handleSubmit()
                         }
                     }}>
