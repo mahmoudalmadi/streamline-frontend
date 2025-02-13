@@ -12,6 +12,8 @@ import { deleteMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/edi
 import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/editingEntryByAllFields";
 import { batchedGetEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/batchedGetEntriesByConditions";
 import { getEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByConditions";
+import scheduleMessage from "@/app/hooks/twilio/scheduleMessage";
+import sendMessage from "@/app/hooks/twilio/sendMessage";
 import CONFIG from "@/config";
 import { PathnameContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 import { usePathname, useRouter } from "next/navigation";
@@ -140,6 +142,23 @@ export default function AcceptLessonRequestPage(){
 
     }
 
+    function subtractTime(start, amount, unit) {
+        const newDate = new Date(start); // Clone the original date
+        const now = new Date(); // Get the current time
+        
+        if (unit === "days") {
+          newDate.setDate(newDate.getDate() - amount);
+        } else if (unit === "hours") {
+          newDate.setHours(newDate.getHours() - amount);
+        } else {
+          throw new Error("Invalid unit. Use 'days' or 'hours'.");
+        }
+      
+        return newDate < now ? false : newDate;
+      }
+      
+      
+
     useEffect(()=>{
 
         async function getLocationInfo(eventInfo) {
@@ -205,6 +224,29 @@ export default function AcceptLessonRequestPage(){
             currentBooking['eventId']=currEvent.id
             currentBooking['lessonId']=currEvent.id
             changeField({setDict:setBookingInfo,field:currEvent.id,value:currentBooking})
+
+            const athleteContactNumber = currentBooking.eventInfo.contact[0].phoneNumber
+
+            const reservationDateTime = formatEventTime({startTime:currentBooking.eventInfo.start,endTime:currentBooking.eventInfo.end})
+            console.log("EVENT INFO", currentBooking.eventInfo.contact)
+            const message = `Hi ${currentBooking.eventInfo.contact[0].fullName}. Your trial lesson with ${currentBooking.teamInfo.teamName} on ${reservationDateTime} has been accepted by Coach ${currentBooking.eventInfo.coachName} (contact: ${currentBooking.eventInfo.coachPhone}). \n\nPlease be sure to arrive at least 10 minutes before your lesson. \n\nLocation address: ${currentBooking.locationInfo.address}. \n\nIf you can no longer attend, please be sure to inform the coach BEFORE the scheduled time.
+            `
+            const scheduledMessageTime = subtractTime(currentBooking.eventInfo.start,currentBooking.eventInfo.reminder.quantity,currentBooking.eventInfo.reminder.metric)
+
+            console.log(scheduledMessageTime,currentBooking.eventInfo.reminder.quantity,currentBooking.eventInfo.reminder.metric)
+
+            const scheduledAthleteMessage = `Hi ${currentBooking.eventInfo.contact[0].fullName}. This is a courtesy reminder that your trial lesson with ${currentBooking.teamInfo.teamName} on ${reservationDateTime} is coming up soon. Happy Swimming!`;
+            const scheduledCoachMessage = `Hi Coach ${currentBooking.eventInfo.coachName}. This is a courtesy reminder that your trial lesson with ${currentBooking.eventInfo.contact[0].fullName} on ${reservationDateTime} is coming up soon. Please reach out to the swimmer if there are any changes in your schedule at your earliest convenience.`
+
+            if(scheduledMessageTime){
+                await scheduleMessage(athleteContactNumber,scheduledAthleteMessage,scheduledMessageTime)
+                await scheduleMessage(currentBooking.eventInfo.coachPhone,scheduledCoachMessage,scheduledMessageTime)
+            }
+
+            // sendMessage(
+            //     athleteContactNumber
+            //     ,message)
+            
         }
           
 
@@ -214,7 +256,8 @@ export default function AcceptLessonRequestPage(){
             if(lessonInfo.length==1){
                 if((lessonInfo[0].status.toLowerCase()!="cancelled") && (lessonInfo[0].status.toLowerCase()!="confirmed")){
                 getLocationInfo(lessonInfo)
-                handleAcceptRequest(lessonInfo[0])}
+                // handleAcceptRequest(lessonInfo[0])
+                }
                 else{
                 setRequestAlreadyDone(true)    
                 }
@@ -257,7 +300,7 @@ export default function AcceptLessonRequestPage(){
                             requestAlreadyDone?
                             <div className="h-full flex flex-col items-center justify-center">
 
-                                <div className="flex flex-1 h-full text-center mt-[50%] font-bold text-gray-500 text-[18px]">
+                                <div className="flex flex-1 h-full text-center mt-[25%] font-bold text-gray-500 text-[18px]">
                                     This trial lesson request has already been resolved. Please go to your team dashboard to view your trial lessons schedule.
                                 </div>
 

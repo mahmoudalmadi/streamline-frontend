@@ -1,13 +1,13 @@
 
 
-const sendMessage = async (to,body) => {
+const scheduleMessage = async (to,body,scheduledTime) => {
     try {
-        const response = await fetch("http://localhost:8080/twilio/send-sms", {
+        const response = await fetch("http://localhost:8080/twilio/scheduleMessage", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ to, body }),
+            body: JSON.stringify({ to, body, scheduledTime }),
         });
 
         const data = await response.json();
@@ -22,4 +22,4 @@ const sendMessage = async (to,body) => {
     }
 };
 
-export default sendMessage;
+export default scheduleMessage;

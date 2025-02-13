@@ -135,9 +135,19 @@ export default function RejectLessonRequestPage(){
             currentBooking['eventInfo']=currEvent
             currentBooking['eventId']=currEvent.id
             currentBooking['lessonId']=currEvent.id
-            console.log("CURRENT BOOKING",currentBooking)
+
             changeField({setDict:setBookingInfo,field:currEvent.id,value:currentBooking})
-            console.log("BOOKING INFO",bookingInfo)
+
+            const athleteContactNumber = currentBooking.eventInfo.contact[0].phoneNumber
+
+            const reservationDateTime = formatEventTime({startTime:currentBooking.eventInfo.start,endTime:currentBooking.eventInfo.end})
+
+            const message = `Hi ${currentBooking.eventInfo.contact[0].fullName}. Your requested trial lesson with ${currentBooking.teamInfo.teamName} on ${reservationDateTime} has been cancelled by Coach ${currentBooking.eventInfo.coachName} (contact: ${currentBooking.eventInfo.coachPhone}). \n\nPlease request another trail lesson at another time or reach out to the coach if you have any questions.
+            `
+
+            sendMessage(
+                athleteContactNumber
+                ,message)
         }
           
 
@@ -191,7 +201,7 @@ export default function RejectLessonRequestPage(){
                             requestAlreadyDone?
                             <div className="h-full flex flex-col items-center justify-center">
 
-                                <div className="flex flex-1 h-full text-center mt-[50%] font-bold text-gray-500 text-[18px]">
+                                <div className="flex flex-1 h-full text-center mt-[25%] font-bold text-gray-500 text-[18px]">
                                     This trial lesson request has already been resolved. Please go to your team dashboard to view your trial lessons schedule.
                                 </div>
 
