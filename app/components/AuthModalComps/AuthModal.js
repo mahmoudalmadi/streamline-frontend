@@ -29,7 +29,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
     const {guardianInfo, setGuardianInfo, kids, setKids,errorMessage,setErrorMessage} = useSignUpContext();
 
-    const {setLoadingNewPage}=useAuth()
+    const {setLoadingNewPage,noLoading}=useAuth()
 
     function extractContent(str) {
         const match = str.match(/:(.*?)(?=\()/);
@@ -163,7 +163,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
                 throw("ExistenceError")
             }
 
-            await emailLogin({email:email,password:password,setLoadingNewPage:setLoadingNewPage});
+            await emailLogin({email:email,password:password,setLoadingNewPage:setLoadingNewPage,noLoading:noLoading});
             
             if (!path.toLowerCase().includes('checkout')){
             window.location.reload()

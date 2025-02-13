@@ -23,7 +23,7 @@ import { calculateAge } from "@/app/hooks/miscellaneous";
 
 export default function CheckoutPage() {
 
-    const {user, setUser,setLoadingNewPage,loadingNewPage,userInfo} = useAuth();
+    const {user, setUser,setLoadingNewPage,loadingNewPage,userInfo,setNoLoading} = useAuth();
 
     const [isNewPageLoading,setIsNewPageLoading]=useState(true)
     const router = useRouter();
@@ -73,11 +73,11 @@ export default function CheckoutPage() {
     const [skillLevel,setSkillLevel]=useState(null)
     const [teamPhoto,setTeamPhoto]=useState(null)
     
-        useEffect(()=>{
+    useEffect(()=>{
         const pathStop = pathName.split('/')[1];
         
         const name = pathStop.split('-')[0]
-        
+        setNoLoading(true)
         setPrevPage(pathStop)
         if(!checkoutData){
             router.push(`/${pathStop}`)

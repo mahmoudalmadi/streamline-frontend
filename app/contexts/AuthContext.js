@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState({"userData":null, "otherAthletes":null});
   const [loadingNewPage,setLoadingNewPage]=useState(false)
   const [loadingNewPageMessage,setLoadingNewPageMessage]=useState("")
+  const [noLoading,setNoLoading]=useState(false)
   useEffect(() => {
     const unsubscribe = monitorAuthState(async(currentUser) => {
       setUser(currentUser || null);
@@ -65,7 +66,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, userInfo, setUserInfo ,isFetchingUserInfo,loadingNewPage,setLoadingNewPage,loadingNewPageMessage,setLoadingNewPageMessage}}>
+    <AuthContext.Provider value={{ user, setUser, userInfo, setUserInfo ,isFetchingUserInfo,loadingNewPage,setLoadingNewPage,loadingNewPageMessage,setLoadingNewPageMessage,noLoading,setNoLoading}}>
       {children}
     </AuthContext.Provider>
   );

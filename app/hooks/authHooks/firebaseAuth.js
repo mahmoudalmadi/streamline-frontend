@@ -8,9 +8,9 @@ import {
 } from "firebase/auth";
 import { useRouter } from "next/navigation"
 // Signup
-export const emailSignUp = async ({email, password,setLoadingNewPage}) => {
+export const emailSignUp = async ({email, password,setLoadingNewPage,noLoading}) => {
   try {
-    setLoadingNewPage(true)
+    if(!noLoading){setLoadingNewPage(true)}
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     return userCredential.user;
   } catch (error) {
@@ -21,10 +21,10 @@ export const emailSignUp = async ({email, password,setLoadingNewPage}) => {
 };
 
 // Login
-export const emailLogin = async ({email, password,setLoadingNewPage}) => {
+export const emailLogin = async ({email, password,setLoadingNewPage,noLoading}) => {
   
   try {
-    setLoadingNewPage(true)
+    if(!noLoading){setLoadingNewPage(true)}
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return userCredential.user;
   } catch (error) {

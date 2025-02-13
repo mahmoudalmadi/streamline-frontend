@@ -20,7 +20,7 @@ import SMSAgreement from "./SMSAgreement";
 
 export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) {
     
-    const {setLoadingNewPage}=useAuth()
+    const {setLoadingNewPage,noLoading}=useAuth()
     const {guardianInfo, setGuardianInfo, kids, setKids, hasEmail, hasNumber, setErrorMessage} = useSignUpContext()
     const [guardianFullName, setGuardianFullName] = useState("")
     const [incompleteFieldsError, setIncompleteFieldsError] = useState(false)
@@ -62,7 +62,7 @@ export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) 
             let userId; 
 
             if (guardianInfo.signUpMethod==="email"){
-            userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password,setLoadingNewPage:setLoadingNewPage})
+            userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password,setLoadingNewPage:setLoadingNewPage,noLoading:noLoading})
             }
         
         const accountDetails={
