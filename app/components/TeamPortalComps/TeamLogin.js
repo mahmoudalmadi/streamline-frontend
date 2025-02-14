@@ -4,8 +4,9 @@ import EmailIcon from '../../../public/emailIcon.svg'
 import RedWarningIcon from "../../../public/RedWarningIcon.svg"
 import { checkAccountExists } from "@/app/hooks/firestoreHooks/user/getUser";
 import { useRouter } from "next/navigation";
-import { emailLogin } from "@/app/hooks/authHooks/firebaseAuth";
+import { emailLogin, resetPasword } from "@/app/hooks/authHooks/firebaseAuth";
 import { useAuth } from "@/app/contexts/AuthContext";
+import ProfileEntryEditor from "../TeamProfileEditorComponents/ProfileEntryEditor";
 
 export default function TeamLogin({switchModalType}){
 
@@ -14,7 +15,10 @@ export default function TeamLogin({switchModalType}){
     const teamName="Neptunes Swimming Academy"
 
     const {loadingNewPage,setLoadingNewPage} = useAuth()
-
+    const [forgotPassword,setForgotPassword]=useState(false)
+    const [passwordResetComplete,setPasswordResetComplete]=useState(false)
+    const [makeTranslucent,setMakeTranslucent]=useState(false)
+    const [email,setEmail]=useState("")
     const {handleTeamRegistrantInfo, teamRegistrantInfo,errorMessage,setErrorMessage} = useTeamSignUpContext();
     const [showPassword,setShowPassword] = useState(false);
 
@@ -32,7 +36,7 @@ export default function TeamLogin({switchModalType}){
         <div className="flex flex-col w-full px-[20px] py-[15px]">
         
         <div className="flex w-full text-streamlineBlue font-bold justify-center">
-          Log Into Team Account
+          {forgotPassword?"":"Log Into Team Account"}
         </div>
         
         {isModal && 
@@ -47,6 +51,26 @@ export default function TeamLogin({switchModalType}){
             Welcome to Experience Streamline
         </div>}
 
+        {forgotPassword?
+        <div>
+            <div>
+
+            {passwordResetComplete?
+            <div className='leading-[18px] text-[16px] mb-[16px] text-center'>
+                If an account with the email address you submitted exists, you will be sent a password reset email to that email address. Please be sure to check your spam if you cannot find it in your inbox.
+            </div>
+            :
+            <>
+            <div className='leading-[18px] text-[16px] mb-[16px]'>
+                Please enter your account's email address to reset your password.
+            </div>
+
+            <ProfileEntryEditor prompt={"Email address"} placeholder={"Email"} response={email} setResponse={setEmail}/>
+            </>}
+            </div>
+        </div>
+        :
+        <>
         <div className='border border-gray-200 px-4 mt-[15px]
          py-2 w-full'
          style={{
@@ -86,8 +110,12 @@ export default function TeamLogin({switchModalType}){
             </div>}
 
         </div>
+        <div className='font-bold mt-[8px] text-[14px] text-streamlineBlue cursor-pointer' onClick={()=>{setForgotPassword(true)}}>
+            Forgot password?
+        </div>
+        </>}
 
-        {errorMessage.length>0 &&
+        {errorMessage.length>0&&!forgotPassword &&
         <div className='flex mt-[7px] items-center'>
             <div className='w-[20px]'>
             <RedWarningIcon/>
@@ -99,6 +127,38 @@ export default function TeamLogin({switchModalType}){
         </div>}
         </div>
 
+        {
+        forgotPassword?
+        <div className='w-full flex justify-center items-center'>
+            {passwordResetComplete?
+            <div>
+                <div className={`flex items-center justify-center py-2 rounded-full
+        mt-[20px] font-bold bg-streamlineBlue text-white w-full text-center px-[18px]
+        ${email.length>3 ? 'cursor-pointer':'opacity-50 '}`}
+        onClick={()=>{if(email.length>3){setForgotPassword(false); setPasswordResetComplete(false)}}}>
+            Back to login
+            </div>
+            </div>
+                :
+            <>
+            <div onClick={()=>{setForgotPassword(false)}} className='flex w-[50%]
+            font-bold text-streamlineBlue text-center mt-[20px] items-center justify-center cursor-pointer'>
+                Cancel
+            </div>
+            <div className={`flex items-center justify-center py-2 rounded-full
+        mt-[20px] font-bold bg-streamlineBlue text-white w-full text-center
+        ${email.length>3&&!makeTranslucent ? 'cursor-pointer':'opacity-50 '}`}
+        onClick={async()=>{if(email.length>3){
+            setMakeTranslucent(true)
+            await resetPasword(email); 
+            setPasswordResetComplete(true)
+            setMakeTranslucent(false)}}}>
+            Reset password
+            </div>
+            </>
+            }
+        </div>
+        :
         <div className={`flex items-center justify-center py-2 rounded-full
         mt-[20px] font-bold bg-streamlineBlue text-white w-full text-center
         ${teamRegistrantInfo.emailAddress.length>0 && teamRegistrantInfo.password.length>3 ? 'cursor-pointer':'opacity-50 '}`}
@@ -133,7 +193,7 @@ export default function TeamLogin({switchModalType}){
             }
             }}>
             Log In
-        </div>
+        </div>}
 
 
         <div className="flex items-center justify-center mt-[45px] space-x-4">

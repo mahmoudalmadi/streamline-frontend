@@ -5,13 +5,14 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { useRouter } from "next/navigation"
 // Signup
 export const emailSignUp = async ({email, password,setLoadingNewPage,noLoading}) => {
   try {
     if(!noLoading){setLoadingNewPage(true)}
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(auth, email.toLowerCase(), password);
     return userCredential.user;
   } catch (error) {
     setLoadingNewPage(false)
@@ -20,12 +21,24 @@ export const emailSignUp = async ({email, password,setLoadingNewPage,noLoading})
   }
 };
 
+export const resetPasword = async(email) => {
+  try{
+
+    await sendPasswordResetEmail(auth,email)
+    console.log("Password reset ok!",email)
+    return(true)
+  }catch(error){
+    console.log(error)
+    return(false)
+  }
+}
+
 // Login
 export const emailLogin = async ({email, password,setLoadingNewPage,noLoading}) => {
   
   try {
     if(!noLoading){setLoadingNewPage(true)}
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(auth, email.toLowerCase(), password);
     return userCredential.user;
   } catch (error) {
     setLoadingNewPage(false)

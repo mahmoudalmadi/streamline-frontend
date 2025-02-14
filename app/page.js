@@ -250,10 +250,14 @@ export default function Home() {
     const criteria = {a:selectedLocos,b:availabilityMatchedLocations,c:skillTypeLocos,d:lessonTypeLocos}
     const settings = {useA:useSelectedLocos,useB:useTimeLocos,useC:useSkillLocos,useD:useTypeLocos}
 
+    if(settings.useA||settings.useB,settings.useC,settings.useD){
     const desiredLocos = getCommonIds(criteria,settings)
-
     setFilteredTeamLocos(teamLocations.filter(item=>desiredLocos.has(item.id)))
     setLoadingSearchResults(false)
+    }else{
+      setFilteredTeamLocos(teamLocations)
+      setLoadingSearchResults(false)
+    }
   }
 
   useEffect(()=>{
