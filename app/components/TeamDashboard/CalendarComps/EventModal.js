@@ -264,7 +264,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
 
         }
 
-        const reservationDateTime = formatEventTime(pickedEvent.start,pickedEvent.end)
+        const reservationDateTime = formatEventTime({startTime:pickedEvent.start,endTime:pickedEvent.end})
 
         const message = `Hi ${pickedEvent.contact[0].fullName}. Your requested trial lesson with ${userInfo.teamInfo.teamName} on ${reservationDateTime} has been cancelled by Coach ${pickedEvent.coachName} (contact: ${pickedEvent.coachPhone}). \n\nPlease request another trail lesson at another time or reach out to the coach if you have any questions.
             `

@@ -257,7 +257,7 @@ export default function AcceptLessonRequestPage(){
             if(lessonInfo.length==1){
                 if((lessonInfo[0].status.toLowerCase()!="cancelled") && (lessonInfo[0].status.toLowerCase()!="confirmed")){
                 getLocationInfo(lessonInfo)
-                // handleAcceptRequest(lessonInfo[0])
+                handleAcceptRequest(lessonInfo[0])
                 }
                 else{
                 setRequestAlreadyDone(true)    

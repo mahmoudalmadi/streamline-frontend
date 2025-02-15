@@ -23,10 +23,12 @@ import { addInfoAsJson } from "@/app/hooks/firestoreHooks/adding/addInfoAsJson";
 import getRelevantDates, { consolidateDate } from "@/app/hooks/getRelevantDates";
 import CheckboxDropdown from "./SelectLessonCategories";
 import CONFIG from "@/config";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 
 export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey,teamId, addAvailibilityModalKey,locationId,events,setEvents,retrievedCoaches,lessonSkills,lessonTypes,parentDivRef}){
 
+    const {userInfo}=useAuth()
     const [hasSubmitted,setHasSubmitted]=useState(false)
     const timePickerRef = useRef(null);
     // Create availibility stuffs
@@ -158,7 +160,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                 });
             });
 
-            const relevantDates = getRelevantDates({startDate:startDate,endDate:endDate,daysPicked:daysPicked,timeObjStart:startTime,timeObjEnd:endTime,lessonType:lessonTypes,coach:selectedCoachId!=null?coaches[selectedCoachId]:null,numberOfSpots:numberOfSpots,reminder:{quantity:reminderQuant,metric:reminderMetric}})
+            const relevantDates = getRelevantDates({startDate:startDate,endDate:endDate,daysPicked:daysPicked,timeObjStart:startTime,timeObjEnd:endTime,lessonType:lessonTypes,coach:selectedCoachId!=null?coaches[selectedCoachId]:null,numberOfSpots:numberOfSpots,sendCoachSMS:userInfo.userData.smsAgreement,reminder:{quantity:reminderQuant,metric:reminderMetric}})
 
             
             const allTimeBlocks = generateJsonListGivenJsons(relevantDates,{teamId:teamId,locationId:locationId,seriesId:seriesId,createdOn:new Date()})
@@ -205,7 +207,8 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                     coachEmail:coach?coach.coachEmail:null,
                     coachPhone:coach?coach.coachPhone:null,    
                     lessonType:lessonTypes,
-                    numberOfSpots:numberOfSpots
+                    numberOfSpots:numberOfSpots,
+                    sendCoachSMS:userInfo.userData.smsAgreement
                     }]
             }
 

@@ -136,18 +136,6 @@ export default function CheckoutPage() {
         setTimeout(() => setIsDateTimeDropdownClosing(false), 500); // Reset after a short delay
     };
 
-    // const [isLessonTypeDropdownVisible, setIsLessonTypeDropdownVisible] = useState(false);
-    // const [isLessonTypeDropdownClosing, setIsLessonTypeDropdownClosing] = useState(false);
-    // const toggleIsLessonTypeDropdownVisible = () => {
-    //     if (isLessonTypeDropdownClosing) return; // Prevent reopening if in closing state
-    //     setIsLessonTypeDropdownVisible(prev => !prev);
-    // };
-    // const handleCloseLessonTypeDropdown = () => {
-    //     setIsLessonTypeDropdownClosing(true); // Set closing flag
-    //     setIsLessonTypeDropdownVisible(false);
-    //     setTimeout(() => setIsLessonTypeDropdownClosing(false), 500); // Reset after a short delay
-    // };  
-
     const [potentialAthletes,setPotentialAthletes]=useState(null)
 
     const {kids} = useSignUpContext()
@@ -225,7 +213,7 @@ export default function CheckoutPage() {
         const reservationDateTime = formatEventTime({startTime:checkoutData.eventInfo.start,endTime:checkoutData.eventInfo.end})
 
         const message = `Hi Coach ${checkoutData.eventInfo.coachName.split(" ")[0]}! A trial lesson on ${reservationDateTime} (Level: ${lessonTypesMapping[currSelectedSkillLevel]}, Category: ${lessonTypesMapping[currSelectedLessonType]}) has been requested by ${potentialAthletes[selectedAthleteId].fullName}. ${potentialAthletes[selectedAthleteId].athleteInfo.dateOfBirth? `(${calculateAge(potentialAthletes[selectedAthleteId].athleteInfo.dateOfBirth)} yo swimmer)`:""} Contact info: ${userInfo.userData.phoneNumber} \n \n To ACCEPT, click here:\n https://www.experiencestreamline.com/accept/${entryId}\n \n To REJECT, click here:\nhttps://www.experiencestreamline.com/reject/${entryId}`
-
+        console.log("GONNA SEND",message)
         sendMessage(
             checkoutData.eventInfo.coachPhone
             ,message)
