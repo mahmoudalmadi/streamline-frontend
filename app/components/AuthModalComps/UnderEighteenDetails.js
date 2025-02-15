@@ -27,6 +27,10 @@ export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) 
     const [userPhoneAgreement,setUserPhoneAgreement]=useState(false)
 
     useEffect(()=>{
+        setNoLoading(true)
+    },[])
+
+    useEffect(()=>{
         setGuardianInfo(prevState => ({
             ...prevState,
             fullName: guardianFullName,

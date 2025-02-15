@@ -15,6 +15,7 @@ const addAccountDetails = async ({accountData}) => {
         firebaseId: accountData.firebaseId,
         fullName: accountData.fullName,
         phoneNumber: accountData.phoneNumber,
+        smsAgreement: accountData.smsAgreement
       });
   
     } catch (error) {

@@ -16,11 +16,15 @@ import SMSAgreement from "./SMSAgreement";
 
 export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
 
-    const {setLoadingNewPag,noLoading}=useAuth()
+    const {setLoadingNewPage,noLoading,setNoLoading}=useAuth()
     const {guardianInfo, setGuardianInfo, hasEmail, hasNumber,kids,setErrorMessage} = useSignUpContext()
     const [wannaAddSwimmers,setWannaAddSwimmers] =useState()
     const [incompleteFieldsError, setIncompleteFieldsError] = useState(false)
     const [userPhoneAgreement,setUserPhoneAgreement]=useState(false)
+    
+    useEffect(()=>{
+        setNoLoading(true)
+    },[])
 
     const handleSubmit = async() => {
         try{
