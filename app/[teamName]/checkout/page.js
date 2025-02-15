@@ -18,10 +18,12 @@ import LoadingSubScreen from "@/app/components/loadingSubscreen";
 import PersonEntry from "@/app/components/TeamDashboard/CalendarComps/PersonEntry";
 import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/editingEntryByAllFields";
 import { addInfoAsJson } from "@/app/hooks/firestoreHooks/adding/addInfoAsJson";
+import sendMessage from "@/app/hooks/twilio/sendMessage";
+import { calculateAge } from "@/app/hooks/miscellaneous";
 
 export default function CheckoutPage() {
 
-    const {user, setUser,setLoadingNewPage,loadingNewPage,userInfo} = useAuth();
+    const {user, setUser,setLoadingNewPage,loadingNewPage,userInfo,setNoLoading} = useAuth();
 
     const [isNewPageLoading,setIsNewPageLoading]=useState(true)
     const router = useRouter();
@@ -71,11 +73,11 @@ export default function CheckoutPage() {
     const [skillLevel,setSkillLevel]=useState(null)
     const [teamPhoto,setTeamPhoto]=useState(null)
     
-        useEffect(()=>{
+    useEffect(()=>{
         const pathStop = pathName.split('/')[1];
         
         const name = pathStop.split('-')[0]
-        
+        setNoLoading(true)
         setPrevPage(pathStop)
         if(!checkoutData){
             router.push(`/${pathStop}`)
@@ -175,7 +177,7 @@ export default function CheckoutPage() {
                     fullName: item.fullName,
                     athleteInfo: item,
                   }));
-                  
+                  console.log("OTHER ATHLESTES",userInfo.otherAthletes)
                   // Set state once
                   setPotentialAthletes((prev) => [...prev, ...newAthletes]);
                 }
@@ -205,7 +207,7 @@ export default function CheckoutPage() {
             title:checkoutData.eventInfo.title,
             availableSister:checkoutData.eventInfo.id,
             athletes:[potentialAthletes[selectedAthleteId]],
-            contact:[potentialAthletes[selectedAthleteId].athleteInfo.phoneNumber?{phoneNumber:"null"}:userInfo.userData]
+            contact:[potentialAthletes[selectedAthleteId].athleteInfo.phoneNumber?{phoneNumber:potentialAthletes[selectedAthleteId].athleteInfo.phoneNumber,fullName:potentialAthletes[selectedAthleteId].athleteInfo.fullName}:userInfo.userData]
         },collectionName:"TimeBlock"})
 
         const bookedLessonId=await addInfoAsJson({
@@ -220,7 +222,13 @@ export default function CheckoutPage() {
         await editingMatchingEntriesByAllFields({collectionName:"TimeBlock",matchParams:{"id":checkoutData.eventInfo.id},updateData:{numberOfSpots:checkoutData.eventInfo.numberOfSpots-1,pendingSisters:checkoutData.eventInfo.pendingSisters?[...checkoutData.eventInfo.pendingSisters,entryId]:[entryId],lessonType:[`${lessonTypesMapping[currSelectedSkillLevel]}\`${lessonTypesMapping[currSelectedLessonType]}`]
         }})
 
+        const reservationDateTime = formatEventTime({startTime:checkoutData.eventInfo.start,endTime:checkoutData.eventInfo.end})
 
+        const message = `Hi Coach ${checkoutData.eventInfo.coachName.split(" ")[0]}! A trial lesson on ${reservationDateTime} (Level: ${lessonTypesMapping[currSelectedSkillLevel]}, Category: ${lessonTypesMapping[currSelectedLessonType]}) has been requested by ${potentialAthletes[selectedAthleteId].fullName}. ${potentialAthletes[selectedAthleteId].athleteInfo.dateOfBirth? `(${calculateAge(potentialAthletes[selectedAthleteId].athleteInfo.dateOfBirth)} yo swimmer)`:""} Contact info: ${userInfo.userData.phoneNumber} \n \n To ACCEPT, click here:\n https://www.experiencestreamline.com/accept/${entryId}\n \n To REJECT, click here:\nhttps://www.experiencestreamline.com/reject/${entryId}`
+
+        sendMessage(
+            checkoutData.eventInfo.coachPhone
+            ,message)
         
         router.push(pathName+`/success`)
         }

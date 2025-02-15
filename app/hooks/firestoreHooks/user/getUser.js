@@ -55,7 +55,6 @@ const getDependantsByFirebaseId = async ({ firebaseId }) => {
     try {
       // Reference the Account collection
       const accountCollection = collection(db, "Account");
-      console.log(value,valueType)
       // Construct Firestore query based on valueType
       let q;
       if (accountType!="team")

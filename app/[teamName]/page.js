@@ -147,17 +147,37 @@ export default function TeamPage()  {
           });
         }
 
+        function createCategoryIndexMap(jsonList) {
+          console.log("adasdadsadsadsdsa",jsonList)
+          const map = new Map();
+          jsonList.forEach((item, index) => {
+              map.set(item.category, index);
+          });
+          return map;
+        }
+      
+
         setTeamInfo(allLocationInfo.teamInfo)
         setLocationInfo(allLocationInfo.locationInfo)
         setTeamName(allLocationInfo.teamInfo[0].teamName)
         setTeamDescription(allLocationInfo.teamInfo[0].teamDescription)
         setProgramsAvailable(allLocationInfo.locationLessonSkills.map(item=>item.level))
+        const rawLocationSkills = allLocationInfo.locationLessonSkills
         const currSkillLevels = allLocationInfo.locationLessonSkills.map(item=>item.category)
         const locoSkillLevels = []
         const skillLevelsDict = CONFIG.skillLevels
         for (const skillLevel of currSkillLevels){
           locoSkillLevels.push({"skillLevel":skillLevel,"skillLevelDescription":skillLevelsDict[skillLevel]})
         }
+        const listOfSkillLevels = Object.keys(CONFIG.skillLevels)
+        const skillIndexMap = createCategoryIndexMap(rawLocationSkills)
+        const orderedSkills = []
+        for (const skillLevel of listOfSkillLevels){
+          if(skillIndexMap.has(skillLevel)){
+            orderedSkills.push(rawLocationSkills[skillIndexMap.get(skillLevel)])
+          }
+        }
+        setProgramsAvailable(orderedSkills.map(item=>item.level))
         setSkillLevels(locoSkillLevels)
         
         const currLessonTypes = allLocationInfo.locationLessonTypes.map(item=>item.category)
@@ -490,7 +510,7 @@ export default function TeamPage()  {
         </div>
 
         <div
-            className="relative w-full h-[1px] bg-gray-200 mt-[20px]"
+            className="relative w-full h-[1px] bg-gray-200 mt-[20px] mb-[30px]"
           />  
 
         {/* AMENITIES SECTION */}
@@ -498,16 +518,16 @@ export default function TeamPage()  {
         <AmenitiesSection amenities={amenities}/>
 
         <div
-            className="relative w-full h-[1px] bg-gray-200 mt-[18px]"
+            className="relative w-full h-[1px] bg-gray-200 mt-[30px] mb-[10px]"
           />  
 
 
         {/* MAP SECTION */}
-        <div className="flex flex-col w-full mt-[25px]"/>
+        <div className="flex flex-col w-full mt-[35px]"/>
             {locationCoords&&<GoogleMap address={locationAddress} locationCoords={locationCoords}/>}
         
         <div
-            className=" w-full h-[1px] bg-gray-200 mt-[18px] mb-[30px]"
+            className=" w-full h-[1px] bg-gray-200 mt-[30px] mb-[30px]"
           />  
 
 
@@ -521,7 +541,7 @@ export default function TeamPage()  {
           <>
           <div
             
-            className=" w-full h-[1px] bg-gray-200 mt-[18px] mb-[30px]"
+            className=" w-full h-[1px] bg-gray-200 mt-[25px] mb-[35px]"
           />  
         
 

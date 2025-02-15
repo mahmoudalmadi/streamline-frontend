@@ -6,20 +6,23 @@ import XCancelIcon from '../../../public/XCancelIcon.svg'
 import EmailIcon from '../../../public/emailIcon.svg'
 import RedWarningIcon from "../../../public/RedWarningIcon.svg"
 import { useState } from 'react';
-import { emailSignUp, emailLogin } from '../../hooks/authHooks/firebaseAuth';
+import { emailSignUp, emailLogin, resetPasword } from '../../hooks/authHooks/firebaseAuth';
 import CompleteSignUpDetails from './CompleteSignUpDetails';
 import {  useSignUpContext } from '../../contexts/SignUpProvider';
 import BlackMoveLeft from "../../../public/BlackMoveLeft.svg";
 import { checkAccountExists } from '@/app/hooks/firestoreHooks/user/getUser';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/app/contexts/AuthContext';
+import ProfileEntryEditor from '../TeamProfileEditorComponents/ProfileEntryEditor';
 
 const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
     const [showPassword, setShowPassword] = useState(false)
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState('')
-
+    const [forgotPassword,setForgotPassword]=useState(false)
+    const [passwordResetComplete,setPasswordResetComplete]=useState(false)
+    const [makeTranslucent,setMakeTranslucent]=useState(false)
     const path = usePathname()
     
     const [finishSignUpDetails, setFinishSignUpDetails] = useState(false)
@@ -29,7 +32,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
     const {guardianInfo, setGuardianInfo, kids, setKids,errorMessage,setErrorMessage} = useSignUpContext();
 
-    const {setLoadingNewPage}=useAuth()
+    const {setLoadingNewPage,noLoading}=useAuth()
 
     function extractContent(str) {
         const match = str.match(/:(.*?)(?=\()/);
@@ -100,10 +103,28 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
 
         <div className='px-[13px]'>
         <div className={isModal?'w-full mt-[40px]':'w-full'}>
-        {isModal && <div className='font-bold '>
+        {isModal&&!forgotPassword && <div className='font-bold '>
             Welcome to Experience Streamline
         </div>}
 
+        {forgotPassword?
+        <div>
+
+            {passwordResetComplete?
+            <div className='leading-[18px] text-[16px] mb-[16px] text-center'>
+                If an account with the email address you submitted exists, you will be sent a password reset email to that email address. Please be sure to check your spam if you cannot find it in your inbox.
+            </div>
+            :
+            <>
+            <div className='leading-[18px] text-[16px] mb-[16px]'>
+                Please enter your account's email address to reset your password.
+            </div>
+
+            <ProfileEntryEditor prompt={"Email address"} placeholder={"Email"} response={email} setResponse={setEmail}/>
+            </>}
+        </div>
+        :
+        <>
         <div className='border border-gray-200 px-4 mt-[15px]
          py-2 w-full'
          style={{
@@ -117,6 +138,7 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
             onChange={(e)=>{setEmail(e.target.value);setErrorMessage("")}}
             />
         </div>
+
         <div className='flex border-l border-r border-b
         border-gray-200 px-4 py-2 w-full items-center'
         style={{
@@ -139,8 +161,14 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
             </div>}
 
         </div>
+        <div className='font-bold mt-[8px] text-[14px] text-streamlineBlue cursor-pointer' onClick={()=>{setForgotPassword(true)}}>
+            Forgot password?
+        </div>
+        </>
+        }
 
-        {errorMessage.length>0 &&
+
+        {errorMessage.length>0&&!forgotPassword &&
         <div className='flex mt-[7px] items-center'>
             <div className='w-[20px]'>
             <RedWarningIcon/>
@@ -152,18 +180,50 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
         </div>}
         </div>
 
+        {
+        forgotPassword?
+        <div className='w-full flex justify-center items-center'>
+            {passwordResetComplete?
+            <div>
+                <div className={`flex items-center justify-center py-2 rounded-full
+        mt-[20px] font-bold bg-streamlineBlue text-white w-full text-center px-[18px]
+        ${email.length>3 ? 'cursor-pointer':'opacity-50 '}`}
+        onClick={()=>{if(email.length>3){setForgotPassword(false); setPasswordResetComplete(false)}}}>
+            Back to login
+            </div>
+            </div>
+                :
+            <>
+            <div onClick={()=>{setForgotPassword(false)}} className='flex w-[50%]
+            font-bold text-streamlineBlue text-center mt-[20px] items-center justify-center cursor-pointer'>
+                Cancel
+            </div>
+            <div className={`flex items-center justify-center py-2 rounded-full
+        mt-[20px] font-bold bg-streamlineBlue text-white w-full text-center
+        ${email.length>3&&!makeTranslucent ? 'cursor-pointer':'opacity-50 '}`}
+        onClick={async()=>{if(email.length>3){
+            setMakeTranslucent(true)
+            await resetPasword(email); 
+            setPasswordResetComplete(true)
+            setMakeTranslucent(false)}}}>
+            Reset password
+            </div>
+            </>
+            }
+        </div>
+        :
         <div className={`flex items-center justify-center py-2 rounded-full
         mt-[20px] font-bold bg-streamlineBlue text-white w-full text-center
         ${email.length>0 && password.length>3 ? 'cursor-pointer':'opacity-50 '}`}
         onClick={async()=>{
             try{
                 
-            const accountExists = await checkAccountExists({valueType:"emailAddress",value:email,accountType:"guardian"})
+            const accountExists = await checkAccountExists({valueType:"emailAddress",value:email.toLowerCase(),accountType:"guardian"})
             if (!accountExists){
                 throw("ExistenceError")
             }
 
-            await emailLogin({email:email,password:password,setLoadingNewPage:setLoadingNewPage});
+            await emailLogin({email:email,password:password,setLoadingNewPage:setLoadingNewPage,noLoading:noLoading});
             
             if (!path.toLowerCase().includes('checkout')){
             window.location.reload()
@@ -185,6 +245,8 @@ const AuthModal = ({ isOpen, onClose, isLogin ,switchModalType, isModal}) => {
             }}>
             Log In
         </div>
+        
+        }
 
 
         <div className="flex items-center justify-center mt-[45px] space-x-4">

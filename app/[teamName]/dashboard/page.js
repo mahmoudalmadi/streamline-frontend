@@ -338,7 +338,7 @@ export default function TeamDashboard() {
          
             <div className="w-full mt-[20px]">
                 <div className="">
-                    <MyCalendar loading events={events} setPickedEvent={setPickedEvent} openEventModal={openEventModal} setCurrWeekNum={setCurrWeekNum} isCalendarLoading={isCalendarLoading} setIsCalendarLoading={setIsCalendarLoading} currWeekNum={currWeekNum} minHour={currentLocation.minHour} maxHour={currentLocation.maxHour} currentDate={currentDate} setCurrentDate={setCurrentDate}/>
+                    <MyCalendar loading events={events} setPickedEvent={setPickedEvent} openEventModal={openEventModal} setCurrWeekNum={setCurrWeekNum} isCalendarLoading={isCalendarLoading} setIsCalendarLoading={setIsCalendarLoading} currWeekNum={currWeekNum} minHour={currentLocation.minHour} maxHour={currentLocation.maxHour} currentDate={currentDate} setCurrentDate={setCurrentDate} fullAddress={currentLocation.location}/>
                 </div>
             </div>
 
@@ -363,7 +363,7 @@ export default function TeamDashboard() {
             </ModalTemplate>
 
             <ModalTemplate isOpen={isEventModalOpen} onClose={closeEventModal}>
-                {pickedEvent&&<EventModal pickedEvent={pickedEvent} streetAddress={currentLocation.parsedAddress.streetAddress} onClose={closeEventModal} setCurrWeekEvents={setCurrWeekEvents} setEvents={setEvents} events={events} currWeekEvents={currWeekEvents} athletes={pickedEvent.athletes}/>}
+                {pickedEvent&&<EventModal pickedEvent={pickedEvent} streetAddress={currentLocation.parsedAddress.streetAddress} onClose={closeEventModal} setCurrWeekEvents={setCurrWeekEvents} setEvents={setEvents} events={events} currWeekEvents={currWeekEvents} athletes={pickedEvent.athletes} fullAddress={currentLocation.address}/>}
             </ModalTemplate>
 
             {/* add Availability modal */}

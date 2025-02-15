@@ -16,7 +16,7 @@ import SMSAgreement from "./SMSAgreement";
 
 export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
 
-    const {setLoadingNewPage}=useAuth()
+    const {setLoadingNewPag,noLoading}=useAuth()
     const {guardianInfo, setGuardianInfo, hasEmail, hasNumber,kids,setErrorMessage} = useSignUpContext()
     const [wannaAddSwimmers,setWannaAddSwimmers] =useState()
     const [incompleteFieldsError, setIncompleteFieldsError] = useState(false)
@@ -36,7 +36,7 @@ export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
         if (guardianInfo.signUpMethod==="email"){
             
         
-            userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password,setLoadingNewPage:setLoadingNewPage})
+            userId = await emailSignUp({email:guardianInfo.emailAddress,password:guardianInfo.password,setLoadingNewPage:setLoadingNewPage,noLoading:noLoading})
         
             console.log("JUST COMPLETED SIGNUP",userId)
     }
