@@ -18,6 +18,7 @@ import { changeField } from "@/app/hooks/changeField";
 import { useAuth } from "@/app/contexts/AuthContext";
 import sendMessage from "@/app/hooks/twilio/sendMessage";
 import scheduleTwilioSms from "@/app/hooks/twilio/scheduleMessage";
+import { subtractTime } from "@/app/hooks/miscellaneous";
 
 export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWeekEvents, setEvents,events,currWeekEvents,athletes,auxiliaryStatus,fullAddress}){
     

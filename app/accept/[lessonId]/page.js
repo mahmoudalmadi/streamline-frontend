@@ -12,6 +12,7 @@ import { deleteMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/edi
 import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/editingEntryByAllFields";
 import { batchedGetEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/batchedGetEntriesByConditions";
 import { getEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByConditions";
+import { subtractTime } from "@/app/hooks/miscellaneous";
 import scheduleTwilioSms from "@/app/hooks/twilio/scheduleMessage";
 import scheduleMessage from "@/app/hooks/twilio/scheduleMessage";
 import sendMessage from "@/app/hooks/twilio/sendMessage";
@@ -143,20 +144,6 @@ export default function AcceptLessonRequestPage(){
 
     }
 
-    function subtractTime(start, amount, unit) {
-        const newDate = new Date(start); // Clone the original date
-        const now = new Date(); // Get the current time
-        
-        if (unit === "days") {
-          newDate.setDate(newDate.getDate() - amount);
-        } else if (unit === "hours") {
-          newDate.setHours(newDate.getHours() - amount);
-        } else {
-          throw new Error("Invalid unit. Use 'days' or 'hours'.");
-        }
-      
-        return newDate < now ? false : newDate;
-      }
       
       
 

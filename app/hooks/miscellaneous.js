@@ -18,7 +18,7 @@ export function calculateAge(dateOfBirthTimestamp) {
     return age;
   }
 
-  function formatEventTime({startTime, endTime}) {
+export  function formatEventTime({startTime, endTime}) {
     // Days of the week and months for formatting
     const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -43,4 +43,19 @@ export function calculateAge(dateOfBirthTimestamp) {
     return `${startDay}, ${startMonth} ${startDate} · ${startFormattedTime} –${endFormattedTime}`;}else{
         return ""
     }
+}
+
+export function subtractTime(start, amount, unit) {
+  const newDate = new Date(start); // Clone the original date
+  const now = new Date(); // Get the current time
+  
+  if (unit === "days") {
+    newDate.setDate(newDate.getDate() - amount);
+  } else if (unit === "hours") {
+    newDate.setHours(newDate.getHours() - amount);
+  } else {
+    throw new Error("Invalid unit. Use 'days' or 'hours'.");
+  }
+
+  return newDate < now ? false : newDate;
 }
