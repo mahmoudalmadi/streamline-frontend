@@ -35,7 +35,7 @@ export const appendToJsonSubListById = ({ fieldMappings, setter, jsonList, id })
                 ? item[fieldName] + fieldValue
                 : Array.isArray(fieldValue) // Initialize a list if fieldValue is a list
                 ? [...fieldValue]
-                : [...fieldValue], // Default: Replace or initialize the field
+                : [fieldValue], // Default: Replace or initialize the field
             ])
           ),
         }

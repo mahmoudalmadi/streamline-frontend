@@ -1,8 +1,9 @@
+import CONFIG from "@/config";
 
 
 const sendMessage = async (to,body) => {
     try {
-        const response = await fetch("http://localhost:8080/twilio/send-sms", {
+        const response = await fetch(CONFIG.backendRoute+"twilio/send-sms", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
