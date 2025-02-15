@@ -12,6 +12,7 @@ import { deleteMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/edi
 import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/editingEntryByAllFields";
 import { batchedGetEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/batchedGetEntriesByConditions";
 import { getEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByConditions";
+import scheduleTwilioSms from "@/app/hooks/twilio/scheduleMessage";
 import scheduleMessage from "@/app/hooks/twilio/scheduleMessage";
 import sendMessage from "@/app/hooks/twilio/sendMessage";
 import CONFIG from "@/config";
@@ -228,24 +229,24 @@ export default function AcceptLessonRequestPage(){
             const athleteContactNumber = currentBooking.eventInfo.contact[0].phoneNumber
 
             const reservationDateTime = formatEventTime({startTime:currentBooking.eventInfo.start,endTime:currentBooking.eventInfo.end})
-            console.log("EVENT INFO", currentBooking.eventInfo.contact)
+
             const message = `Hi ${currentBooking.eventInfo.contact[0].fullName}. Your trial lesson with ${currentBooking.teamInfo.teamName} on ${reservationDateTime} has been accepted by Coach ${currentBooking.eventInfo.coachName} (contact: ${currentBooking.eventInfo.coachPhone}). \n\nPlease be sure to arrive at least 10 minutes before your lesson. \n\nLocation address: ${currentBooking.locationInfo.address}. \n\nIf you can no longer attend, please be sure to inform the coach BEFORE the scheduled time.
             `
+
             const scheduledMessageTime = subtractTime(currentBooking.eventInfo.start,currentBooking.eventInfo.reminder.quantity,currentBooking.eventInfo.reminder.metric)
 
-            console.log(scheduledMessageTime,currentBooking.eventInfo.reminder.quantity,currentBooking.eventInfo.reminder.metric)
 
             const scheduledAthleteMessage = `Hi ${currentBooking.eventInfo.contact[0].fullName}. This is a courtesy reminder that your trial lesson with ${currentBooking.teamInfo.teamName} on ${reservationDateTime} is coming up soon. Happy Swimming!`;
             const scheduledCoachMessage = `Hi Coach ${currentBooking.eventInfo.coachName}. This is a courtesy reminder that your trial lesson with ${currentBooking.eventInfo.contact[0].fullName} on ${reservationDateTime} is coming up soon. Please reach out to the swimmer if there are any changes in your schedule at your earliest convenience.`
 
             if(scheduledMessageTime){
-                await scheduleMessage(athleteContactNumber,scheduledAthleteMessage,scheduledMessageTime)
-                await scheduleMessage(currentBooking.eventInfo.coachPhone,scheduledCoachMessage,scheduledMessageTime)
+                await scheduleTwilioSms(scheduledAthleteMessage,athleteContactNumber,scheduledMessageTime,'America/Toronto')
+                await scheduleTwilioSms(scheduledCoachMessage,currentBooking.eventInfo.coachPhone,scheduledMessageTime,'America/Toronto')
             }
 
-            // sendMessage(
-            //     athleteContactNumber
-            //     ,message)
+            sendMessage(
+                athleteContactNumber
+                ,message)
             
         }
           

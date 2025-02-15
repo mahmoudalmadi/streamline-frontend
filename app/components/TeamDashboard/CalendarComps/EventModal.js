@@ -16,8 +16,10 @@ import { deleteMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/edi
 import LoadingSubScreen from "../../loadingSubscreen";
 import { changeField } from "@/app/hooks/changeField";
 import { useAuth } from "@/app/contexts/AuthContext";
+import sendMessage from "@/app/hooks/twilio/sendMessage";
+import scheduleTwilioSms from "@/app/hooks/twilio/scheduleMessage";
 
-export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWeekEvents, setEvents,events,currWeekEvents,athletes,auxiliaryStatus}){
+export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWeekEvents, setEvents,events,currWeekEvents,athletes,auxiliaryStatus,fullAddress}){
     
     const {userInfo}=useAuth()
 
@@ -66,7 +68,8 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
       
     const [selectedSkillsLevels,setSelectedSkillLevels]=useState(null)
     const [selectedLessonTypes,setSelectedLessonTypes]=useState(null)
-    
+    console.log(pickedEvent.start.toISOString())
+
     useEffect(()=>{
         const {firstEntries,secondEntries} = processEntries(pickedEvent.lessonType)
         
@@ -200,8 +203,30 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
             onClose()
         }
 
+        const reservationDateTime = formatEventTime({startTime:pickedEvent.start,endTime:pickedEvent.end})
+
+        const message = `Hi ${pickedEvent.contact[0].fullName}. Your trial lesson with ${userInfo.teamInfo.teamName} on ${reservationDateTime} has been accepted by Coach ${pickedEvent.coachName} (contact: ${pickedEvent.coachPhone}). \n\nPlease be sure to arrive at least 10 minutes before your lesson. \n\nLocation address: ${fullAddress}. \n\nIf you can no longer attend, please be sure to inform the coach BEFORE the scheduled time.
+        `
+
+        const scheduledMessageTime = subtractTime(pickedEvent.start,pickedEvent.reminder.quantity,pickedEvent.reminder.metric)
+
+
+        const scheduledAthleteMessage = `Hi ${pickedEvent.contact[0].fullName}. This is a courtesy reminder that your trial lesson with ${userInfo.teamInfo.teamName} on ${reservationDateTime} is coming up soon. Happy Swimming!`;
+        const scheduledCoachMessage = `Hi Coach ${pickedEvent.coachName}. This is a courtesy reminder that your trial lesson with ${pickedEvent.contact[0].fullName} on ${reservationDateTime} is coming up soon. Please reach out to the swimmer if there are any changes in your schedule at your earliest convenience.`
+
+        const athleteContactNumber = pickedEvent.contact[0].phoneNumber
+
+        if(scheduledMessageTime){
+            await scheduleTwilioSms(scheduledAthleteMessage,athleteContactNumber,scheduledMessageTime,'America/Toronto')
+            await scheduleTwilioSms(scheduledCoachMessage,pickedEvent.coachPhone,scheduledMessageTime,'America/Toronto')
+        }
+
+        sendMessage(
+            athleteContactNumber
+            ,message)
+
     }
-    console.log(pickedEvent)
+    
     const handleRejectRequest=async()=>{
 
 
@@ -239,7 +264,14 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
 
         }
 
+        const reservationDateTime = formatEventTime(pickedEvent.start,pickedEvent.end)
 
+        const message = `Hi ${pickedEvent.contact[0].fullName}. Your requested trial lesson with ${userInfo.teamInfo.teamName} on ${reservationDateTime} has been cancelled by Coach ${pickedEvent.coachName} (contact: ${pickedEvent.coachPhone}). \n\nPlease request another trail lesson at another time or reach out to the coach if you have any questions.
+            `
+        const athleteContactNumber = pickedEvent.contact[0].phoneNumber
+        sendMessage(
+            athleteContactNumber
+            ,message)
 
     }
 
