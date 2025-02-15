@@ -1,8 +1,25 @@
+import CONFIG from '@/config';
 import React, { useEffect, useRef, useState } from 'react';
 
 const LessonTypeDropdown = ({ isVisible, onClose, lessonTypes,skillLevels, selectedLessonType, selectedSkillLevel,
 setSelectedLessonType, setSelectedSkillLevel,lessonInfoDropdownStyling}) => {
     const divRef = useRef(null);
+
+    function transformSkillData(jsonList) {
+        return jsonList.map(item => ({
+            [item.SkillLevel]: item.SkillLevelDescription
+        }));
+    }
+
+    const allSkillList = Object.keys(CONFIG.skillLevels).map(item => ({
+        skillLevel: item,
+        skillLevelDescription: CONFIG.skillLevels[item]
+    }));
+    
+    const desiredSkills = skillLevels.map(item=>item.skillLevel)
+    
+    const orderedSkills = allSkillList.filter(item=>desiredSkills.includes(item.skillLevel))
+
 
     useEffect(() => {
         if (isVisible && divRef.current) {
@@ -71,7 +88,7 @@ setSelectedLessonType, setSelectedSkillLevel,lessonInfoDropdownStyling}) => {
                             }}>
                             Skill Levels
                         </div>
-                        {skillLevels.map((item, index) => (
+                        {orderedSkills.map((item, index) => (
                         <div key={index} className="flex flex-1 pl-3  pr-3 w-full py-2
                         rounded-xl md:whitespace-nowrap hover:bg-gray-200  cursor-pointer"
                         onClick={()=>{setSelectedSkillLevel(item.skillLevel)}}>
