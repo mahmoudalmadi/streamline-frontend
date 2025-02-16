@@ -178,6 +178,7 @@ export default function Home() {
   
   const getCommonIds = ({ a, b, c, d }, { useA, useB, useC, useD }) => {
     // Collect only the active sets
+    
     console.log(a, b, c, d)
     console.log(useA, useB, useC, useD)
     const activeSets = [];
@@ -248,9 +249,10 @@ export default function Home() {
     const useSkillLocos=selectedSkillLevel
 
     const criteria = {a:selectedLocos,b:availabilityMatchedLocations,c:skillTypeLocos,d:lessonTypeLocos}
+    
     const settings = {useA:useSelectedLocos,useB:useTimeLocos,useC:useSkillLocos,useD:useTypeLocos}
-
-    if(settings.useA||settings.useB,settings.useC,settings.useD){
+    
+    if(settings.useA||settings.useB||settings.useC||settings.useD){
     const desiredLocos = getCommonIds(criteria,settings)
     setFilteredTeamLocos(teamLocations.filter(item=>desiredLocos.has(item.id)))
     setLoadingSearchResults(false)
@@ -345,7 +347,7 @@ export default function Home() {
         </>:
         <>
              <div className="text-[18px] font-semibold mt-[18px] mb-4">
-          Partnered Swim Teams
+          All Partnered Swim Teams
         </div>
         <SwimTeamsMenu teamLocations={teamLocations}/>
         </>

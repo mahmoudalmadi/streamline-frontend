@@ -234,13 +234,13 @@ export default function RejectLessonRequestPage(){
                                 </div>
 
                                 <div className="flex w-full justify-center" >
-                                <div className=" py-[20px] px-[20px] w-[80%] sm:w-[100%] border border-gray-300 rounded-xl
-                                        shadow-[0_0_10px_rgba(0,0,0,0.1)] hover:shadow-streamlineBlue cursor-pointer transition-shadow duration-300" onClick={()=>{setSelectedEventId(lessonId);openEventModal();}}>  
+                            <div className=" py-[20px] px-[20px] w-[100%] sm:w-[100%] border border-gray-300 rounded-xl
+                          shadow-[0_0_10px_rgba(0,0,0,0.1)] hover:shadow-streamlineBlue cursor-pointer transition-shadow duration-300" onClick={()=>{setSelectedEventId(lessonId);openEventModal();}}>  
                                             <div className="flex items-center  mb-[10px] space-x-[4px] items-end">
                                                     <img
                                                         src={bookingInfo[lessonId]?bookingInfo[lessonId].locationImgs[0].imageUrl:""}
                                                         className=
-                                                        " w-[140px] h-[140px] rounded-[10px]"
+                                                        " w-[110px] h-[110px] sm:h-[140px] sm:w-[140px] rounded-[10px]"
                                                     />
                                                 <div className="pl-[10px]">
                                                 

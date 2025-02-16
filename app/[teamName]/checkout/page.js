@@ -165,7 +165,7 @@ export default function CheckoutPage() {
                     fullName: item.fullName,
                     athleteInfo: item,
                   }));
-                  console.log("OTHER ATHLESTES",userInfo.otherAthletes)
+                  
                   // Set state once
                   setPotentialAthletes((prev) => [...prev, ...newAthletes]);
                 }
@@ -213,7 +213,7 @@ export default function CheckoutPage() {
         const reservationDateTime = formatEventTime({startTime:checkoutData.eventInfo.start,endTime:checkoutData.eventInfo.end})
 
         const message = `Hi Coach ${checkoutData.eventInfo.coachName.split(" ")[0]}! A trial lesson on ${reservationDateTime} (Level: ${lessonTypesMapping[currSelectedSkillLevel]}, Category: ${lessonTypesMapping[currSelectedLessonType]}) has been requested by ${potentialAthletes[selectedAthleteId].fullName}. ${potentialAthletes[selectedAthleteId].athleteInfo.dateOfBirth? `(${calculateAge(potentialAthletes[selectedAthleteId].athleteInfo.dateOfBirth)} yo swimmer)`:""} Contact info: ${userInfo.userData.phoneNumber} \n \n To ACCEPT, click here:\n https://www.experiencestreamline.com/accept/${entryId}\n \n To REJECT, click here:\nhttps://www.experiencestreamline.com/reject/${entryId}`
-        console.log("GONNA SEND",message)
+        
         sendMessage(
             checkoutData.eventInfo.coachPhone
             ,message)

@@ -7,9 +7,9 @@ import MultiFieldPhoneEntry from "../../AuthModalComps/MultiFieldPhoneEntry"
 import ProfileEntryEditor from "../ProfileEntryEditor"
 
 export default function LocationInfoWrapper({
-    locationDivRef,address,setAddress,streetAddress,setStreetAddress,setCoords,setCity, postalCode,setPostalCode,setProvince,coords,city,province,setCountry,country,locationImgs,setLocationImgs,selectedAmenities,setSelectedAmenities,isMissingLocation,noHeader,sameAsTeamContact,setSameAsTeamContact,locationContactName,locationContactNumber,locationContactEmail,setLocationContactName,setLocationContactNumber,setLocationContactEmail,hasChosenLocationContact
+    locationDivRef,address,setAddress,streetAddress,setStreetAddress,setCoords,setCity, postalCode,setPostalCode,setProvince,coords,city,province,setCountry,country,locationImgs,setLocationImgs,selectedAmenities,setSelectedAmenities,isMissingLocation,noHeader,sameAsTeamContact,setSameAsTeamContact,locationContactName,locationContactNumber,locationContactEmail,setLocationContactName,setLocationContactNumber,setLocationContactEmail,hasChosenLocationContact,missingBool
 }){
-
+    
     return(
         <>
             <div className="font-bold text-streamlineBlue text-[18px] pt-[15px]"
@@ -39,6 +39,13 @@ export default function LocationInfoWrapper({
               setCountry={setCountry}
               setProvince={setProvince}
               />
+               {
+                  (isMissingLocation && (address==""||city==""||province==""||country==""||postalCode==""))&&
+                  <div className="leading-[0px] text-red-500 text-[14px]">
+                      Missing address info
+                  </div>
+              }
+            
 
               {!hasChosenLocationContact?
               <div>
@@ -84,12 +91,24 @@ export default function LocationInfoWrapper({
                     response={locationContactName}
                     setResponse={setLocationContactName}
                     />
+                    {
+                  (isMissingLocation && (locationContactName==""))&&
+                  <div className="leading-[0px] py-[10px] text-red-500 text-[14px]">
+                      Missing contact name
+                  </div>
+                    }
                     <ProfileEntryEditor
                     prompt={"Location contact email"}
                     placeholder={"Email address"}
                     response={locationContactEmail}
                     setResponse={setLocationContactEmail}
                     />
+                    {
+                    (isMissingLocation && (locationContactEmail==""))&&
+                    <div className="leading-[0px] py-[10px] text-red-500 text-[14px]">
+                        Missing contact email
+                    </div>
+                    }
                     <MultiFieldPhoneEntry 
                     prompt={"Location Contact Number"}
                     placeholder={"Contact #"}
@@ -98,6 +117,7 @@ export default function LocationInfoWrapper({
                     field={'phoneNumber'}
                     customLength={"w-[190px]"}
                     />
+                    
 
                 </div>
                 :
@@ -110,12 +130,24 @@ export default function LocationInfoWrapper({
                     response={locationContactName}
                     setResponse={setLocationContactName}
                     />
+                    {
+                  (isMissingLocation && (locationContactName==""))&&
+                  <div className="leading-[0px] py-[10px] text-red-500 text-[14px]">
+                      Missing contact name
+                  </div>
+                    }
                     <ProfileEntryEditor
                     prompt={"Location contact email"}
                     placeholder={"Email address"}
                     response={locationContactEmail}
                     setResponse={setLocationContactEmail}
                     />
+                    {
+                  (isMissingLocation && (locationContactEmail==""))&&
+                  <div className="leading-[0px] py-[10px] text-red-500 text-[14px]">
+                      Missing contact email
+                  </div>
+                    }
                     <MultiFieldPhoneEntry 
                     prompt={"Location Contact Number"}
                     placeholder={"Contact #"}
@@ -136,12 +168,24 @@ export default function LocationInfoWrapper({
                     response={locationContactName}
                     setResponse={setLocationContactName}
                     />
+                    {
+                  (isMissingLocation && (locationContactName==""))&&
+                  <div className="leading-[0px] py-[10px] text-red-500 text-[14px]">
+                      Missing contact name
+                  </div>
+                    }
                     <ProfileEntryEditor
                     prompt={"Location contact email"}
                     placeholder={"Email address"}
                     response={locationContactEmail}
                     setResponse={setLocationContactEmail}
                     />
+                    {
+                  (isMissingLocation && (locationContactEmail==""))&&
+                  <div className="leading-[0px] py-[10px] text-red-500 text-[14px]">
+                      Missing contact email
+                  </div>
+                    }
                     <MultiFieldPhoneEntry 
                     prompt={"Location Contact Number"}
                     placeholder={"Contact #"}
@@ -156,7 +200,18 @@ export default function LocationInfoWrapper({
               <ImageUploader allowMultiple={true} images={locationImgs} setImages={setLocationImgs} prompt={"Location Images (at least 5 images)"}
               buttonMessage={
               locationImgs.length===0?"Upload Location Photos":"Add Location Photos"}/>
-
+                {
+                  (isMissingLocation && (locationImgs.length==0))&&
+                  <div className="leading-[0px] text-red-500 text-[14px]">
+                      Missing location images
+                  </div>
+                }
+                {
+                  (isMissingLocation && (selectedAmenities.length==0))&&
+                  <div className="leading-[0px] py-[10px] text-red-500 text-[14px]">
+                      Missing location amenities
+                  </div>
+                    }
               <AmenitiesSelection 
               selectedAmenities={selectedAmenities}
               setSelectedAmenities={setSelectedAmenities}

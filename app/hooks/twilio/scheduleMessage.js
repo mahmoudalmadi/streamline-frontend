@@ -2,6 +2,7 @@ import CONFIG from "@/config";
 
 const scheduleTwilioSms = async (message, to, myDateTime, timeZone) => {
     try {
+      console.log("SHCELELELELELLEELE",myDateTime.toISOString().slice(0, 19))
       const response = await fetch(CONFIG.backendRoute+"aws/scheduleTwilioSmsLambda", {
         method: "POST",
         headers: {

@@ -2,7 +2,7 @@ import ProfileEntryEditor from "../ProfileEntryEditor"
 import ImageUploader from "../ImageUploader"
 import MultiFieldPhoneEntry from "../../AuthModalComps/MultiFieldPhoneEntry"
 
-export default function HeadCoachWrapper({coachInfoDivRef,isMissingCoachInfo,headCoachBio,setHeadCoachBio,headCoachName,setHeadCoachName,coachImg,setCoachImg,noHeader,coachEmail,setCoachEmail,coachPhone,setCoachPhone}){
+export default function HeadCoachWrapper({coachInfoDivRef,isMissingCoachInfo,headCoachBio,setHeadCoachBio,headCoachName,setHeadCoachName,coachImg,setCoachImg,noHeader,coachEmail,setCoachEmail,coachPhone,setCoachPhone,missingBool}){
 
     return(
         <>
@@ -24,6 +24,12 @@ export default function HeadCoachWrapper({coachInfoDivRef,isMissingCoachInfo,hea
               placeholder={"Coach Name"}
               isLong={false}
               />
+              {
+              (missingBool && headCoachName=="")&&
+              <div className="leading-[0px] text-red-500 text-[14px]">
+                  Missing coach name
+              </div>
+              }
 
               <ProfileEntryEditor
               prompt={"Head coach bio"}
@@ -32,6 +38,12 @@ export default function HeadCoachWrapper({coachInfoDivRef,isMissingCoachInfo,hea
               placeholder={"Talk about the head coach's experiences, history, fun facts, etc..."}
               isLong={true}
               />
+              {
+              (missingBool && headCoachBio=="")&&
+              <div className="leading-[0px] text-red-500 text-[14px]">
+                  Missing coach bio
+              </div>
+              }
 
               <MultiFieldPhoneEntry
               prompt={"Head coach phone #"}
@@ -40,6 +52,12 @@ export default function HeadCoachWrapper({coachInfoDivRef,isMissingCoachInfo,hea
               setFieldResponse={setCoachPhone}
               field={'phoneNumber'}
               customLength={"w-[180px]"}/>
+              {
+              (missingBool && coachPhone=="")&&
+              <div className="leading-[0px] text-red-500 text-[14px]">
+                  Missing coach name
+              </div>
+              }
 
               <ProfileEntryEditor
               prompt={"Head coach email (optional)"}
@@ -47,11 +65,22 @@ export default function HeadCoachWrapper({coachInfoDivRef,isMissingCoachInfo,hea
               setResponse={setCoachEmail}
               placeholder={"Email address"}
               isLong={false}/>
+              {
+              (missingBool && coachEmail=="")&&
+              <div className="leading-[0px] text-red-500 text-[14px]">
+                  Missing coach email
+              </div>
+              }
 
               <ImageUploader allowMultiple={false} images={coachImg} setImages={setCoachImg} prompt={"Head Coach Photo"}
               buttonMessage={
                   coachImg.length!=0?"Replace Head Coach Photo":"Upload Head Coach Photo"}/>
-
+                {
+              (missingBool && coachImg.length==0)&&
+              <div className="leading-[0px] pb-[30px] text-red-500 text-[14px]">
+                  Missing coach photo
+              </div>
+              }
         </>
     )
 }

@@ -1,7 +1,7 @@
 import ProfileEntryEditor from "../ProfileEntryEditor"
 import MultiFieldPhoneEntry from "../../AuthModalComps/MultiFieldPhoneEntry"
 
-export default function ContactInfoWrapper({fullName,setFullName,emailAddress,setEmailAddress,phoneNumberObj,setPhoneNumberObj}) {
+export default function ContactInfoWrapper({fullName,setFullName,emailAddress,setEmailAddress,phoneNumberObj,setPhoneNumberObj,missingBool}) {
 
     return(
         <>
@@ -12,6 +12,12 @@ export default function ContactInfoWrapper({fullName,setFullName,emailAddress,se
               placeholder={"Full Name"}
               isLong={false}
               />
+               {
+                  (missingBool && fullName=="")&&
+                  <div className="leading-[0px] text-red-500 text-[14px]">
+                      Missing full name
+                  </div>
+              }
               
               <ProfileEntryEditor
               prompt={"Team Contact Email"}
@@ -21,6 +27,12 @@ export default function ContactInfoWrapper({fullName,setFullName,emailAddress,se
               placeholder={"Email Address"}
               isLong={false}
               />
+                 {
+                  (missingBool && emailAddress=="")&&
+                  <div className="leading-[0px] text-red-500 text-[14px]">
+                      Missing email address
+                  </div>
+              }
 
               <MultiFieldPhoneEntry 
               prompt="Contact Phone Number"

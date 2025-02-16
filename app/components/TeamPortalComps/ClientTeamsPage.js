@@ -30,14 +30,8 @@ export default function ClientTeamsPage() {
 
   return (
     <div
-      className="bg-custom-radial w-screen overflow-x-hidden"
-      style={{
-        "--tw-gradient-from": "#28C8ED",
-        "--tw-gradient-to": "#FFFFFF",
-        "--tw-gradient-stops": "var(--tw-gradient-from), var(--tw-gradient-to)",
-        width: "100vw",
-        height: "110vh",
-      }}
+      className="w-screen overflow-x-hidden"
+
     >
     <DynamicScreen>
         <div>
@@ -51,13 +45,13 @@ export default function ClientTeamsPage() {
           <LoadingSubScreen />
         </div>
         :
-        <div className="flex flex-col w-screen h-screen items-center justify-center">
-          <div className="font-bold text-white text-[24px] px-[90px] text-center">
+        <div className="flex flex-col h-screen items-center justify-center">
+          <div className="font-bold text-streamlineBlue text-[24px] px-[90px] text-center">
             Welcome to the Experience Streamline Teams Portal
           </div>
 
           {stateValue || isLogin || isSignUp ? (
-            <div className="flex justify-center">
+            <div className="w-[70%] md:w-[50%] lg:w-[40%] justify-center">
               <LoginSignUp isSignUp={isSignUp} isLogin={isLogin} setIsLogin={setIsLogin} setIsSignUp={setIsSignUp} switchModalType={switchModalType}/>
             </div>
           ) : (
