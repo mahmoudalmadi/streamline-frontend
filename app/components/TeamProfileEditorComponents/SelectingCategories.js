@@ -3,7 +3,7 @@
 import InfoDropdown from "./InfoDropdown";
 import { useState } from "react";
 
-export default function SelectingCategories({categoryTypes, programs, setPrograms, categoryDict}) {
+export default function SelectingCategories({categoryTypes, programs, setPrograms, categoryDict,missingBool}) {
 
     const handleAddLevel = () => {
         setPrograms([...programs, { level: "", category: "" }]);
@@ -37,6 +37,20 @@ export default function SelectingCategories({categoryTypes, programs, setProgram
     
     const categories = Object.keys(categoryDict)
 
+    let missingInfo = false
+
+    programs.map(item=>{
+        if("Program Class Sizes"==categoryTypes){
+        if(item.price==""||item.category==""||item.level==""){
+            missingInfo=true
+        }
+        }else{
+            if(item.category==""||item.level==""){
+                missingInfo=true
+            }
+        }
+    })
+
     return(
         <div className="">
             <div className="flex text-[15px] mb-[10px] font-bold items-center ">
@@ -54,6 +68,12 @@ export default function SelectingCategories({categoryTypes, programs, setProgram
                 </div>
             </div>
             
+            {
+              (missingBool && missingInfo)&&
+              <div className="mb-[8px] text-red-500 text-[14px]">
+                  Some information is missing here. Please check that each of the {categoryTypes.toLowerCase()} has a {"Program Class Sizes"==categoryTypes?"name, category, and price":"name and category"}
+              </div>
+              }
             
             <div className="flex w-full flex-col justify-center">
 

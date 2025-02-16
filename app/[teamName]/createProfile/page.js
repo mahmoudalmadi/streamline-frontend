@@ -243,7 +243,7 @@ export default function TeamProfileEditor() {
       setIsMissingTeamInfo(false)
       setHourOfOpError(false)
       setIsMissingLocationDivRef(false)
-    },[teamName,teamDescription
+    },[teamName,teamDescription,newTeamName
       ,logoImg,emailAddress,phoneNumberObj,fullName,address,city,province,coords,selectedAmenities,locationImgs,daysOfWeek,timesOfDay,programLevels,programTypes,headCoachName,headCoachBio,coachImg,locationContactEmail,locationContactName,locationContactPhone])
 
     const [isMissingCoachInfo,setIsMissingCoachInfo]=useState(false)
@@ -566,6 +566,7 @@ export default function TeamProfileEditor() {
               setTeamDescription={setTeamDescription}
               logoImg={logoImg}
               setLogoImg={setLogoImg}
+              missingBool={isMissingTeamInfo}
               />
 
               <div
@@ -594,6 +595,7 @@ export default function TeamProfileEditor() {
               setEmailAddress={setEmailAddress}
               phoneNumberObj={phoneNumberObj}
               setPhoneNumberObj={setPhoneNumberObj}
+              missingBool={isMissingTeamInfo}
               />
 
               <div
@@ -607,6 +609,7 @@ export default function TeamProfileEditor() {
               </>
               
               <LocationInfoWrapper
+              
               locationDivRef={locationDivRef}
               setPostalCode={setPostalCode}
               postalCode={postalCode}
@@ -652,6 +655,7 @@ export default function TeamProfileEditor() {
               daysOfWeek={daysOfWeek}
               setDaysOfWeek={setDaysOfWeek}
               hourOfOpError={hourOfOpError}
+              missingBool={isMissingProgramsOffered}
               />
               <div className="h-[6px]"/>
 
@@ -669,6 +673,7 @@ export default function TeamProfileEditor() {
               setCoachImg={setCoachImg}
               coachEmail={coachEmail}
               setCoachEmail={setCoachEmail}
+              missingBool={isMissingCoachInfo}
               />
 
               </div>

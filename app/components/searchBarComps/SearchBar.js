@@ -85,9 +85,9 @@ const SearchBar = ({searchTeams,locations,setLocations,setDaysOfWeek,daysOfWeek,
 
 
     return(
-        <>
+        <div className="flex flex-col w-full justify-center items-center">
         <div className="relative flex shadow-[0_0_10px_rgba(0,0,0,0.1)] 
-         justify-between border-[1px] border-gray-300  h-[60px] rounded-full w-[100%] md:w-[65%] lg:w-[75%]"
+         justify-between border-[1px] border-gray-300 h-[50px] sm:h-[60px] rounded-full w-[100%] md:w-[75%] lg:w-[75%]"
         style={{
             zIndex:100,
             userSelect: "none", // Prevent text selection
@@ -105,7 +105,7 @@ const SearchBar = ({searchTeams,locations,setLocations,setDaysOfWeek,daysOfWeek,
                 zIndex:100
             }}
             >
-                <div className="font-semibold text-[14px]">
+                <div className="font-semibold text-[14px] text-center sm:text-start">
                     Where
                 </div>
                 <div className="hidden sm:block text-graySubtitle text-[12px]">
@@ -121,15 +121,15 @@ const SearchBar = ({searchTeams,locations,setLocations,setDaysOfWeek,daysOfWeek,
             justify-center rounded-full px-3 py-1 pl-6 hover:bg-gray-200
             ${isLessonTimingDropdownVisible?"bg-gray-200":""}`}
             onClick={toggleIsLessonTimingDropdownVisible}>
-                    <div className="absolute right-0 h-[35px]  w-[0.5px] bg-gray-200 transform -translate-x-1/2
+                    <div className="absolute right-0 h-[25px] sm:h-[35px]  w-[0.5px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
-                    <div className="font-semibold text-[14px]">
+                    <div className="font-semibold text-[14px] text-center sm:text-start">
                         When
                     </div>
                     <div className="hidden sm:block text-graySubtitle text-[12px]">
                         Lesson times
                     </div>
-                    <div className="absolute left-0 h-[35px] w-[1px] bg-gray-200 transform -translate-x-1/2
+                    <div className="absolute left-0 h-[25px] sm:h-[35px] w-[1px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                     <LessonTimingDropdown isVisible={isLessonTimingDropdownVisible}
                     onClose={handleCloseLessonTimingDropdown} 
@@ -141,18 +141,18 @@ const SearchBar = ({searchTeams,locations,setLocations,setDaysOfWeek,daysOfWeek,
             </div>
 
             {/* lesson type box */}
-            <div className={`relative group flex w-[23%] flex-col justify-center rounded-full px-3 py-1
-             hover:bg-gray-200 pl-6 cursor-pointer ${isLessonTypeDropdownVisible?"bg-gray-200":""}`}
+            <div className={`relative group flex w-[23%] sm:w-[25%] flex-col justify-center rounded-full px-3 py-1
+             hover:bg-gray-200 pl-3 sm:pl-6 cursor-pointer ${isLessonTypeDropdownVisible?"bg-gray-200":""}`}
              onClick={toggleIsLessonTypeDropdownVisible}>
-                <div className="absolute right-0 h-[35px]  w-[1px] bg-gray-200 transform -translate-x-1/2
+                <div className="absolute right-0 h-[25px] sm:h-[35px]  w-[1px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
-                <div className="font-semibold text-[14px]">
+                <div className="font-semibold text-[14px] text-center sm:text-start">
                     Level
                 </div>
                 <div className="hidden sm:block text-graySubtitle text-[12px]">
                     Add Level
                 </div>
-                <div className="absolute left-0 h-[35px] w-[0.5px] bg-gray-200 transform -translate-x-1/2
+                <div className="absolute left-0 h-[25px] sm:h-[35px] w-[0.5px] bg-gray-200 transform -translate-x-1/2
                     opacity-100  "/>
                 <LessonTypeDropdown isVisible={isLessonTypeDropdownVisible}
                     onClose={handleCloseLessonTypeDropdown} 
@@ -167,13 +167,13 @@ const SearchBar = ({searchTeams,locations,setLocations,setDaysOfWeek,daysOfWeek,
             {/* Price box */}
             <div 
                 className={`relative flex flex-1 
-                    justify-between items-center rounded-full py-1 pr-1 pl-4
+                    justify-between items-center rounded-full py-1 pr-0 sm:pr-1 pl-0 sm:pl-4
                     cursor-pointer hover:bg-gray-200 
                     ${isPriceDropdownVisible ? "bg-gray-200" : ""}`}
                 onClick={toggleIsPriceDropdownVisible}
             >
-                <div className="flex flex-col">
-                    <div className="font-semibold text-[14px]">Price</div>
+                <div className="flex flex-col w-full">
+                    <div className="font-semibold text-[14px] text-center sm:text-start">Price</div>
                     <div className="text-graySubtitle hidden sm:block text-[12px]">Per Lesson</div>
                 </div>
 
@@ -185,14 +185,18 @@ const SearchBar = ({searchTeams,locations,setLocations,setDaysOfWeek,daysOfWeek,
                     }} 
                     className="pointer-events-auto"
                 >
+                    <div className="hidden sm:block">
                     <div 
                         className="flex justify-center items-center 
-                            rounded-full w-[32px] h-[32px] sm:w-[42px] sm:h-[42px] mt-1 mb-1 
+                            rounded-full w-[42px] h-[42px] mt-1 mb-1 
                             bg-streamlineBlue hover:bg-blue-600"
                     >
                         <FaSearch style={{ color: 'white', fontSize: '19px' }} />
                     </div>  
+                    </div>
                 </button>      
+
+
 
                 <PriceDropdown 
                     isVisible={isPriceDropdownVisible} 
@@ -212,7 +216,23 @@ const SearchBar = ({searchTeams,locations,setLocations,setDaysOfWeek,daysOfWeek,
 
         </div>
 
-        </>
+        <div className="sm:hidden cursor-pointer flex bg-streamlineBlue items-center px-[10px] rounded-full mt-[12px]" onClick={(event) => {
+                        event.stopPropagation();
+                        searchTeams();
+                    }} >
+        <div 
+            className="flex justify-center items-center 
+                rounded-full w-[42px] h-[25px] mt-1 mb-1 
+                 hover:bg-blue-600"
+        >
+            <FaSearch style={{ color: 'white', fontSize: '16px' }} />
+        </div>  
+        <div className="flex text-white font-bold mr-[8px] text-[15px]">
+            Search teams
+        </div>
+        </div>
+
+        </div>
 
 
     )

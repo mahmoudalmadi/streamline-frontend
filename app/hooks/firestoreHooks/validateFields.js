@@ -5,9 +5,10 @@ const validateFields = ({data, isGuardian}) => {
   }  
 
   for (const [key, value] of Object.entries(data)) {
-    
+    console.log("PRICE CHECK",key,value)
+
      if(key=="price"){
-      if (!isExclusivelyNumber(value)){
+      if (!isExclusivelyNumber(value)||value==""){
         throw new Error(`Hi ,Invalid value for field "${key}" with value "${JSON.stringify(value)}": Gotta be a numba!`)  
       }
      }else

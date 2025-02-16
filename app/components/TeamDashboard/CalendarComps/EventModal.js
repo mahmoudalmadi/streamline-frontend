@@ -216,7 +216,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
         const scheduledCoachMessage = `Hi Coach ${pickedEvent.coachName}. This is a courtesy reminder that your trial lesson with ${pickedEvent.contact[0].fullName} on ${reservationDateTime} is coming up soon. Please reach out to the swimmer if there are any changes in your schedule at your earliest convenience.`
 
         const athleteContactNumber = pickedEvent.contact[0].phoneNumber
-
+        console.log(scheduledMessageTime,pickedEvent.start,pickedEvent.reminder)
         if(scheduledMessageTime){
             await scheduleTwilioSms(scheduledAthleteMessage,athleteContactNumber,scheduledMessageTime,'America/Toronto')
             await scheduleTwilioSms(scheduledCoachMessage,pickedEvent.coachPhone,scheduledMessageTime,'America/Toronto')
@@ -227,7 +227,7 @@ export default function EventModal ({pickedEvent,streetAddress,onClose,setCurrWe
             ,message)
 
     }
-    
+    console.log(pickedEvent)
     const handleRejectRequest=async()=>{
 
 

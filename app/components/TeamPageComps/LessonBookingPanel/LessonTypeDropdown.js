@@ -49,7 +49,7 @@ setSelectedLessonType, setSelectedSkillLevel,lessonInfoDropdownStyling}) => {
             <div
                 ref={divRef}
                 className={`${lessonInfoDropdownStyling}`}
-                 
+                style={{height:'fit-content'}}
                 onClick={(e)=>e.stopPropagation()} // Close on click within the div
             >
                 <div className='flex max-h-[256px] pl-3 pr-4'>
