@@ -20,7 +20,7 @@ import SMSAgreement from "./SMSAgreement";
 
 export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) {
     
-    const {setLoadingNewPage,noLoading}=useAuth()
+    const {setLoadingNewPage,noLoading,setNoLoading}=useAuth()
     const {guardianInfo, setGuardianInfo, kids, setKids, hasEmail, hasNumber, setErrorMessage} = useSignUpContext()
     const [guardianFullName, setGuardianFullName] = useState("")
     const [incompleteFieldsError, setIncompleteFieldsError] = useState(false)
