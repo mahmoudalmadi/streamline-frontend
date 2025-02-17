@@ -63,7 +63,7 @@ const EmailSignupWidget = ({setAlternativeSignUpEmail, alternativeSignUpEmail, u
             <div className="h-[10px]"/>
             <div className="w-[60%] pb-[4px]">
 
-            <SMSAgreement setUserPhoneAgreement={setUserPhoneAgreement} blurb={"I agree to have coaches registered under this team to receive SMS notifications for lesson scheduling. Standard SMS carrier rates apply."}/>
+            {/* <SMSAgreement setUserPhoneAgreement={setUserPhoneAgreement} blurb={"I agree to have coaches registered under this team to receive SMS notifications for lesson scheduling. Standard SMS carrier rates apply."}/> */}
 
             <div className="h-[10px]"/>
 

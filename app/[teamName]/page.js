@@ -148,7 +148,6 @@ export default function TeamPage()  {
         }
 
         function createCategoryIndexMap(jsonList) {
-          console.log("adasdadsadsadsdsa",jsonList)
           const map = new Map();
           jsonList.forEach((item, index) => {
               map.set(item.category, index);

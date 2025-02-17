@@ -98,7 +98,7 @@ const SearchBar = ({searchTeams,locations,setLocations,setDaysOfWeek,daysOfWeek,
         
             {/* where box */}
 
-            <div className={`relative flex flex-1 flex-col justify-center rounded-full px-3 
+            <div className={`relative flex sm:flex-1 flex-col justify-center rounded-full px-3 w-[25%]
             py-1 pl-6 hover:bg-gray-200 cursor-pointer ${isLocationDropdownVisible?"bg-gray-200":""}`}
             onClick={toggleLocationDropdownVisibility}
             style={{
@@ -117,8 +117,8 @@ const SearchBar = ({searchTeams,locations,setLocations,setDaysOfWeek,daysOfWeek,
             </div>
 
             {/* when box */}
-            <div className={`relative flex flex-1 flex-col cursor-pointer
-            justify-center rounded-full px-3 py-1 pl-6 hover:bg-gray-200
+            <div className={`relative flex w-[25%] flex-col cursor-pointer items-center sm:items-start
+            justify-center rounded-full sm:ßpx-3 py-1 pl-0 sm:pl-6 hover:bg-gray-200
             ${isLessonTimingDropdownVisible?"bg-gray-200":""}`}
             onClick={toggleIsLessonTimingDropdownVisible}>
                     <div className="absolute right-0 h-[25px] sm:h-[35px]  w-[0.5px] bg-gray-200 transform -translate-x-1/2
@@ -141,7 +141,7 @@ const SearchBar = ({searchTeams,locations,setLocations,setDaysOfWeek,daysOfWeek,
             </div>
 
             {/* lesson type box */}
-            <div className={`relative group flex w-[23%] sm:w-[25%] flex-col justify-center rounded-full px-3 py-1
+            <div className={`relative group flex w-[25%] sm:w-[25%] flex-col justify-center rounded-full px-3 py-1
              hover:bg-gray-200 pl-3 sm:pl-6 cursor-pointer ${isLessonTypeDropdownVisible?"bg-gray-200":""}`}
              onClick={toggleIsLessonTypeDropdownVisible}>
                 <div className="absolute right-0 h-[25px] sm:h-[35px]  w-[1px] bg-gray-200 transform -translate-x-1/2
@@ -166,7 +166,7 @@ const SearchBar = ({searchTeams,locations,setLocations,setDaysOfWeek,daysOfWeek,
 
             {/* Price box */}
             <div 
-                className={`relative flex flex-1 
+                className={`relative flex sm:flex-1 w-[25%] 
                     justify-between items-center rounded-full py-1 pr-0 sm:pr-1 pl-0 sm:pl-4
                     cursor-pointer hover:bg-gray-200 
                     ${isPriceDropdownVisible ? "bg-gray-200" : ""}`}

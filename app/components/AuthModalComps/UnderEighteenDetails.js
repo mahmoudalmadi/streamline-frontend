@@ -144,7 +144,7 @@ export default function UnderEighteenDetails({setFinishSignUpDetails, onClose}) 
         </div>}
 
         
-        <SMSAgreement setUserPhoneAgreement={setUserPhoneAgreement} blurb={"I agree to receive SMS notifications for lesson scheduling. Standard SMS carrier rates apply."}/>
+        {/* <SMSAgreement setUserPhoneAgreement={setUserPhoneAgreement} blurb={"I agree to receive SMS notifications for lesson scheduling. Standard SMS carrier rates apply."}/> */}
 
 
         <TermsAcknowledgment buttonText={"Create Account"} termsPageRoute={"termsOfService/swimmers"}/>

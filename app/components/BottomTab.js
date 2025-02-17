@@ -26,13 +26,18 @@ export default function BottomTab() {
           router.push("/termsOfService/teams")}}>
             For Teams
           </div>
-        </div>
-        <div className="flex flex-col underline hover:no-underline cursor-pointer text-center font-bold w-[33%]" onClick={()=>{
+          <div className="flex sm:hidden flex-col underline hover:no-underline cursor-pointer text-center font-bold mt-[20px]" onClick={()=>{
           setLoadingNewPage(true);
           router.push("/privacyPolicy")}}>
         Privacy Policy
         </div>
-        <div className="flex flex-col break-all w-[33%] ">
+        </div>
+        <div className="flex hidden sm:block flex-col underline hover:no-underline cursor-pointer text-center font-bold w-[0%] sm:w-[33%]" onClick={()=>{
+          setLoadingNewPage(true);
+          router.push("/privacyPolicy")}}>
+        Privacy Policy
+        </div>
+        <div className="flex flex-col break-all w-[60%] sm:w-[33%]">
         <div className="font-bold text-center sm:text-start">Contact Info</div>
         <div className="flex text-[14px]  items-center space-x-[6px]">
           <div className="flex justify-center w-[30px]">
