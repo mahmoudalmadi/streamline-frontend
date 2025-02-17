@@ -34,8 +34,10 @@ export default function PersonEntry({personInfo,noLeftMargin,noIcon}){
                             </div>
                             
                             {personInfo.email &&
-                            <div className="flex items-center mt-[1px] space-x-[3px] leading-[14px]">
+                            <div className="flex items-center mt-[1px]  space-x-[3px] leading-[14px]">
+                            <div>
                             <EmailIcon/>
+                            </div>
                             <div>
                             {personInfo.email}
                             </div>                    

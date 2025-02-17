@@ -10,7 +10,7 @@ const scheduleTwilioSms = async (message, to, myDateTime, timeZone) => {
         },
         body: JSON.stringify({
           task: { message, to },
-          dateTime: myDateTime.toISOString().slice(0, 19),
+          dateTime: myDateTime,
           timeZone,
         }),
       });

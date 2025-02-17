@@ -33,7 +33,7 @@ export default function ClientTeamsPage() {
       className="w-screen overflow-x-hidden"
 
     >
-    <DynamicScreen>
+    <DynamicScreen className="bg-streamlineBlue">
         <div>
           <button onClick={redirectHome}>
             <StreamlineLogo className="w-[130px] h-[50px]" />
@@ -42,16 +42,16 @@ export default function ClientTeamsPage() {
 
         {loadingNewPage ? 
         <div className="h-screen">
-          <LoadingSubScreen />
+          <LoadingSubScreen color={true}/>
         </div>
         :
-        <div className="flex flex-col h-screen items-center justify-center">
-          <div className="font-bold text-streamlineBlue text-[24px] px-[90px] text-center">
+        <div className="flex flex-col h-screen items-center justify-center w-full">
+          <div className="font-bold text-white text-[24px] px-[90px] text-center w-full">
             Welcome to the Experience Streamline Teams Portal
           </div>
 
           {stateValue || isLogin || isSignUp ? (
-            <div className="w-[70%] md:w-[50%] lg:w-[40%] justify-center">
+            <div className="w-[90%] md:w-[50%] lg:w-[40%] justify-center">
               <LoginSignUp isSignUp={isSignUp} isLogin={isLogin} setIsLogin={setIsLogin} setIsSignUp={setIsSignUp} switchModalType={switchModalType}/>
             </div>
           ) : (

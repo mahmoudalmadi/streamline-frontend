@@ -12,7 +12,7 @@ import { deleteMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/edi
 import { editingMatchingEntriesByAllFields } from "@/app/hooks/firestoreHooks/editing/editingEntryByAllFields";
 import { batchedGetEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/batchedGetEntriesByConditions";
 import { getEntriesByConditions } from "@/app/hooks/firestoreHooks/retrieving/getEntriesByConditions";
-import { subtractTime } from "@/app/hooks/miscellaneous";
+import { formatEventTime, subtractTime } from "@/app/hooks/miscellaneous";
 import scheduleTwilioSms from "@/app/hooks/twilio/scheduleMessage";
 import scheduleMessage from "@/app/hooks/twilio/scheduleMessage";
 import sendMessage from "@/app/hooks/twilio/sendMessage";
@@ -41,32 +41,6 @@ export default function AcceptLessonRequestPage(){
 
     const [bookingInfo,setBookingInfo]=useState({})
 
-    function formatEventTime({startTime, endTime}) {
-        // Days of the week and months for formatting
-        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      
-        // Extracting components for the start time
-        if(startTime){const startDay = daysOfWeek[startTime.getDay()];
-        const startMonth = months[startTime.getMonth()];
-        const startDate = startTime.getDate();
-      
-        // Formatting hours and minutes for start and end time
-        const formatTime = (date) => {
-          const hours = date.getHours() % 12 || 12; // Convert to 12-hour format
-          const minutes = date.getMinutes().toString().padStart(2, "0");
-          const amPm = date.getHours() >= 12 ? "PM" : "AM";
-          return `${hours}${minutes !== "00" ? `:${minutes}` : ""} ${amPm}`;
-        };
-      
-        const startFormattedTime = formatTime(startTime);
-        const endFormattedTime = formatTime(endTime);
-      
-        // Return formatted string
-        return `${startDay}, ${startMonth} ${startDate} · ${startFormattedTime} –${endFormattedTime}`;}else{
-            return ""
-        }
-    }
 
     const handleAcceptRequest = async(pickedEvent) => {
 
@@ -323,7 +297,7 @@ export default function AcceptLessonRequestPage(){
                                 </div>
 
                                 <div className="flex w-full justify-center" >
-                            <div className=" py-[20px] px-[20px] w-[100%] sm:w-[100%] border border-gray-300 rounded-xl
+                            <div style={{width:"fit-content"}} className=" py-[20px] px-[20px] w-[100%] border border-gray-300 rounded-xl
                           shadow-[0_0_10px_rgba(0,0,0,0.1)] hover:shadow-streamlineBlue cursor-pointer transition-shadow duration-300" onClick={()=>{setSelectedEventId(lessonId);openEventModal();}}>  
                                             <div className="flex items-center  mb-[10px] space-x-[4px] items-end">
                                                     <img

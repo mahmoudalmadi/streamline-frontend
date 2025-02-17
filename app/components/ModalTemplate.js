@@ -14,7 +14,7 @@ const ModalTemplate = ({ isOpen, onClose, children, parentDivRef }) => {
       <div
         className="relative bg-white rounded-lg shadow-lg p-4"
         style={{
-          maxWidth: "90%",
+          maxWidth: "95%",
           maxHeight: "95%",
           overflow: "auto", // Scrollable if content overflows
         }}

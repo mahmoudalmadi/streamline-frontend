@@ -172,7 +172,7 @@ export default function OverEighteenDetails({setFinishSignUpDetails, onClose}) {
             "Please ensure you have entered a correct phone number"}
         </div>}
 
-        <SMSAgreement setUserPhoneAgreement={setUserPhoneAgreement} blurb={"I agree to receive SMS notifications for lesson scheduling. Standard SMS carrier rates apply."}/>
+        {/* <SMSAgreement setUserPhoneAgreement={setUserPhoneAgreement} blurb={"I agree to receive SMS notifications for lesson scheduling. Standard SMS carrier rates apply."}/> */}
 
         <TermsAcknowledgment buttonText={"Create Account"} termsPageRoute={"termsOfService/swimmers"}/>
         

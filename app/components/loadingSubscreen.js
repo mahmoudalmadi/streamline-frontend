@@ -3,10 +3,10 @@ import TopBar from "./TopBarComps/TopBar";
 
 import { BounceLoader } from "react-spinners";
 
-const Spinner = () => {
+const Spinner = ({color}) => {
     return (
     <BounceLoader
-        color="#28C8ED" // Customize the color
+        color={color?"#FFFFFF":"#28C8ED"} // Customize the color
         size={80} // Customize the size
         aria-label="Loading spinner"
     />
@@ -14,7 +14,7 @@ const Spinner = () => {
 };
     
 
-export default function LoadingSubScreen({loadingMessage}){
+export default function LoadingSubScreen({loadingMessage,color}){
 
         return (
         <div className="flex justify-center items-center h-full w-full">
@@ -22,7 +22,7 @@ export default function LoadingSubScreen({loadingMessage}){
             <div className="flex text-[18px] font-bold items-center h-[500px]">
                 <div className=" bottom-[54%] flex flex-col items-center">
                     <div className="justify-center ">
-                    <Spinner/>
+                    <Spinner color={color}/>
                     </div>        
                     <div className="text-streamlineBlue mt-[16px] text-center">
                     {loadingMessage}

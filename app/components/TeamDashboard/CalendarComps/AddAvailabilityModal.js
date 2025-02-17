@@ -463,7 +463,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                             </div>     */}
                         </div>
 
-                        <div className="flex w-full justify-center space-x-4 mt-[14px]">
+                        <div className="flex w-full justify-center space-x-0 mt-[14px]">
                             <CheckboxDropdown
                             fieldType={"Skill levels"}
                             options={lessonSkills}

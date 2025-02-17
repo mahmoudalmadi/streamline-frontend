@@ -168,7 +168,7 @@ export default function TeamLogin({switchModalType}){
                 
             setLoadingNewPage(true)
             
-            const accountExists = await checkAccountExists({valueType:"emailAddress",value:teamRegistrantInfo.emailAddress,accountType:"team"})
+            const accountExists = await checkAccountExists({valueType:"emailAddress",value:teamRegistrantInfo.emailAddress.toLowerCase(),accountType:"team"})
             if (!accountExists){
                 throw("ExistenceError")
             }
