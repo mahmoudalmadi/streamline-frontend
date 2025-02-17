@@ -33,15 +33,14 @@ export default function Bookings(){
     useEffect(()=>{
 
         const getData = async() => {
-
             const allBookings = await getAllEntries({collectionName:"LessonBookings"})
-            const filteredBookings = allBookings.filter(item=>item.bookingDateTime)
+            const filteredBookings = allBookings.filter(item=>item.phoneNumber)
             const sortedBookings = filteredBookings.sort((a, b) => b.bookingDateTime.seconds - a.bookingDateTime.seconds);
+            console.log(sortedBookings)
             const formattedBookings = addFormattedDates(sortedBookings)
             setAllBookings(formattedBookings)
             setLoading(false)
         }
-
         getData()
         
     },[])
@@ -58,7 +57,7 @@ export default function Bookings(){
                     {allBookings.map((item,idx)=>
                         (<div className="" key={idx}>
                            <span className="font-bold">
-                                {item.bookingDateTime?
+                           {item?.teamName}*{item?.address}*{item?.city}*{item?.state}*{item?.country}*{item?.athlete}*{item?.age}*{item?.phoneNumber}*{item?.lessonType}*{item?.skillLevel}*{item.bookingDateTime?
                             item.formattedDate: "N/A"}
                                 
                                 </span> 

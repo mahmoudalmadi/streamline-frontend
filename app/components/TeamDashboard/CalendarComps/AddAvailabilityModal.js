@@ -369,7 +369,7 @@ export default function AddAvailibilityModal({onClose,setAddAvailibilityModalKey
                         </div>
                         
                         <div className="flex items-center text-[14px] py-[4px]">
-                            <div className="flex flex-col w-[145px]">
+                            <div className="flex flex-col w-[100px] sm:w-[145px] ">
                             
                             <div className="leading-[14px] mt-[6px] text-gray-500 text-center">
                                 Select coach or 

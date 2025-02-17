@@ -148,6 +148,8 @@ export default function CheckoutPage() {
 
     const [selectedAthleteId,setSelectedAthleteId]=useState(null)
     
+    console.log(checkoutData)
+
     const handleRedirect = async() => {
         setLoadingNewPage(true)
 
@@ -176,7 +178,16 @@ export default function CheckoutPage() {
                 userId:user.uid,
                 lessonId:entryId,
                 athlete:potentialAthletes[selectedAthleteId].fullName,
-                bookingDateTime:new Date()
+                bookingDateTime:new Date(),
+                skillLevel:currSelectedSkillLevel,
+                lessonType:currSelectedLessonType,
+                age:potentialAthletes[selectedAthleteId].athleteInfo.dateOfBirth? `${calculateAge(potentialAthletes[selectedAthleteId].athleteInfo.dateOfBirth)}`:"Over 18",
+                teamName:checkoutData.teamInfo[0].teamName,
+                city:checkoutData.locationInfo[0].city,
+                state:checkoutData.locationInfo[0].state,
+                country:checkoutData.locationInfo[0].country,
+                address:checkoutData.locationInfo[0].address,
+                phoneNumber:potentialAthletes[selectedAthleteId].athleteInfo.phoneNumber?potentialAthletes[selectedAthleteId].athleteInfo.phoneNumber:userInfo.userData.phoneNumber
             },
             collectionName:"LessonBookings"
         })
